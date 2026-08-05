@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/li-neo/one-skills/schemas/protected-constraints.schema.json",
+  "title": "One Skills Protected Constraints",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "created_at",
+    "source_hashes",
+    "protected",
+    "canonical_eval_hashes",
+    "runtime_eval_hashes"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "created_at": {"type": "string"},
+    "source_hashes": {
+      "type": "object",
+      "additionalProperties": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+    },
+    "protected": {
+      "type": "array",
+      "items": {"type": "string"},
+      "uniqueItems": true
+    },
+    "canonical_eval_hashes": {
+      "type": "object",
+      "additionalProperties": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+    },
+    "runtime_eval_hashes": {
+      "type": "object",
+      "additionalProperties": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+    }
+  },
+  "additionalProperties": false
+}

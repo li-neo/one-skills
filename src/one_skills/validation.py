@@ -10,7 +10,7 @@ from typing import Any
 
 from .constants import EVIDENCE_TYPES, INFERENCE_LEVELS, PERMISSIONS, TEST_TYPES
 from .pipeline import load_state
-from .utils import load_json
+from .utils import load_json, stable_json_hash
 
 
 @dataclass(frozen=True)
@@ -153,10 +153,283 @@ def validate_evidence(path: Path) -> list[Finding]:
     return findings
 
 
+def validate_frozen_evals(pack: Path) -> list[Finding]:
+    constraints_path = pack / "PROTECTED_CONSTRAINTS.json"
+    if not constraints_path.exists():
+        return [
+            Finding(
+                "error",
+                "eval.constraints_missing",
+                "missing PROTECTED_CONSTRAINTS.json",
+                str(constraints_path),
+            )
+        ]
+    try:
+        constraints = load_json(constraints_path)
+    except (OSError, json.JSONDecodeError) as exc:
+        return [
+            Finding("error", "eval.constraints_parse", str(exc), str(constraints_path))
+        ]
+    if not isinstance(constraints, dict):
+        return [
+            Finding(
+                "error",
+                "eval.constraints_shape",
+                "PROTECTED_CONSTRAINTS.json must be an object",
+                str(constraints_path),
+            )
+        ]
+    canonical_hashes = constraints.get("canonical_eval_hashes", {})
+    runtime_hashes = constraints.get("runtime_eval_hashes", {})
+    if not isinstance(canonical_hashes, dict) or not isinstance(runtime_hashes, dict):
+        return [
+            Finding(
+                "error",
+                "eval.constraints_shape",
+                "evaluation hash maps must be objects",
+                str(constraints_path),
+            )
+        ]
+    findings: list[Finding] = []
+    for skill_file in sorted((pack / "skills").glob("*/SKILL.md")):
+        skill = skill_file.parent
+        canonical_path = skill / "evals" / "canonical.json"
+        runtime_path = skill / "test-prompts.json"
+        if not canonical_path.exists():
+            findings.append(
+                Finding(
+                    "error",
+                    "eval.canonical_missing",
+                    "compiled Skill is missing canonical evaluations",
+                    str(canonical_path),
+                )
+            )
+            continue
+        if not runtime_path.exists():
+            findings.append(
+                Finding(
+                    "error",
+                    "eval.runtime_missing",
+                    "compiled Skill is missing runtime evaluations",
+                    str(runtime_path),
+                )
+            )
+            continue
+        try:
+            canonical = load_json(canonical_path)
+            runtime = load_json(runtime_path)
+        except (OSError, json.JSONDecodeError) as exc:
+            findings.append(
+                Finding("error", "eval.parse", str(exc), str(skill))
+            )
+            continue
+        name = skill.name
+        required = {
+            "schema_version",
+            "suite_version",
+            "skill",
+            "profile",
+            "protected_gates",
+            "cases",
+        }
+        if not isinstance(canonical, dict) or not required <= set(canonical):
+            findings.append(
+                Finding(
+                    "error",
+                    "eval.canonical_shape",
+                    "canonical suite is missing required fields",
+                    str(canonical_path),
+                )
+            )
+            continue
+        if (
+            canonical.get("schema_version") != "1.0"
+            or not isinstance(canonical.get("suite_version"), str)
+            or not canonical["suite_version"]
+            or canonical.get("skill") != name
+        ):
+            findings.append(
+                Finding(
+                    "error",
+                    "eval.canonical_identity",
+                    "canonical suite version or Skill identity is invalid",
+                    str(canonical_path),
+                )
+            )
+        required_gates = {
+            "authorization",
+            "safety",
+            "source_facts",
+            "should_not_trigger",
+            "sibling_bait",
+        }
+        gates = canonical["protected_gates"]
+        if (
+            not isinstance(gates, list)
+            or any(not isinstance(gate, str) for gate in gates)
+            or not required_gates <= set(gates)
+        ):
+            findings.append(
+                Finding(
+                    "error",
+                    "eval.protected_gates",
+                    "canonical suite is missing protected gates",
+                    str(canonical_path),
+                )
+            )
+        if canonical_hashes.get(name) != stable_json_hash(canonical):
+            findings.append(
+                Finding(
+                    "error",
+                    "eval.canonical_drift",
+                    "canonical evaluations are not frozen or have drifted",
+                    str(canonical_path),
+                )
+            )
+        if runtime_hashes.get(name) != stable_json_hash(runtime):
+            findings.append(
+                Finding(
+                    "error",
+                    "eval.runtime_drift",
+                    "runtime evaluations are not frozen or have drifted",
+                    str(runtime_path),
+                )
+            )
+        if canonical.get("cases") != runtime:
+            findings.append(
+                Finding(
+                    "error",
+                    "eval.adapter_drift",
+                    "canonical cases and runtime tests differ",
+                    str(runtime_path),
+                )
+            )
+    return findings
+
+
+def validate_reproducibility(pack: Path) -> list[Finding]:
+    paths = {
+        "pack": pack / "pack.json",
+        "recipe": pack / "RECIPE_LOCK.json",
+        "constraints": pack / "PROTECTED_CONSTRAINTS.json",
+        "manifest": pack / "SOURCE_MANIFEST.json",
+    }
+    if any(not path.exists() for path in paths.values()):
+        return []
+    try:
+        metadata = load_json(paths["pack"])
+        recipe_lock = load_json(paths["recipe"])
+        constraints = load_json(paths["constraints"])
+        manifest = load_json(paths["manifest"])
+    except (OSError, json.JSONDecodeError) as exc:
+        return [
+            Finding("error", "reproducibility.parse", str(exc), str(pack))
+        ]
+    if not all(
+        isinstance(value, dict)
+        for value in (metadata, recipe_lock, constraints, manifest)
+    ):
+        return [
+            Finding(
+                "error",
+                "reproducibility.shape",
+                "Pack reproducibility files must be JSON objects",
+                str(pack),
+            )
+        ]
+    findings: list[Finding] = []
+    if metadata.get("schema_version") != "0.2":
+        findings.append(
+            Finding(
+                "error",
+                "pack.schema_version",
+                "reproducible Packs require schema_version 0.2",
+                str(paths["pack"]),
+            )
+        )
+    recipe_value = recipe_lock.get("recipe", {})
+    recipe = recipe_value if isinstance(recipe_value, dict) else {}
+    recipe_fields = {
+        "id",
+        "version",
+        "profile",
+        "parser",
+        "chunker",
+        "extractors",
+        "verifier",
+        "builder",
+    }
+    if (
+        recipe_lock.get("schema_version") != "1.0"
+        or not isinstance(recipe_value, dict)
+        or not recipe_fields <= set(recipe)
+    ):
+        findings.append(
+            Finding(
+                "error",
+                "recipe.lock_shape",
+                "RECIPE_LOCK.json is incomplete",
+                str(paths["recipe"]),
+            )
+        )
+    if metadata.get("recipe") != {
+        "id": recipe.get("id"),
+        "version": recipe.get("version"),
+    }:
+        findings.append(
+            Finding(
+                "error",
+                "recipe.lock_mismatch",
+                "pack recipe identity does not match RECIPE_LOCK.json",
+                str(paths["recipe"]),
+            )
+        )
+    if recipe.get("profile") != metadata.get("profile"):
+        findings.append(
+            Finding(
+                "error",
+                "recipe.profile_mismatch",
+                "locked Recipe profile does not match the Pack",
+                str(paths["recipe"]),
+            )
+        )
+    sources = manifest.get("sources", [])
+    if not isinstance(sources, list) or any(
+        not isinstance(item, dict)
+        or not {"source_id", "document_version", "content_hash"} <= set(item)
+        for item in sources
+    ):
+        findings.append(
+            Finding(
+                "error",
+                "source.manifest_shape",
+                "SOURCE_MANIFEST.json has invalid source records",
+                str(paths["manifest"]),
+            )
+        )
+        return findings
+    expected_hashes = {
+        f"{item['source_id']}@{item['document_version']}": item["content_hash"]
+        for item in sources
+    }
+    if constraints.get("source_hashes") != expected_hashes:
+        findings.append(
+            Finding(
+                "error",
+                "source.hash_drift",
+                "protected source hashes do not match SOURCE_MANIFEST.json",
+                str(paths["constraints"]),
+            )
+        )
+    return findings
+
+
 def validate_pack(pack: Path) -> list[Finding]:
     findings: list[Finding] = []
     for relative in (
         "pack.json",
+        "RECIPE_LOCK.json",
+        "PROTECTED_CONSTRAINTS.json",
         "DISTILLATION_CONTRACT.md",
         "PIPELINE_STATE.json",
         "SOURCE_MANIFEST.json",
@@ -194,6 +467,8 @@ def validate_pack(pack: Path) -> list[Finding]:
     except (PipelineError, OSError, json.JSONDecodeError) as exc:
         findings.append(Finding("error", "state.invalid", str(exc), str(pack / "PIPELINE_STATE.json")))
     findings.extend(validate_evidence(pack / "EVIDENCE_LEDGER.jsonl"))
+    findings.extend(validate_reproducibility(pack))
+    findings.extend(validate_frozen_evals(pack))
     for skill_file in sorted((pack / "skills").glob("*/SKILL.md")):
         findings.extend(validate_skill(skill_file.parent))
         tests = skill_file.parent / "test-prompts.json"

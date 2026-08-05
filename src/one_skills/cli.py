@@ -5,19 +5,43 @@ from __future__ import annotations
 import argparse
 import json
 import os
-from pathlib import Path
 import sys
+from pathlib import Path
 from typing import Sequence
 
 from . import __version__
 from .api import create_api_server
-from .benchmark import run_profile_benchmark
 from .batch import distill_batch, load_jobs
-from .constants import CONSENT_LEVELS, MODES, PHASES
+from .benchmark import run_profile_benchmark
 from .compiler import export_profile_templates
+from .constants import CONSENT_LEVELS, MODES, PHASES
 from .database import KnowledgeDB
-from .delivery import DeliveryError, export_pack, install_pack, prepare_darwin, release_pack
+from .delivery import (
+    DeliveryError,
+    export_pack,
+    install_pack,
+    prepare_darwin,
+    release_pack,
+)
 from .evaluation import evaluate_pack
+from .guided import (
+    CHECKPOINT_STATUSES,
+    CHECKPOINTS,
+    EVENT_KINDS,
+    GUIDE_OBJECTS,
+    INTERACTION_MODES,
+    SESSION_EVIDENCE_CLASSES,
+    GuidedSessionError,
+    advance_session,
+    confirm_checkpoint,
+    create_pack_from_session,
+    export_session_source,
+    init_session,
+    load_session,
+    record_event,
+    update_session_profile,
+    validate_guided_workspace,
+)
 from .ingest import IngestionError
 from .jobs import JobQueue, run_worker_once
 from .pipeline import (
@@ -34,8 +58,8 @@ from .pipeline import (
     verify_and_compile_with_model,
     workspace_for,
 )
-from .provider import OpenAICompatibleProvider, ProviderConfig, ProviderError
 from .postgres import PostgresBackend
+from .provider import OpenAICompatibleProvider, ProviderConfig, ProviderError
 from .recipes import Recipe, promote_recipe, promotion_decision
 from .retrieval import HybridRetriever, local_embedding
 from .validation import summary, validate_pack, validate_skill
@@ -220,7 +244,12 @@ def cmd_memory(args: argparse.Namespace) -> int:
 
 def cmd_validate(args: argparse.Namespace) -> int:
     target = _path(args.target)
-    findings = validate_pack(target) if (target / "PIPELINE_STATE.json").exists() else validate_skill(target)
+    if (target / "SESSION_STATE.json").exists():
+        findings = validate_guided_workspace(target)
+    elif (target / "PIPELINE_STATE.json").exists():
+        findings = validate_pack(target)
+    else:
+        findings = validate_skill(target)
     result = summary(findings)
     _print(result)
     return 1 if result["errors"] else 0
@@ -280,6 +309,112 @@ def cmd_batch(args: argparse.Namespace) -> int:
 def cmd_profiles(args: argparse.Namespace) -> int:
     path = export_profile_templates(_path(args.output))
     print(f"exported Profile templates: {path}")
+    return 0
+
+
+def cmd_guide(args: argparse.Namespace) -> int:
+    workspace = _path(args.workspace)
+    if args.guide_command == "init":
+        state = init_session(
+            workspace,
+            args.subject,
+            args.object_type,
+            args.interaction_mode,
+            args.target_capability,
+            args.target_user,
+            args.output_goal,
+            args.access,
+            args.consent,
+        )
+        _print(
+            {
+                "workspace": str(workspace),
+                "session_id": state["session_id"],
+                "current_stage": state["current_stage"],
+                "next_questions": state["next_questions"],
+            }
+        )
+    elif args.guide_command == "set":
+        state = update_session_profile(
+            workspace,
+            args.target_capability,
+            args.target_user,
+            args.output_goal,
+            args.exclude,
+        )
+        _print(
+            {
+                "current_stage": state["current_stage"],
+                "target_capability": state["target_capability"],
+                "target_user": state["target_user"],
+                "output_goal": state["output_goal"],
+                "exclusions": state["exclusions"],
+                "next_questions": state["next_questions"],
+            }
+        )
+    elif args.guide_command == "status":
+        state = load_session(workspace)
+        _print(
+            {
+                key: state[key]
+                for key in (
+                    "session_id",
+                    "subject",
+                    "object_type",
+                    "recommended_profile",
+                    "target_capability",
+                    "current_stage",
+                    "evidence_counts",
+                    "evidence_gaps",
+                    "checkpoints",
+                    "next_questions",
+                    "pack_path",
+                )
+            }
+        )
+    elif args.guide_command == "record":
+        event = (
+            json.loads(_path(args.from_file).read_text(encoding="utf-8"))
+            if args.from_file
+            else {
+                "kind": args.kind,
+                "content": args.content,
+                "evidence_class": args.evidence_class,
+                "permission": args.permission,
+                "locator": args.locator or "",
+                "notes": args.notes or "",
+            }
+        )
+        _print(record_event(workspace, event))
+    elif args.guide_command == "confirm":
+        result = confirm_checkpoint(
+            workspace, args.checkpoint, args.status, args.notes or ""
+        )
+        _print({"checkpoint": args.checkpoint, **result})
+    elif args.guide_command == "advance":
+        state = advance_session(workspace)
+        _print(
+            {
+                "current_stage": state["current_stage"],
+                "next_questions": state["next_questions"],
+            }
+        )
+    elif args.guide_command == "export":
+        target = export_session_source(
+            workspace, _path(args.output) if args.output else None
+        )
+        _print({"source": str(target)})
+    else:
+        pack, evidence_count = create_pack_from_session(
+            workspace, _path(args.output), args.mode, args.source
+        )
+        _print(
+            {
+                "pack": str(pack),
+                "guided_evidence_materialized": evidence_count,
+                "current_phase": load_state(pack)["current_phase"],
+            }
+        )
     return 0
 
 
@@ -538,6 +673,85 @@ def build_parser() -> argparse.ArgumentParser:
     profiles.add_argument("--output", required=True)
     profiles.set_defaults(func=cmd_profiles)
 
+    guide = commands.add_parser(
+        "guide",
+        help="run a recoverable guided distillation session before creating a Pack",
+    )
+    guide_commands = guide.add_subparsers(dest="guide_command", required=True)
+    guide_init = guide_commands.add_parser("init", help="create a guided workspace")
+    guide_init.add_argument("workspace")
+    guide_init.add_argument("--subject", required=True)
+    guide_init.add_argument("--object", dest="object_type", choices=GUIDE_OBJECTS, required=True)
+    guide_init.add_argument(
+        "--interaction-mode", choices=INTERACTION_MODES, default="hybrid"
+    )
+    guide_init.add_argument("--target-capability")
+    guide_init.add_argument("--target-user")
+    guide_init.add_argument("--output-goal")
+    guide_init.add_argument(
+        "--access",
+        choices=("public", "authorized", "private-local"),
+        default="private-local",
+    )
+    guide_init.add_argument("--consent", choices=CONSENT_LEVELS)
+    guide_init.set_defaults(func=cmd_guide)
+
+    guide_set = guide_commands.add_parser("set", help="refine scope and exclusions")
+    guide_set.add_argument("workspace")
+    guide_set.add_argument("--target-capability")
+    guide_set.add_argument("--target-user")
+    guide_set.add_argument("--output-goal")
+    guide_set.add_argument("--exclude", action="append", default=[])
+    guide_set.set_defaults(func=cmd_guide)
+
+    guide_status = guide_commands.add_parser("status", help="show state and next questions")
+    guide_status.add_argument("workspace")
+    guide_status.set_defaults(func=cmd_guide)
+
+    guide_record = guide_commands.add_parser(
+        "record", help="record an answer, source, correction, gap, observation, or result"
+    )
+    guide_record.add_argument("workspace")
+    guide_record.add_argument("--from", dest="from_file")
+    guide_record.add_argument("--kind", choices=EVENT_KINDS)
+    guide_record.add_argument("--content")
+    guide_record.add_argument(
+        "--evidence-class", choices=SESSION_EVIDENCE_CLASSES, default="unknown"
+    )
+    guide_record.add_argument("--permission", choices=("public", "authorized", "private-local", "unknown"), default="unknown")
+    guide_record.add_argument("--locator")
+    guide_record.add_argument("--notes")
+    guide_record.set_defaults(func=cmd_guide)
+
+    guide_confirm = guide_commands.add_parser(
+        "confirm", help="confirm or reject a human checkpoint"
+    )
+    guide_confirm.add_argument("workspace")
+    guide_confirm.add_argument("--checkpoint", choices=CHECKPOINTS, required=True)
+    guide_confirm.add_argument("--status", choices=CHECKPOINT_STATUSES, required=True)
+    guide_confirm.add_argument("--notes")
+    guide_confirm.set_defaults(func=cmd_guide)
+
+    guide_advance = guide_commands.add_parser("advance", help="pass the current stage gate")
+    guide_advance.add_argument("workspace")
+    guide_advance.set_defaults(func=cmd_guide)
+
+    guide_export = guide_commands.add_parser(
+        "export", help="export the evidence-graded session as a source"
+    )
+    guide_export.add_argument("workspace")
+    guide_export.add_argument("--output")
+    guide_export.set_defaults(func=cmd_guide)
+
+    guide_pack = guide_commands.add_parser(
+        "create-pack", help="create a formal Pack from the session and optional sources"
+    )
+    guide_pack.add_argument("workspace")
+    guide_pack.add_argument("--source", action="append", default=[])
+    guide_pack.add_argument("--mode", choices=MODES, default="standard")
+    guide_pack.add_argument("--output", required=True)
+    guide_pack.set_defaults(func=cmd_guide)
+
     postgres = commands.add_parser("postgres", help="initialize, migrate, and verify PostgreSQL")
     postgres_commands = postgres.add_subparsers(dest="postgres_command", required=True)
     postgres_init = postgres_commands.add_parser("init")
@@ -592,6 +806,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     except (
         DeliveryError,
         IngestionError,
+        GuidedSessionError,
         PipelineError,
         ProviderError,
         ValueError,

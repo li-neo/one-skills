@@ -56,6 +56,8 @@ description: "Distills people, content, methodologies, SOPs, or existing skills 
 - 无法判断用户要摘要、方法论还是可运行 Skill
 - 成功标准会显著改变产物结构
 
+如果目标明确但材料不足，不要一次抛出长表单。使用 `one guide init` 启动可恢复会话，每轮最多询问三个问题；将自述、情景回答、观察行为、文档结果和模型推断分级记录。至少确认 `scope` 与 `evidence_inventory` 后，才使用 `one guide create-pack` 进入正式十阶段 Pipeline。完整协议见 [Guided Distillation](docs/GUIDED_DISTILLATION.md)。
+
 输出 `DISTILLATION_CONTRACT.md`。如果当前任务只要求设计方案，不创建虚假的输入和测试结果。
 
 ## Phase 1：建立来源账本
@@ -269,7 +271,7 @@ Problem → Trigger → Input → Procedure → Output → Done
 
 1. **Frontmatter**：只允许 `name`（≤64 字符 hyphen-case）与 `description`（≥40 字符且含触发词）。
 2. **Pipeline 状态机**：十阶段 `contract→ingest→map→extract→verify→compile→link→test→ship→evolve` 由 `PIPELINE_STATE.json` 持久化，不能跳阶。
-3. **证据 Schema**：`EVIDENCE_LEDGER.jsonl` 每条必须含 `id / claim / evidence_type / source / locator / confidence[0,1] / inference_level / permission`；`evidence_type` 只能是 `quote / verified_position / observed_behavior / third_party_view / model_inference / unknown`。
+3. **证据 Schema**：`EVIDENCE_LEDGER.jsonl` 每条必须含 `id / claim / evidence_type / source / locator / confidence[0,1] / inference_level / permission`；`evidence_type` 使用 `schemas/evidence.schema.json` 的封闭枚举，自述和情景回答不得冒充观察行为或已记录结果。
 4. **测试覆盖**：`test-prompts.json` 必须至少含 `should_trigger / should_not_trigger / edge_case`；静态检查永远不填 `actual_effect` 分，只有独立 Agent 结果才折算。
 5. **交付读回**：安装、导出、切换 `active_version` 后必须读回校验；覆盖已存在目标须先 `.backup-<timestamp>`。
 6. **URL 安全**：默认拒绝私有/环回/链路本地 IP，重定向后再校验；URL ≤20 MiB，本地文件 ≤100 MiB。

@@ -1,21 +1,22 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
 import tempfile
-from threading import Thread
 import unittest
+import zipfile
+from pathlib import Path
+from threading import Thread
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
-import zipfile
 
 from one_skills.api import create_api_server
+from one_skills.batch import distill_batch
 from one_skills.compiler import (
     capability_from_candidate,
     compile_skill,
     export_profile_templates,
 )
-from one_skills.batch import distill_batch
+from one_skills.constants import MAX_LOCAL_BYTES
 from one_skills.database import KnowledgeDB
 from one_skills.delivery import (
     DeliveryError,
@@ -26,7 +27,17 @@ from one_skills.delivery import (
 )
 from one_skills.evaluation import aggregate_results, evaluate_pack, paired_decision
 from one_skills.extraction import extract_candidates_with_model
-from one_skills.constants import MAX_LOCAL_BYTES
+from one_skills.guided import (
+    GuidedSessionError,
+    advance_session,
+    confirm_checkpoint,
+    create_pack_from_session,
+    init_session,
+    load_session,
+    record_event,
+    update_session_profile,
+    validate_guided_workspace,
+)
 from one_skills.ingest import (
     IngestionError,
     _assert_archive_budget,
@@ -47,12 +58,12 @@ from one_skills.pipeline import (
     update_pack,
     verify_and_compile_with_model,
 )
-from one_skills.retrieval import HybridRetriever, local_embedding
-from one_skills.recipes import promotion_decision
-from one_skills.profiles import Profile, register_profile
 from one_skills.postgres import MIGRATION_TABLES, PostgresBackend
+from one_skills.profiles import Profile, register_profile
 from one_skills.provider import ProviderError
-from one_skills.validation import validate_skill
+from one_skills.recipes import promotion_decision
+from one_skills.retrieval import HybridRetriever, local_embedding
+from one_skills.validation import validate_pack, validate_skill
 
 
 class IngestionTests(unittest.TestCase):
@@ -279,6 +290,131 @@ class DatabaseAndRetrievalTests(unittest.TestCase):
 
 
 class PipelineTests(unittest.TestCase):
+    def test_guided_session_preserves_evidence_class_in_pack(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            guided = root / "guided"
+            state = init_session(
+                guided,
+                "Decision Method",
+                "methodology",
+                target_capability="review a proposal",
+                target_user="product team",
+                output_goal="reviewer Skill",
+                access_level="authorized",
+            )
+            self.assertEqual(state["recommended_profile"], "methodology")
+            self.assertLessEqual(len(state["next_questions"]), 3)
+            self.assertEqual(advance_session(guided)["current_stage"], "scope")
+            confirm_checkpoint(guided, "scope", "confirmed", "scope accepted")
+            self.assertEqual(
+                advance_session(guided)["current_stage"], "evidence_inventory"
+            )
+            confirm_checkpoint(
+                guided,
+                "evidence_inventory",
+                "confirmed",
+                "conversation authorized",
+            )
+            self.assertEqual(advance_session(guided)["current_stage"], "interview")
+            event = record_event(
+                guided,
+                {
+                    "kind": "answer",
+                    "content": "我会先确认方案承载的决定，再检查不可逆风险。",
+                    "evidence_class": "self_report",
+                    "permission": "authorized",
+                    "locator": "conversation:turn-1",
+                },
+            )
+            source_event = record_event(
+                guided,
+                {
+                    "kind": "source",
+                    "content": "A source is available separately.",
+                    "evidence_class": "unknown",
+                    "permission": "authorized",
+                    "locator": "source-inventory:item-1",
+                },
+            )
+            pack, materialized = create_pack_from_session(
+                guided, root / "workspace", "quick"
+            )
+            self.assertEqual(materialized, 1)
+            self.assertEqual(load_session(guided)["pack_path"], str(pack))
+            ledger = [
+                json.loads(line)
+                for line in (pack / "EVIDENCE_LEDGER.jsonl")
+                .read_text(encoding="utf-8")
+                .splitlines()
+                if line
+            ]
+            preserved = next(item for item in ledger if item["id"] == event["id"])
+            self.assertEqual(preserved["evidence_type"], "self_report")
+            self.assertEqual(preserved["permission"], "authorized")
+            self.assertNotIn(source_event["id"], {item["id"] for item in ledger})
+            self.assertEqual(validate_guided_workspace(guided), [])
+            self.assertEqual(
+                [item for item in validate_pack(pack) if item.severity == "error"],
+                [],
+            )
+            with KnowledgeDB(root / "workspace" / ".one" / "knowledge.db") as database:
+                claim = database.rows(
+                    "SELECT * FROM claims WHERE id = ?", (event["id"],)
+                )[0]
+                links = database.rows(
+                    "SELECT * FROM evidence_links WHERE claim_id = ?", (event["id"],)
+                )
+            self.assertEqual(claim["status"], "active")
+            self.assertEqual(len(links), 1)
+
+    def test_guided_session_enforces_consent_and_evidence_grade(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            with self.assertRaises(GuidedSessionError):
+                init_session(root / "missing-consent", "Private Person", "person")
+            with self.assertRaises(GuidedSessionError):
+                init_session(
+                    root / "bad-public-only",
+                    "Public Person",
+                    "person",
+                    consent="public-only",
+                    access_level="private-local",
+                )
+            guided = root / "person"
+            init_session(
+                guided,
+                "Self",
+                "person",
+                target_capability="review",
+                consent="self",
+            )
+            with self.assertRaises(GuidedSessionError):
+                record_event(
+                    guided,
+                    {
+                        "kind": "answer",
+                        "content": "I always identify risk first.",
+                        "evidence_class": "observed_behavior",
+                        "permission": "private-local",
+                        "locator": "conversation:turn-1",
+                    },
+                )
+            self.assertEqual(load_session(guided)["evidence_counts"]["observed_behavior"], 0)
+
+    def test_guided_session_requires_stage_checkpoints(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            guided = Path(temporary) / "guided"
+            init_session(guided, "Method", "methodology")
+            with self.assertRaises(GuidedSessionError):
+                advance_session(guided)
+            update_session_profile(guided, target_capability="triage incidents")
+            advance_session(guided)
+            with self.assertRaises(GuidedSessionError):
+                advance_session(guided)
+            with self.assertRaises(GuidedSessionError):
+                confirm_checkpoint(guided, "ship", "confirmed")
+
     def test_custom_profile_registration_is_usable_by_pipeline(self) -> None:
         register_profile(
             Profile(
@@ -339,6 +475,42 @@ class PipelineTests(unittest.TestCase):
             state = load_state(pack)
             self.assertEqual(state["current_phase"], "verify")
             self.assertEqual(state["phases"]["verify"]["status"], "blocked")
+            recipe_lock = json.loads(
+                (pack / "RECIPE_LOCK.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual(recipe_lock["recipe"]["profile"], "methodology")
+            constraints = json.loads(
+                (pack / "PROTECTED_CONSTRAINTS.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual(len(constraints["source_hashes"]), 1)
+            recipe_path = pack / "RECIPE_LOCK.json"
+            recipe_lock["recipe"]["profile"] = "content"
+            recipe_path.write_text(json.dumps(recipe_lock), encoding="utf-8")
+            self.assertIn(
+                "recipe.profile_mismatch",
+                {
+                    item.code
+                    for item in validate_pack(pack)
+                    if item.severity == "error"
+                },
+            )
+            recipe_lock["recipe"]["profile"] = "methodology"
+            recipe_path.write_text(json.dumps(recipe_lock), encoding="utf-8")
+            constraints_path = pack / "PROTECTED_CONSTRAINTS.json"
+            source_key = next(iter(constraints["source_hashes"]))
+            source_hash = constraints["source_hashes"][source_key]
+            constraints["source_hashes"][source_key] = "0" * 64
+            constraints_path.write_text(json.dumps(constraints), encoding="utf-8")
+            self.assertIn(
+                "source.hash_drift",
+                {
+                    item.code
+                    for item in validate_pack(pack)
+                    if item.severity == "error"
+                },
+            )
+            constraints["source_hashes"][source_key] = source_hash
+            constraints_path.write_text(json.dumps(constraints), encoding="utf-8")
             with self.assertRaises(PipelineError):
                 advance_phase(pack, "ship", "completed")
             self.assertTrue((pack / "candidates" / "candidates.json").exists())
@@ -360,6 +532,14 @@ class PipelineTests(unittest.TestCase):
                 if item["document_id"] == manifest["sources"][-1]["document_id"]
             ]
             self.assertEqual(versions, [1, 2])
+            constraints = json.loads(
+                (pack / "PROTECTED_CONSTRAINTS.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual(len(constraints["source_hashes"]), 2)
+            self.assertEqual(
+                [item for item in validate_pack(pack) if item.severity == "error"],
+                [],
+            )
             self.assertTrue((pack / "reports" / "IMPACT.md").exists())
 
     def test_independent_model_verification_compiles_profile_skill(self) -> None:
@@ -580,6 +760,18 @@ class CompilerEvaluationTests(unittest.TestCase):
             request = prepare_darwin(pack)
             self.assertEqual(request["status"], "prepared")
             self.assertTrue((pack / "evolution" / "DARWIN_REQUEST.md").exists())
+            canonical = skill / "evals" / "canonical.json"
+            changed = json.loads(canonical.read_text(encoding="utf-8"))
+            changed["suite_version"] = "1.0.1"
+            canonical.write_text(json.dumps(changed), encoding="utf-8")
+            codes = {
+                item.code
+                for item in validate_pack(pack)
+                if item.severity == "error"
+            }
+            self.assertIn("eval.canonical_drift", codes)
+            with self.assertRaises(DeliveryError):
+                prepare_darwin(pack)
 
     def test_result_filtering_and_paired_decisions(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

@@ -9,6 +9,8 @@
 | 要求 | 实现证据 | 验证证据 |
 |---|---|---|
 | neo-skills 十阶段状态机不可跳阶 | `pipeline.py` | `test_pipeline_blocks_at_independent_verification_and_cannot_skip` |
+| neo-skills v0.2.2 Guided Controller | `guided.py`、两个 Session Schema | 检查点、授权、证据等级无损入 Pack 测试 |
+| neo-skills v0.2.0 可复现 Pack | `RECIPE_LOCK.json`、`PROTECTED_CONSTRAINTS.json` | Recipe/Profile 一致性、Source/Eval hash 漂移门测试 |
 | Evidence 强 Schema | `models.py`、`schemas/evidence.schema.json` | Evidence 校验贯穿 Pack 测试 |
 | SSRF、读回、Darwin 降级 | `ingest.py`、`delivery.py` | 私网拒绝、安装/导出、`status: prepared` 测试 |
 | cangjie 多视角提取 | `extraction.extract_candidates_with_model` | 并行 Profile views；非原文 quote 拒绝测试 |
@@ -58,7 +60,7 @@ PostgreSQL 外部证据：[GitHub Actions run 30995239307](https://github.com/li
 
 | 要求 | 实现证据 |
 |---|---|
-| canonical eval 与 Darwin Adapter 分离 | `evals/canonical.json` + `test-prompts.json` |
+| canonical eval 与 Darwin Adapter 分离 | `evals/canonical.json` + `test-prompts.json`，双哈希冻结并校验漂移 |
 | 独立 Answer 结果 | `evaluation.aggregate_results`，缺失结果阻止发布 |
 | 反触发/安全/相邻冲突 100% | `delivery._assert_tested` 硬门 |
 | 实际效果不自评 | 静态 `actual_effect = 0`，只由外部结果折算 |
@@ -72,7 +74,7 @@ PostgreSQL 外部证据：[GitHub Actions run 30995239307](https://github.com/li
 
 | 要求 | 实现证据 |
 |---|---|
-| CLI | `one --help` 的 26 个主入口/命令组 |
+| CLI | `one --help` 的 27 个主入口/命令组 |
 | HTTP API | Bearer 鉴权、限长 JSON、search、job submit/status |
 | 持久 Worker | SQLite lease、超时重领、最大重试、错误隔离 |
 | 批量并发 | 有界 ThreadPool，独立 Pack 和独立错误结果 |
@@ -92,7 +94,7 @@ PostgreSQL 外部证据：[GitHub Actions run 30995239307](https://github.com/li
 ## 7. 最终验证
 
 ```text
-Local unit/integration tests: 18/18
+Local unit/integration tests: 21/21
 Root Skill validation: 0 errors, 0 warnings
 Profile benchmark: 7/7
 Python CI: 3.10 / 3.11 / 3.12 passed

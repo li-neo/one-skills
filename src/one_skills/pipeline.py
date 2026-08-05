@@ -39,7 +39,14 @@ def init_workspace(path: Path, mode: str = "standard") -> Path:
     if mode not in MODES:
         raise PipelineError(f"unsupported mode: {mode}")
     root = path.expanduser().resolve()
-    for relative in ("packs", "dist", "knowledge/sources", "knowledge/normalized", ".one"):
+    for relative in (
+        "guided",
+        "packs",
+        "dist",
+        "knowledge/sources",
+        "knowledge/normalized",
+        ".one",
+    ):
         (root / relative).mkdir(parents=True, exist_ok=True)
     dump_json(
         root / ".one" / "config.json",
@@ -202,6 +209,10 @@ def create_pack(
     profile = detect_profile(documents, sources) if requested_profile == "auto" else requested_profile
     if profile not in PROFILES:
         raise PipelineError(f"profile has no implementation: {profile}")
+    initialize_registry(root / ".one" / "recipes.json")
+    recipe = load_json(root / ".one" / "recipes.json")["active"].get(profile)
+    if not recipe:
+        raise PipelineError(f"profile has no active Recipe: {profile}")
     if profile == "person":
         if consent not in CONSENT_LEVELS:
             raise PipelineError(
@@ -230,7 +241,7 @@ def create_pack(
     dump_json(
         pack / "pack.json",
         {
-            "schema_version": "0.1",
+            "schema_version": "0.2",
             "id": pack_id,
             "name": resolved_name,
             "slug": pack.name,
@@ -239,10 +250,41 @@ def create_pack(
             "sources": sources,
             "access_level": access_level,
             "consent": consent or "not-applicable",
+            "recipe": {"id": recipe["id"], "version": recipe["version"]},
             "created_at": utc_now(),
         },
     )
+    dump_json(
+        pack / "RECIPE_LOCK.json",
+        {
+            "schema_version": "1.0",
+            "locked_at": utc_now(),
+            "recipe": recipe,
+        },
+    )
+    dump_json(
+        pack / "PROTECTED_CONSTRAINTS.json",
+        {
+            "schema_version": "1.0",
+            "created_at": utc_now(),
+            "source_hashes": {},
+            "protected": [
+                "source_facts",
+                "authorization",
+                "safety_boundaries",
+                "negative_tests",
+                "canonical_evals",
+            ],
+            "canonical_eval_hashes": {},
+            "runtime_eval_hashes": {},
+        },
+    )
     atomic_write(pack / "EVIDENCE_LEDGER.jsonl", "")
+    atomic_write(
+        pack / "INDEX.md",
+        "# Skill Graph\n\n"
+        "No compiled capabilities yet. This index is rebuilt after the compile phase.\n",
+    )
     atomic_write(
         pack / "DISTILLATION_CONTRACT.md",
         _contract(resolved_name, profile, mode, sources, consent or "not-applicable"),
@@ -296,6 +338,13 @@ def _ingest_documents(
             all_chunks.extend(asdict(chunk) for chunk in chunks)
     dump_json(pack / "SOURCE_MANIFEST.json", {"profile": profile, "sources": manifest})
     dump_json(pack / "sources" / "chunks.json", all_chunks)
+    constraints_path = pack / "PROTECTED_CONSTRAINTS.json"
+    constraints = load_json(constraints_path)
+    constraints["source_hashes"] = {
+        f"{item['source_id']}@{item['document_version']}": item["content_hash"]
+        for item in manifest
+    }
+    dump_json(constraints_path, constraints)
     advance_phase(pack, "ingest", "completed", f"indexed {len(documents)} sources")
     _write_object_map(pack, profile, manifest)
 

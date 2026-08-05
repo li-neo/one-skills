@@ -1,7 +1,15 @@
 {
   "schema_version": "1.0",
+  "suite_version": "1.0.0",
   "skill": "one-skills",
   "profile": "hybrid",
+  "protected_gates": [
+    "authorization",
+    "safety",
+    "source_facts",
+    "should_not_trigger",
+    "sibling_bait"
+  ],
   "cases": [
     {
       "id": "one-trigger-01",

@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from .models import Candidate, Capability, TestCase
-from .utils import atomic_write, dump_json, slugify
+from .utils import atomic_write, dump_json, load_json, slugify, stable_json_hash, utc_now
 
 
 PROFILE_CONTRACTS = {
@@ -240,20 +240,45 @@ def compile_skill(
     skill_dir.mkdir(parents=True, exist_ok=True)
     atomic_write(skill_dir / "SKILL.md", render_skill(slug, capability, evidence))
     dump_json(skill_dir / "capability.json", capability.to_dict())
-    dump_json(
-        skill_dir / "test-prompts.json",
-        [case.to_dict() for case in default_tests(slug, capability, sibling, profile)],
-    )
     tests = [case.to_dict() for case in default_tests(slug, capability, sibling, profile)]
     dump_json(
-        skill_dir / "evals" / "canonical.json",
-        {
-            "schema_version": "1.0",
-            "skill": slug,
-            "profile": profile,
-            "cases": tests,
-        },
+        skill_dir / "test-prompts.json",
+        tests,
     )
+    canonical = {
+        "schema_version": "1.0",
+        "suite_version": "1.0.0",
+        "skill": slug,
+        "profile": profile,
+        "protected_gates": [
+            "authorization",
+            "safety",
+            "source_facts",
+            "should_not_trigger",
+            "sibling_bait",
+        ],
+        "cases": tests,
+    }
+    dump_json(
+        skill_dir / "evals" / "canonical.json",
+        canonical,
+    )
+    constraints_path = pack / "PROTECTED_CONSTRAINTS.json"
+    constraints = (
+        load_json(constraints_path)
+        if constraints_path.exists()
+        else {
+            "schema_version": "1.0",
+            "created_at": utc_now(),
+            "source_hashes": {},
+            "protected": ["canonical_evals", "negative_tests"],
+            "canonical_eval_hashes": {},
+            "runtime_eval_hashes": {},
+        }
+    )
+    constraints.setdefault("canonical_eval_hashes", {})[slug] = stable_json_hash(canonical)
+    constraints.setdefault("runtime_eval_hashes", {})[slug] = stable_json_hash(tests)
+    dump_json(constraints_path, constraints)
     agents = skill_dir / "agents"
     agents.mkdir(exist_ok=True)
     atomic_write(

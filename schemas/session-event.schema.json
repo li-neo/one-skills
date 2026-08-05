@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/li-neo/one-skills/schemas/session-event.schema.json",
+  "title": "One Skills Guided Session Event",
+  "type": "object",
+  "required": [
+    "id",
+    "kind",
+    "content",
+    "evidence_class",
+    "permission",
+    "locator",
+    "stage",
+    "recorded_at"
+  ],
+  "properties": {
+    "id": {"type": "string", "pattern": "^session-event-"},
+    "kind": {
+      "enum": [
+        "answer",
+        "source",
+        "correction",
+        "assumption",
+        "evidence_gap",
+        "observation",
+        "result"
+      ]
+    },
+    "content": {"type": "string", "minLength": 1},
+    "evidence_class": {
+      "enum": [
+        "self_report",
+        "scenario_response",
+        "observed_behavior",
+        "documented_result",
+        "third_party_view",
+        "model_inference",
+        "unknown"
+      ]
+    },
+    "permission": {
+      "enum": ["public", "authorized", "private-local", "unknown"]
+    },
+    "locator": {"type": "string"},
+    "stage": {
+      "enum": [
+        "discover",
+        "scope",
+        "evidence_inventory",
+        "interview",
+        "map_confirm",
+        "claim_review",
+        "capability_confirm",
+        "build",
+        "evaluate",
+        "ship",
+        "evolve"
+      ]
+    },
+    "recorded_at": {"type": "string"},
+    "notes": {"type": "string"}
+  },
+  "additionalProperties": false
+}

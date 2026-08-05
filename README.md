@@ -36,7 +36,8 @@
 | CLI、脚本与 Schema | 已实现 Alpha 版本 |
 | 端到端工程链 | 已由集成测试覆盖 |
 | 示例库 | 已实现单任务、批量并发与七类 Profile 基准 |
-| 自动化测试 | 18 项，持续扩充 |
+| Guided 蒸馏 | 已实现可恢复会话、证据分级、人工检查点与无损入 Pack |
+| 自动化测试 | 21 项，持续扩充 |
 
 当前可运行命令以 `python3 scripts/one.py --help` 或安装后的 `one --help` 为准。README 中尚未出现在 CLI 帮助里的命令仍属于规划接口。
 
@@ -85,6 +86,7 @@ one-skills 深入参考以下项目，但不会把三套流程机械拼接：
 
 | 项目 | 核心贡献 | one-skills 继承 | one-skills 扩展 |
 |---|---|---|---|
+| [neo-skills](https://github.com/li-neo/neo-skills) | 轻量蒸馏协议、IR/Lineage/Recipe 与 Guided Controller | 十阶段状态机、强 Schema、测试冻结、对话式材料发现 | 跨 Pack 知识库、ACL、时序记忆、模型提取，以及会话证据等级无损入库 |
 | [nuwa-skill](https://github.com/alchaincyf/nuwa-skill) | 蒸馏人的思维方式与表达 DNA | 多源采集、心智模型、决策启发式、表达 DNA、诚实边界、保真度评测 | 私人对象授权、组织角色、能力与人格解耦、隐私分级 |
 | [cangjie-skill](https://github.com/kangarooking/cangjie-skill) | 蒸馏长内容中的方法论 | 整体理解、并行提取、三重验证、原子化、触发设计、压力测试 | 从“书”扩展到文档、SOP、案例库、混合语料和既有 Skill |
 | [darwin-skill](https://github.com/alchaincyf/darwin-skill) | 进化任意 Skill | 独立评审、效果测试、paired 比较、棘轮、人在回路、可回滚 | 在产物层提供标准适配器，直接调用 Darwin，不重复实现优化器 |
@@ -93,6 +95,7 @@ one-skills 深入参考以下项目，但不会把三套流程机械拼接：
 
 | 项目 | Commit |
 |---|---|
+| neo-skills | `104f966ab731782b6b26524f8b45c9560aab3473`（v0.2.2） |
 | cangjie-skill | `55e4b7059c423534f94cfbdeb0a4ee34f3ba6182` |
 | nuwa-skill | `27642f5bfed2dc1bbf8ee59a2c1ee602a626bbd7` |
 | darwin-skill | `2fbaf4171e453d5c66fc8109a296ae89c4772bc3` |
@@ -881,38 +884,43 @@ one-skills/
 └── examples/
 ```
 
-单次蒸馏任务建议输出：
+单次蒸馏任务实际输出：
 
 ```text
-distillations/<object-slug>/
+packs/<object-slug>/
+├── pack.json
+├── RECIPE_LOCK.json
+├── PROTECTED_CONSTRAINTS.json
 ├── DISTILLATION_CONTRACT.md
+├── PIPELINE_STATE.json
 ├── PIPELINE_STATE.md
 ├── OBJECT_MAP.md
-├── manifest.yaml
+├── SOURCE_MANIFEST.json
+├── EVIDENCE_LEDGER.jsonl
+├── INDEX.md
 ├── sources/
-│   ├── manifest.yaml
-│   ├── raw/
-│   └── normalized/
-├── evidence/
-│   ├── claims.jsonl
-│   ├── contradictions.md
-│   └── rejected.md
+│   └── chunks.json
+├── candidates/
+├── verified/
+├── rejected/
 ├── ir/
-│   └── distillation.yaml
+│   └── distillation.json
 ├── skills/
-│   ├── INDEX.md
 │   └── <skill-slug>/
 │       ├── SKILL.md
+│       ├── capability.json
+│       ├── test-prompts.json
+│       ├── agents/
 │       ├── references/
-│       ├── scripts/
-│       └── evals/
+│       └── evals/canonical.json
 ├── reports/
 │   ├── QUALITY.md
 │   ├── PROVENANCE.md
-│   └── EVOLUTION.md
-└── adapters/
-    └── darwin/
-        └── test-prompts.json
+│   └── EVIDENCE_GRAPH.md
+├── audit/
+└── evolution/
+    ├── darwin-request.json
+    └── DARWIN_REQUEST.md
 ```
 
 ---
@@ -970,6 +978,36 @@ python3 scripts/one.py --help
 ```bash
 one distill --source ./inputs --type auto --workspace .
 ```
+
+### 材料不足时启动 Guided Session
+
+Guided Session 不替代正式十阶段 Pipeline。它先通过每轮最多三个问题、证据分级和人工检查点，把模糊目标与对话材料整理成可恢复的输入，再创建正式 Pack。
+
+```bash
+one guide init ./guided/reviewer \
+  --subject "Decision Method" \
+  --object methodology \
+  --target-capability "评审产品方案" \
+  --target-user "产品团队" \
+  --output-goal "Reviewer Skill" \
+  --access authorized
+
+one guide advance ./guided/reviewer
+one guide confirm ./guided/reviewer --checkpoint scope --status confirmed
+one guide advance ./guided/reviewer
+one guide confirm ./guided/reviewer \
+  --checkpoint evidence_inventory --status confirmed
+one guide advance ./guided/reviewer
+one guide record ./guided/reviewer \
+  --kind answer \
+  --content "我会先确认方案承载的决定，再检查不可逆风险。" \
+  --evidence-class self_report \
+  --permission authorized \
+  --locator "conversation:turn-1"
+one guide create-pack ./guided/reviewer --output .
+```
+
+`self_report`、`scenario_response`、`observed_behavior`、`documented_result` 等等级会原样进入 Pack 的证据账本和知识库，不会在 Markdown 摄取后退化为普通引文。完整协议见 [Guided Distillation](docs/GUIDED_DISTILLATION.md)。
 
 ### 蒸馏一个人
 
@@ -1345,6 +1383,7 @@ one-skills 参考了多个不同许可证的项目：
 
 - `nuwa-skill`：MIT
 - `darwin-skill`：MIT
+- `neo-skills`：GNU AGPL v3
 - `cangjie-skill`：GNU AGPL v3
 
 在项目正式选择许可证前：

@@ -27,8 +27,11 @@ PHASE_INDEX = {name: index for index, name in enumerate(PHASES)}
 
 EVIDENCE_TYPES = (
     "quote",
+    "self_report",
+    "scenario_response",
     "verified_position",
     "observed_behavior",
+    "documented_result",
     "third_party_view",
     "model_inference",
     "unknown",

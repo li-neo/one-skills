@@ -39,17 +39,27 @@ def default_recipes() -> dict[str, Recipe]:
 
 
 def initialize_registry(path: Path) -> None:
+    defaults = default_recipes()
     if path.exists():
-        return
-    dump_json(
-        path,
-        {
-            "schema_version": "1.0",
-            "updated_at": utc_now(),
-            "active": {name: asdict(recipe) for name, recipe in default_recipes().items()},
-            "history": [],
-        },
-    )
+        registry = load_json(path)
+        changed = False
+        for name, recipe in defaults.items():
+            if name not in registry["active"]:
+                registry["active"][name] = asdict(recipe)
+                changed = True
+        if changed:
+            registry["updated_at"] = utc_now()
+            dump_json(path, registry)
+    else:
+        dump_json(
+            path,
+            {
+                "schema_version": "1.0",
+                "updated_at": utc_now(),
+                "active": {name: asdict(recipe) for name, recipe in defaults.items()},
+                "history": [],
+            },
+        )
 
 
 def promotion_decision(

@@ -14,7 +14,7 @@ from .pipeline import advance_phase, load_state, workspace_for
 from .reporting import write_evidence_graph
 from .runtime import export_runtime
 from .utils import atomic_write, dump_json, load_json, utc_now
-from .validation import validate_pack
+from .validation import validate_frozen_evals, validate_pack
 
 
 class DeliveryError(RuntimeError):
@@ -22,6 +22,13 @@ class DeliveryError(RuntimeError):
 
 
 def _assert_tested(pack: Path) -> None:
+    drift = [
+        finding
+        for finding in validate_frozen_evals(pack)
+        if finding.severity == "error"
+    ]
+    if drift:
+        raise DeliveryError(f"evaluation freeze check failed: {drift[0].code}")
     path = pack / "test-results.json"
     if not path.exists():
         raise DeliveryError("missing test-results.json")

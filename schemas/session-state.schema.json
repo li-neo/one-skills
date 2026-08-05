@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/li-neo/one-skills/schemas/session-state.schema.json",
+  "title": "One Skills Guided Session State",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "session_id",
+    "subject",
+    "object_type",
+    "recommended_profile",
+    "interaction_mode",
+    "access_level",
+    "consent",
+    "current_stage",
+    "stages",
+    "checkpoints",
+    "evidence_counts",
+    "next_questions"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "session_id": {"type": "string", "pattern": "^session-"},
+    "subject": {"type": "string", "minLength": 1},
+    "object_type": {
+      "enum": [
+        "person",
+        "customer",
+        "proposal",
+        "skill",
+        "methodology",
+        "thought-system",
+        "book",
+        "document",
+        "sop",
+        "tool"
+      ]
+    },
+    "recommended_profile": {
+      "enum": ["person", "content", "methodology", "sop", "tool", "skill", "hybrid"]
+    },
+    "interaction_mode": {"enum": ["conversation", "materials", "hybrid"]},
+    "access_level": {"enum": ["public", "authorized", "private-local"]},
+    "consent": {
+      "enum": [
+        "self",
+        "consented",
+        "work-authorized",
+        "public-only",
+        "prohibited",
+        "not-applicable"
+      ]
+    },
+    "target_capability": {"type": "string"},
+    "target_user": {"type": "string"},
+    "output_goal": {"type": "string"},
+    "exclusions": {
+      "type": "array",
+      "items": {"type": "string"},
+      "uniqueItems": true
+    },
+    "current_stage": {
+      "enum": [
+        "discover",
+        "scope",
+        "evidence_inventory",
+        "interview",
+        "map_confirm",
+        "claim_review",
+        "capability_confirm",
+        "build",
+        "evaluate",
+        "ship",
+        "evolve"
+      ]
+    },
+    "stages": {"type": "object"},
+    "checkpoints": {"type": "object"},
+    "evidence_counts": {"type": "object"},
+    "source_inventory": {"type": "array"},
+    "assumptions": {"type": "array"},
+    "evidence_gaps": {"type": "array"},
+    "corrections": {"type": "array"},
+    "next_questions": {
+      "type": "array",
+      "maxItems": 3,
+      "items": {"type": "string"}
+    },
+    "pack_path": {"type": ["string", "null"]},
+    "exported_source": {"type": ["string", "null"]},
+    "created_at": {"type": "string"},
+    "updated_at": {"type": "string"}
+  },
+  "additionalProperties": false
+}

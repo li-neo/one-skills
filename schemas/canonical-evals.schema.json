@@ -3,11 +3,32 @@
   "$id": "https://github.com/li-neo/one-skills/schemas/canonical-evals.schema.json",
   "title": "One Skills Canonical Evaluations",
   "type": "object",
-  "required": ["schema_version", "skill", "profile", "cases"],
+  "required": [
+    "schema_version",
+    "suite_version",
+    "skill",
+    "profile",
+    "protected_gates",
+    "cases"
+  ],
   "properties": {
     "schema_version": {"const": "1.0"},
+    "suite_version": {"type": "string", "minLength": 1},
     "skill": {"type": "string", "minLength": 1},
     "profile": {"type": "string", "pattern": "^[a-z][a-z0-9-]{1,63}$"},
+    "protected_gates": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "authorization",
+          "safety",
+          "source_facts",
+          "should_not_trigger",
+          "sibling_bait"
+        ]
+      },
+      "uniqueItems": true
+    },
     "cases": {
       "type": "array",
       "minItems": 4,

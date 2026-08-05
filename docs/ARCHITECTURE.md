@@ -1177,7 +1177,7 @@ CLI 与 HTTP API 复用相同知识库、ACL 和持久 Job Queue。HTTP 写请�
 
 ## 19. 从 neo-skills 借鉴的最小执行契约
 
-`li-neo/neo-skills` 是本项目的姊妹仓库，已实现一套可运行的最小蒸馏骨架（`src/neo_skills/` + `tests/` + `schemas/`）。本章把它经过验证的 **7 条硬约束**吸收进 one-skills 的架构规范，并明确边界与差异，用于指导后续代码实现，不重复造轮子也不忽视对方的教训。
+`li-neo/neo-skills` 是本项目的姊妹仓库。本文最初吸收其最小蒸馏骨架的 7 条硬约束，并在 2026-08-05 重新审计 v0.2.2（commit `104f966a`）新增的 IR / Lineage / Recipe、完整路径 Playbook 和 Guided Distillation Controller。已有能力不重复移植；新增设计按 one-skills 的知识库、权限与血缘协议重新实现。
 
 ### 19.1 Frontmatter 静态校验
 
@@ -1206,14 +1206,14 @@ CLI 与 HTTP API 复用相同知识库、ACL 和持久 Job Queue。HTTP 写请�
 |---|---|---|
 | `id` | string | 非空、Pack 内唯一 |
 | `claim` | string | 非空 |
-| `evidence_type` | enum | `quote / verified_position / observed_behavior / third_party_view / model_inference / unknown` |
+| `evidence_type` | enum | `quote / self_report / scenario_response / verified_position / observed_behavior / documented_result / third_party_view / model_inference / unknown` |
 | `source` | string | 指向 `SOURCE_MANIFEST` 中的条目 |
 | `locator` | string | 行号、章节路径、URL 片段等可回溯定位 |
 | `confidence` | number | `[0, 1]` 闭区间 |
 | `inference_level` | enum | `none / low / medium / high` |
 | `permission` | enum | `public / authorized / private-local / unknown` |
 
-**关键**：`evidence_type` 六类不可扩展，`inference_level` 分级强制透明化"这是原话还是模型推断"；违反的记录一律拒绝入账。
+**关键**：`evidence_type` 使用 Schema 中的封闭枚举，`inference_level` 分级强制透明化"这是原话、自述、观察、结果还是模型推断"；违反的记录一律拒绝入账。
 
 **为什么**：区分"原话/立场/观察/推断/未知"是所有蒸馏可信度的基石。one-skills 第 6 节的 `claims / evidence_links` 表原来只有 `confidence`，本条把 `evidence_type` 和 `inference_level` 提升为一等公民并纳入静态校验。
 
@@ -1270,19 +1270,51 @@ CLI 与 HTTP API 复用相同知识库、ACL 和持久 Job Queue。HTTP 写请�
 
 ### 19.8 与 neo-skills 的差异（不倒退清单）
 
-以下 5 点是 one-skills 相对 neo-skills 的核心增量，不能因为"向姊妹项目学习"而放弃：
+截至 neo-skills v0.2.2，双方都已有 IR、Lineage、canonical eval 和 Recipe Loop。以下 5 点仍是 one-skills 的核心增量，不能因为"向姊妹项目学习"而放弃：
 
 1. **知识库层**：neo-skills 的 Pack 是孤岛，one-skills 在第 4-9 节定义了跨 Pack 的证据/能力索引和混合检索。
 2. **Person Profile 记忆层**：neo-skills 每次人物蒸馏都从零开始；one-skills 第 6.1 节的 `person_facts` 支持 ADD/UPDATE/REVOKE 三态增量更新和语义召回。
 3. **多租户 ACL**：neo-skills 无租户概念；one-skills 第 8.1 节要求 ACL 先于召回、进入数据库过滤条件。
-4. **三类进化闭环**：neo-skills 只有 `evolve` 一个 Skill Loop；one-skills 第 2 节明确 Recipe Loop / Skill Loop / Knowledge Loop 三条独立闭环。
+4. **生产运行面**：one-skills 已实现持久 Job Queue、Worker、鉴权 API、PostgreSQL/pgvector、对象存储和 Runtime Adapter；neo-skills 保持轻量本地 Pack。
 5. **候选抽取**：neo-skills 用正则关键词做 `bootstrap_candidates`，one-skills 应走"chunk + embedding + LLM 抽取 + 三重验证"完整链路，不退化为过程式脚本。
 
-### 19.9 反向输出：one-skills 建议 neo-skills 补的 4 项
+### 19.9 反向输出：one-skills 建议 neo-skills 补的 5 项
 
 作为姊妹项目的双向反馈，one-skills 建议 neo-skills 未来演进补上：
 
 1. `knowledge/` 命名空间和跨 Pack 索引（对应 one-skills 第 4-7 节）。
 2. `person_facts` 增量记忆表和三态更新（对应 one-skills 第 6.1 节）。
-3. Recipe Loop 与 Knowledge Loop 边界（对应 one-skills 第 2 节）。
-4. `pack.py` 按 Control / Knowledge / Distillation / Evaluation 四平面拆分，避免过程式脚本 + 硬编码路径（对应 one-skills 第 3、12 节）。
+3. 多租户 ACL，并确保权限过滤发生在全文和向量召回之前。
+4. Guided Session 创建 Pack 时把事件证据等级直接写入 Claim 和 Evidence Link，避免只导出 Markdown 后丢失等级。
+5. `pack.py` 按 Control / Knowledge / Distillation / Evaluation 四平面拆分，避免过程式脚本 + 硬编码路径（对应 one-skills 第 3、12 节）。
+
+### 19.10 Guided Distillation Controller
+
+neo-skills v0.2.2 的最佳新增设计是把"用户没有完整材料"从失败状态改成一个显式、可恢复的材料发现流程。one-skills 采用以下机制：
+
+- `discover → scope → evidence_inventory → interview → map_confirm → claim_review → capability_confirm → build → evaluate → ship → evolve` 会话状态机；
+- 每轮最多三个问题；
+- scope、证据、对象地图、Claim、Capability、构建、评测和发布的人类检查点；
+- 自述、情景回答、观察行为、文档结果、第三方观点和模型推断的分级；
+- customer、proposal、thought-system 等用户语言对象到七类正式 Profile 的路由。
+
+one-skills 不直接复制参考实现的文件孤岛方式，而是增加四项平台约束：
+
+1. Person Session 初始化即校验 consent 与 access；
+2. `SESSION_EVENTS.jsonl` 只追加；
+3. `create-pack` 将回答、纠正、假设、观察和结果按原证据等级写入 `EVIDENCE_LEDGER.jsonl` 和数据库 Claim，材料清单与缺口不伪装成 Claim；
+4. 导出文档以事件 ID 分 Section，使每条 Claim 能建立 Source → Chunk → Claim 血缘。
+
+完整操作协议见 [`GUIDED_DISTILLATION.md`](GUIDED_DISTILLATION.md)。
+
+### 19.11 Recipe 与评测冻结
+
+neo-skills v0.2.0 将 Recipe 和 canonical eval 从约定提升为 Pack 内的可验证资产。one-skills 采用并扩展该机制：
+
+- 创建 Pack 时从 Registry 复制当前活动 Recipe 到 `RECIPE_LOCK.json`，并把 Recipe ID/version 写入 `pack.json`；
+- `PROTECTED_CONSTRAINTS.json` 冻结每个 Source Version 的内容哈希；
+- Skill 编译时冻结 canonical suite 与 runtime `test-prompts.json` 的规范 JSON 哈希；
+- Pack 校验、发布、安装、导出和 Darwin handoff 均拒绝 hash drift；
+- canonical cases 必须与 runtime tests 一致，Adapter 漂移不能静默通过。
+
+Recipe Registry 之后晋升新版本不会改变已有 Pack；需要使用新 Recipe 时必须创建新 Pack 或执行显式重蒸馏。

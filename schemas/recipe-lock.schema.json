@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/li-neo/one-skills/schemas/recipe-lock.schema.json",
+  "title": "One Skills Recipe Lock",
+  "type": "object",
+  "required": ["schema_version", "locked_at", "recipe"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "locked_at": {"type": "string"},
+    "recipe": {
+      "type": "object",
+      "required": [
+        "id",
+        "version",
+        "profile",
+        "parser",
+        "chunker",
+        "extractors",
+        "verifier",
+        "builder"
+      ],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "minLength": 1},
+        "profile": {"type": "string", "minLength": 1},
+        "parser": {"type": "string", "minLength": 1},
+        "chunker": {"type": "string", "minLength": 1},
+        "extractors": {
+          "type": "array",
+          "items": {"type": "string"},
+          "minItems": 1
+        },
+        "verifier": {"type": "string", "minLength": 1},
+        "builder": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
