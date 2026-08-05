@@ -22,22 +22,22 @@
 
 ## 项目状态
 
-当前处于 **Architecture / README-first** 阶段。
+当前处于 **Alpha 工程实现阶段**。核心协议、知识底座和 CLI 已落地，模型驱动验证与多 Profile 端到端样例仍在补齐。
 
 | 能力 | 状态 |
 |---|---|
-| 总体架构 | 已设计 |
-| 统一蒸馏协议 | 已设计 |
-| 对象 Profile | 已设计 |
-| 质量与评测体系 | 已设计 |
-| Darwin 兼容层 | 已设计 |
-| 工程架构与知识库索引 | [已设计](docs/ARCHITECTURE.md) |
-| 根目录 `SKILL.md` | 最小骨架 |
-| CLI、脚本与模板 | 待实现 |
-| 端到端样例 | 待实现 |
-| 自动化测试 | 待实现 |
+| 总体架构 | 已实现核心分层 |
+| 统一蒸馏协议 | 已实现十阶段状态机与统一 IR |
+| 对象 Profile | 已实现路由与专项抽取契约 |
+| 质量与评测体系 | 已实现静态门禁、独立结果聚合与 paired 决策 |
+| Darwin 兼容层 | 已实现 `prepared` 交接与降级契约 |
+| 工程架构与知识库索引 | [已实现本地 MVP](docs/ARCHITECTURE.md) |
+| 根目录 `SKILL.md` | 已完成运行协议 |
+| CLI、脚本与 Schema | 已实现 Alpha 版本 |
+| 端到端样例 | 实现中 |
+| 自动化测试 | 已建立，持续扩充 |
 
-本文中标记为 `规划接口` 的命令用于定义未来产品形态，当前不能视为已经实现。
+当前可运行命令以 `python3 scripts/one.py --help` 或安装后的 `one --help` 为准。README 中尚未出现在 CLI 帮助里的命令仍属于规划接口。
 
 工程实现、技术文档保存、混合检索、增量索引和三类持续优化闭环详见 [工程架构](docs/ARCHITECTURE.md)。
 
@@ -955,55 +955,69 @@ last_updated: "2026-08-04T12:00:00+08:00"
 
 ---
 
-## 规划中的使用方式
+## 使用方式
 
-以下为 `规划接口`。
+要求 Python 3.10+。源码目录可直接运行，也可以执行 `python3 -m pip install -e .` 安装 `one` 命令。
+
+```bash
+python3 scripts/one.py init .
+python3 scripts/one.py --help
+```
 
 ### 自动识别对象
 
 ```bash
-neo distill ./inputs --profile auto
+one distill --source ./inputs --type auto --workspace .
 ```
 
 ### 蒸馏一个人
 
 ```bash
-neo distill person \
+one distill \
+  --source ./materials/person \
+  --type person \
   --name "Example Person" \
-  --sources ./materials/person \
-  --mode advisor \
-  --depth standard
+  --mode standard \
+  --access authorized
 ```
 
 ### 从文档创建 Skill
 
 ```bash
-neo distill skill \
-  --from ./docs/requirement.md \
-  --acceptance ./evals/cases.yaml
+one distill --source ./docs/requirement.md --type skill --mode standard
 ```
 
 ### 蒸馏一本书
 
 ```bash
-neo distill content \
-  --from ./books/example.pdf \
-  --output ./distillations/example-book
+one distill --source ./books/example.pdf --type content --mode deep
 ```
 
 ### 整理 SOP
 
 ```bash
-neo distill sop \
-  --from ./recordings ./tickets ./manuals \
-  --target "用户离职清理闭环"
+one distill \
+  --source ./recordings \
+  --source ./tickets \
+  --source ./manuals \
+  --type sop \
+  --name "用户离职清理闭环"
 ```
 
 ### 调用 Darwin 进化
 
 ```bash
-neo evolve ./distillations/example/skills/example-skill \
-  --engine darwin
+one evolve ./packs/example --skill example-skill
+```
+
+### 检索与用户画像记忆
+
+```bash
+one search "如何验证删除动作已经闭环" --access authorized
+one memory subject --name "Example Person" --relation self
+one memory fact --action ADD --subject <subject-id> \
+  --dimension preference --statement "偏好结论附带证据" \
+  --confidence 0.9
 ```
 
 ---

@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "one-skills"
+version = "0.1.0"
+description = "Evidence-first distillation, knowledge indexing, and Skill evolution."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{name = "li-neo"}]
+keywords = ["agent", "skills", "distillation", "knowledge", "memory"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Operating System :: OS Independent",
+]
+dependencies = []
+
+[project.scripts]
+one = "one_skills.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.unittest]
+start-directory = "tests"

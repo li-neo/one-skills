@@ -1,0 +1,155 @@
+"""Typed intermediate representation for all distillation profiles."""
+
+from __future__ import annotations
+
+from dataclasses import asdict, dataclass, field
+from typing import Any
+
+from .constants import EVIDENCE_TYPES, INFERENCE_LEVELS, PERMISSIONS
+from .utils import new_id, utc_now
+
+
+@dataclass(frozen=True)
+class SourceDocument:
+    source: str
+    title: str
+    media_type: str
+    text: str
+    content_hash: str
+    byte_count: int
+    access_level: str = "private-local"
+    license: str | None = None
+    extractor: str = "plain-text"
+    warnings: tuple[str, ...] = ()
+
+    def metadata(self) -> dict[str, Any]:
+        result = asdict(self)
+        result.pop("text")
+        result["character_count"] = len(self.text)
+        return result
+
+
+@dataclass(frozen=True)
+class Chunk:
+    id: str
+    document_id: str
+    document_version: int
+    section_path: str
+    ordinal: int
+    text: str
+    content_hash: str
+    access_level: str
+    source_locator: str
+
+
+@dataclass(frozen=True)
+class Evidence:
+    claim: str
+    evidence_type: str
+    source: str
+    locator: str
+    confidence: float
+    inference_level: str
+    permission: str
+    id: str = field(default_factory=lambda: new_id("ev"))
+    notes: str = ""
+    recorded_at: str = field(default_factory=utc_now)
+
+    def validate(self) -> None:
+        if self.evidence_type not in EVIDENCE_TYPES:
+            raise ValueError(f"invalid evidence_type: {self.evidence_type}")
+        if self.inference_level not in INFERENCE_LEVELS:
+            raise ValueError(f"invalid inference_level: {self.inference_level}")
+        if self.permission not in PERMISSIONS:
+            raise ValueError(f"invalid permission: {self.permission}")
+        if not 0 <= self.confidence <= 1:
+            raise ValueError("confidence must be between 0 and 1")
+        for name in ("claim", "source", "locator"):
+            if not getattr(self, name).strip():
+                raise ValueError(f"{name} must not be empty")
+
+    def to_dict(self) -> dict[str, Any]:
+        self.validate()
+        return asdict(self)
+
+
+@dataclass
+class Candidate:
+    title: str
+    candidate_type: str
+    summary: str
+    evidence_ids: list[str]
+    source_contexts: list[str]
+    tags: list[str] = field(default_factory=list)
+    id: str = field(default_factory=lambda: new_id("candidate"))
+    cross_domain: bool = False
+    predictive: bool = False
+    distinctive: bool = False
+    actionable: bool = False
+    status: str = "pending"
+    rejection_reason: str = ""
+
+    @property
+    def accepted(self) -> bool:
+        return all((self.cross_domain, self.predictive, self.distinctive, self.actionable))
+
+
+@dataclass
+class Capability:
+    name: str
+    problem: str
+    trigger: str
+    inputs: list[str]
+    procedure: list[str]
+    output: str
+    done: str
+    boundaries: list[str]
+    failures: list[str]
+    fallback: str
+    evidence_ids: list[str]
+    confidence: float
+    id: str = field(default_factory=lambda: new_id("capability"))
+    relations: list[dict[str, str]] = field(default_factory=list)
+
+    def validate(self) -> None:
+        required = {
+            "name": self.name,
+            "problem": self.problem,
+            "trigger": self.trigger,
+            "output": self.output,
+            "done": self.done,
+            "fallback": self.fallback,
+        }
+        missing = [name for name, value in required.items() if not value]
+        if missing:
+            raise ValueError(f"capability fields are empty: {', '.join(missing)}")
+        if not self.procedure:
+            raise ValueError("capability procedure must not be empty")
+        if not self.evidence_ids:
+            raise ValueError("capability must link to evidence")
+        if not 0 <= self.confidence <= 1:
+            raise ValueError("capability confidence must be between 0 and 1")
+
+    def to_dict(self) -> dict[str, Any]:
+        self.validate()
+        return asdict(self)
+
+
+@dataclass(frozen=True)
+class TestCase:
+    id: str
+    test_type: str
+    prompt: str
+    expected: str
+    risk: str = "low"
+    sibling_skill: str | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "id": self.id,
+            "type": self.test_type,
+            "prompt": self.prompt,
+            "expected": self.expected,
+            "risk": self.risk,
+            "sibling_skill": self.sibling_skill,
+        }

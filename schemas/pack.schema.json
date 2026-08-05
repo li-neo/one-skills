@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/li-neo/one-skills/schemas/pack.schema.json",
+  "title": "One Skills Pack",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "id",
+    "name",
+    "slug",
+    "profile",
+    "mode",
+    "sources",
+    "access_level",
+    "created_at"
+  ],
+  "properties": {
+    "schema_version": {"const": "0.1"},
+    "id": {"type": "string", "minLength": 1},
+    "name": {"type": "string", "minLength": 1},
+    "slug": {"type": "string", "pattern": "^[a-z0-9\\u4e00-\\u9fff]+(?:-[a-z0-9\\u4e00-\\u9fff]+)*$"},
+    "profile": {
+      "enum": ["person", "content", "methodology", "sop", "tool", "skill", "hybrid"]
+    },
+    "mode": {"enum": ["quick", "standard", "deep", "continuous"]},
+    "sources": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "access_level": {"enum": ["public", "authorized", "private-local"]},
+    "created_at": {"type": "string"}
+  },
+  "additionalProperties": false
+}
