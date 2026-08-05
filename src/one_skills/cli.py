@@ -119,6 +119,7 @@ def cmd_verify_model(args: argparse.Namespace) -> int:
         _path(args.pack),
         OpenAICompatibleProvider(config),
         args.allow_sensitive_data,
+        not args.skip_semantic_extract,
     )
     _print({"compiled": [str(skill) for skill in skills], "count": len(skills)})
     return 0 if skills else 1
@@ -395,6 +396,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--allow-sensitive-data",
         action="store_true",
         help="explicitly authorize sending authorized/private-local evidence to the model endpoint",
+    )
+    verify_model.add_argument(
+        "--skip-semantic-extract",
+        action="store_true",
+        help="verify existing candidates without running parallel semantic extractors",
     )
     verify_model.set_defaults(func=cmd_verify_model)
 

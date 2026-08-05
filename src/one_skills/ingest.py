@@ -114,9 +114,18 @@ def assert_public_url(url: str) -> None:
     assert_public_host(parsed.hostname)
 
 
+def _assert_archive_budget(archive: zipfile.ZipFile, path: Path) -> None:
+    total = sum(item.file_size for item in archive.infolist())
+    if total > MAX_LOCAL_BYTES:
+        raise IngestionError(
+            f"archive expands beyond {MAX_LOCAL_BYTES} byte safety limit: {path}"
+        )
+
+
 def _docx_text(path: Path) -> str:
     try:
         with zipfile.ZipFile(path) as archive:
+            _assert_archive_budget(archive, path)
             root = ElementTree.fromstring(archive.read("word/document.xml"))
     except (zipfile.BadZipFile, KeyError, ElementTree.ParseError) as exc:
         raise IngestionError(f"invalid DOCX: {path}") from exc
@@ -131,6 +140,7 @@ def _docx_text(path: Path) -> str:
 def _epub_text(path: Path) -> str:
     try:
         with zipfile.ZipFile(path) as archive:
+            _assert_archive_budget(archive, path)
             names = sorted(
                 name for name in archive.namelist() if Path(name).suffix.lower() in HTML_SUFFIXES
             )
@@ -146,15 +156,20 @@ def _pdf_text(path: Path) -> str:
     executable = shutil.which("pdftotext")
     if not executable:
         raise IngestionError("PDF ingestion requires Poppler pdftotext")
-    result = subprocess.run(
-        [executable, "-layout", str(path), "-"],
-        check=False,
-        capture_output=True,
-        timeout=120,
-    )
+    try:
+        result = subprocess.run(
+            [executable, "-layout", str(path), "-"],
+            check=False,
+            capture_output=True,
+            timeout=120,
+        )
+    except subprocess.TimeoutExpired as exc:
+        raise IngestionError("pdftotext exceeded 120 second safety timeout") from exc
     if result.returncode:
         detail = result.stderr.decode("utf-8", errors="replace").strip()
         raise IngestionError(f"pdftotext failed: {detail or 'unknown error'}")
+    if len(result.stdout) > MAX_LOCAL_BYTES:
+        raise IngestionError("PDF extracted text exceeds safety limit")
     return normalize_text(decode_bytes(result.stdout))
 
 

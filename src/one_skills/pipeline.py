@@ -11,7 +11,13 @@ from typing import Any
 from .compiler import capability_from_candidate, compile_skill
 from .constants import CONSENT_LEVELS, MODES, PHASE_INDEX, PHASES
 from .database import KnowledgeDB
-from .extraction import approve_candidate, extract_candidates, merge_candidates, verify_candidates
+from .extraction import (
+    approve_candidate,
+    extract_candidates,
+    extract_candidates_with_model,
+    merge_candidates,
+    verify_candidates,
+)
 from .ingest import expand_sources, structural_chunks
 from .models import Candidate, Capability, Evidence
 from .profiles import PROFILES, detect_profile, load_profile_plugins, profile_prompt
@@ -479,19 +485,7 @@ def extract_pack(pack: Path) -> tuple[list[Candidate], list[Evidence]]:
     dump_json(pack / "candidates" / "candidates.json", [_candidate_dict(item) for item in candidates])
     for item in evidence:
         append_jsonl(pack / "EVIDENCE_LEDGER.jsonl", item.to_dict())
-    workspace = workspace_for(pack)
-    with KnowledgeDB(workspace / ".one" / "knowledge.db") as database:
-        for item in evidence:
-            chunk_rows = database.rows(
-                "SELECT id FROM chunks WHERE document_id = ? AND source_locator = ?",
-                (item.source, item.locator),
-            )
-            database.add_claim(
-                item.claim,
-                item.confidence,
-                [row["id"] for row in chunk_rows],
-                claim_id=item.id,
-            )
+    _index_evidence(pack, evidence)
     advance_phase(pack, "extract", "completed", f"extracted {len(candidates)} candidates")
     verified = verify_candidates(candidates, deep=metadata["mode"] == "deep")
     dump_json(pack / "verified" / "decisions.json", [_candidate_dict(item) for item in verified])
@@ -505,6 +499,61 @@ def extract_pack(pack: Path) -> tuple[list[Candidate], list[Evidence]]:
         "V2 predictive-power judgments require model or human approval",
     )
     return verified, evidence
+
+
+def reextract_with_model(
+    pack: Path,
+    provider: ModelProvider,
+    allow_sensitive_data: bool = False,
+    workers: int = 5,
+) -> tuple[list[Candidate], list[Evidence]]:
+    metadata = load_json(pack / "pack.json")
+    if metadata["access_level"] != "public" and not allow_sensitive_data:
+        raise PipelineError(
+            "non-public Pack data cannot be sent to a model without explicit authorization"
+        )
+    from .models import Chunk
+
+    chunks = [Chunk(**value) for value in load_json(pack / "sources" / "chunks.json")]
+    candidates, evidence = extract_candidates_with_model(
+        provider, chunks, metadata["profile"], workers
+    )
+    dump_json(pack / "candidates" / "semantic-candidates.json", [_candidate_dict(item) for item in candidates])
+    for item in evidence:
+        append_jsonl(pack / "EVIDENCE_LEDGER.jsonl", item.to_dict())
+    _index_evidence(pack, evidence)
+    verified = verify_candidates(candidates, deep=True)
+    dump_json(pack / "verified" / "decisions.json", [_candidate_dict(item) for item in verified])
+    state = load_state(pack)
+    state["phases"]["extract"] = {
+        "status": "completed",
+        "updated_at": utc_now(),
+        "notes": f"{len(PROFILES[metadata['profile']].candidate_kinds)} semantic views",
+    }
+    state["phases"]["verify"] = {
+        "status": "blocked",
+        "updated_at": utc_now(),
+        "notes": "semantic candidates require independent verification",
+    }
+    state["current_phase"] = "verify"
+    save_state(pack, state)
+    return verified, evidence
+
+
+def _index_evidence(pack: Path, evidence: list[Evidence]) -> None:
+    workspace = workspace_for(pack)
+    with KnowledgeDB(workspace / ".one" / "knowledge.db") as database:
+        for item in evidence:
+            chunk_rows = database.rows(
+                "SELECT id FROM chunks WHERE document_id = ? AND source_locator = ?",
+                (item.source, item.locator),
+            )
+            database.add_claim(
+                item.claim,
+                item.confidence,
+                [row["id"] for row in chunk_rows],
+                claim_id=item.id,
+            )
 
 
 def approve_and_compile(pack: Path, candidate_id: str, reason: str) -> Path:
@@ -551,6 +600,7 @@ def verify_and_compile_with_model(
     pack: Path,
     provider: ModelProvider,
     allow_sensitive_data: bool = False,
+    semantic_extract: bool = True,
 ) -> list[Path]:
     """Run independent semantic gates and compile every accepted candidate."""
     metadata = load_json(pack / "pack.json")
@@ -559,6 +609,8 @@ def verify_and_compile_with_model(
             "non-public Pack data cannot be sent to a model without explicit "
             "--allow-sensitive-data authorization"
         )
+    if semantic_extract and not (pack / "candidates" / "semantic-candidates.json").exists():
+        reextract_with_model(pack, provider, allow_sensitive_data)
     decisions_path = pack / "verified" / "decisions.json"
     candidates = [Candidate(**value) for value in load_json(decisions_path)]
     evidence = [

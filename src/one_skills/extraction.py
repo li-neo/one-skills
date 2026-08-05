@@ -3,10 +3,13 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor
+import json
 import re
 
 from .models import Candidate, Chunk, Evidence
-from .profiles import signal_patterns
+from .profiles import PROFILES, profile_prompt, signal_patterns
+from .provider import ModelProvider, ProviderError
 from .utils import slugify
 
 
@@ -134,3 +137,116 @@ def approve_candidate(candidate: Candidate, predictive_reason: str) -> Candidate
         candidate.status = "accepted"
         candidate.rejection_reason = ""
     return candidate
+
+
+def extract_candidates_with_model(
+    provider: ModelProvider,
+    chunks: list[Chunk],
+    profile_name: str,
+    workers: int = 5,
+) -> tuple[list[Candidate], list[Evidence]]:
+    """Run independent semantic views and accept only verbatim chunk evidence."""
+    if profile_name not in PROFILES:
+        raise ValueError(f"unknown profile: {profile_name}")
+    if not chunks:
+        return [], []
+    views = PROFILES[profile_name].candidate_kinds
+    chunk_by_id = {chunk.id: chunk for chunk in chunks}
+    payload_chunks = []
+    character_budget = 50000
+    used = 0
+    for chunk in chunks:
+        if used >= character_budget:
+            break
+        text = chunk.text[: min(len(chunk.text), character_budget - used)]
+        payload_chunks.append(
+            {
+                "id": chunk.id,
+                "section": chunk.section_path,
+                "locator": chunk.source_locator,
+                "text": text,
+            }
+        )
+        used += len(text)
+
+    def run_view(view: str) -> dict:
+        return provider.complete_json(
+            (
+                f"You are the independent {view} extractor in a multi-view distillation pipeline. "
+                "Return JSON {candidates:[...]}. Each candidate must contain title, summary, tags, "
+                "and evidence. Evidence items must contain chunk_id and a verbatim quote copied "
+                "from that chunk. Do not evaluate or compile Skills."
+            ),
+            json.dumps(
+                {
+                    "profile_contract": profile_prompt(profile_name),
+                    "view": view,
+                    "chunks": payload_chunks,
+                },
+                ensure_ascii=False,
+            ),
+            f"extract-{view}",
+        )
+
+    with ThreadPoolExecutor(max_workers=min(workers, len(views))) as executor:
+        outputs = list(executor.map(run_view, views))
+
+    candidates: list[Candidate] = []
+    evidence_records: list[Evidence] = []
+    for view, output in zip(views, outputs):
+        values = output.get("candidates")
+        if not isinstance(values, list):
+            raise ProviderError(f"extract-{view} response requires candidates array")
+        for value in values[:20]:
+            if not isinstance(value, dict):
+                raise ProviderError(f"extract-{view} candidate must be an object")
+            title = value.get("title")
+            summary = value.get("summary")
+            evidence_values = value.get("evidence")
+            if (
+                not isinstance(title, str)
+                or not title.strip()
+                or not isinstance(summary, str)
+                or not summary.strip()
+                or not isinstance(evidence_values, list)
+                or not evidence_values
+            ):
+                raise ProviderError(f"extract-{view} candidate is incomplete")
+            evidence_ids: list[str] = []
+            contexts: list[str] = []
+            for item in evidence_values:
+                if not isinstance(item, dict):
+                    raise ProviderError(f"extract-{view} evidence must be an object")
+                chunk = chunk_by_id.get(item.get("chunk_id"))
+                quote = item.get("quote")
+                if chunk is None or not isinstance(quote, str) or quote.strip() not in chunk.text:
+                    raise ProviderError(
+                        f"extract-{view} evidence quote is not verbatim in its chunk"
+                    )
+                record = Evidence(
+                    claim=quote.strip(),
+                    evidence_type="quote",
+                    source=chunk.document_id,
+                    locator=chunk.source_locator,
+                    confidence=0.9,
+                    inference_level="none",
+                    permission=chunk.access_level,
+                    notes=f"semantic {view} extractor",
+                )
+                evidence_records.append(record)
+                evidence_ids.append(record.id)
+                contexts.append(chunk.section_path)
+            tags = value.get("tags", [])
+            if not isinstance(tags, list) or any(not isinstance(tag, str) for tag in tags):
+                raise ProviderError(f"extract-{view} tags must be a string array")
+            candidates.append(
+                Candidate(
+                    title=title.strip(),
+                    candidate_type=view,
+                    summary=summary.strip(),
+                    evidence_ids=evidence_ids,
+                    source_contexts=list(dict.fromkeys(contexts)),
+                    tags=[profile_name, view, *tags],
+                )
+            )
+    return merge_candidates(candidates), evidence_records

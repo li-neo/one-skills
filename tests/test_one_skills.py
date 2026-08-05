@@ -25,7 +25,15 @@ from one_skills.delivery import (
     release_pack,
 )
 from one_skills.evaluation import aggregate_results, evaluate_pack, paired_decision
-from one_skills.ingest import IngestionError, assert_public_host, ingest_file, structural_chunks
+from one_skills.extraction import extract_candidates_with_model
+from one_skills.constants import MAX_LOCAL_BYTES
+from one_skills.ingest import (
+    IngestionError,
+    _assert_archive_budget,
+    assert_public_host,
+    ingest_file,
+    structural_chunks,
+)
 from one_skills.jobs import JobQueue, run_worker_once
 from one_skills.models import Candidate
 from one_skills.pipeline import (
@@ -43,10 +51,51 @@ from one_skills.retrieval import HybridRetriever, local_embedding
 from one_skills.recipes import promotion_decision
 from one_skills.profiles import Profile, register_profile
 from one_skills.postgres import MIGRATION_TABLES, PostgresBackend
+from one_skills.provider import ProviderError
 from one_skills.validation import validate_skill
 
 
 class IngestionTests(unittest.TestCase):
+    def test_archive_expansion_budget_is_enforced(self) -> None:
+        class Entry:
+            file_size = MAX_LOCAL_BYTES + 1
+
+        class Archive:
+            def infolist(self) -> list:
+                return [Entry()]
+
+        with self.assertRaises(IngestionError):
+            _assert_archive_budget(Archive(), Path("oversized.epub"))
+
+    def test_semantic_extractor_rejects_non_verbatim_evidence(self) -> None:
+        class BadProvider:
+            def complete_json(self, system: str, user: str, schema_name: str) -> dict:
+                del system, schema_name
+                payload = json.loads(user)
+                return {
+                    "candidates": [
+                        {
+                            "title": "invented",
+                            "summary": "invented",
+                            "tags": [],
+                            "evidence": [
+                                {
+                                    "chunk_id": payload["chunks"][0]["id"],
+                                    "quote": "这句话不在原文中",
+                                }
+                            ],
+                        }
+                    ]
+                }
+
+        with tempfile.TemporaryDirectory() as temporary:
+            source = Path(temporary) / "source.md"
+            source.write_text("# Source\n\n真实证据只存在于这里。" * 5, encoding="utf-8")
+            document = ingest_file(source, "public")
+            chunks = structural_chunks(document, "document-1", 1)
+            with self.assertRaises(ProviderError):
+                extract_candidates_with_model(BadProvider(), chunks, "content")
+
     def test_private_network_is_rejected(self) -> None:
         with self.assertRaises(IngestionError):
             assert_public_host("127.0.0.1")
@@ -316,7 +365,27 @@ class PipelineTests(unittest.TestCase):
     def test_independent_model_verification_compiles_profile_skill(self) -> None:
         class FakeProvider:
             def complete_json(self, system: str, user: str, schema_name: str) -> dict:
-                del system, user
+                del system
+                if schema_name.startswith("extract-"):
+                    payload = json.loads(user)
+                    if schema_name != "extract-framework":
+                        return {"candidates": []}
+                    chunk = payload["chunks"][0]
+                    return {
+                        "candidates": [
+                            {
+                                "title": "verified-bottleneck",
+                                "summary": "先识别稀缺资源，再比较单位瓶颈价值。",
+                                "tags": ["decision"],
+                                "evidence": [
+                                    {
+                                        "chunk_id": chunk["id"],
+                                        "quote": chunk["text"],
+                                    }
+                                ],
+                            }
+                        ]
+                    }
                 if schema_name == "candidate-verification":
                     return {
                         "cross_domain": True,
@@ -357,18 +426,12 @@ class PipelineTests(unittest.TestCase):
                 "model-case",
                 "public",
             )
-            values = json.loads((pack / "verified" / "decisions.json").read_text(encoding="utf-8"))
-            self.assertTrue(values)
-            values = [values[0]]
-            (pack / "verified" / "decisions.json").write_text(
-                json.dumps(values, ensure_ascii=False),
-                encoding="utf-8",
-            )
             skills = verify_and_compile_with_model(pack, FakeProvider())
             self.assertEqual(len(skills), 1)
             self.assertTrue((skills[0] / "SKILL.md").exists())
             self.assertEqual(load_state(pack)["current_phase"], "test")
             self.assertTrue((pack / "audit" / "model-verification.json").exists())
+            self.assertTrue((pack / "candidates" / "semantic-candidates.json").exists())
             tests = json.loads((skills[0] / "test-prompts.json").read_text(encoding="utf-8"))
             results = root / "agent-results.json"
             results.write_text(

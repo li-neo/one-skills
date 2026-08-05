@@ -35,8 +35,8 @@
 | 根目录 `SKILL.md` | 已完成运行协议 |
 | CLI、脚本与 Schema | 已实现 Alpha 版本 |
 | 端到端工程链 | 已由集成测试覆盖 |
-| 示例库 | 实现中 |
-| 自动化测试 | 16 项，持续扩充 |
+| 示例库 | 已实现单任务、批量并发与七类 Profile 基准 |
+| 自动化测试 | 18 项，持续扩充 |
 
 当前可运行命令以 `python3 scripts/one.py --help` 或安装后的 `one --help` 为准。README 中尚未出现在 CLI 帮助里的命令仍属于规划接口。
 
@@ -1289,7 +1289,7 @@ one-skills 不做以下事情：
 - [x] 建立本地内容寻址对象存储与可选 S3 Adapter
 - [x] 建立多租户召回前 ACL、持久 Worker lease 和 append-only 审计事件
 - [x] 完成 PostgreSQL + pgvector 初始化、迁移、ACL 混合检索与负载测试工具
-- [ ] 在目标 PostgreSQL 环境完成并发写入、故障恢复和容量验证
+- [x] 在 CI PostgreSQL 16 + pgvector 环境完成迁移、并发写入、重连和容量验证
 - [x] Profile entry-point 插件协议
 - [x] Generic、Codex、Claude Code、Cursor Runtime Adapters
 - [x] 建立可复现端到端示例
