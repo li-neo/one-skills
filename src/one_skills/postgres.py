@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime
 from pathlib import Path
 import sqlite3
 from statistics import median
@@ -41,11 +42,13 @@ class PostgresBackend:
             import psycopg
             from psycopg import sql
             from psycopg.rows import dict_row
+            from psycopg.types.json import Jsonb
         except ImportError as exc:
             raise RuntimeError(
                 "PostgreSQL backend requires `pip install one-skills[production]`"
             ) from exc
         self.sql = sql
+        self.Jsonb = Jsonb
         self.connection = psycopg.connect(dsn, row_factory=dict_row)
 
     def close(self) -> None:
@@ -105,7 +108,13 @@ class PostgresBackend:
                     self.sql.SQL(", ").join(
                         self.sql.Identifier(column) for column in columns
                     ),
-                    self.sql.SQL(", ").join(self.sql.Placeholder() for _ in columns),
+                    self.sql.SQL(", ").join(
+                        self.sql.SQL("{}::vector").format(self.sql.Placeholder())
+                        if column == "embedding"
+                        and table in {"chunks", "person_facts"}
+                        else self.sql.Placeholder()
+                        for column in columns
+                    ),
                 )
                 inserted = 0
                 with self.connection.cursor() as cursor:
@@ -122,14 +131,40 @@ class PostgresBackend:
             source.close()
         return counts
 
-    @staticmethod
-    def _convert_value(table: str, column: str, value: Any) -> Any:
+    def _convert_value(self, table: str, column: str, value: Any) -> Any:
         if value is None:
             return None
         if column == "embedding" and table in {"chunks", "person_facts"}:
             parsed = json.loads(value) if isinstance(value, str) else value
-            return "[" + ",".join(str(float(item)) for item in parsed) + "]"
+            if not parsed:
+                return None
+            if len(parsed) != 128:
+                raise ValueError(f"{table}.{column} must contain 128 dimensions")
+            return self._vector_literal(parsed)
+        if column in {
+            "ir_json",
+            "input_json",
+            "output_json",
+            "payload_json",
+            "result_json",
+            "details_json",
+        }:
+            parsed = json.loads(value) if isinstance(value, str) else value
+            return self.Jsonb(parsed)
+        if column in {
+            "captured_at",
+            "created_at",
+            "updated_at",
+            "valid_from",
+            "valid_to",
+            "lease_until",
+        } and isinstance(value, str):
+            return datetime.fromisoformat(value)
         return value
+
+    @staticmethod
+    def _vector_literal(values: list[float]) -> str:
+        return "[" + ",".join(str(float(item)) for item in values) + "]"
 
     def hybrid_search(
         self,

@@ -3,9 +3,13 @@ from __future__ import annotations
 import json
 from pathlib import Path
 import tempfile
+from threading import Thread
 import unittest
+from urllib.error import HTTPError
+from urllib.request import Request, urlopen
 import zipfile
 
+from one_skills.api import create_api_server
 from one_skills.compiler import (
     capability_from_candidate,
     compile_skill,
@@ -58,6 +62,53 @@ class IngestionTests(unittest.TestCase):
 
 
 class DatabaseAndRetrievalTests(unittest.TestCase):
+    def test_authenticated_http_api_queues_jobs(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            init_workspace(root)
+            server = create_api_server(root, "127.0.0.1", 0, "secret-token")
+            thread = Thread(target=server.serve_forever, daemon=True)
+            thread.start()
+            base = f"http://127.0.0.1:{server.server_port}"
+            try:
+                health = json.loads(urlopen(f"{base}/health").read().decode())
+                self.assertEqual(health["status"], "ok")
+                with self.assertRaises(HTTPError) as unauthorized:
+                    urlopen(f"{base}/v1/jobs/missing")
+                self.assertEqual(unauthorized.exception.code, 401)
+                payload = json.dumps(
+                    {
+                        "type": "benchmark",
+                        "payload": {
+                            "suite": str(
+                                Path(__file__).resolve().parents[1]
+                                / "benchmarks"
+                                / "profile-routing.json"
+                            )
+                        },
+                    }
+                ).encode()
+                request = Request(
+                    f"{base}/v1/jobs",
+                    data=payload,
+                    method="POST",
+                    headers={
+                        "Authorization": "Bearer secret-token",
+                        "Content-Type": "application/json",
+                    },
+                )
+                accepted = json.loads(urlopen(request).read().decode())
+                status_request = Request(
+                    f"{base}/v1/jobs/{accepted['job_id']}",
+                    headers={"Authorization": "Bearer secret-token"},
+                )
+                status = json.loads(urlopen(status_request).read().decode())
+                self.assertEqual(status["status"], "queued")
+            finally:
+                server.shutdown()
+                thread.join(timeout=5)
+                server.server_close()
+
     def test_postgres_schema_and_migration_mapping_cover_sqlite_assets(self) -> None:
         root = Path(__file__).resolve().parents[1]
         migration = (root / "migrations" / "postgres" / "001_initial.sql").read_text(
@@ -77,7 +128,7 @@ class DatabaseAndRetrievalTests(unittest.TestCase):
                 }
         self.assertTrue(tables.issubset(set(MIGRATION_TABLES)))
         self.assertEqual(
-            PostgresBackend._convert_value("chunks", "embedding", "[0.5, -0.25]"),
+            PostgresBackend._vector_literal([0.5, -0.25]),
             "[0.5,-0.25]",
         )
 

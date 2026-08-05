@@ -36,7 +36,7 @@
 | CLI、脚本与 Schema | 已实现 Alpha 版本 |
 | 端到端工程链 | 已由集成测试覆盖 |
 | 示例库 | 实现中 |
-| 自动化测试 | 13 项，持续扩充 |
+| 自动化测试 | 16 项，持续扩充 |
 
 当前可运行命令以 `python3 scripts/one.py --help` 或安装后的 `one --help` 为准。README 中尚未出现在 CLI 帮助里的命令仍属于规划接口。
 
@@ -1049,6 +1049,9 @@ one acl grant --tenant team-a --principal alice \
 
 one job submit --type distill --payload ./job-payload.json
 one job worker --owner worker-01
+
+export ONE_SKILLS_API_TOKEN="replace-with-secret"
+one serve --host 127.0.0.1 --port 8765
 ```
 
 ---

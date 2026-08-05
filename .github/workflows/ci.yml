@@ -24,3 +24,44 @@ jobs:
       - run: python -m compileall -q src tests
       - run: one --help
       - run: one benchmark --suite benchmarks/profile-routing.json
+
+  postgres:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_DB: one_skills
+          POSTGRES_USER: one_skills
+          POSTGRES_PASSWORD: one_skills
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U one_skills -d one_skills"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      ONE_SKILLS_POSTGRES_DSN: postgresql://one_skills:one_skills@127.0.0.1:5432/one_skills
+      ONE_SKILLS_POSTGRES_TEST_WORKERS: "8"
+      ONE_SKILLS_POSTGRES_TEST_ITERATIONS: "20"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -e '.[production]'
+      - run: one init /tmp/one-skills-postgres
+      - run: >-
+          one distill
+          --workspace /tmp/one-skills-postgres
+          --source examples/sources/decision-bottleneck.md
+          --type methodology
+          --name postgres-smoke
+          --access public
+      - run: one postgres init
+      - run: one postgres migrate --sqlite /tmp/one-skills-postgres/.one/knowledge.db
+      - run: one postgres health
+      - run: one postgres load-test --query "瓶颈价值" --iterations 50
+      - run: python scripts/postgres_smoke.py

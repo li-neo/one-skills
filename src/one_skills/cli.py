@@ -10,6 +10,7 @@ import sys
 from typing import Sequence
 
 from . import __version__
+from .api import create_api_server
 from .benchmark import run_profile_benchmark
 from .batch import distill_batch, load_jobs
 from .constants import CONSENT_LEVELS, MODES, PHASES
@@ -35,6 +36,7 @@ from .pipeline import (
 )
 from .provider import OpenAICompatibleProvider, ProviderConfig, ProviderError
 from .postgres import PostgresBackend
+from .recipes import Recipe, promote_recipe, promotion_decision
 from .retrieval import HybridRetriever, local_embedding
 from .validation import summary, validate_pack, validate_skill
 
@@ -300,6 +302,48 @@ def cmd_postgres(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_recipe(args: argparse.Namespace) -> int:
+    workspace = workspace_for(_path(args.workspace))
+    registry_path = workspace / ".one" / "recipes.json"
+    if args.recipe_command == "list":
+        _print(json.loads(registry_path.read_text(encoding="utf-8")))
+        return 0
+    if args.recipe_command == "evaluate":
+        baseline = json.loads(_path(args.baseline).read_text(encoding="utf-8"))
+        candidate = json.loads(_path(args.candidate).read_text(encoding="utf-8"))
+        budgets = json.loads(_path(args.budgets).read_text(encoding="utf-8"))
+        decision = promotion_decision(baseline, candidate, budgets)
+        if args.output:
+            from .utils import dump_json
+
+            dump_json(_path(args.output), decision)
+        _print(decision)
+        return 0 if decision["promote"] else 1
+    recipe = Recipe(**json.loads(_path(args.recipe).read_text(encoding="utf-8")))
+    decision = json.loads(_path(args.decision).read_text(encoding="utf-8"))
+    promote_recipe(registry_path, recipe, decision)
+    _print({"status": "promoted", "profile": recipe.profile, "version": recipe.version})
+    return 0
+
+
+def cmd_serve(args: argparse.Namespace) -> int:
+    workspace = workspace_for(_path(args.workspace))
+    server = create_api_server(
+        workspace,
+        args.host,
+        args.port,
+        os.getenv("ONE_SKILLS_API_TOKEN"),
+    )
+    print(f"one-skills API listening on http://{args.host}:{server.server_port}")
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        server.server_close()
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="one", description="Evidence-first Skill distillation and knowledge system")
     parser.add_argument("--version", action="version", version=f"one-skills {__version__}")
@@ -508,6 +552,30 @@ def build_parser() -> argparse.ArgumentParser:
     postgres_load.add_argument("--tenant", default="local")
     postgres_load.add_argument("--principal", default="local-user")
     postgres_load.set_defaults(func=cmd_postgres)
+
+    recipe = commands.add_parser("recipe", help="evaluate and promote versioned Recipes")
+    recipe_commands = recipe.add_subparsers(dest="recipe_command", required=True)
+    recipe_list = recipe_commands.add_parser("list")
+    recipe_list.add_argument("--workspace", default=".")
+    recipe_list.set_defaults(func=cmd_recipe)
+    recipe_evaluate = recipe_commands.add_parser("evaluate")
+    recipe_evaluate.add_argument("--workspace", default=".")
+    recipe_evaluate.add_argument("--baseline", required=True)
+    recipe_evaluate.add_argument("--candidate", required=True)
+    recipe_evaluate.add_argument("--budgets", required=True)
+    recipe_evaluate.add_argument("--output")
+    recipe_evaluate.set_defaults(func=cmd_recipe)
+    recipe_promote = recipe_commands.add_parser("promote")
+    recipe_promote.add_argument("--workspace", default=".")
+    recipe_promote.add_argument("--recipe", required=True)
+    recipe_promote.add_argument("--decision", required=True)
+    recipe_promote.set_defaults(func=cmd_recipe)
+
+    serve = commands.add_parser("serve", help="run authenticated HTTP API")
+    serve.add_argument("--workspace", default=".")
+    serve.add_argument("--host", default="127.0.0.1")
+    serve.add_argument("--port", type=int, default=8765)
+    serve.set_defaults(func=cmd_serve)
     return parser
 
 

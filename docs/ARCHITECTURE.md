@@ -1022,9 +1022,11 @@ one release ./packs/example
 one install ./packs/example --target ~/.codex/skills
 one export ./packs/example
 one evolve ./packs/example --skill offboarding-cleanup
+one recipe evaluate --baseline baseline.json --candidate candidate.json --budgets budgets.json
+one serve --host 127.0.0.1 --port 8765
 ```
 
-Recipe 晋升和 HTTP API 尚未提供 CLI，不应视为已实现接口。Application 层将逐步提供相同 Use Case，CLI 和未来 API 只是不同入口。
+CLI 与 HTTP API 复用相同知识库、ACL 和持久 Job Queue。HTTP 写请求只创建任务，不绕过 Pipeline 状态机和发布门。
 
 ---
 
