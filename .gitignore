@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Databases and indexes (runtime state, not source of truth)
+*.db
+*.sqlite
+*.sqlite3
+data/
+index/
+
+# Secrets
+.env
+.env.*
+*.key
+credentials.json
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# Reference repos cloned during research (not part of this project)
+references/
