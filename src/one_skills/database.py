@@ -284,6 +284,10 @@ class KnowledgeDB:
                     now,
                 ),
             )
+            connection.execute(
+                "INSERT OR IGNORE INTO lineage_edges VALUES (?, ?, ?, ?, ?, ?)",
+                ("source", source_id, "produces", "document", document_id, now),
+            )
         return source_id, document_id, version, True
 
     def add_chunks(self, chunks: list[Chunk], embeddings: dict[str, list[float]]) -> None:
@@ -311,6 +315,17 @@ class KnowledgeDB:
                         "INSERT INTO chunks_fts(chunk_id, text, section_path) VALUES (?, ?, ?)",
                         (chunk.id, chunk.text, chunk.section_path),
                     )
+                connection.execute(
+                    "INSERT OR IGNORE INTO lineage_edges VALUES (?, ?, ?, ?, ?, ?)",
+                    (
+                        "document",
+                        chunk.document_id,
+                        "produces",
+                        "chunk",
+                        chunk.id,
+                        utc_now(),
+                    ),
+                )
 
     def add_claim(
         self,
@@ -318,8 +333,9 @@ class KnowledgeDB:
         confidence: float,
         chunk_ids: list[str],
         status: str = "active",
+        claim_id: str | None = None,
     ) -> str:
-        claim_id = new_id("claim")
+        claim_id = claim_id or new_id("claim")
         with self.transaction() as connection:
             connection.execute(
                 "INSERT INTO claims VALUES (?, ?, ?, ?, NULL, NULL, ?)",
@@ -329,6 +345,10 @@ class KnowledgeDB:
                 connection.execute(
                     "INSERT INTO evidence_links VALUES (?, ?, 'supports', NULL, NULL)",
                     (claim_id, chunk_id),
+                )
+                connection.execute(
+                    "INSERT OR IGNORE INTO lineage_edges VALUES (?, ?, ?, ?, ?, ?)",
+                    ("chunk", chunk_id, "supports", "claim", claim_id, utc_now()),
                 )
         return claim_id
 
@@ -416,3 +436,63 @@ class KnowledgeDB:
 
     def rows(self, query: str, parameters: tuple[Any, ...] = ()) -> list[sqlite3.Row]:
         return list(self.connection.execute(query, parameters).fetchall())
+
+    def descendants(self, node_type: str, node_id: str) -> list[dict[str, str]]:
+        queue = [(node_type, node_id)]
+        seen = set(queue)
+        result: list[dict[str, str]] = []
+        while queue:
+            current_type, current_id = queue.pop(0)
+            edges = self.rows(
+                "SELECT relation, to_type, to_id FROM lineage_edges "
+                "WHERE from_type = ? AND from_id = ?",
+                (current_type, current_id),
+            )
+            for edge in edges:
+                target = (edge["to_type"], edge["to_id"])
+                if target in seen:
+                    continue
+                seen.add(target)
+                queue.append(target)
+                result.append(
+                    {
+                        "from_type": current_type,
+                        "from_id": current_id,
+                        "relation": edge["relation"],
+                        "to_type": edge["to_type"],
+                        "to_id": edge["to_id"],
+                    }
+                )
+        return result
+
+    def revoke_source(self, source_id: str) -> dict[str, Any]:
+        source = self.connection.execute(
+            "SELECT id, uri FROM sources WHERE id = ?", (source_id,)
+        ).fetchone()
+        if not source:
+            raise ValueError(f"source does not exist: {source_id}")
+        affected = self.descendants("source", source_id)
+        document_ids = {
+            edge["to_id"] for edge in affected if edge["to_type"] == "document"
+        }
+        with self.transaction() as connection:
+            for document_id in document_ids:
+                connection.execute(
+                    "UPDATE document_versions SET status = 'revoked' "
+                    "WHERE document_id = ? AND source_id = ?",
+                    (document_id, source_id),
+                )
+                active = connection.execute(
+                    "SELECT MAX(version) AS version FROM document_versions "
+                    "WHERE document_id = ? AND status = 'active'",
+                    (document_id,),
+                ).fetchone()
+                connection.execute(
+                    "UPDATE documents SET active_version = ? WHERE id = ?",
+                    (active["version"] or 0, document_id),
+                )
+        return {
+            "source_id": source_id,
+            "uri": source["uri"],
+            "affected": affected,
+        }

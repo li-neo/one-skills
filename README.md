@@ -1023,6 +1023,7 @@ one verify-model ./packs/example
 one test ./packs/example --results ./agent-results.json
 one release ./packs/example
 one install ./packs/example --target ~/.codex/skills
+one export ./packs/example --runtime claude
 ```
 
 非公开 Pack 默认禁止发送到模型端点。只有在确认端点、数据协议和授权范围后，才能显式增加 `--allow-sensitive-data`。
@@ -1035,6 +1036,11 @@ one memory subject --name "Example Person" --relation self
 one memory fact --action ADD --subject <subject-id> \
   --dimension preference --statement "偏好结论附带证据" \
   --confidence 0.9
+
+one lineage --type source --id <source-id>
+one source-revoke --id <source-id> --reason "来源方撤回授权"
+
+one batch --manifest examples/batch-manifest.json --workers 8
 ```
 
 ---
@@ -1264,18 +1270,18 @@ one-skills 不做以下事情：
 - [x] 实现 Darwin Adapter
 - [x] 接入 paired 评审决策；Git 提交与回滚由 Darwin 执行
 - [x] 支持来源增量更新与 active version 原子切换
-- [x] 支持影响报告与下游阶段失效
-- [ ] 支持按血缘自动选择局部回归测试
+- [x] 支持来源撤销、影响报告与下游阶段失效
+- [x] 支持按血缘自动选择局部回归测试
 
 ### Milestone 4：生态化
 
 - [ ] 迁移 PostgreSQL + pgvector + 对象存储
 - [ ] 建立生产级多租户 ACL、异步 Worker 和审计日志
-- [ ] Profile 插件协议
-- [ ] Runtime Adapters
+- [x] Profile entry-point 插件协议
+- [x] Generic、Codex、Claude Code、Cursor Runtime Adapters
 - [x] 建立可复现端到端示例
 - [ ] 扩充 Profile 专项模板与示例库
-- [ ] 批量蒸馏和并发执行
+- [x] 批量蒸馏、错误隔离和有界并发执行
 - [x] 生成证据索引、质量报告与 Provenance 报告
 - [ ] 可视化证据图
 

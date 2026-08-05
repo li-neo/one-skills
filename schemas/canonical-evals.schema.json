@@ -7,9 +7,7 @@
   "properties": {
     "schema_version": {"const": "1.0"},
     "skill": {"type": "string", "minLength": 1},
-    "profile": {
-      "enum": ["person", "content", "methodology", "sop", "tool", "skill", "hybrid"]
-    },
+    "profile": {"type": "string", "pattern": "^[a-z][a-z0-9-]{1,63}$"},
     "cases": {
       "type": "array",
       "minItems": 4,

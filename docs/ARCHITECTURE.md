@@ -1013,6 +1013,9 @@ one init .
 one distill --source ./docs --type sop --access authorized
 one update ./packs/example --source ./docs/changed.md
 one search "离职清理涉及哪些系统" --access authorized
+one lineage --type source --id <source-id>
+one source-revoke --id <source-id> --reason "来源方撤回授权"
+one regression-plan ./packs/example --skill offboarding-cleanup
 one verify-model ./packs/example
 one test ./packs/example --results ./agent-results.json
 one release ./packs/example
@@ -1021,7 +1024,7 @@ one export ./packs/example
 one evolve ./packs/example --skill offboarding-cleanup
 ```
 
-Recipe benchmark、血缘查询、来源撤销和 HTTP API 尚未提供 CLI，不应视为已实现接口。Application 层将逐步提供相同 Use Case，CLI 和未来 API 只是不同入口。
+Recipe 晋升和 HTTP API 尚未提供 CLI，不应视为已实现接口。Application 层将逐步提供相同 Use Case，CLI 和未来 API 只是不同入口。
 
 ---
 

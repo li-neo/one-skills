@@ -20,9 +20,7 @@
     "id": {"type": "string", "minLength": 1},
     "name": {"type": "string", "minLength": 1},
     "slug": {"type": "string", "pattern": "^[a-z0-9\\u4e00-\\u9fff]+(?:-[a-z0-9\\u4e00-\\u9fff]+)*$"},
-    "profile": {
-      "enum": ["person", "content", "methodology", "sop", "tool", "skill", "hybrid"]
-    },
+    "profile": {"type": "string", "pattern": "^[a-z][a-z0-9-]{1,63}$"},
     "mode": {"enum": ["quick", "standard", "deep", "continuous"]},
     "sources": {"type": "array", "items": {"type": "string"}, "minItems": 1},
     "access_level": {"enum": ["public", "authorized", "private-local"]},

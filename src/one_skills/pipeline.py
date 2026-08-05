@@ -5,15 +5,16 @@ from __future__ import annotations
 from dataclasses import asdict
 import json
 from pathlib import Path
+from threading import Lock
 from typing import Any
 
 from .compiler import capability_from_candidate, compile_skill
-from .constants import CONSENT_LEVELS, MODES, OBJECT_TYPES, PHASE_INDEX, PHASES
+from .constants import CONSENT_LEVELS, MODES, PHASE_INDEX, PHASES
 from .database import KnowledgeDB
 from .extraction import approve_candidate, extract_candidates, merge_candidates, verify_candidates
 from .ingest import expand_sources, structural_chunks
 from .models import Candidate, Capability, Evidence
-from .profiles import PROFILES, detect_profile, profile_prompt
+from .profiles import PROFILES, detect_profile, load_profile_plugins, profile_prompt
 from .provider import ModelProvider, model_capability, verify_candidate
 from .recipes import initialize_registry
 from .retrieval import local_embedding
@@ -22,6 +23,9 @@ from .utils import append_jsonl, atomic_write, dump_json, load_json, new_id, slu
 
 class PipelineError(RuntimeError):
     pass
+
+
+_DB_WRITE_LOCK = Lock()
 
 
 def init_workspace(path: Path, mode: str = "standard") -> Path:
@@ -181,7 +185,8 @@ def create_pack(
     access_level: str = "private-local",
     consent: str | None = None,
 ) -> Path:
-    if requested_profile not in OBJECT_TYPES:
+    load_profile_plugins()
+    if requested_profile != "auto" and requested_profile not in PROFILES:
         raise PipelineError(f"unsupported profile: {requested_profile}")
     if mode not in MODES:
         raise PipelineError(f"unsupported mode: {mode}")
@@ -252,7 +257,7 @@ def _ingest_documents(
     existing_chunks = load_json(pack / "sources" / "chunks.json") if append else []
     manifest: list[dict[str, Any]] = list(existing_manifest)
     all_chunks: list[dict[str, Any]] = list(existing_chunks)
-    with KnowledgeDB(database_path) as database:
+    with _DB_WRITE_LOCK, KnowledgeDB(database_path) as database:
         for document in documents:
             source_id, document_id, version, created = database.add_document(document, profile)
             if version > 1:
@@ -323,6 +328,100 @@ def update_pack(pack: Path, sources: list[str]) -> dict[str, Any]:
     }
 
 
+def lineage(workspace: Path, node_type: str, node_id: str) -> list[dict[str, str]]:
+    root = workspace_for(workspace)
+    with KnowledgeDB(root / ".one" / "knowledge.db") as database:
+        return database.descendants(node_type, node_id)
+
+
+def revoke_source(workspace: Path, source_id: str, reason: str) -> dict[str, Any]:
+    if not reason.strip():
+        raise PipelineError("source revocation requires a reason")
+    root = workspace_for(workspace)
+    with KnowledgeDB(root / ".one" / "knowledge.db") as database:
+        result = database.revoke_source(source_id)
+    affected_skills = sorted(
+        {
+            edge["to_id"]
+            for edge in result["affected"]
+            if edge["to_type"] == "skill"
+        }
+    )
+    affected_packs: list[str] = []
+    for manifest_path in (root / "packs").glob("*/SOURCE_MANIFEST.json"):
+        manifest = load_json(manifest_path)
+        matches = [item for item in manifest["sources"] if item["source_id"] == source_id]
+        if not matches:
+            continue
+        pack = manifest_path.parent
+        affected_packs.append(pack.name)
+        for item in matches:
+            item["active"] = False
+            item["revoked_at"] = utc_now()
+            item["revocation_reason"] = reason
+        dump_json(manifest_path, manifest)
+        state = load_state(pack)
+        for phase in PHASES[PHASE_INDEX["ingest"] :]:
+            state["phases"][phase] = {
+                "status": "blocked" if phase == "ingest" else "pending",
+                "updated_at": utc_now() if phase == "ingest" else None,
+                "notes": f"source revoked: {source_id}" if phase == "ingest" else "",
+            }
+        state["current_phase"] = "ingest"
+        save_state(pack, state)
+        log = pack / "audit" / "DELETION_LOG.md"
+        previous = log.read_text(encoding="utf-8") if log.exists() else "# Deletion Log\n\n"
+        atomic_write(
+            log,
+            previous
+            + f"- {utc_now()} revoked `{source_id}`; reason: {reason}; "
+            f"affected Skills: {', '.join(affected_skills) or 'none'}\n",
+        )
+        (pack / "reports").mkdir(exist_ok=True)
+        regression = select_regression_tests(pack, affected_skills)
+        dump_json(pack / "reports" / "regression-plan.json", regression)
+    event = {
+        "source_id": source_id,
+        "reason": reason,
+        "revoked_at": utc_now(),
+        "affected_packs": affected_packs,
+        "affected_skills": affected_skills,
+    }
+    append_jsonl(root / ".one" / "revocations.jsonl", event)
+    return event
+
+
+def select_regression_tests(pack: Path, affected_skills: list[str]) -> dict[str, Any]:
+    tests: list[dict[str, Any]] = []
+    for skill_name in affected_skills:
+        path = pack / "skills" / skill_name / "evals" / "canonical.json"
+        if not path.exists():
+            continue
+        suite = load_json(path)
+        tests.extend(
+            {"skill": skill_name, **case}
+            for case in suite["cases"]
+        )
+    # Safety and routing are global invariants. Include them for all remaining
+    # Skills even when their evidence lineage was not directly affected.
+    for path in sorted((pack / "skills").glob("*/evals/canonical.json")):
+        skill_name = path.parents[1].name
+        if skill_name in affected_skills:
+            continue
+        suite = load_json(path)
+        tests.extend(
+            {"skill": skill_name, **case}
+            for case in suite["cases"]
+            if case["type"] in {"should_not_trigger", "sibling_bait", "safety"}
+        )
+    return {
+        "generated_at": utc_now(),
+        "affected_skills": affected_skills,
+        "tests": tests,
+        "count": len(tests),
+    }
+
+
 def _write_object_map(pack: Path, profile: str, manifest: list[dict[str, Any]]) -> None:
     profile_definition = PROFILES[profile]
     source_rows = "\n".join(
@@ -376,6 +475,19 @@ def extract_pack(pack: Path) -> tuple[list[Candidate], list[Evidence]]:
     dump_json(pack / "candidates" / "candidates.json", [_candidate_dict(item) for item in candidates])
     for item in evidence:
         append_jsonl(pack / "EVIDENCE_LEDGER.jsonl", item.to_dict())
+    workspace = workspace_for(pack)
+    with KnowledgeDB(workspace / ".one" / "knowledge.db") as database:
+        for item in evidence:
+            chunk_rows = database.rows(
+                "SELECT id FROM chunks WHERE document_id = ? AND source_locator = ?",
+                (item.source, item.locator),
+            )
+            database.add_claim(
+                item.claim,
+                item.confidence,
+                [row["id"] for row in chunk_rows],
+                claim_id=item.id,
+            )
     advance_phase(pack, "extract", "completed", f"extracted {len(candidates)} candidates")
     verified = verify_candidates(candidates, deep=metadata["mode"] == "deep")
     dump_json(pack / "verified" / "decisions.json", [_candidate_dict(item) for item in verified])
@@ -415,7 +527,8 @@ def approve_and_compile(pack: Path, candidate_id: str, reason: str) -> Path:
     with KnowledgeDB(workspace / ".one" / "knowledge.db") as database:
         database.add_capability(capability.id, capability.name, profile, capability.to_dict())
         for evidence_id in capability.evidence_ids:
-            database.add_edge("evidence", evidence_id, "supports", "capability", capability.id)
+            database.add_edge("claim", evidence_id, "supports", "capability", capability.id)
+        database.add_edge("capability", capability.id, "produces", "skill", skill_dir.name)
     state = load_state(pack)
     state["phases"]["verify"] = {
         "status": "completed",
@@ -485,7 +598,8 @@ def verify_and_compile_with_model(
                 capability.to_dict(),
             )
             for evidence_id in capability.evidence_ids:
-                database.add_edge("evidence", evidence_id, "supports", "capability", capability.id)
+                database.add_edge("claim", evidence_id, "supports", "capability", capability.id)
+            database.add_edge("capability", capability.id, "produces", "skill", skill_dir.name)
     dump_json(decisions_path, [_candidate_dict(item) for item in candidates])
     dump_json(pack / "audit" / "model-verification.json", audit)
     if not compiled:

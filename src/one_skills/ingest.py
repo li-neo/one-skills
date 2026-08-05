@@ -23,7 +23,7 @@ from .constants import (
     TEXT_SUFFIXES,
 )
 from .models import Chunk, SourceDocument
-from .utils import new_id, sha256_bytes
+from .utils import sha256_bytes
 
 
 class IngestionError(RuntimeError):
@@ -309,7 +309,10 @@ def structural_chunks(
         content_hash = sha256_bytes(text.encode("utf-8"))
         chunks.append(
             Chunk(
-                id=new_id("chunk"),
+                id="chunk-"
+                + sha256_bytes(
+                    f"{document_id}:{document_version}:{ordinal}:{content_hash}".encode()
+                )[:24],
                 document_id=document_id,
                 document_version=document_version,
                 section_path=section_path,

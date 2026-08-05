@@ -4,10 +4,18 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+import zipfile
 
 from one_skills.compiler import capability_from_candidate, compile_skill
+from one_skills.batch import distill_batch
 from one_skills.database import KnowledgeDB
-from one_skills.delivery import export_pack, install_pack, prepare_darwin, release_pack
+from one_skills.delivery import (
+    DeliveryError,
+    export_pack,
+    install_pack,
+    prepare_darwin,
+    release_pack,
+)
 from one_skills.evaluation import aggregate_results, evaluate_pack, paired_decision
 from one_skills.ingest import IngestionError, assert_public_host, ingest_file, structural_chunks
 from one_skills.models import Candidate
@@ -16,12 +24,15 @@ from one_skills.pipeline import (
     advance_phase,
     create_pack,
     init_workspace,
+    lineage,
     load_state,
+    revoke_source,
     update_pack,
     verify_and_compile_with_model,
 )
 from one_skills.retrieval import HybridRetriever, local_embedding
 from one_skills.recipes import promotion_decision
+from one_skills.profiles import Profile, register_profile
 from one_skills.validation import validate_skill
 
 
@@ -102,6 +113,52 @@ class DatabaseAndRetrievalTests(unittest.TestCase):
 
 
 class PipelineTests(unittest.TestCase):
+    def test_custom_profile_registration_is_usable_by_pipeline(self) -> None:
+        register_profile(
+            Profile(
+                name="compliance",
+                map_dimensions=("controls", "evidence"),
+                candidate_kinds=("rule", "exception"),
+                required_boundaries=("jurisdiction",),
+                compiler="control-pack",
+            )
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source = root / "controls.md"
+            source.write_text("必须记录控制证据，并在例外发生时停止发布。" * 8, encoding="utf-8")
+            pack = create_pack(root, [str(source)], "compliance", "quick", "control-pack")
+            metadata = json.loads((pack / "pack.json").read_text(encoding="utf-8"))
+            self.assertEqual(metadata["profile"], "compliance")
+            registry = json.loads((root / ".one" / "recipes.json").read_text(encoding="utf-8"))
+            self.assertIn("compliance", registry["active"])
+
+    def test_batch_distillation_runs_independent_jobs_concurrently(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            sources = []
+            for index in range(3):
+                source = root / f"source-{index}.md"
+                source.write_text(
+                    f"# Method {index}\n\n必须先确认约束 {index}，然后执行步骤并验证结果。" * 5,
+                    encoding="utf-8",
+                )
+                sources.append(source)
+            jobs = [
+                {
+                    "name": f"batch-{index}",
+                    "sources": [str(source)],
+                    "type": "methodology",
+                    "mode": "quick",
+                    "access": "public",
+                }
+                for index, source in enumerate(sources)
+            ]
+            report = distill_batch(root / "workspace", jobs, workers=3)
+            self.assertEqual(report["created"], 3)
+            self.assertEqual(report["failed"], 0)
+            self.assertEqual(report["workers"], 3)
+
     def test_pipeline_blocks_at_independent_verification_and_cannot_skip(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -203,9 +260,32 @@ class PipelineTests(unittest.TestCase):
             self.assertEqual(load_state(pack)["current_phase"], "evolve")
             installed = install_pack(pack, root / "installed")
             self.assertTrue(Path(installed[0]["destination"]).joinpath("SKILL.md").exists())
-            archive = export_pack(pack, root / "dist")
-            self.assertGreater(archive.stat().st_size, 0)
+            for runtime, prefix in {
+                "generic": "skills/",
+                "codex": ".codex/skills/",
+                "claude": ".claude/skills/",
+                "cursor": ".cursor/skills/",
+            }.items():
+                archive = export_pack(pack, root / "dist", runtime)
+                self.assertGreater(archive.stat().st_size, 0)
+                with zipfile.ZipFile(archive) as zipped:
+                    self.assertTrue(
+                        any(name.startswith(prefix) and name.endswith("/SKILL.md") for name in zipped.namelist())
+                    )
             self.assertEqual(prepare_darwin(pack)["status"], "prepared")
+            manifest = json.loads((pack / "SOURCE_MANIFEST.json").read_text(encoding="utf-8"))
+            source_id = manifest["sources"][0]["source_id"]
+            descendants = lineage(root, "source", source_id)
+            self.assertIn("skill", {item["to_type"] for item in descendants})
+            revocation = revoke_source(root, source_id, "source owner withdrew permission")
+            self.assertEqual(revocation["affected_skills"], [skills[0].name])
+            regression = json.loads(
+                (pack / "reports" / "regression-plan.json").read_text(encoding="utf-8")
+            )
+            self.assertGreater(regression["count"], 0)
+            self.assertEqual(load_state(pack)["phases"]["ship"]["status"], "pending")
+            with self.assertRaises(DeliveryError):
+                install_pack(pack, root / "installed-after-revoke")
 
     def test_model_verification_rejects_non_public_pack_without_authorization(self) -> None:
         class UnusedProvider:

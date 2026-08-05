@@ -22,19 +22,20 @@ class Recipe:
     builder: str
 
 
-DEFAULT_RECIPES = {
-    profile: Recipe(
-        id=f"{profile}-standard",
-        version="1.0.0",
-        profile=profile,
-        parser="structural-text@1.0.0",
-        chunker="semantic-section@1.0.0",
-        extractors=definition.candidate_kinds,
-        verifier="six-gates@1.0.0",
-        builder=f"{definition.compiler}@1.0.0",
-    )
-    for profile, definition in PROFILES.items()
-}
+def default_recipes() -> dict[str, Recipe]:
+    return {
+        profile: Recipe(
+            id=f"{profile}-standard",
+            version="1.0.0",
+            profile=profile,
+            parser="structural-text@1.0.0",
+            chunker="semantic-section@1.0.0",
+            extractors=definition.candidate_kinds,
+            verifier="six-gates@1.0.0",
+            builder=f"{definition.compiler}@1.0.0",
+        )
+        for profile, definition in PROFILES.items()
+    }
 
 
 def initialize_registry(path: Path) -> None:
@@ -45,7 +46,7 @@ def initialize_registry(path: Path) -> None:
         {
             "schema_version": "1.0",
             "updated_at": utc_now(),
-            "active": {name: asdict(recipe) for name, recipe in DEFAULT_RECIPES.items()},
+            "active": {name: asdict(recipe) for name, recipe in default_recipes().items()},
             "history": [],
         },
     )

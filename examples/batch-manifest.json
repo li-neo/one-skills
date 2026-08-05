@@ -1,0 +1,25 @@
+{
+  "jobs": [
+    {
+      "name": "decision-bottleneck-content",
+      "sources": ["examples/sources/decision-bottleneck.md"],
+      "type": "content",
+      "mode": "quick",
+      "access": "public"
+    },
+    {
+      "name": "decision-bottleneck-methodology",
+      "sources": ["examples/sources/decision-bottleneck.md"],
+      "type": "methodology",
+      "mode": "standard",
+      "access": "public"
+    },
+    {
+      "name": "decision-bottleneck-sop",
+      "sources": ["examples/sources/decision-bottleneck.md"],
+      "type": "sop",
+      "mode": "quick",
+      "access": "public"
+    }
+  ]
+}

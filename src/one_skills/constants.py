@@ -55,6 +55,7 @@ RELATION_TYPES = (
     "supports",
     "derived_from",
     "invalidates",
+    "produces",
 )
 
 TEXT_SUFFIXES = {

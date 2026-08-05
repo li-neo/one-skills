@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from importlib.metadata import entry_points
 from pathlib import Path
 import re
 
@@ -69,6 +70,37 @@ PROFILES = {
         "router",
     ),
 }
+_LOADED_PLUGIN_ENTRIES: set[str] = set()
+
+
+def register_profile(profile: Profile, replace: bool = False) -> None:
+    if profile.name in PROFILES and not replace:
+        raise ValueError(f"profile already registered: {profile.name}")
+    if not re.fullmatch(r"[a-z][a-z0-9-]{1,63}", profile.name):
+        raise ValueError("profile name must be hyphen-case")
+    PROFILES[profile.name] = profile
+
+
+def load_profile_plugins() -> list[str]:
+    loaded: list[str] = []
+    discovered = entry_points()
+    selected = (
+        discovered.select(group="one_skills.profiles")
+        if hasattr(discovered, "select")
+        else discovered.get("one_skills.profiles", [])
+    )
+    for entry_point in selected:
+        identity = f"{entry_point.name}:{entry_point.value}"
+        if identity in _LOADED_PLUGIN_ENTRIES:
+            continue
+        value = entry_point.load()
+        profile = value() if callable(value) else value
+        if not isinstance(profile, Profile):
+            raise TypeError(f"profile plugin {entry_point.name} did not return Profile")
+        register_profile(profile)
+        _LOADED_PLUGIN_ENTRIES.add(identity)
+        loaded.append(profile.name)
+    return loaded
 
 
 def detect_profile(documents: list[SourceDocument], source_values: list[str]) -> str:

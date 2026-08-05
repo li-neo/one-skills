@@ -10,7 +10,8 @@ from typing import Sequence
 
 from . import __version__
 from .benchmark import run_profile_benchmark
-from .constants import CONSENT_LEVELS, MODES, OBJECT_TYPES, PHASES
+from .batch import distill_batch, load_jobs
+from .constants import CONSENT_LEVELS, MODES, PHASES
 from .database import KnowledgeDB
 from .delivery import DeliveryError, export_pack, install_pack, prepare_darwin, release_pack
 from .evaluation import evaluate_pack
@@ -21,7 +22,10 @@ from .pipeline import (
     approve_and_compile,
     create_pack,
     init_workspace,
+    lineage,
     load_state,
+    revoke_source,
+    select_regression_tests,
     update_pack,
     verify_and_compile_with_model,
     workspace_for,
@@ -133,6 +137,21 @@ def cmd_search(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_lineage(args: argparse.Namespace) -> int:
+    _print(lineage(_path(args.workspace), args.type, args.id))
+    return 0
+
+
+def cmd_revoke_source(args: argparse.Namespace) -> int:
+    _print(revoke_source(_path(args.workspace), args.id, args.reason))
+    return 0
+
+
+def cmd_regression_plan(args: argparse.Namespace) -> int:
+    _print(select_regression_tests(_path(args.pack), args.skill))
+    return 0
+
+
 def cmd_memory(args: argparse.Namespace) -> int:
     workspace = workspace_for(_path(args.workspace))
     with KnowledgeDB(workspace / ".one" / "knowledge.db") as database:
@@ -185,7 +204,7 @@ def cmd_release(args: argparse.Namespace) -> int:
 
 
 def cmd_export(args: argparse.Namespace) -> int:
-    archive = export_pack(_path(args.pack), _path(args.output))
+    archive = export_pack(_path(args.pack), _path(args.output), args.runtime)
     print(f"exported and verified: {archive}")
     return 0
 
@@ -207,6 +226,12 @@ def cmd_benchmark(args: argparse.Namespace) -> int:
     return 0 if report["rate"] == 1.0 else 1
 
 
+def cmd_batch(args: argparse.Namespace) -> int:
+    report = distill_batch(_path(args.workspace), load_jobs(_path(args.manifest)), args.workers)
+    _print(report)
+    return 1 if report["failed"] else 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="one", description="Evidence-first Skill distillation and knowledge system")
     parser.add_argument("--version", action="version", version=f"one-skills {__version__}")
@@ -220,7 +245,7 @@ def build_parser() -> argparse.ArgumentParser:
     distill = commands.add_parser("distill", help="ingest, index, map, extract, and verify sources")
     distill.add_argument("--source", action="append", required=True)
     distill.add_argument("--workspace", default=".")
-    distill.add_argument("--type", choices=OBJECT_TYPES, default="auto")
+    distill.add_argument("--type", default="auto", help="built-in or entry-point Profile name")
     distill.add_argument("--mode", choices=MODES, default="standard")
     distill.add_argument("--name")
     distill.add_argument("--access", choices=("public", "authorized", "private-local"), default="private-local")
@@ -268,6 +293,23 @@ def build_parser() -> argparse.ArgumentParser:
     search.add_argument("--limit", type=int, default=10)
     search.set_defaults(func=cmd_search)
 
+    lineage_parser = commands.add_parser("lineage", help="list transitive descendants of an asset")
+    lineage_parser.add_argument("--workspace", default=".")
+    lineage_parser.add_argument("--type", required=True)
+    lineage_parser.add_argument("--id", required=True)
+    lineage_parser.set_defaults(func=cmd_lineage)
+
+    revoke = commands.add_parser("source-revoke", help="revoke a source and invalidate dependent Packs")
+    revoke.add_argument("--workspace", default=".")
+    revoke.add_argument("--id", required=True)
+    revoke.add_argument("--reason", required=True)
+    revoke.set_defaults(func=cmd_revoke_source)
+
+    regression = commands.add_parser("regression-plan", help="select local tests by affected Skill lineage")
+    regression.add_argument("pack")
+    regression.add_argument("--skill", action="append", required=True)
+    regression.set_defaults(func=cmd_regression_plan)
+
     memory = commands.add_parser("memory", help="manage temporal Person Profile memory")
     memory_commands = memory.add_subparsers(dest="memory_command", required=True)
     subject = memory_commands.add_parser("subject")
@@ -310,6 +352,7 @@ def build_parser() -> argparse.ArgumentParser:
     export = commands.add_parser("export", help="export a tested Pack")
     export.add_argument("pack")
     export.add_argument("--output", default="dist")
+    export.add_argument("--runtime", default="generic")
     export.set_defaults(func=cmd_export)
 
     evolve = commands.add_parser("evolve", help="prepare a Darwin handoff")
@@ -325,6 +368,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     benchmark.add_argument("--output")
     benchmark.set_defaults(func=cmd_benchmark)
+
+    batch = commands.add_parser("batch", help="distill independent Packs concurrently")
+    batch.add_argument("--manifest", required=True)
+    batch.add_argument("--workspace", default=".")
+    batch.add_argument("--workers", type=int, default=4)
+    batch.set_defaults(func=cmd_batch)
     return parser
 
 

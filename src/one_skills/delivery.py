@@ -7,10 +7,10 @@ import json
 import os
 from pathlib import Path
 import shutil
-import zipfile
 
 from .evaluation import paired_decision
 from .pipeline import advance_phase, load_state
+from .runtime import export_runtime
 from .utils import atomic_write, dump_json, load_json, utc_now
 from .validation import validate_pack
 
@@ -135,23 +135,16 @@ def install_pack(
     return actions
 
 
-def export_pack(pack: Path, output: Path) -> Path:
+def export_pack(pack: Path, output: Path, runtime: str = "generic") -> Path:
     if any(finding.severity == "error" for finding in validate_pack(pack)):
         raise DeliveryError("pack validation failed")
     if load_state(pack)["phases"]["ship"]["status"] != "completed":
         raise DeliveryError("ship phase is not completed")
     _assert_tested(pack)
-    output.mkdir(parents=True, exist_ok=True)
-    archive_path = output / f"{pack.name}.zip"
-    with zipfile.ZipFile(archive_path, "w", zipfile.ZIP_DEFLATED) as archive:
-        for source in sorted((pack / "skills").rglob("*")):
-            if source.is_file():
-                archive.write(source, Path(pack.name) / source.relative_to(pack))
-    with zipfile.ZipFile(archive_path) as archive:
-        names = archive.namelist()
-        if not names or not any(name.endswith("/SKILL.md") for name in names):
-            raise DeliveryError("archive read-back verification failed")
-    return archive_path
+    try:
+        return export_runtime(pack, output, runtime)
+    except ValueError as exc:
+        raise DeliveryError(str(exc)) from exc
 
 
 def prepare_darwin(

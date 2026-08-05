@@ -11,7 +11,7 @@
       "required": ["id", "type", "goal", "scope", "consent"],
       "properties": {
         "id": {"type": "string"},
-        "type": {"enum": ["person", "content", "methodology", "sop", "tool", "skill", "hybrid"]},
+        "type": {"type": "string", "pattern": "^[a-z][a-z0-9-]{1,63}$"},
         "goal": {"type": "string"},
         "scope": {"type": "string"},
         "consent": {"type": "string"}
