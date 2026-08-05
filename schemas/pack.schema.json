@@ -12,6 +12,7 @@
     "mode",
     "sources",
     "access_level",
+    "consent",
     "created_at"
   ],
   "properties": {
@@ -25,6 +26,9 @@
     "mode": {"enum": ["quick", "standard", "deep", "continuous"]},
     "sources": {"type": "array", "items": {"type": "string"}, "minItems": 1},
     "access_level": {"enum": ["public", "authorized", "private-local"]},
+    "consent": {
+      "enum": ["self", "consented", "work-authorized", "public-only", "not-applicable"]
+    },
     "created_at": {"type": "string"}
   },
   "additionalProperties": false

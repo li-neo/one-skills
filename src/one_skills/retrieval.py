@@ -17,7 +17,13 @@ VECTOR_DIMENSIONS = 128
 
 def tokenize(text: str) -> list[str]:
     english = re.findall(r"[a-zA-Z][a-zA-Z0-9_-]{1,}", text.lower())
-    chinese = re.findall(r"[\u4e00-\u9fff]{1,4}", text)
+    chinese: list[str] = []
+    for run in re.findall(r"[\u4e00-\u9fff]+", text):
+        if len(run) == 1:
+            chinese.append(run)
+            continue
+        for size in (2, 3, 4):
+            chinese.extend(run[index : index + size] for index in range(len(run) - size + 1))
     return english + chinese
 
 
@@ -28,8 +34,7 @@ def local_embedding(text: str, dimensions: int = VECTOR_DIMENSIONS) -> list[floa
     for token in tokens:
         digest = blake2b(token.encode("utf-8"), digest_size=8).digest()
         index = int.from_bytes(digest[:4], "big") % dimensions
-        sign = 1.0 if digest[4] & 1 else -1.0
-        vector[index] += sign
+        vector[index] += 1.0
     magnitude = math.sqrt(sum(value * value for value in vector))
     return [value / magnitude for value in vector] if magnitude else vector
 
@@ -72,7 +77,9 @@ class HybridRetriever:
                 rows = self.database.rows(
                     "SELECT c.*, bm25(chunks_fts) AS keyword_score "
                     "FROM chunks_fts JOIN chunks c ON c.id = chunks_fts.chunk_id "
+                    "JOIN documents d ON d.id = c.document_id "
                     f"WHERE chunks_fts MATCH ? AND {clause} "
+                    "AND c.document_version = d.active_version "
                     "ORDER BY keyword_score LIMIT ?",
                     (expression, *access_values, limit),
                 )
@@ -83,7 +90,9 @@ class HybridRetriever:
         conditions = " OR ".join("c.text LIKE ?" for _ in patterns)
         rows = self.database.rows(
             f"SELECT c.*, 0.0 AS keyword_score FROM chunks c "
-            f"WHERE ({conditions}) AND {clause} LIMIT ?",
+            "JOIN documents d ON d.id = c.document_id "
+            f"WHERE ({conditions}) AND {clause} "
+            "AND c.document_version = d.active_version LIMIT ?",
             (*patterns, *access_values, limit),
         )
         return [dict(row) for row in rows]
@@ -96,7 +105,8 @@ class HybridRetriever:
     ) -> list[dict[str, Any]]:
         clause, access_values = self._allowed_clause(allowed_access)
         rows = self.database.rows(
-            f"SELECT c.* FROM chunks c WHERE {clause}",
+            "SELECT c.* FROM chunks c JOIN documents d ON d.id = c.document_id "
+            f"WHERE {clause} AND c.document_version = d.active_version",
             access_values,
         )
         query_vector = local_embedding(query)
@@ -108,6 +118,10 @@ class HybridRetriever:
             except json.JSONDecodeError:
                 vector = []
             score = cosine_similarity(query_vector, vector)
+            # Feature hashing is a dependency-free fallback; a floor avoids
+            # returning collisions as semantic matches.
+            if score < 0.20:
+                continue
             item["semantic_score"] = score
             scored.append((score, item))
         return [item for _, item in sorted(scored, key=lambda pair: pair[0], reverse=True)[:limit]]

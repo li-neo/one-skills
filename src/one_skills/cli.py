@@ -9,9 +9,10 @@ import sys
 from typing import Sequence
 
 from . import __version__
-from .constants import MODES, OBJECT_TYPES, PHASES
+from .benchmark import run_profile_benchmark
+from .constants import CONSENT_LEVELS, MODES, OBJECT_TYPES, PHASES
 from .database import KnowledgeDB
-from .delivery import DeliveryError, export_pack, install_pack, prepare_darwin
+from .delivery import DeliveryError, export_pack, install_pack, prepare_darwin, release_pack
 from .evaluation import evaluate_pack
 from .ingest import IngestionError
 from .pipeline import (
@@ -21,8 +22,11 @@ from .pipeline import (
     create_pack,
     init_workspace,
     load_state,
+    update_pack,
+    verify_and_compile_with_model,
     workspace_for,
 )
+from .provider import OpenAICompatibleProvider, ProviderConfig, ProviderError
 from .retrieval import HybridRetriever, local_embedding
 from .validation import summary, validate_pack, validate_skill
 
@@ -49,6 +53,7 @@ def cmd_distill(args: argparse.Namespace) -> int:
         args.mode,
         args.name,
         args.access,
+        args.consent,
     )
     state = load_state(pack)
     _print(
@@ -77,6 +82,11 @@ def cmd_inspect(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_update(args: argparse.Namespace) -> int:
+    _print(update_pack(_path(args.pack), args.source))
+    return 0
+
+
 def cmd_advance(args: argparse.Namespace) -> int:
     state = advance_phase(_path(args.pack), args.phase, args.status, args.notes or "")
     _print({"current_phase": state["current_phase"], "phases": state["phases"]})
@@ -87,6 +97,21 @@ def cmd_approve(args: argparse.Namespace) -> int:
     skill = approve_and_compile(_path(args.pack), args.candidate, args.reason)
     print(f"compiled Skill: {skill}")
     return 0
+
+
+def cmd_verify_model(args: argparse.Namespace) -> int:
+    config = ProviderConfig.from_environment()
+    if config is None:
+        raise ProviderError(
+            "set ONE_SKILLS_MODEL_BASE_URL, ONE_SKILLS_MODEL_API_KEY, and ONE_SKILLS_MODEL"
+        )
+    skills = verify_and_compile_with_model(
+        _path(args.pack),
+        OpenAICompatibleProvider(config),
+        args.allow_sensitive_data,
+    )
+    _print({"compiled": [str(skill) for skill in skills], "count": len(skills)})
+    return 0 if skills else 1
 
 
 def cmd_search(args: argparse.Namespace) -> int:
@@ -154,6 +179,11 @@ def cmd_install(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_release(args: argparse.Namespace) -> int:
+    _print(release_pack(_path(args.pack)))
+    return 0
+
+
 def cmd_export(args: argparse.Namespace) -> int:
     archive = export_pack(_path(args.pack), _path(args.output))
     print(f"exported and verified: {archive}")
@@ -168,6 +198,13 @@ def cmd_evolve(args: argparse.Namespace) -> int:
     )
     _print(request)
     return 0
+
+
+def cmd_benchmark(args: argparse.Namespace) -> int:
+    suite = _path(args.suite)
+    report = run_profile_benchmark(suite, _path(args.output) if args.output else None)
+    _print(report)
+    return 0 if report["rate"] == 1.0 else 1
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -187,11 +224,17 @@ def build_parser() -> argparse.ArgumentParser:
     distill.add_argument("--mode", choices=MODES, default="standard")
     distill.add_argument("--name")
     distill.add_argument("--access", choices=("public", "authorized", "private-local"), default="private-local")
+    distill.add_argument("--consent", choices=CONSENT_LEVELS)
     distill.set_defaults(func=cmd_distill)
 
     inspect = commands.add_parser("inspect", help="inspect Pack state")
     inspect.add_argument("pack")
     inspect.set_defaults(func=cmd_inspect)
+
+    update = commands.add_parser("update", help="incrementally ingest changed sources")
+    update.add_argument("pack")
+    update.add_argument("--source", action="append", required=True)
+    update.set_defaults(func=cmd_update)
 
     advance = commands.add_parser("advance", help="advance or block a phase without skipping")
     advance.add_argument("pack")
@@ -205,6 +248,18 @@ def build_parser() -> argparse.ArgumentParser:
     approve.add_argument("--candidate", required=True)
     approve.add_argument("--reason", required=True)
     approve.set_defaults(func=cmd_approve)
+
+    verify_model = commands.add_parser(
+        "verify-model",
+        help="run independent V1-V3 verification and capability modeling",
+    )
+    verify_model.add_argument("pack")
+    verify_model.add_argument(
+        "--allow-sensitive-data",
+        action="store_true",
+        help="explicitly authorize sending authorized/private-local evidence to the model endpoint",
+    )
+    verify_model.set_defaults(func=cmd_verify_model)
 
     search = commands.add_parser("search", help="ACL-aware keyword, semantic, and graph retrieval")
     search.add_argument("query")
@@ -248,6 +303,10 @@ def build_parser() -> argparse.ArgumentParser:
     install.add_argument("--force", action="store_true")
     install.set_defaults(func=cmd_install)
 
+    release = commands.add_parser("release", help="apply hard gates and complete test/ship phases")
+    release.add_argument("pack")
+    release.set_defaults(func=cmd_release)
+
     export = commands.add_parser("export", help="export a tested Pack")
     export.add_argument("pack")
     export.add_argument("--output", default="dist")
@@ -258,6 +317,14 @@ def build_parser() -> argparse.ArgumentParser:
     evolve.add_argument("--skill")
     evolve.add_argument("--comparisons")
     evolve.set_defaults(func=cmd_evolve)
+
+    benchmark = commands.add_parser("benchmark", help="run a frozen Profile benchmark suite")
+    benchmark.add_argument(
+        "--suite",
+        required=True,
+    )
+    benchmark.add_argument("--output")
+    benchmark.set_defaults(func=cmd_benchmark)
     return parser
 
 
@@ -269,6 +336,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         DeliveryError,
         IngestionError,
         PipelineError,
+        ProviderError,
         ValueError,
         OSError,
         json.JSONDecodeError,

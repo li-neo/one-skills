@@ -8,12 +8,14 @@ from pathlib import Path
 from typing import Any
 
 from .compiler import capability_from_candidate, compile_skill
-from .constants import MODES, OBJECT_TYPES, PHASE_INDEX, PHASES
+from .constants import CONSENT_LEVELS, MODES, OBJECT_TYPES, PHASE_INDEX, PHASES
 from .database import KnowledgeDB
 from .extraction import approve_candidate, extract_candidates, merge_candidates, verify_candidates
 from .ingest import expand_sources, structural_chunks
-from .models import Candidate, Evidence
+from .models import Candidate, Capability, Evidence
 from .profiles import PROFILES, detect_profile, profile_prompt
+from .provider import ModelProvider, model_capability, verify_candidate
+from .recipes import initialize_registry
 from .retrieval import local_embedding
 from .utils import append_jsonl, atomic_write, dump_json, load_json, new_id, slugify, utc_now
 
@@ -40,6 +42,7 @@ def init_workspace(path: Path, mode: str = "standard") -> Path:
     )
     with KnowledgeDB(root / ".one" / "knowledge.db"):
         pass
+    initialize_registry(root / ".one" / "recipes.json")
     return root
 
 
@@ -137,13 +140,20 @@ def advance_phase(pack: Path, phase: str, status: str, notes: str = "") -> dict[
     return state
 
 
-def _contract(name: str, profile: str, mode: str, sources: list[str]) -> str:
+def _contract(
+    name: str,
+    profile: str,
+    mode: str,
+    sources: list[str],
+    consent: str,
+) -> str:
     source_list = "\n".join(f"- `{source}`" for source in sources)
     return f"""# Distillation Contract
 
 - 对象：{name}
 - Profile：`{profile}`
 - 模式：`{mode}`
+- 授权：`{consent}`
 - 创建时间：{utc_now()}
 
 ## 来源
@@ -169,6 +179,7 @@ def create_pack(
     mode: str = "standard",
     name: str | None = None,
     access_level: str = "private-local",
+    consent: str | None = None,
 ) -> Path:
     if requested_profile not in OBJECT_TYPES:
         raise PipelineError(f"unsupported profile: {requested_profile}")
@@ -179,6 +190,15 @@ def create_pack(
     profile = detect_profile(documents, sources) if requested_profile == "auto" else requested_profile
     if profile not in PROFILES:
         raise PipelineError(f"profile has no implementation: {profile}")
+    if profile == "person":
+        if consent not in CONSENT_LEVELS:
+            raise PipelineError(
+                "person Profile requires --consent self, consented, work-authorized, or public-only"
+            )
+        if consent == "prohibited":
+            raise PipelineError("person distillation is prohibited by the consent contract")
+        if consent == "public-only" and access_level != "public":
+            raise PipelineError("public-only consent requires --access public")
     resolved_name = name or documents[0].title
     pack = root / "packs" / slugify(resolved_name)
     if pack.exists() and any(pack.iterdir()):
@@ -206,11 +226,15 @@ def create_pack(
             "mode": mode,
             "sources": sources,
             "access_level": access_level,
+            "consent": consent or "not-applicable",
             "created_at": utc_now(),
         },
     )
     atomic_write(pack / "EVIDENCE_LEDGER.jsonl", "")
-    atomic_write(pack / "DISTILLATION_CONTRACT.md", _contract(resolved_name, profile, mode, sources))
+    atomic_write(
+        pack / "DISTILLATION_CONTRACT.md",
+        _contract(resolved_name, profile, mode, sources, consent or "not-applicable"),
+    )
     advance_phase(pack, "contract", "completed", "contract generated from explicit CLI inputs")
     _ingest_documents(root, pack, documents, profile)
     return pack
@@ -221,13 +245,23 @@ def _ingest_documents(
     pack: Path,
     documents: list,
     profile: str,
+    append: bool = False,
 ) -> None:
     database_path = workspace / ".one" / "knowledge.db"
-    manifest: list[dict[str, Any]] = []
-    all_chunks: list[dict[str, Any]] = []
+    existing_manifest = load_json(pack / "SOURCE_MANIFEST.json")["sources"] if append else []
+    existing_chunks = load_json(pack / "sources" / "chunks.json") if append else []
+    manifest: list[dict[str, Any]] = list(existing_manifest)
+    all_chunks: list[dict[str, Any]] = list(existing_chunks)
     with KnowledgeDB(database_path) as database:
         for document in documents:
             source_id, document_id, version, created = database.add_document(document, profile)
+            if version > 1:
+                for item in manifest:
+                    if item.get("document_id") == document_id:
+                        item["active"] = False
+                all_chunks = [
+                    item for item in all_chunks if item.get("document_id") != document_id
+                ]
             normalized_path = workspace / "knowledge" / "normalized" / document_id / f"{version}.md"
             atomic_write(normalized_path, document.text + "\n")
             chunks = structural_chunks(document, document_id, version)
@@ -239,6 +273,7 @@ def _ingest_documents(
                     "document_id": document_id,
                     "document_version": version,
                     "created": created,
+                    "active": True,
                     "normalized_uri": str(normalized_path),
                     "chunk_ids": [chunk.id for chunk in chunks],
                 }
@@ -248,6 +283,44 @@ def _ingest_documents(
     dump_json(pack / "sources" / "chunks.json", all_chunks)
     advance_phase(pack, "ingest", "completed", f"indexed {len(documents)} sources")
     _write_object_map(pack, profile, manifest)
+
+
+def update_pack(pack: Path, sources: list[str]) -> dict[str, Any]:
+    """Incrementally ingest changed sources and invalidate downstream phases."""
+    metadata = load_json(pack / "pack.json")
+    documents = expand_sources(sources, metadata["access_level"])
+    before = load_json(pack / "SOURCE_MANIFEST.json")["sources"]
+    state = load_state(pack)
+    for phase in PHASES[PHASE_INDEX["ingest"] :]:
+        state["phases"][phase] = {
+            "status": "in_progress" if phase == "ingest" else "pending",
+            "updated_at": utc_now() if phase == "ingest" else None,
+            "notes": "invalidated by incremental source update",
+        }
+    state["current_phase"] = "ingest"
+    save_state(pack, state)
+    metadata["sources"] = list(dict.fromkeys([*metadata["sources"], *sources]))
+    metadata["updated_at"] = utc_now()
+    dump_json(pack / "pack.json", metadata)
+    workspace = workspace_for(pack)
+    _ingest_documents(workspace, pack, documents, metadata["profile"], append=True)
+    after = load_json(pack / "SOURCE_MANIFEST.json")["sources"]
+    changed = [item for item in after[len(before) :] if item["created"]]
+    existing_skills = sorted(path.parent.name for path in (pack / "skills").glob("*/SKILL.md"))
+    reports = pack / "reports"
+    reports.mkdir(exist_ok=True)
+    atomic_write(
+        reports / "IMPACT.md",
+        "# Incremental Impact\n\n"
+        f"- New source versions: {len(changed)}\n"
+        f"- Existing Skills requiring regression: {', '.join(existing_skills) or 'none'}\n"
+        "- Downstream phases extract through evolve were invalidated and must pass again.\n",
+    )
+    return {
+        "new_source_versions": len(changed),
+        "affected_skills": existing_skills,
+        "current_phase": load_state(pack)["current_phase"],
+    }
 
 
 def _write_object_map(pack: Path, profile: str, manifest: list[dict[str, Any]]) -> None:
@@ -335,11 +408,12 @@ def approve_and_compile(pack: Path, candidate_id: str, reason: str) -> Path:
         if line.strip()
     ]
     linked = [item for item in evidence if item.get("id") in target.evidence_ids]
-    capability = capability_from_candidate(target)
-    skill_dir = compile_skill(pack, capability, linked)
+    profile = load_json(pack / "pack.json")["profile"]
+    capability = capability_from_candidate(target, profile)
+    skill_dir = compile_skill(pack, capability, linked, profile=profile)
     workspace = workspace_for(pack)
     with KnowledgeDB(workspace / ".one" / "knowledge.db") as database:
-        database.add_capability(capability.id, capability.name, load_json(pack / "pack.json")["profile"], capability.to_dict())
+        database.add_capability(capability.id, capability.name, profile, capability.to_dict())
         for evidence_id in capability.evidence_ids:
             database.add_edge("evidence", evidence_id, "supports", "capability", capability.id)
     state = load_state(pack)
@@ -356,6 +430,81 @@ def approve_and_compile(pack: Path, candidate_id: str, reason: str) -> Path:
     return skill_dir
 
 
+def verify_and_compile_with_model(
+    pack: Path,
+    provider: ModelProvider,
+    allow_sensitive_data: bool = False,
+) -> list[Path]:
+    """Run independent semantic gates and compile every accepted candidate."""
+    metadata = load_json(pack / "pack.json")
+    if metadata["access_level"] != "public" and not allow_sensitive_data:
+        raise PipelineError(
+            "non-public Pack data cannot be sent to a model without explicit "
+            "--allow-sensitive-data authorization"
+        )
+    decisions_path = pack / "verified" / "decisions.json"
+    candidates = [Candidate(**value) for value in load_json(decisions_path)]
+    evidence = [
+        json.loads(line)
+        for line in (pack / "EVIDENCE_LEDGER.jsonl").read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    contract = profile_prompt(metadata["profile"])
+    audit: list[dict[str, Any]] = []
+    compiled: list[Path] = []
+    workspace = workspace_for(pack)
+    with KnowledgeDB(workspace / ".one" / "knowledge.db") as database:
+        for candidate in candidates:
+            related = [item for item in evidence if item.get("id") in candidate.evidence_ids]
+            # The independent verifier also sees nearby evidence so it can test recurrence.
+            verification = verify_candidate(provider, asdict(candidate), evidence[:50], contract)
+            audit.append({"candidate_id": candidate.id, **verification})
+            candidate.cross_domain = verification["cross_domain"]
+            candidate.predictive = verification["predictive"]
+            candidate.distinctive = verification["distinctive"]
+            candidate.actionable = verification["actionable"]
+            if not verification["accepted"]:
+                candidate.status = "rejected"
+                candidate.rejection_reason = verification["reason"]
+                dump_json(pack / "rejected" / f"{candidate.id}.json", _candidate_dict(candidate))
+                continue
+            candidate.status = "accepted"
+            candidate.rejection_reason = ""
+            generated = model_capability(provider, asdict(candidate), related, contract)
+            capability = Capability(
+                **generated,
+                evidence_ids=list(candidate.evidence_ids),
+                confidence=0.85,
+            )
+            skill_dir = compile_skill(pack, capability, related, profile=metadata["profile"])
+            compiled.append(skill_dir)
+            database.add_capability(
+                capability.id,
+                capability.name,
+                metadata["profile"],
+                capability.to_dict(),
+            )
+            for evidence_id in capability.evidence_ids:
+                database.add_edge("evidence", evidence_id, "supports", "capability", capability.id)
+    dump_json(decisions_path, [_candidate_dict(item) for item in candidates])
+    dump_json(pack / "audit" / "model-verification.json", audit)
+    if not compiled:
+        advance_phase(pack, "verify", "blocked", "independent model accepted no candidates")
+        return []
+    state = load_state(pack)
+    state["phases"]["verify"] = {
+        "status": "completed",
+        "updated_at": utc_now(),
+        "notes": f"independent model accepted {len(compiled)} candidates",
+    }
+    state["current_phase"] = "compile"
+    state["phases"]["compile"] = {"status": "in_progress", "updated_at": utc_now(), "notes": ""}
+    save_state(pack, state)
+    advance_phase(pack, "compile", "completed", f"compiled {len(compiled)} Skills")
+    _build_index(pack)
+    return compiled
+
+
 def _build_index(pack: Path) -> None:
     skills = sorted(path.parent for path in (pack / "skills").glob("*/SKILL.md"))
     rows = "\n".join(f"- [{skill.name}](skills/{skill.name}/SKILL.md)" for skill in skills)
@@ -364,4 +513,50 @@ def _build_index(pack: Path) -> None:
         f"# Skill Graph\n\n## Skills\n\n{rows or '- none'}\n\n"
         "## Relations\n\nNo relation is emitted without explicit evidence.\n",
     )
+    _write_distillation_ir(pack, skills)
     advance_phase(pack, "link", "completed", f"linked {len(skills)} skills")
+
+
+def _write_distillation_ir(pack: Path, skills: list[Path]) -> None:
+    metadata = load_json(pack / "pack.json")
+    manifest = load_json(pack / "SOURCE_MANIFEST.json")
+    evidence = [
+        json.loads(line)
+        for line in (pack / "EVIDENCE_LEDGER.jsonl").read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    capabilities = [load_json(skill / "capability.json") for skill in skills]
+    evals = [
+        test
+        for skill in skills
+        for test in load_json(skill / "test-prompts.json")
+    ]
+    ir = {
+        "schema_version": "1.0",
+        "object": {
+            "id": metadata["id"],
+            "type": metadata["profile"],
+            "goal": "compile evidence-linked, executable Agent Skills",
+            "scope": f"{len(manifest['sources'])} captured source versions",
+            "consent": metadata["consent"],
+        },
+        "sources": manifest["sources"],
+        "claims": [
+            {
+                "id": item["id"],
+                "statement": item["claim"],
+                "status": "cited",
+                "confidence": item["confidence"],
+                "evidence": [item["locator"]],
+            }
+            for item in evidence
+        ],
+        "capabilities": capabilities,
+        "style": {
+            "enabled": metadata["profile"] == "person",
+            "mode": "advisor",
+            "forbidden_patterns": ["identity impersonation", "unsupported sensitive inference"],
+        },
+        "evals": evals,
+    }
+    dump_json(pack / "ir" / "distillation.json", ir)

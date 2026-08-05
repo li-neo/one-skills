@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/li-neo/one-skills/schemas/canonical-evals.schema.json",
+  "title": "One Skills Canonical Evaluations",
+  "type": "object",
+  "required": ["schema_version", "skill", "profile", "cases"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "skill": {"type": "string", "minLength": 1},
+    "profile": {
+      "enum": ["person", "content", "methodology", "sop", "tool", "skill", "hybrid"]
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 4,
+      "items": {"$ref": "test-prompts.schema.json#/$defs/testCase"}
+    }
+  },
+  "additionalProperties": false
+}

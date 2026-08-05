@@ -65,6 +65,7 @@ def aggregate_results(path: Path, expected_ids: set[str]) -> tuple[dict[str, Any
         "passed": passed,
         "rate": passed / evaluated if evaluated else 0.0,
         "missing": missing,
+        "by_id": selected,
     }, ([f"missing results: {', '.join(missing)}"] if missing else [])
 
 
@@ -82,6 +83,14 @@ def evaluate_pack(pack: Path, results_path: Path | None = None) -> dict[str, Any
         warnings: list[str] = []
         if results_path:
             result, warnings = aggregate_results(results_path, {item["id"] for item in tests})
+            grouped: dict[str, dict[str, int]] = {}
+            for test in tests:
+                test_type = test["type"]
+                grouped.setdefault(test_type, {"evaluated": 0, "passed": 0})
+                if test["id"] in result["by_id"]:
+                    grouped[test_type]["evaluated"] += 1
+                    grouped[test_type]["passed"] += int(result["by_id"][test["id"]])
+            result["by_type"] = grouped
             scores = [
                 Score(item.dimension, item.weight, round(item.weight * result["rate"]), "independent agent results")
                 if item.dimension == "actual_effect"

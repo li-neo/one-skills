@@ -232,8 +232,15 @@ class KnowledgeDB:
                 return existing["id"], linked["document_id"], linked["version"], False
 
         source_id = new_id("source")
-        document_id = new_id("document")
         now = utc_now()
+        previous = self.connection.execute(
+            "SELECT dv.document_id, MAX(dv.version) AS version "
+            "FROM sources s JOIN document_versions dv ON dv.source_id = s.id "
+            "WHERE s.uri = ? GROUP BY dv.document_id ORDER BY version DESC LIMIT 1",
+            (source.source,),
+        ).fetchone()
+        document_id = previous["document_id"] if previous else new_id("document")
+        version = int(previous["version"]) + 1 if previous else 1
         with self.transaction() as connection:
             connection.execute(
                 "INSERT INTO sources VALUES (?, ?, ?, ?, ?, ?, ?)",
@@ -247,15 +254,28 @@ class KnowledgeDB:
                     now,
                 ),
             )
+            if previous:
+                connection.execute(
+                    "UPDATE documents SET title = ?, type = ?, access_level = ?, active_version = ? "
+                    "WHERE id = ?",
+                    (source.title, document_type, source.access_level, version, document_id),
+                )
+                connection.execute(
+                    "UPDATE document_versions SET status = 'superseded' "
+                    "WHERE document_id = ? AND status = 'active'",
+                    (document_id,),
+                )
+            else:
+                connection.execute(
+                    "INSERT INTO documents(id, title, type, access_level, active_version) "
+                    "VALUES (?, ?, ?, ?, 1)",
+                    (document_id, source.title, document_type, source.access_level),
+                )
             connection.execute(
-                "INSERT INTO documents(id, title, type, access_level, active_version) "
-                "VALUES (?, ?, ?, ?, 1)",
-                (document_id, source.title, document_type, source.access_level),
-            )
-            connection.execute(
-                "INSERT INTO document_versions VALUES (?, 1, ?, ?, ?, ?, ?, ?)",
+                "INSERT INTO document_versions VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                 (
                     document_id,
+                    version,
                     source_id,
                     source.content_hash,
                     "one-skills@0.1",
@@ -264,7 +284,7 @@ class KnowledgeDB:
                     now,
                 ),
             )
-        return source_id, document_id, 1, True
+        return source_id, document_id, version, True
 
     def add_chunks(self, chunks: list[Chunk], embeddings: dict[str, list[float]]) -> None:
         with self.transaction() as connection:

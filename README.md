@@ -22,7 +22,7 @@
 
 ## 项目状态
 
-当前处于 **Alpha 工程实现阶段**。核心协议、知识底座和 CLI 已落地，模型驱动验证与多 Profile 端到端样例仍在补齐。
+当前处于 **Alpha 工程验证阶段**。核心协议、知识底座、模型验证、专项编译和完整交付链已落地，多 Profile 示例库与规模化适配仍在补齐。
 
 | 能力 | 状态 |
 |---|---|
@@ -34,8 +34,9 @@
 | 工程架构与知识库索引 | [已实现本地 MVP](docs/ARCHITECTURE.md) |
 | 根目录 `SKILL.md` | 已完成运行协议 |
 | CLI、脚本与 Schema | 已实现 Alpha 版本 |
-| 端到端样例 | 实现中 |
-| 自动化测试 | 已建立，持续扩充 |
+| 端到端工程链 | 已由集成测试覆盖 |
+| 示例库 | 实现中 |
+| 自动化测试 | 10 项，持续扩充 |
 
 当前可运行命令以 `python3 scripts/one.py --help` 或安装后的 `one --help` 为准。README 中尚未出现在 CLI 帮助里的命令仍属于规划接口。
 
@@ -322,7 +323,7 @@ one-skills 并不假设所有对象都能被完整复制。
 
 ---
 
-## 统一中间表示：Neo Distillation IR
+## 统一中间表示：One Distillation IR
 
 one-skills 的关键不是统一最终模板，而是统一中间表示。
 
@@ -561,7 +562,7 @@ Problem → Trigger → Input → Procedure → Output → Done
 
 直接调用 Darwin：
 
-1. 将 neo evals 适配为 Darwin 测试格式
+1. 将 one-skills canonical evals 适配为 Darwin 测试格式
 2. 建立 git 基线
 3. 由 Darwin 做结构与效果评估
 4. paired 独立评审改前与改后
@@ -804,7 +805,7 @@ one-skills 不 fork Darwin，也不重新实现一套优化器。
 集成边界：
 
 ```text
-Neo canonical evals
+One canonical evals
         │
         ▼
 Darwin Adapter
@@ -978,7 +979,8 @@ one distill \
   --type person \
   --name "Example Person" \
   --mode standard \
-  --access authorized
+  --access authorized \
+  --consent self
 ```
 
 ### 从文档创建 Skill
@@ -1009,6 +1011,21 @@ one distill \
 ```bash
 one evolve ./packs/example --skill example-skill
 ```
+
+### 独立模型验证与受控发布
+
+```bash
+export ONE_SKILLS_MODEL_BASE_URL="https://model.example/v1"
+export ONE_SKILLS_MODEL_API_KEY="..."
+export ONE_SKILLS_MODEL="model-name"
+
+one verify-model ./packs/example
+one test ./packs/example --results ./agent-results.json
+one release ./packs/example
+one install ./packs/example --target ~/.codex/skills
+```
+
+非公开 Pack 默认禁止发送到模型端点。只有在确认端点、数据协议和授权范围后，才能显式增加 `--allow-sensitive-data`。
 
 ### 检索与用户画像记忆
 
@@ -1221,42 +1238,46 @@ one-skills 不做以下事情：
 - [x] 定义统一架构
 - [x] 定义 Profile 模型
 - [x] 定义验证与 Darwin 集成原则
-- [ ] 完成正式 Schema
+- [x] 完成 Pack、Evidence、Distillation IR、canonical eval 与 Darwin eval Schema
 
 ### Milestone 1：最小闭环
 
-- [ ] 建立本地 Source Store、文档版本和 SQLite 元数据
-- [ ] 实现结构化 Chunk 与 SQLite FTS5 全文索引
-- [ ] 实现 `content` Profile
-- [ ] 实现 `skill` Profile
-- [ ] 建立 canonical eval schema
-- [ ] 输出一个可运行 Skill
-- [ ] 完成 Trigger 与行为测试
+- [x] 建立本地 Source Store、不可变文档版本和 SQLite 元数据
+- [x] 实现结构化 Chunk、SQLite FTS5 与本地语义索引
+- [x] 实现 `content` Profile
+- [x] 实现 `skill` Profile
+- [x] 建立 canonical eval schema 与 Darwin Adapter
+- [x] 输出可运行、可安装、可导出的 Skill
+- [x] 完成 Trigger、行为、边界、安全与相邻冲突测试框架
 
 ### Milestone 2：人物与 SOP
 
-- [ ] 实现 `person` Profile
-- [ ] 实现授权与隐私清单
-- [ ] 实现 `sop` Profile
-- [ ] 建立 Profile 专项评分卡
+- [x] 实现 `person` Profile 与时序记忆
+- [x] 实现授权等级、模型外发隐私门和撤销数据模型
+- [x] 实现 `sop` Profile 与破坏性操作闭环约束
+- [x] 建立七类 Profile 专项测试
 
 ### Milestone 3：Darwin 与增量更新
 
-- [ ] 建立 Recipe Registry 和固定 Benchmark
-- [ ] 实现 Darwin Adapter
-- [ ] 接入 paired 评审和 git 棘轮
-- [ ] 支持来源增量更新
-- [ ] 支持影响分析与局部回归
+- [x] 建立 Recipe Registry 与非补偿式晋升门
+- [x] 建立七类 Profile 固定 Benchmark 语料与基准运行器
+- [x] 实现 Darwin Adapter
+- [x] 接入 paired 评审决策；Git 提交与回滚由 Darwin 执行
+- [x] 支持来源增量更新与 active version 原子切换
+- [x] 支持影响报告与下游阶段失效
+- [ ] 支持按血缘自动选择局部回归测试
 
 ### Milestone 4：生态化
 
 - [ ] 迁移 PostgreSQL + pgvector + 对象存储
-- [ ] 建立 ACL、异步 Worker 和审计日志
+- [ ] 建立生产级多租户 ACL、异步 Worker 和审计日志
 - [ ] Profile 插件协议
 - [ ] Runtime Adapters
-- [ ] 可复用模板与示例库
+- [x] 建立可复现端到端示例
+- [ ] 扩充 Profile 专项模板与示例库
 - [ ] 批量蒸馏和并发执行
-- [ ] 可视化证据图与质量报告
+- [x] 生成证据索引、质量报告与 Provenance 报告
+- [ ] 可视化证据图
 
 ---
 

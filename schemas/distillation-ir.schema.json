@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/li-neo/one-skills/schemas/distillation-ir.schema.json",
+  "title": "One Skills Distillation IR",
+  "type": "object",
+  "required": ["schema_version", "object", "sources", "claims", "capabilities", "evals"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "object": {
+      "type": "object",
+      "required": ["id", "type", "goal", "scope", "consent"],
+      "properties": {
+        "id": {"type": "string"},
+        "type": {"enum": ["person", "content", "methodology", "sop", "tool", "skill", "hybrid"]},
+        "goal": {"type": "string"},
+        "scope": {"type": "string"},
+        "consent": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "sources": {"type": "array", "items": {"type": "object"}},
+    "claims": {"type": "array", "items": {"type": "object"}},
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id", "name", "problem", "trigger", "inputs", "procedure", "output",
+          "done", "boundaries", "failures", "fallback", "evidence_ids", "confidence"
+        ]
+      }
+    },
+    "style": {"type": "object"},
+    "evals": {"type": "array", "items": {"type": "object"}}
+  },
+  "additionalProperties": false
+}

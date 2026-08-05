@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0",
+  "name": "profile-routing-v1",
+  "cases": [
+    {
+      "id": "person-01",
+      "expected": "person",
+      "title": "访谈记录",
+      "text": "在这次访谈中他说：我通常会先判断长期价值，再决定是否投入。"
+    },
+    {
+      "id": "content-01",
+      "expected": "content",
+      "title": "课程讲义",
+      "text": "前言。本课程分为三个 chapter，作者首先介绍背景，然后给出案例。"
+    },
+    {
+      "id": "methodology-01",
+      "expected": "methodology",
+      "title": "决策方法论",
+      "text": "这个方法论包含诊断框架、核心原则、决策模型和适用边界。"
+    },
+    {
+      "id": "sop-01",
+      "expected": "sop",
+      "title": "发布 Runbook",
+      "text": "标准作业程序：执行前审批，逐步操作，失败走升级路径并完成交接。"
+    },
+    {
+      "id": "tool-01",
+      "expected": "tool",
+      "title": "API Reference",
+      "text": "API reference documents endpoint authentication, request parameters and response schema."
+    },
+    {
+      "id": "skill-01",
+      "expected": "skill",
+      "title": "Agent Skill",
+      "text": "---\nname: example-skill\ndescription: Use when a workflow needs a tested fallback.\n---"
+    },
+    {
+      "id": "hybrid-01",
+      "expected": "hybrid",
+      "title": "组织销售系统",
+      "text": "组织角色需要结合方法论、系统流程、团队案例库和操作约束形成完整能力。"
+    }
+  ]
+}

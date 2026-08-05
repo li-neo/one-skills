@@ -70,6 +70,11 @@ def validate_skill(skill_dir: Path) -> list[Finding]:
             findings.append(Finding("warning", f"skill.{code}", f"missing {code} section", str(path)))
     if len(body.splitlines()) > 500:
         findings.append(Finding("warning", "skill.length", "SKILL.md exceeds 500 lines", str(path)))
+    canonical = skill_dir / "evals" / "canonical.json"
+    if not canonical.exists():
+        findings.append(
+            Finding("warning", "skill.canonical_evals", "missing canonical evals", str(canonical))
+        )
     for match in re.finditer(r"\[[^\]]+\]\(([^)]+)\)", body):
         target = match.group(1).split("#", 1)[0]
         if not target or "://" in target or target.startswith("#"):
@@ -162,7 +167,24 @@ def validate_pack(pack: Path) -> list[Finding]:
         if not (pack / relative).exists():
             findings.append(Finding("error", "pack.missing", f"missing {relative}", str(pack / relative)))
     try:
-        load_state(pack)
+        state = load_state(pack)
+        if state["phases"]["link"]["status"] == "completed" and not (
+            pack / "ir" / "distillation.json"
+        ).exists():
+            findings.append(
+                Finding(
+                    "error",
+                    "ir.missing",
+                    "linked Pack is missing canonical Distillation IR",
+                    str(pack / "ir" / "distillation.json"),
+                )
+            )
+        if state["phases"]["ship"]["status"] == "completed":
+            for relative in ("MODEL_CARD.md", "DIGEST.md", "reports/QUALITY.md", "reports/PROVENANCE.md"):
+                if not (pack / relative).exists():
+                    findings.append(
+                        Finding("error", "release.missing", f"missing {relative}", str(pack / relative))
+                    )
     except (PipelineError, OSError, json.JSONDecodeError) as exc:
         findings.append(Finding("error", "state.invalid", str(exc), str(pack / "PIPELINE_STATE.json")))
     findings.extend(validate_evidence(pack / "EVIDENCE_LEDGER.jsonl"))

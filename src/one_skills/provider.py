@@ -5,12 +5,17 @@ from __future__ import annotations
 from dataclasses import dataclass
 import json
 import os
-from typing import Any
+from typing import Any, Protocol
 from urllib.request import Request, urlopen
 
 
 class ProviderError(RuntimeError):
     pass
+
+
+class ModelProvider(Protocol):
+    def complete_json(self, system: str, user: str, schema_name: str) -> dict[str, Any]:
+        """Return one JSON object without markdown wrappers."""
 
 
 @dataclass(frozen=True)
@@ -69,3 +74,72 @@ class OpenAICompatibleProvider:
         if not isinstance(value, dict):
             raise ProviderError(f"{schema_name} model response must be a JSON object")
         return value
+
+
+def verify_candidate(
+    provider: ModelProvider,
+    candidate: dict[str, Any],
+    evidence: list[dict[str, Any]],
+    profile_contract: str,
+) -> dict[str, Any]:
+    result = provider.complete_json(
+        (
+            "You are an independent capability verifier. Judge only from supplied evidence. "
+            "Do not reward eloquence. Return JSON with booleans cross_domain, predictive, "
+            "distinctive, actionable, boundary; strings novel_question, derived_answer, reason."
+        ),
+        json.dumps(
+            {
+                "profile_contract": profile_contract,
+                "candidate": candidate,
+                "evidence": evidence,
+            },
+            ensure_ascii=False,
+        ),
+        "candidate-verification",
+    )
+    boolean_fields = ("cross_domain", "predictive", "distinctive", "actionable", "boundary")
+    if any(not isinstance(result.get(field), bool) for field in boolean_fields):
+        raise ProviderError("candidate verification must contain all boolean gates")
+    for field in ("novel_question", "derived_answer", "reason"):
+        if not isinstance(result.get(field), str) or not result[field].strip():
+            raise ProviderError(f"candidate verification requires non-empty {field}")
+    result["accepted"] = all(result[field] for field in boolean_fields)
+    return result
+
+
+def model_capability(
+    provider: ModelProvider,
+    candidate: dict[str, Any],
+    evidence: list[dict[str, Any]],
+    profile_contract: str,
+) -> dict[str, Any]:
+    result = provider.complete_json(
+        (
+            "Build an executable capability from a verified candidate. Return JSON with strings "
+            "name, problem, trigger, output, done, fallback; arrays inputs, procedure, boundaries, "
+            "failures. Use only supplied evidence and profile constraints."
+        ),
+        json.dumps(
+            {
+                "profile_contract": profile_contract,
+                "candidate": candidate,
+                "evidence": evidence,
+            },
+            ensure_ascii=False,
+        ),
+        "capability-ir",
+    )
+    string_fields = ("name", "problem", "trigger", "output", "done", "fallback")
+    list_fields = ("inputs", "procedure", "boundaries", "failures")
+    for field in string_fields:
+        if not isinstance(result.get(field), str) or not result[field].strip():
+            raise ProviderError(f"capability IR requires non-empty {field}")
+    for field in list_fields:
+        if (
+            not isinstance(result.get(field), list)
+            or not result[field]
+            or any(not isinstance(item, str) or not item.strip() for item in result[field])
+        ):
+            raise ProviderError(f"capability IR requires non-empty string array {field}")
+    return result

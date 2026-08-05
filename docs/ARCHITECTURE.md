@@ -1006,22 +1006,22 @@ PROFILE_REGISTRY = {
 
 ## 14. API 与 CLI 边界
 
-规划命令：
+当前已实现命令：
 
 ```bash
-neo source add ./docs --access internal
-neo index build --changed-only
-neo search "离职清理涉及哪些系统"
-neo distill --profile sop --source doc-01J...
-neo eval skill offboarding-cleanup
-neo recipe benchmark content-standard@1.4.0
-neo recipe promote content-standard@1.4.0
-neo evolve skill offboarding-cleanup --engine darwin
-neo lineage skill offboarding-cleanup
-neo source revoke src-01J...
+one init .
+one distill --source ./docs --type sop --access authorized
+one update ./packs/example --source ./docs/changed.md
+one search "离职清理涉及哪些系统" --access authorized
+one verify-model ./packs/example
+one test ./packs/example --results ./agent-results.json
+one release ./packs/example
+one install ./packs/example --target ~/.codex/skills
+one export ./packs/example
+one evolve ./packs/example --skill offboarding-cleanup
 ```
 
-Application 层提供相同 Use Case，CLI 和未来 API 只是不同入口。
+Recipe benchmark、血缘查询、来源撤销和 HTTP API 尚未提供 CLI，不应视为已实现接口。Application 层将逐步提供相同 Use Case，CLI 和未来 API 只是不同入口。
 
 ---
 

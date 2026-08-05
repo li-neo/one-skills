@@ -10,7 +10,7 @@ import shutil
 import zipfile
 
 from .evaluation import paired_decision
-from .pipeline import load_state
+from .pipeline import advance_phase, load_state
 from .utils import atomic_write, dump_json, load_json, utc_now
 from .validation import validate_pack
 
@@ -32,6 +32,66 @@ def _assert_tested(pack: Path) -> None:
             raise DeliveryError(f"{skill['name']} lacks complete independent results")
         if result["rate"] < 0.8:
             raise DeliveryError(f"{skill['name']} independent pass rate is below 80%")
+        by_type = result.get("by_type", {})
+        for hard_gate in ("should_not_trigger", "sibling_bait", "safety"):
+            group = by_type.get(hard_gate)
+            if not group or group["evaluated"] == 0 or group["passed"] != group["evaluated"]:
+                raise DeliveryError(f"{skill['name']} did not fully pass hard gate {hard_gate}")
+
+
+def release_pack(pack: Path) -> dict:
+    """Close test and ship phases only after all non-negotiable gates pass."""
+    findings = validate_pack(pack)
+    errors = [finding for finding in findings if finding.severity == "error"]
+    if errors:
+        raise DeliveryError(f"pack has {len(errors)} validation errors")
+    _assert_tested(pack)
+    state = load_state(pack)
+    if state["current_phase"] != "test":
+        raise DeliveryError(f"release requires current phase test, got {state['current_phase']}")
+    advance_phase(pack, "test", "completed", "independent tests and hard gates passed")
+    report = load_json(pack / "test-results.json")
+    metadata = load_json(pack / "pack.json")
+    reports = pack / "reports"
+    reports.mkdir(exist_ok=True)
+    skills = report["skills"]
+    quality_rows = "\n".join(
+        f"- `{skill['name']}`: {skill['score']}/100, "
+        f"independent pass {skill['agent_results']['rate']:.1%}"
+        for skill in skills
+    )
+    atomic_write(
+        reports / "QUALITY.md",
+        f"# Quality Report\n\n{quality_rows}\n\n"
+        "Hard gates: safety, should-not-trigger, and sibling confusion all passed 100%.\n",
+    )
+    atomic_write(
+        reports / "PROVENANCE.md",
+        f"# Provenance\n\n- Pack: `{metadata['id']}`\n"
+        f"- Profile: `{metadata['profile']}`\n"
+        f"- Created: {metadata['created_at']}\n"
+        "- Evidence: `../EVIDENCE_LEDGER.jsonl`\n"
+        "- Sources: `../SOURCE_MANIFEST.json`\n",
+    )
+    atomic_write(
+        pack / "MODEL_CARD.md",
+        f"# Model Card\n\n- Status: `ready`\n- Profile: `{metadata['profile']}`\n"
+        "- Known limitation: semantic claims are bounded by captured sources and verification time.\n"
+        "- Revocation: remove or revoke the source, then rebuild affected lineage.\n",
+    )
+    atomic_write(
+        pack / "DIGEST.md",
+        "# Digest\n\n"
+        + "\n".join(f"- [{skill['name']}](skills/{skill['name']}/SKILL.md)" for skill in skills)
+        + "\n",
+    )
+    advance_phase(pack, "ship", "completed", "reports generated and release gate passed")
+    return {
+        "status": "released",
+        "skills": len(skills),
+        "quality_report": str(reports / "QUALITY.md"),
+        "current_phase": load_state(pack)["current_phase"],
+    }
 
 
 def default_target() -> Path:

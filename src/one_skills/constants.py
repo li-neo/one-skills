@@ -35,6 +35,7 @@ EVIDENCE_TYPES = (
 )
 INFERENCE_LEVELS = ("none", "low", "medium", "high")
 PERMISSIONS = ("public", "authorized", "private-local", "unknown")
+CONSENT_LEVELS = ("self", "consented", "work-authorized", "public-only", "prohibited")
 TEST_TYPES = (
     "should_trigger",
     "should_not_trigger",

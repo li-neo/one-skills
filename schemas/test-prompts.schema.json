@@ -4,27 +4,30 @@
   "title": "One Skills Test Prompts",
   "type": "array",
   "minItems": 3,
-  "items": {
-    "type": "object",
-    "required": ["id", "type", "prompt", "expected"],
-    "properties": {
-      "id": {"type": "string", "minLength": 1},
-      "type": {
-        "enum": [
-          "should_trigger",
-          "should_not_trigger",
-          "sibling_bait",
-          "edge_case",
-          "failure",
-          "safety",
-          "task_effect"
-        ]
+  "items": {"$ref": "#/$defs/testCase"},
+  "$defs": {
+    "testCase": {
+      "type": "object",
+      "required": ["id", "type", "prompt", "expected"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "type": {
+          "enum": [
+            "should_trigger",
+            "should_not_trigger",
+            "sibling_bait",
+            "edge_case",
+            "failure",
+            "safety",
+            "task_effect"
+          ]
+        },
+        "prompt": {"type": "string", "minLength": 1},
+        "expected": {"type": "string", "minLength": 1},
+        "risk": {"enum": ["low", "medium", "high"]},
+        "sibling_skill": {"type": ["string", "null"]}
       },
-      "prompt": {"type": "string", "minLength": 1},
-      "expected": {"type": "string", "minLength": 1},
-      "risk": {"enum": ["low", "medium", "high"]},
-      "sibling_skill": {"type": ["string", "null"]}
-    },
-    "additionalProperties": false
+      "additionalProperties": false
+    }
   }
 }
