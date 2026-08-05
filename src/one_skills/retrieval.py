@@ -54,14 +54,28 @@ def reciprocal_rank_fusion(rankings: list[list[str]], k: int = 60) -> dict[str, 
 
 
 class HybridRetriever:
-    def __init__(self, database: KnowledgeDB):
+    def __init__(
+        self,
+        database: KnowledgeDB,
+        tenant_id: str = "local",
+        principal_id: str = "local-user",
+    ):
         self.database = database
+        self.tenant_id = tenant_id
+        self.principal_id = principal_id
 
     def _allowed_clause(self, allowed_access: set[str]) -> tuple[str, tuple[str, ...]]:
         if not allowed_access:
             return "0", ()
         placeholders = ", ".join("?" for _ in allowed_access)
-        return f"c.access_level IN ({placeholders})", tuple(sorted(allowed_access))
+        clause = (
+            f"c.access_level IN ({placeholders}) AND EXISTS ("
+            "SELECT 1 FROM asset_acl acl "
+            "WHERE acl.asset_type = 'chunk' AND acl.asset_id = c.id "
+            "AND acl.tenant_id = ? AND acl.principal_id IN (?, '*') "
+            "AND acl.permission IN ('read', 'owner'))"
+        )
+        return clause, (*tuple(sorted(allowed_access)), self.tenant_id, self.principal_id)
 
     def keyword_search(
         self,
@@ -156,9 +170,10 @@ class HybridRetriever:
         missing = [item_id for item_id in graph_ids if item_id not in items]
         if missing:
             placeholders = ", ".join("?" for _ in missing)
+            clause, access_values = self._allowed_clause(allowed_access)
             for row in self.database.rows(
-                f"SELECT * FROM chunks WHERE id IN ({placeholders})",
-                tuple(missing),
+                f"SELECT c.* FROM chunks c WHERE c.id IN ({placeholders}) AND {clause}",
+                (*missing, *access_values),
             ):
                 items[row["id"]] = dict(row)
         results: list[dict[str, Any]] = []

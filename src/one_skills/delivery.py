@@ -8,8 +8,10 @@ import os
 from pathlib import Path
 import shutil
 
+from .database import KnowledgeDB
 from .evaluation import paired_decision
-from .pipeline import advance_phase, load_state
+from .pipeline import advance_phase, load_state, workspace_for
+from .reporting import write_evidence_graph
 from .runtime import export_runtime
 from .utils import atomic_write, dump_json, load_json, utc_now
 from .validation import validate_pack
@@ -85,11 +87,15 @@ def release_pack(pack: Path) -> dict:
         + "\n".join(f"- [{skill['name']}](skills/{skill['name']}/SKILL.md)" for skill in skills)
         + "\n",
     )
+    workspace = workspace_for(pack)
+    with KnowledgeDB(workspace / ".one" / "knowledge.db") as database:
+        graph_path = write_evidence_graph(pack, database)
     advance_phase(pack, "ship", "completed", "reports generated and release gate passed")
     return {
         "status": "released",
         "skills": len(skills),
         "quality_report": str(reports / "QUALITY.md"),
+        "evidence_graph": str(graph_path),
         "current_phase": load_state(pack)["current_phase"],
     }
 

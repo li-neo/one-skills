@@ -6,7 +6,11 @@ import tempfile
 import unittest
 import zipfile
 
-from one_skills.compiler import capability_from_candidate, compile_skill
+from one_skills.compiler import (
+    capability_from_candidate,
+    compile_skill,
+    export_profile_templates,
+)
 from one_skills.batch import distill_batch
 from one_skills.database import KnowledgeDB
 from one_skills.delivery import (
@@ -18,6 +22,7 @@ from one_skills.delivery import (
 )
 from one_skills.evaluation import aggregate_results, evaluate_pack, paired_decision
 from one_skills.ingest import IngestionError, assert_public_host, ingest_file, structural_chunks
+from one_skills.jobs import JobQueue, run_worker_once
 from one_skills.models import Candidate
 from one_skills.pipeline import (
     PipelineError,
@@ -52,6 +57,37 @@ class IngestionTests(unittest.TestCase):
 
 
 class DatabaseAndRetrievalTests(unittest.TestCase):
+    def test_persistent_job_worker_retries_and_audits(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            init_workspace(root)
+            with KnowledgeDB(root / ".one" / "knowledge.db") as database:
+                queue = JobQueue(database)
+                good_id = queue.enqueue(
+                    "benchmark",
+                    {
+                        "suite": str(
+                            Path(__file__).resolve().parents[1]
+                            / "benchmarks"
+                            / "profile-routing.json"
+                        )
+                    },
+                )
+            result = run_worker_once(root, "worker-1")
+            self.assertEqual(result["status"], "completed")
+            with KnowledgeDB(root / ".one" / "knowledge.db") as database:
+                queue = JobQueue(database)
+                self.assertEqual(queue.get(good_id)["status"], "completed")
+                bad_id = queue.enqueue("update", {"pack": "/missing", "sources": []}, max_attempts=2)
+            self.assertEqual(run_worker_once(root, "worker-1")["status"], "failed")
+            with KnowledgeDB(root / ".one" / "knowledge.db") as database:
+                self.assertEqual(JobQueue(database).get(bad_id)["status"], "queued")
+            self.assertEqual(run_worker_once(root, "worker-1")["status"], "failed")
+            with KnowledgeDB(root / ".one" / "knowledge.db") as database:
+                self.assertEqual(JobQueue(database).get(bad_id)["status"], "failed")
+                audits = database.rows("SELECT * FROM audit_events")
+                self.assertGreaterEqual(len(audits), 6)
+
     def test_acl_hybrid_search_and_person_fact_history(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -66,6 +102,12 @@ class DatabaseAndRetrievalTests(unittest.TestCase):
                 self.assertEqual(retriever.search("瓶颈价值", {"public"}), [])
                 results = retriever.search("瓶颈价值", {"authorized"})
                 self.assertTrue(results)
+                database.create_tenant("team-a", "Team A")
+                database.create_principal("team-a", "alice", "Alice")
+                team_retriever = HybridRetriever(database, "team-a", "alice")
+                self.assertEqual(team_retriever.search("瓶颈价值", {"authorized"}), [])
+                database.grant_acl("team-a", "alice", "chunk", chunks[0].id, "read")
+                self.assertTrue(team_retriever.search("瓶颈价值", {"authorized"}))
                 source.write_text("# Decisions\n\n新版本要求先验证约束，再分配资源。", encoding="utf-8")
                 updated = ingest_file(source, "authorized")
                 _, same_document_id, second_version, created = database.add_document(
@@ -177,6 +219,10 @@ class PipelineTests(unittest.TestCase):
                 advance_phase(pack, "ship", "completed")
             self.assertTrue((pack / "candidates" / "candidates.json").exists())
             self.assertTrue((pack / "EVIDENCE_LEDGER.jsonl").exists())
+            initial_manifest = json.loads(
+                (pack / "SOURCE_MANIFEST.json").read_text(encoding="utf-8")
+            )
+            self.assertTrue(initial_manifest["sources"][0]["raw_uri"].startswith("file://"))
             source.write_text(
                 "# Context C\n\n新版本要求必须验证完成标准，并记录回滚路径。\n",
                 encoding="utf-8",
@@ -257,6 +303,9 @@ class PipelineTests(unittest.TestCase):
             evaluate_pack(pack, results)
             release = release_pack(pack)
             self.assertEqual(release["status"], "released")
+            graph = (pack / "reports" / "EVIDENCE_GRAPH.md").read_text(encoding="utf-8")
+            self.assertIn("```mermaid", graph)
+            self.assertIn("capability", graph)
             self.assertEqual(load_state(pack)["current_phase"], "evolve")
             installed = install_pack(pack, root / "installed")
             self.assertTrue(Path(installed[0]["destination"]).joinpath("SKILL.md").exists())
@@ -312,6 +361,15 @@ class PipelineTests(unittest.TestCase):
 
 
 class CompilerEvaluationTests(unittest.TestCase):
+    def test_profile_template_library_exports_all_builtin_profiles(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            path = export_profile_templates(Path(temporary) / "profiles.json")
+            templates = json.loads(path.read_text(encoding="utf-8"))
+            self.assertEqual(
+                set(templates["profiles"]),
+                {"person", "content", "methodology", "sop", "tool", "skill", "hybrid"},
+            )
+
     def test_recipe_promotion_uses_non_compensating_gates(self) -> None:
         baseline = {
             "task_success": 0.7,

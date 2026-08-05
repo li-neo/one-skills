@@ -12,10 +12,12 @@ from . import __version__
 from .benchmark import run_profile_benchmark
 from .batch import distill_batch, load_jobs
 from .constants import CONSENT_LEVELS, MODES, PHASES
+from .compiler import export_profile_templates
 from .database import KnowledgeDB
 from .delivery import DeliveryError, export_pack, install_pack, prepare_darwin, release_pack
 from .evaluation import evaluate_pack
 from .ingest import IngestionError
+from .jobs import JobQueue, run_worker_once
 from .pipeline import (
     PipelineError,
     advance_phase,
@@ -121,7 +123,9 @@ def cmd_verify_model(args: argparse.Namespace) -> int:
 def cmd_search(args: argparse.Namespace) -> int:
     workspace = workspace_for(_path(args.workspace))
     with KnowledgeDB(workspace / ".one" / "knowledge.db") as database:
-        results = HybridRetriever(database).search(args.query, set(args.access), args.limit)
+        results = HybridRetriever(database, args.tenant, args.principal).search(
+            args.query, set(args.access), args.limit
+        )
     _print(
         [
             {
@@ -134,6 +138,42 @@ def cmd_search(args: argparse.Namespace) -> int:
             for item in results
         ]
     )
+    return 0
+
+
+def cmd_acl(args: argparse.Namespace) -> int:
+    workspace = workspace_for(_path(args.workspace))
+    with KnowledgeDB(workspace / ".one" / "knowledge.db") as database:
+        if args.acl_command == "tenant":
+            database.create_tenant(args.tenant, args.name)
+        elif args.acl_command == "principal":
+            database.create_principal(args.tenant, args.principal, args.name)
+        else:
+            database.grant_acl(
+                args.tenant,
+                args.principal,
+                args.asset_type,
+                args.asset_id,
+                args.permission,
+            )
+    _print({"status": "ok", "operation": args.acl_command})
+    return 0
+
+
+def cmd_job(args: argparse.Namespace) -> int:
+    workspace = workspace_for(_path(args.workspace))
+    if args.job_command == "worker":
+        result = run_worker_once(workspace, args.owner)
+        _print(result or {"status": "idle"})
+        return 0
+    with KnowledgeDB(workspace / ".one" / "knowledge.db") as database:
+        queue = JobQueue(database)
+        if args.job_command == "submit":
+            payload = json.loads(_path(args.payload).read_text(encoding="utf-8"))
+            job_id = queue.enqueue(args.type, payload, args.max_attempts)
+            _print({"job_id": job_id, "status": "queued"})
+        else:
+            _print(queue.get(args.id))
     return 0
 
 
@@ -232,6 +272,12 @@ def cmd_batch(args: argparse.Namespace) -> int:
     return 1 if report["failed"] else 0
 
 
+def cmd_profiles(args: argparse.Namespace) -> int:
+    path = export_profile_templates(_path(args.output))
+    print(f"exported Profile templates: {path}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="one", description="Evidence-first Skill distillation and knowledge system")
     parser.add_argument("--version", action="version", version=f"one-skills {__version__}")
@@ -290,8 +336,49 @@ def build_parser() -> argparse.ArgumentParser:
     search.add_argument("query")
     search.add_argument("--workspace", default=".")
     search.add_argument("--access", action="append", default=["public"])
+    search.add_argument("--tenant", default="local")
+    search.add_argument("--principal", default="local-user")
     search.add_argument("--limit", type=int, default=10)
     search.set_defaults(func=cmd_search)
+
+    acl = commands.add_parser("acl", help="manage tenant, principal, and asset grants")
+    acl_commands = acl.add_subparsers(dest="acl_command", required=True)
+    acl_tenant = acl_commands.add_parser("tenant")
+    acl_tenant.add_argument("--workspace", default=".")
+    acl_tenant.add_argument("--tenant", required=True)
+    acl_tenant.add_argument("--name", required=True)
+    acl_tenant.set_defaults(func=cmd_acl)
+    acl_principal = acl_commands.add_parser("principal")
+    acl_principal.add_argument("--workspace", default=".")
+    acl_principal.add_argument("--tenant", required=True)
+    acl_principal.add_argument("--principal", required=True)
+    acl_principal.add_argument("--name", required=True)
+    acl_principal.set_defaults(func=cmd_acl)
+    acl_grant = acl_commands.add_parser("grant")
+    acl_grant.add_argument("--workspace", default=".")
+    acl_grant.add_argument("--tenant", required=True)
+    acl_grant.add_argument("--principal", required=True)
+    acl_grant.add_argument("--asset-type", required=True)
+    acl_grant.add_argument("--asset-id", required=True)
+    acl_grant.add_argument("--permission", choices=("read", "write", "owner"), required=True)
+    acl_grant.set_defaults(func=cmd_acl)
+
+    job = commands.add_parser("job", help="submit, inspect, or execute persistent jobs")
+    job_commands = job.add_subparsers(dest="job_command", required=True)
+    job_submit = job_commands.add_parser("submit")
+    job_submit.add_argument("--workspace", default=".")
+    job_submit.add_argument("--type", choices=("distill", "update", "benchmark"), required=True)
+    job_submit.add_argument("--payload", required=True, help="JSON payload file")
+    job_submit.add_argument("--max-attempts", type=int, default=3)
+    job_submit.set_defaults(func=cmd_job)
+    job_status = job_commands.add_parser("status")
+    job_status.add_argument("--workspace", default=".")
+    job_status.add_argument("--id", required=True)
+    job_status.set_defaults(func=cmd_job)
+    job_worker = job_commands.add_parser("worker")
+    job_worker.add_argument("--workspace", default=".")
+    job_worker.add_argument("--owner", required=True)
+    job_worker.set_defaults(func=cmd_job)
 
     lineage_parser = commands.add_parser("lineage", help="list transitive descendants of an asset")
     lineage_parser.add_argument("--workspace", default=".")
@@ -374,6 +461,10 @@ def build_parser() -> argparse.ArgumentParser:
     batch.add_argument("--workspace", default=".")
     batch.add_argument("--workers", type=int, default=4)
     batch.set_defaults(func=cmd_batch)
+
+    profiles = commands.add_parser("profiles", help="export built-in Profile templates")
+    profiles.add_argument("--output", required=True)
+    profiles.set_defaults(func=cmd_profiles)
     return parser
 
 

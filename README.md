@@ -36,7 +36,7 @@
 | CLI、脚本与 Schema | 已实现 Alpha 版本 |
 | 端到端工程链 | 已由集成测试覆盖 |
 | 示例库 | 实现中 |
-| 自动化测试 | 10 项，持续扩充 |
+| 自动化测试 | 13 项，持续扩充 |
 
 当前可运行命令以 `python3 scripts/one.py --help` 或安装后的 `one --help` 为准。README 中尚未出现在 CLI 帮助里的命令仍属于规划接口。
 
@@ -1041,6 +1041,14 @@ one lineage --type source --id <source-id>
 one source-revoke --id <source-id> --reason "来源方撤回授权"
 
 one batch --manifest examples/batch-manifest.json --workers 8
+
+one acl tenant --tenant team-a --name "Team A"
+one acl principal --tenant team-a --principal alice --name "Alice"
+one acl grant --tenant team-a --principal alice \
+  --asset-type chunk --asset-id <chunk-id> --permission read
+
+one job submit --type distill --payload ./job-payload.json
+one job worker --owner worker-01
 ```
 
 ---
@@ -1275,15 +1283,16 @@ one-skills 不做以下事情：
 
 ### Milestone 4：生态化
 
-- [ ] 迁移 PostgreSQL + pgvector + 对象存储
-- [ ] 建立生产级多租户 ACL、异步 Worker 和审计日志
+- [x] 建立本地内容寻址对象存储与可选 S3 Adapter
+- [x] 建立多租户召回前 ACL、持久 Worker lease 和 append-only 审计事件
+- [ ] 完成 PostgreSQL + pgvector 后端并进行生产负载验证
 - [x] Profile entry-point 插件协议
 - [x] Generic、Codex、Claude Code、Cursor Runtime Adapters
 - [x] 建立可复现端到端示例
-- [ ] 扩充 Profile 专项模板与示例库
+- [x] 建立七类 Profile 专项模板导出与示例库
 - [x] 批量蒸馏、错误隔离和有界并发执行
 - [x] 生成证据索引、质量报告与 Provenance 报告
-- [ ] 可视化证据图
+- [x] 发布时生成 Mermaid 可视化证据图
 
 ---
 

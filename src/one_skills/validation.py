@@ -180,7 +180,13 @@ def validate_pack(pack: Path) -> list[Finding]:
                 )
             )
         if state["phases"]["ship"]["status"] == "completed":
-            for relative in ("MODEL_CARD.md", "DIGEST.md", "reports/QUALITY.md", "reports/PROVENANCE.md"):
+            for relative in (
+                "MODEL_CARD.md",
+                "DIGEST.md",
+                "reports/QUALITY.md",
+                "reports/PROVENANCE.md",
+                "reports/EVIDENCE_GRAPH.md",
+            ):
                 if not (pack / relative).exists():
                     findings.append(
                         Finding("error", "release.missing", f"missing {relative}", str(pack / relative))

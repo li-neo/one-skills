@@ -269,3 +269,23 @@ def compile_skill(
 def load_capability(path: Path) -> Capability:
     value = json.loads(path.read_text(encoding="utf-8"))
     return Capability(**value)
+
+
+def export_profile_templates(path: Path) -> Path:
+    dump_json(
+        path,
+        {
+            "schema_version": "1.0",
+            "profiles": {
+                profile: {
+                    **contract,
+                    "specialized_test": {
+                        "prompt": PROFILE_TEST_PROMPTS[profile][0],
+                        "expected": PROFILE_TEST_PROMPTS[profile][1],
+                    },
+                }
+                for profile, contract in PROFILE_CONTRACTS.items()
+            },
+        },
+    )
+    return path

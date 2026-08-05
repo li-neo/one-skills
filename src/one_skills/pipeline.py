@@ -18,6 +18,7 @@ from .profiles import PROFILES, detect_profile, load_profile_plugins, profile_pr
 from .provider import ModelProvider, model_capability, verify_candidate
 from .recipes import initialize_registry
 from .retrieval import local_embedding
+from .storage import LocalBlobStore
 from .utils import append_jsonl, atomic_write, dump_json, load_json, new_id, slugify, utc_now
 
 
@@ -257,8 +258,10 @@ def _ingest_documents(
     existing_chunks = load_json(pack / "sources" / "chunks.json") if append else []
     manifest: list[dict[str, Any]] = list(existing_manifest)
     all_chunks: list[dict[str, Any]] = list(existing_chunks)
+    blob_store = LocalBlobStore(workspace / "knowledge" / "sources")
     with _DB_WRITE_LOCK, KnowledgeDB(database_path) as database:
         for document in documents:
+            raw_uri = blob_store.put_source(document)
             source_id, document_id, version, created = database.add_document(document, profile)
             if version > 1:
                 for item in manifest:
@@ -280,6 +283,7 @@ def _ingest_documents(
                     "created": created,
                     "active": True,
                     "normalized_uri": str(normalized_path),
+                    "raw_uri": raw_uri,
                     "chunk_ids": [chunk.id for chunk in chunks],
                 }
             )

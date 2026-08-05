@@ -164,11 +164,64 @@ CREATE TABLE IF NOT EXISTS runs (
   updated_at TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS jobs (
+  id TEXT PRIMARY KEY,
+  job_type TEXT NOT NULL,
+  payload_json TEXT NOT NULL,
+  status TEXT NOT NULL,
+  attempts INTEGER NOT NULL DEFAULT 0,
+  max_attempts INTEGER NOT NULL DEFAULT 3,
+  lease_owner TEXT,
+  lease_until TEXT,
+  result_json TEXT,
+  error TEXT,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS audit_events (
+  id TEXT PRIMARY KEY,
+  tenant_id TEXT NOT NULL,
+  actor_id TEXT NOT NULL,
+  action TEXT NOT NULL,
+  asset_type TEXT,
+  asset_id TEXT,
+  details_json TEXT NOT NULL,
+  created_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS tenants (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  created_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS principals (
+  tenant_id TEXT NOT NULL REFERENCES tenants(id),
+  id TEXT NOT NULL,
+  display_name TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  PRIMARY KEY (tenant_id, id)
+);
+
+CREATE TABLE IF NOT EXISTS asset_acl (
+  tenant_id TEXT NOT NULL REFERENCES tenants(id),
+  principal_id TEXT NOT NULL,
+  asset_type TEXT NOT NULL,
+  asset_id TEXT NOT NULL,
+  permission TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  PRIMARY KEY (tenant_id, principal_id, asset_type, asset_id, permission)
+);
+
 CREATE INDEX IF NOT EXISTS idx_chunks_document ON chunks(document_id, document_version);
 CREATE INDEX IF NOT EXISTS idx_chunks_access ON chunks(access_level);
 CREATE INDEX IF NOT EXISTS idx_person_facts_subject ON person_facts(subject_id, status);
 CREATE INDEX IF NOT EXISTS idx_edges_from ON lineage_edges(from_type, from_id);
 CREATE INDEX IF NOT EXISTS idx_edges_to ON lineage_edges(to_type, to_id);
+CREATE INDEX IF NOT EXISTS idx_acl_asset ON asset_acl(tenant_id, asset_type, asset_id);
+CREATE INDEX IF NOT EXISTS idx_jobs_status ON jobs(status, created_at);
+CREATE INDEX IF NOT EXISTS idx_audit_asset ON audit_events(asset_type, asset_id, created_at);
 """
 
 
@@ -182,6 +235,15 @@ class KnowledgeDB:
         self.connection.row_factory = sqlite3.Row
         self.connection.execute("PRAGMA foreign_keys = ON")
         self.connection.executescript(SCHEMA)
+        now = utc_now()
+        self.connection.execute(
+            "INSERT OR IGNORE INTO tenants VALUES ('local', 'Local workspace', ?)", (now,)
+        )
+        self.connection.execute(
+            "INSERT OR IGNORE INTO principals VALUES ('local', 'local-user', 'Local user', ?)",
+            (now,),
+        )
+        self.connection.commit()
         self.fts_enabled = self._create_fts()
 
     def _create_fts(self) -> bool:
@@ -326,6 +388,11 @@ class KnowledgeDB:
                         utc_now(),
                     ),
                 )
+                connection.execute(
+                    "INSERT OR IGNORE INTO asset_acl VALUES "
+                    "('local', 'local-user', 'chunk', ?, 'owner', ?)",
+                    (chunk.id, utc_now()),
+                )
 
     def add_claim(
         self,
@@ -437,6 +504,82 @@ class KnowledgeDB:
     def rows(self, query: str, parameters: tuple[Any, ...] = ()) -> list[sqlite3.Row]:
         return list(self.connection.execute(query, parameters).fetchall())
 
+    def create_tenant(self, tenant_id: str, name: str) -> None:
+        self.connection.execute(
+            "INSERT INTO tenants VALUES (?, ?, ?)",
+            (tenant_id, name, utc_now()),
+        )
+        self.connection.commit()
+
+    def create_principal(self, tenant_id: str, principal_id: str, display_name: str) -> None:
+        self.connection.execute(
+            "INSERT INTO principals VALUES (?, ?, ?, ?)",
+            (tenant_id, principal_id, display_name, utc_now()),
+        )
+        self.connection.commit()
+
+    def grant_acl(
+        self,
+        tenant_id: str,
+        principal_id: str,
+        asset_type: str,
+        asset_id: str,
+        permission: str,
+    ) -> None:
+        if permission not in {"read", "write", "owner"}:
+            raise ValueError("ACL permission must be read, write, or owner")
+        tenant = self.connection.execute(
+            "SELECT id FROM tenants WHERE id = ?", (tenant_id,)
+        ).fetchone()
+        if not tenant:
+            raise ValueError(f"tenant does not exist: {tenant_id}")
+        if principal_id != "*":
+            principal = self.connection.execute(
+                "SELECT id FROM principals WHERE tenant_id = ? AND id = ?",
+                (tenant_id, principal_id),
+            ).fetchone()
+            if not principal:
+                raise ValueError(f"principal does not exist: {tenant_id}/{principal_id}")
+        self.connection.execute(
+            "INSERT OR IGNORE INTO asset_acl VALUES (?, ?, ?, ?, ?, ?)",
+            (tenant_id, principal_id, asset_type, asset_id, permission, utc_now()),
+        )
+        self.connection.commit()
+        self.record_audit(
+            tenant_id,
+            "local-user",
+            "acl.granted",
+            asset_type,
+            asset_id,
+            {"principal_id": principal_id, "permission": permission},
+        )
+
+    def record_audit(
+        self,
+        tenant_id: str,
+        actor_id: str,
+        action: str,
+        asset_type: str | None,
+        asset_id: str | None,
+        details: dict[str, Any],
+    ) -> str:
+        event_id = new_id("audit")
+        self.connection.execute(
+            "INSERT INTO audit_events VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            (
+                event_id,
+                tenant_id,
+                actor_id,
+                action,
+                asset_type,
+                asset_id,
+                json.dumps(details, ensure_ascii=False),
+                utc_now(),
+            ),
+        )
+        self.connection.commit()
+        return event_id
+
     def descendants(self, node_type: str, node_id: str) -> list[dict[str, str]]:
         queue = [(node_type, node_id)]
         seen = set(queue)
@@ -491,6 +634,14 @@ class KnowledgeDB:
                     "UPDATE documents SET active_version = ? WHERE id = ?",
                     (active["version"] or 0, document_id),
                 )
+        self.record_audit(
+            "local",
+            "local-user",
+            "source.revoked",
+            "source",
+            source_id,
+            {"uri": source["uri"], "affected_count": len(affected)},
+        )
         return {
             "source_id": source_id,
             "uri": source["uri"],
