@@ -1,8 +1,8 @@
-# neo-skills
+# one-skills
 
 > 将人、知识、方法、流程与既有 Skill，蒸馏为可运行、可验证、可追溯、可进化的 Agent Skills。
 
-`neo-skills` 是一个面向“能力复制”的通用蒸馏框架。
+`one-skills` 是一个面向“能力复制”的通用蒸馏框架。
 
 它不把蒸馏理解为摘要、模仿或提示词改写，而是把一个对象中稳定、可迁移的知识与能力，转换为 Agent 可以在真实场景中调用的执行系统：
 
@@ -14,7 +14,7 @@
 - 蒸馏混合对象：将人物、资料、案例、工具与组织约束组合成一套完整能力包
 - 持续进化：通过测试集、独立评审、回归验证和 Darwin 棘轮持续优化
 
-`neo-skills` 的目标不是“蒸馏万物”这句口号本身，而是建立一套足够通用、又不会牺牲证据与质量的工程协议。
+`one-skills` 的目标不是“蒸馏万物”这句口号本身，而是建立一套足够通用、又不会牺牲证据与质量的工程协议。
 
 > **核心判断：复制的不是材料，而是材料背后可被重新运行的能力。**
 
@@ -49,13 +49,13 @@
 
 > “这里讲了什么？”
 
-neo-skills 回答：
+one-skills 回答：
 
 > “这里有什么能力值得复制？证据是什么？什么时候调用？如何执行？在哪里失效？怎样证明它真的有效？以后如何继续进化？”
 
 ---
 
-## 为什么需要 neo-skills
+## 为什么需要 one-skills
 
 现有知识处理方式通常停在四个层次：
 
@@ -74,15 +74,15 @@ neo-skills 回答：
 - 与相邻 Skills 的路由关系
 - 可持续更新和可回滚的版本机制
 
-neo-skills 把这些要求统一到一条蒸馏流水线中。
+one-skills 把这些要求统一到一条蒸馏流水线中。
 
 ---
 
 ## 参考项目与继承关系
 
-neo-skills 深入参考以下项目，但不会把三套流程机械拼接：
+one-skills 深入参考以下项目，但不会把三套流程机械拼接：
 
-| 项目 | 核心贡献 | neo-skills 继承 | neo-skills 扩展 |
+| 项目 | 核心贡献 | one-skills 继承 | one-skills 扩展 |
 |---|---|---|---|
 | [nuwa-skill](https://github.com/alchaincyf/nuwa-skill) | 蒸馏人的思维方式与表达 DNA | 多源采集、心智模型、决策启发式、表达 DNA、诚实边界、保真度评测 | 私人对象授权、组织角色、能力与人格解耦、隐私分级 |
 | [cangjie-skill](https://github.com/kangarooking/cangjie-skill) | 蒸馏长内容中的方法论 | 整体理解、并行提取、三重验证、原子化、触发设计、压力测试 | 从“书”扩展到文档、SOP、案例库、混合语料和既有 Skill |
@@ -105,7 +105,7 @@ neo-skills 深入参考以下项目，但不会把三套流程机械拼接：
 - SOP Skill 关心“能不能稳定复现、异常时能否恢复、是否满足完成标准”
 - 既有 Skill 关心“触发是否准确、实际效果是否优于 baseline、修改后是否退化”
 
-因此 neo-skills 使用统一内核，但为不同对象装配不同的采集器、提取器、构建器和评测器。
+因此 one-skills 使用统一内核，但为不同对象装配不同的采集器、提取器、构建器和评测器。
 
 ---
 
@@ -234,7 +234,7 @@ Skill 是否有价值，首先取决于：
 
 ### “蒸馏万物”的真实含义
 
-neo-skills 并不假设所有对象都能被完整复制。
+one-skills 并不假设所有对象都能被完整复制。
 
 可以被蒸馏的是：
 
@@ -324,7 +324,7 @@ neo-skills 并不假设所有对象都能被完整复制。
 
 ## 统一中间表示：Neo Distillation IR
 
-neo-skills 的关键不是统一最终模板，而是统一中间表示。
+one-skills 的关键不是统一最终模板，而是统一中间表示。
 
 不同对象都先被转换为 `Distillation IR`，再由 Profile 构建不同产物。
 
@@ -799,7 +799,7 @@ Builder Agent
 
 ## Darwin 集成
 
-neo-skills 不 fork Darwin，也不重新实现一套优化器。
+one-skills 不 fork Darwin，也不重新实现一套优化器。
 
 集成边界：
 
@@ -828,7 +828,7 @@ Neo regression gate
 
 ### 为什么需要适配层
 
-参考项目的 `test-prompts.json` 结构并不完全一致。neo-skills 保留自己的规范化测试集，再生成目标 Darwin 版本所需格式，避免核心数据结构被外部版本绑定。
+参考项目的 `test-prompts.json` 结构并不完全一致。one-skills 保留自己的规范化测试集，再生成目标 Darwin 版本所需格式，避免核心数据结构被外部版本绑定。
 
 ### 受保护约束
 
@@ -858,7 +858,7 @@ Darwin 优化时不得改变：
 ## 产物结构
 
 ```text
-neo-skills/
+one-skills/
 ├── README.md
 ├── SKILL.md
 ├── profiles/
@@ -1152,7 +1152,7 @@ evolution:
 
 ## Runtime 中立
 
-neo-skills 面向 Agent Skills 兼容生态，不绑定单一 Runtime。
+one-skills 面向 Agent Skills 兼容生态，不绑定单一 Runtime。
 
 原则：
 
@@ -1182,7 +1182,7 @@ neo-skills 面向 Agent Skills 兼容生态，不绑定单一 Runtime。
 
 ## 反模式黑名单
 
-neo-skills 不做以下事情：
+one-skills 不做以下事情：
 
 1. 没有原始材料却凭模型记忆“蒸馏”
 2. 把摘要包装成 Skill
@@ -1272,7 +1272,7 @@ docs/adr/
 
 ## 成功标准
 
-neo-skills 成功不是因为支持很多输入格式，而是因为：
+one-skills 成功不是因为支持很多输入格式，而是因为：
 
 1. 用户可以从复杂材料中得到真正可调用的能力
 2. 每个能力都能追溯到来源
@@ -1287,7 +1287,7 @@ neo-skills 成功不是因为支持很多输入格式，而是因为：
 
 ## License 与参考实现边界
 
-neo-skills 参考了多个不同许可证的项目：
+one-skills 参考了多个不同许可证的项目：
 
 - `nuwa-skill`：MIT
 - `darwin-skill`：MIT
@@ -1304,9 +1304,9 @@ neo-skills 参考了多个不同许可证的项目：
 
 ## FAQ
 
-### neo-skills 和知识库有什么区别？
+### one-skills 和知识库有什么区别？
 
-知识库主要负责检索信息。neo-skills 负责把信息转换为触发、判断和行动协议。两者可以组合，但不能互相替代。
+知识库主要负责检索信息。one-skills 负责把信息转换为触发、判断和行动协议。两者可以组合，但不能互相替代。
 
 ### 能完整复制一个人吗？
 
@@ -1318,11 +1318,11 @@ neo-skills 参考了多个不同许可证的项目：
 
 ### 为什么不直接把所有逻辑放进一个超级 SKILL.md？
 
-巨型 Skill 会造成加载成本高、触发模糊、维护困难和测试不可归因。neo-skills 统一的是协议和 IR，不是把所有能力塞进一个文件。
+巨型 Skill 会造成加载成本高、触发模糊、维护困难和测试不可归因。one-skills 统一的是协议和 IR，不是把所有能力塞进一个文件。
 
 ### 为什么直接使用 Darwin，而不是内建进化算法？
 
-Darwin 已经提供独立评审、paired 比较、棘轮和人在回路。neo-skills 应专注蒸馏质量，通过 Adapter 复用成熟优化器。
+Darwin 已经提供独立评审、paired 比较、棘轮和人在回路。one-skills 应专注蒸馏质量，通过 Adapter 复用成熟优化器。
 
 ### 没有 sub-agent 能运行吗？
 
@@ -1332,7 +1332,7 @@ Darwin 已经提供独立评审、paired 比较、棘轮和人在回路。neo-sk
 
 ## 致谢
 
-neo-skills 的设计建立在以下工作的启发之上：
+one-skills 的设计建立在以下工作的启发之上：
 
 - [nuwa-skill](https://github.com/alchaincyf/nuwa-skill)：人物思维与表达 DNA 蒸馏
 - [cangjie-skill](https://github.com/kangarooking/cangjie-skill)：长内容方法论蒸馏
@@ -1343,7 +1343,7 @@ neo-skills 的设计建立在以下工作的启发之上：
 
 ## 项目愿景
 
-neo-skills 希望形成一种新的知识交付单位：
+one-skills 希望形成一种新的知识交付单位：
 
 不是一份读完即忘的文档，不是一段只在演示中有效的提示词，也不是一个无法验证的“数字分身”。
 

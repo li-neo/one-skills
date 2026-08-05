@@ -1,9 +1,9 @@
 ---
-name: "neo-skills"
+name: "one-skills"
 description: "Distills people, content, methodologies, SOPs, or existing skills into traceable, testable Agent Skills. Invoke when users ask to distill, create, repair, validate, or evolve a skill."
 ---
 
-# neo-skills
+# one-skills
 
 将人、内容、方法、流程或既有 Skill 转换为可运行、可验证、可追溯的 Agent Skills。
 
@@ -218,11 +218,11 @@ Problem → Trigger → Input → Procedure → Output → Done
 
 如果用户要求优化或持续进化：
 
-1. 保留 neo-skills 的规范化测试集。
+1. 保留 one-skills 的规范化测试集。
 2. 生成当前 Darwin 版本兼容的 `test-prompts.json`。
 3. 将授权、安全、来源和反触发条件设为受保护约束。
 4. 直接调用 Darwin 执行基线、实验、paired 评审和 keep/revert。
-5. Darwin 完成后重新运行 neo-skills 回归门禁。
+5. Darwin 完成后重新运行 one-skills 回归门禁。
 
 不得为了通过测试而降低测试难度或删除失败案例。
 

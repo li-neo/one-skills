@@ -1,10 +1,10 @@
-# neo-skills 工程架构
+# one-skills 工程架构
 
 > 本文回答三个问题：蒸馏方案如何持续优化、蒸馏产物如何持续进化、技术文档如何保存并建立可追溯的知识库索引。
 
 ## 1. 架构目标
 
-neo-skills 需要同时管理三类长期资产：
+one-skills 需要同时管理三类长期资产：
 
 1. **源知识**：文档、访谈、书籍、SOP、代码、记录和外部资料
 2. **蒸馏逻辑**：Profile、提取器、验证规则、模板和评测标准
@@ -142,12 +142,12 @@ Skill Loop 直接复用 Darwin，优化对象限定为：
 
 ```text
 1. 冻结 source_version、recipe_version、skill_version
-2. 由 neo-skills 生成 Darwin Adapter
+2. 由 one-skills 生成 Darwin Adapter
 3. Darwin 建立 baseline
 4. 每轮只提出可归因修改
 5. 独立 judges 做改前/改后 paired 比较
 6. 多数判断 improved 或 tie 才暂时保留
-7. 运行 neo-skills 全量回归门禁
+7. 运行 one-skills 全量回归门禁
 8. 通过后生成新 skill_version，否则 revert
 ```
 
@@ -902,8 +902,8 @@ MVP 不需要 Kafka。先在数据库中实现 Transactional Outbox，由 Worker
 ## 12. 代码模块
 
 ```text
-neo-skills/
-├── src/neo_skills/
+one-skills/
+├── src/one_skills/
 │   ├── cli/
 │   ├── api/
 │   ├── domain/
