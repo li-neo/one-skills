@@ -48,7 +48,7 @@
 | PostgreSQL + pgvector | migration、HNSW、GIN、ACL 混合查询和负载工具 |
 | 对象存储 | 本地内容寻址；可选 S3 Adapter |
 
-PostgreSQL 外部证据：[GitHub Actions run 30995239307](https://github.com/li-neo/one-skills/actions/runs/30995239307)：
+当前实现外部证据：[GitHub Actions run 31000073539](https://github.com/li-neo/one-skills/actions/runs/31000073539)：
 
 - PostgreSQL 16 + pgvector 容器健康；
 - SQLite 全资产迁移成功；
