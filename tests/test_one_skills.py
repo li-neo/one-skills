@@ -38,6 +38,7 @@ from one_skills.pipeline import (
 from one_skills.retrieval import HybridRetriever, local_embedding
 from one_skills.recipes import promotion_decision
 from one_skills.profiles import Profile, register_profile
+from one_skills.postgres import MIGRATION_TABLES, PostgresBackend
 from one_skills.validation import validate_skill
 
 
@@ -57,6 +58,29 @@ class IngestionTests(unittest.TestCase):
 
 
 class DatabaseAndRetrievalTests(unittest.TestCase):
+    def test_postgres_schema_and_migration_mapping_cover_sqlite_assets(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        migration = (root / "migrations" / "postgres" / "001_initial.sql").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("CREATE EXTENSION IF NOT EXISTS vector", migration)
+        self.assertIn("USING hnsw", migration)
+        self.assertIn("search_vector tsvector", migration)
+        with tempfile.TemporaryDirectory() as temporary:
+            with KnowledgeDB(Path(temporary) / "knowledge.db") as database:
+                tables = {
+                    row["name"]
+                    for row in database.rows(
+                        "SELECT name FROM sqlite_master WHERE type = 'table' "
+                        "AND name NOT LIKE 'chunks_fts%'"
+                    )
+                }
+        self.assertTrue(tables.issubset(set(MIGRATION_TABLES)))
+        self.assertEqual(
+            PostgresBackend._convert_value("chunks", "embedding", "[0.5, -0.25]"),
+            "[0.5,-0.25]",
+        )
+
     def test_persistent_job_worker_retries_and_audits(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

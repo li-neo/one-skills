@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 import sys
 from typing import Sequence
@@ -33,6 +34,7 @@ from .pipeline import (
     workspace_for,
 )
 from .provider import OpenAICompatibleProvider, ProviderConfig, ProviderError
+from .postgres import PostgresBackend
 from .retrieval import HybridRetriever, local_embedding
 from .validation import summary, validate_pack, validate_skill
 
@@ -278,6 +280,26 @@ def cmd_profiles(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_postgres(args: argparse.Namespace) -> int:
+    dsn = os.getenv("ONE_SKILLS_POSTGRES_DSN")
+    if not dsn:
+        raise ValueError("set ONE_SKILLS_POSTGRES_DSN")
+    with PostgresBackend(dsn) as backend:
+        if args.postgres_command == "init":
+            backend.initialize(_path(args.migration))
+            result = backend.health()
+        elif args.postgres_command == "health":
+            result = backend.health()
+        elif args.postgres_command == "migrate":
+            result = {
+                "migrated": backend.migrate_from_sqlite(_path(args.sqlite), args.batch_size)
+            }
+        else:
+            result = backend.load_test(args.query, args.iterations, args.tenant, args.principal)
+    _print(result)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="one", description="Evidence-first Skill distillation and knowledge system")
     parser.add_argument("--version", action="version", version=f"one-skills {__version__}")
@@ -465,6 +487,27 @@ def build_parser() -> argparse.ArgumentParser:
     profiles = commands.add_parser("profiles", help="export built-in Profile templates")
     profiles.add_argument("--output", required=True)
     profiles.set_defaults(func=cmd_profiles)
+
+    postgres = commands.add_parser("postgres", help="initialize, migrate, and verify PostgreSQL")
+    postgres_commands = postgres.add_subparsers(dest="postgres_command", required=True)
+    postgres_init = postgres_commands.add_parser("init")
+    postgres_init.add_argument(
+        "--migration",
+        default="migrations/postgres/001_initial.sql",
+    )
+    postgres_init.set_defaults(func=cmd_postgres)
+    postgres_health = postgres_commands.add_parser("health")
+    postgres_health.set_defaults(func=cmd_postgres)
+    postgres_migrate = postgres_commands.add_parser("migrate")
+    postgres_migrate.add_argument("--sqlite", required=True)
+    postgres_migrate.add_argument("--batch-size", type=int, default=500)
+    postgres_migrate.set_defaults(func=cmd_postgres)
+    postgres_load = postgres_commands.add_parser("load-test")
+    postgres_load.add_argument("--query", required=True)
+    postgres_load.add_argument("--iterations", type=int, default=100)
+    postgres_load.add_argument("--tenant", default="local")
+    postgres_load.add_argument("--principal", default="local-user")
+    postgres_load.set_defaults(func=cmd_postgres)
     return parser
 
 

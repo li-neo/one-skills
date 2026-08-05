@@ -1285,7 +1285,8 @@ one-skills 不做以下事情：
 
 - [x] 建立本地内容寻址对象存储与可选 S3 Adapter
 - [x] 建立多租户召回前 ACL、持久 Worker lease 和 append-only 审计事件
-- [ ] 完成 PostgreSQL + pgvector 后端并进行生产负载验证
+- [x] 完成 PostgreSQL + pgvector 初始化、迁移、ACL 混合检索与负载测试工具
+- [ ] 在目标 PostgreSQL 环境完成并发写入、故障恢复和容量验证
 - [x] Profile entry-point 插件协议
 - [x] Generic、Codex、Claude Code、Cursor Runtime Adapters
 - [x] 建立可复现端到端示例
