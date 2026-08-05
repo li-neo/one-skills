@@ -1167,3 +1167,117 @@ Application 层提供相同 Use Case，CLI 和未来 API 只是不同入口。
 8. **知识库和用户画像必须同时具备精确、语义、关系三种检索能力，但优先合库实现，而非部署多套集群。**
 9. **用户画像是记忆层而非静态成品：事实条目增量更新（ADD/UPDATE/REVOKE）+ 语义召回 + 时序保留。**
 10. **先用合库的 SQLite/PostgreSQL（含 sqlite-vec/pgvector）解决问题，只有深度多跳遍历出现时才引入嵌入式图引擎。**
+
+---
+
+## 19. 从 neo-skills 借鉴的最小执行契约
+
+`li-neo/neo-skills` 是本项目的姊妹仓库，已实现一套可运行的最小蒸馏骨架（`src/neo_skills/` + `tests/` + `schemas/`）。本章把它经过验证的 **7 条硬约束**吸收进 one-skills 的架构规范，并明确边界与差异，用于指导后续代码实现，不重复造轮子也不忽视对方的教训。
+
+### 19.1 Frontmatter 静态校验
+
+**规则**：SKILL.md 的 YAML frontmatter 只允许两个键：`name` 和 `description`。任何附加键都必须报错。
+
+- `name`：不超过 64 字符，正则 `[a-z0-9]+(?:-[a-z0-9]+)*`（lowercase hyphen-case）。
+- `description`：不少于 40 字符，必须同时说明"做什么"和"何时触发"，静态校验须匹配 `use|when|for|使用|当|适用于|触发` 至少一处。
+- SKILL.md 正文超过 500 行触发 `warning`，提示走渐进披露（把领域知识拆入 `references/`）。
+- 正文中所有 `[label](path)` 相对引用必须解析到存在的本地文件。
+
+**为什么**：这是跨 runtime（Claude Code / Codex / Cursor / OpenClaw）加载 Skill 的最低共识。任何 runtime 都不接受多余 frontmatter 键；没有 description 触发词的 Skill 会被静默忽略。
+
+### 19.2 十阶段状态机不可跳阶
+
+**规则**：Pipeline 十个阶段 `contract → ingest → map → extract → verify → compile → link → test → ship → evolve` 由 `PIPELINE_STATE.json` 持久化，`advance_phase(phase, status)` 只有在前置所有阶段状态为 `completed` 时才允许把当前阶段推进为 `completed`；否则拒绝并列出未完成前置。
+
+**状态字段**：每个阶段记录 `status ∈ {pending, in_progress, completed, blocked}` 和 `updated_at`、`notes`。同时生成 `PIPELINE_STATE.md` 供人读，机器状态以 JSON 为准。
+
+**为什么**：状态机是"断点续跑 + 追责 + 拒绝跳步"的唯一基础。文档里写"Phase 0-9"没有意义，只有落到不可跳过的执行契约才有意义。
+
+### 19.3 证据账本的强 Schema
+
+**规则**：`EVIDENCE_LEDGER.jsonl` 每行一条 JSON，字段必须齐备并通过 JSON Schema Draft 2020-12 校验：
+
+| 字段 | 类型 | 约束 |
+|---|---|---|
+| `id` | string | 非空、Pack 内唯一 |
+| `claim` | string | 非空 |
+| `evidence_type` | enum | `quote / verified_position / observed_behavior / third_party_view / model_inference / unknown` |
+| `source` | string | 指向 `SOURCE_MANIFEST` 中的条目 |
+| `locator` | string | 行号、章节路径、URL 片段等可回溯定位 |
+| `confidence` | number | `[0, 1]` 闭区间 |
+| `inference_level` | enum | `none / low / medium / high` |
+| `permission` | enum | `public / authorized / private-local / unknown` |
+
+**关键**：`evidence_type` 六类不可扩展，`inference_level` 分级强制透明化"这是原话还是模型推断"；违反的记录一律拒绝入账。
+
+**为什么**：区分"原话/立场/观察/推断/未知"是所有蒸馏可信度的基石。one-skills 第 6 节的 `claims / evidence_links` 表原来只有 `confidence`，本条把 `evidence_type` 和 `inference_level` 提升为一等公民并纳入静态校验。
+
+### 19.4 七类测试与独立评审隔离
+
+**规则**：每个 Skill 必须携带 `test-prompts.json`（JSON 数组），至少覆盖以下三类且以下七种类型不可扩展：
+
+- 强制覆盖：`should_trigger`、`should_not_trigger`、`edge_case`
+- 可选但建议：`sibling_bait`（相邻 Skill 混淆测试）、`failure`、`safety`、`task_effect`
+
+每条测试至少包含 `id / type / prompt / expected`；`id` 在文件内唯一。
+
+**独立评审纪律**：
+- 静态检查器**永远不填 `actual_effect` 分数**，只能填 0；只有独立 Agent 提交 `agent-results.json` 且 `passed` 字段齐备时才折算。
+- 前向测试的提示语必须使用"`Use $<skill> at <path> to solve <real task>.`"格式，禁止告诉测试 Agent"这在测什么弱点"。
+- 修改 Skill 后不得同步调整冻结测试来迁就答案；测试本身错误时必须记录理由并由用户确认。
+
+**为什么**：创作者自评是所有 skill 质量崩坏的头号原因（对应 SkillLens/SkillOpt 论文中 LLM 自评仅 46.4% 准确率的结论）。
+
+### 19.5 交付前"read-back verification"
+
+**规则**：任何写入外部系统的操作必须遵循 `dry-run → 执行 → 读回校验 → 审计` 四步。具体到本项目：
+
+- 安装 Skill：写入目标目录后必须读回 SKILL.md，任何一处缺失即视为失败。
+- 导出 Pack：zip 打包后必须读回验证 zip 非空且包含预期文件。
+- 覆盖已存在目标：必须先 `rename` 为 `.backup-<timestamp>` 再写新版本，无 `--force` 时直接拒绝。
+- 与本文档第 4 节 `active_version` 原子切换配套：切换后必须回读校验查询命中的是新版本。
+
+**为什么**：这是把"闭环交付"从口号变成机制的唯一办法，与你在项目记忆里"用户离职清理需涵盖所有关联系统"的原子闭环需求同源。
+
+### 19.6 SSRF 与私网默认拒绝
+
+**规则**：所有 URL 摄入路径默认拒绝解析到私有、环回、链路本地、保留、组播、未指定 IP 段的 hostname；重定向后的最终 URL 必须再校验一次；只有显式 `--allow-private-network` 时才放行。
+
+- 校验点：`socket.getaddrinfo(hostname)` 返回的所有 IP 都必须是公网可路由地址。
+- 尺寸限制：URL 内容最大 20 MiB、本地文件最大 100 MiB，超过直接拒绝，不试图截断。
+- 编码降级顺序固定为 `utf-8-sig → utf-8 → gb18030 → big5 → latin-1`，失败时报错不猜。
+
+**为什么**：SSRF 是 Agent 调用外部 URL 时最便宜、最关键的一道默认阈值；同时限制大小和编码链路避免"部分成功、部分猜测"的静默错误。
+
+### 19.7 Darwin 降级契约
+
+**规则**：`evolve` 阶段调用 Darwin 优化 Skill 时，如果本地没有可用的 `darwin-skill`：
+
+- 只写 `evolution/DARWIN_REQUEST.md` 和 `evolution/darwin-request.json`，`status` 保持 `prepared`。
+- 不修改任何 Skill 文件、不宣称"已进化"。
+- 后续人工或系统在有 Darwin 时读取该请求文件继续，测试集必须保持冻结。
+
+**Darwin 使用纪律**（有 Darwin 时）：
+- 冻结测试集 + 冻结基线；每轮只改一个维度；同一裁判成对比较 before/after；3 个（必要时 5 个）裁判多数决；多数变差用 `git revert`；连续轻微改善或平局时停止。
+- 结果按行追加 `evolution/results.tsv`：`timestamp / skill / round / dimension / commit / judges / better / tie / worse / decision / notes`。
+
+**为什么**：Darwin 不可用时**沉默失败或虚假声称"已优化"是这类系统最常见的诚信崩坏点**。降级契约把"没做到"变成显式状态，而不是模糊承诺。
+
+### 19.8 与 neo-skills 的差异（不倒退清单）
+
+以下 5 点是 one-skills 相对 neo-skills 的核心增量，不能因为"向姊妹项目学习"而放弃：
+
+1. **知识库层**：neo-skills 的 Pack 是孤岛，one-skills 在第 4-9 节定义了跨 Pack 的证据/能力索引和混合检索。
+2. **Person Profile 记忆层**：neo-skills 每次人物蒸馏都从零开始；one-skills 第 6.1 节的 `person_facts` 支持 ADD/UPDATE/REVOKE 三态增量更新和语义召回。
+3. **多租户 ACL**：neo-skills 无租户概念；one-skills 第 8.1 节要求 ACL 先于召回、进入数据库过滤条件。
+4. **三类进化闭环**：neo-skills 只有 `evolve` 一个 Skill Loop；one-skills 第 2 节明确 Recipe Loop / Skill Loop / Knowledge Loop 三条独立闭环。
+5. **候选抽取**：neo-skills 用正则关键词做 `bootstrap_candidates`，one-skills 应走"chunk + embedding + LLM 抽取 + 三重验证"完整链路，不退化为过程式脚本。
+
+### 19.9 反向输出：one-skills 建议 neo-skills 补的 4 项
+
+作为姊妹项目的双向反馈，one-skills 建议 neo-skills 未来演进补上：
+
+1. `knowledge/` 命名空间和跨 Pack 索引（对应 one-skills 第 4-7 节）。
+2. `person_facts` 增量记忆表和三态更新（对应 one-skills 第 6.1 节）。
+3. Recipe Loop 与 Knowledge Loop 边界（对应 one-skills 第 2 节）。
+4. `pack.py` 按 Control / Knowledge / Distillation / Evaluation 四平面拆分，避免过程式脚本 + 硬编码路径（对应 one-skills 第 3、12 节）。

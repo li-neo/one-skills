@@ -262,3 +262,15 @@ Problem → Trigger → Input → Procedure → Output → Done
 - 最后更新时间
 
 恢复时先读取状态和已有产物，不重复已完成工作。
+
+## 最小执行契约
+
+以下 7 条硬约束吸收自姊妹项目 `li-neo/neo-skills` 的已验证实现，任何 Skill 交付都必须满足。完整规范见 `docs/ARCHITECTURE.md` 第 19 章。
+
+1. **Frontmatter**：只允许 `name`（≤64 字符 hyphen-case）与 `description`（≥40 字符且含触发词）。
+2. **Pipeline 状态机**：十阶段 `contract→ingest→map→extract→verify→compile→link→test→ship→evolve` 由 `PIPELINE_STATE.json` 持久化，不能跳阶。
+3. **证据 Schema**：`EVIDENCE_LEDGER.jsonl` 每条必须含 `id / claim / evidence_type / source / locator / confidence[0,1] / inference_level / permission`；`evidence_type` 只能是 `quote / verified_position / observed_behavior / third_party_view / model_inference / unknown`。
+4. **测试覆盖**：`test-prompts.json` 必须至少含 `should_trigger / should_not_trigger / edge_case`；静态检查永远不填 `actual_effect` 分，只有独立 Agent 结果才折算。
+5. **交付读回**：安装、导出、切换 `active_version` 后必须读回校验；覆盖已存在目标须先 `.backup-<timestamp>`。
+6. **URL 安全**：默认拒绝私有/环回/链路本地 IP，重定向后再校验；URL ≤20 MiB，本地文件 ≤100 MiB。
+7. **Darwin 降级**：无 Darwin 时只写 `DARWIN_REQUEST.md` 并保持 `status: prepared`，不得声称"已进化"。
