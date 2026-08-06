@@ -22,7 +22,7 @@
 
 ## 项目状态
 
-当前处于 **Alpha 工程验证阶段**。核心协议、知识底座、模型验证、专项编译和完整交付链已落地，多 Profile 示例库与规模化适配仍在补齐。
+当前版本 **0.2.0**，处于 **Alpha 工程验证阶段**。核心协议、知识底座、模型验证、专项编译和完整交付链已落地，多 Profile 示例库与规模化适配仍在补齐。
 
 | 能力 | 状态 |
 |---|---|
@@ -37,11 +37,17 @@
 | 端到端工程链 | 已由集成测试覆盖 |
 | 示例库 | 已实现单任务、批量并发与七类 Profile 基准 |
 | Guided 蒸馏 | 已实现可恢复会话、证据分级、人工检查点与无损入 Pack |
-| 自动化测试 | 21 项，持续扩充 |
+| 高质量来源 | 已实现 Source Catalog、集合质量门、独立来源组、反证和 holdout |
+| Skill 召回 | 已实现字段感知 sparse/dense 召回、margin 与拒答 |
+| 学习模式 | 已实现先修路径、掌握证据和间隔复习状态 |
+| 经验进化 | 已实现 append-only 反馈、复现门和 holdout 隔离 |
+| 自动化测试 | 27 项，持续扩充 |
 
 当前可运行命令以 `python3 scripts/one.py --help` 或安装后的 `one --help` 为准。README 中尚未出现在 CLI 帮助里的命令仍属于规划接口。
 
 工程实现、技术文档保存、混合检索、增量索引和三类持续优化闭环详见 [工程架构](docs/ARCHITECTURE.md)。
+
+2026 年 Agent Skills、Skill Retrieval、RAG/Memory、深度研究来源质量、学习路径和持续经验学习的完整复审见 [2026 架构审计](docs/RESEARCH_2026_ARCHITECTURE_AUDIT.md)。
 
 ---
 
@@ -95,7 +101,7 @@ one-skills 深入参考以下项目，但不会把三套流程机械拼接：
 
 | 项目 | Commit |
 |---|---|
-| neo-skills | `104f966ab731782b6b26524f8b45c9560aab3473`（v0.2.2） |
+| neo-skills | `d88f6db02691dd8dbadeebdb1d6bb247af59dd38`（v0.2.8） |
 | cangjie-skill | `55e4b7059c423534f94cfbdeb0a4ee34f3ba6182` |
 | nuwa-skill | `27642f5bfed2dc1bbf8ee59a2c1ee602a626bbd7` |
 | darwin-skill | `2fbaf4171e453d5c66fc8109a296ae89c4772bc3` |
@@ -978,6 +984,51 @@ python3 scripts/one.py --help
 ```bash
 one distill --source ./inputs --type auto --workspace .
 ```
+
+对象仍不明确时先使用可拒答路由，不猜测：
+
+```bash
+one route --intent "把这个人的著作和决策方法做成可运行能力"
+```
+
+### 高质量来源目录
+
+```bash
+one source template --output SOURCE_CATALOG.json
+one source audit \
+  --catalog SOURCE_CATALOG.json \
+  --type methodology \
+  --mode deep
+
+one distill \
+  --workspace . \
+  --source-catalog SOURCE_CATALOG.json \
+  --type methodology \
+  --mode deep \
+  --name example
+```
+
+来源目录把一手、二手、反证、验证锚点和 `evaluation_only` 分开，完整协议见 [来源质量](docs/SOURCE_QUALITY.md)。
+
+### Skill 召回、学习与反馈
+
+```bash
+one skill-search "只看了行业报告，还没访谈用户" \
+  --root ./packs/example/skills
+
+one learn init ./packs/example --learner alice
+one learn next ./packs/example --learner alice
+
+one experience record ./packs/example \
+  --skill example-skill \
+  --task-signature "重复出现的失败模式" \
+  --outcome failure \
+  --result-summary "实际结果摘要" \
+  --evidence-locator run:001
+one experience mine ./packs/example
+```
+
+详见 [学习路径与经验进化](docs/LEARNING_AND_EXPERIENCE.md)。
 
 ### 材料不足时启动 Guided Session
 

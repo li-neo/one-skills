@@ -24,6 +24,7 @@
     "profile": {"type": "string", "pattern": "^[a-z][a-z0-9-]{1,63}$"},
     "mode": {"enum": ["quick", "standard", "deep", "continuous"]},
     "sources": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "source_catalog": {"type": ["string", "null"]},
     "access_level": {"enum": ["public", "authorized", "private-local"]},
     "consent": {
       "enum": ["self", "consented", "work-authorized", "public-only", "not-applicable"]

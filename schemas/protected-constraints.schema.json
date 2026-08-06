@@ -7,6 +7,7 @@
     "schema_version",
     "created_at",
     "source_hashes",
+    "source_quality_hash",
     "protected",
     "canonical_eval_hashes",
     "runtime_eval_hashes"
@@ -30,7 +31,8 @@
     "runtime_eval_hashes": {
       "type": "object",
       "additionalProperties": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
-    }
+    },
+    "source_quality_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
   },
   "additionalProperties": false
 }

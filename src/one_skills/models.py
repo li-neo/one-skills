@@ -21,6 +21,14 @@ class SourceDocument:
     license: str | None = None
     extractor: str = "plain-text"
     warnings: tuple[str, ...] = ()
+    authority: str = "unknown"
+    directness: str = "unknown"
+    independence_group: str = ""
+    source_role: str = "evidence"
+    source_uri: str | None = None
+    creator: str | None = None
+    published_at: str | None = None
+    quality_score: float = 0.0
 
     def metadata(self) -> dict[str, Any]:
         result = asdict(self)
@@ -40,6 +48,10 @@ class Chunk:
     content_hash: str
     access_level: str
     source_locator: str
+    source_key: str = ""
+    independence_group: str = ""
+    authority: str = "unknown"
+    source_role: str = "evidence"
 
 
 @dataclass(frozen=True)
@@ -51,6 +63,11 @@ class Evidence:
     confidence: float
     inference_level: str
     permission: str
+    source_key: str = ""
+    independence_group: str = ""
+    authority: str = "unknown"
+    chunk_id: str = ""
+    document_version: int | None = None
     id: str = field(default_factory=lambda: new_id("ev"))
     notes: str = ""
     recorded_at: str = field(default_factory=utc_now)
@@ -81,8 +98,11 @@ class Candidate:
     evidence_ids: list[str]
     source_contexts: list[str]
     tags: list[str] = field(default_factory=list)
+    source_ids: list[str] = field(default_factory=list)
+    independence_groups: list[str] = field(default_factory=list)
     id: str = field(default_factory=lambda: new_id("candidate"))
     cross_domain: bool = False
+    source_independent: bool = False
     predictive: bool = False
     distinctive: bool = False
     actionable: bool = False

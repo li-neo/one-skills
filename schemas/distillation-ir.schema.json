@@ -31,7 +31,8 @@
       }
     },
     "style": {"type": "object"},
-    "evals": {"type": "array", "items": {"type": "object"}}
+    "evals": {"type": "array", "items": {"type": "object"}},
+    "learning_path": {"type": "object"}
   },
   "additionalProperties": false
 }

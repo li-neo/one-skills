@@ -1,0 +1,29 @@
+{
+  "title": "工作论文使用模型和历史数据解释制度机制，不应被简化为单因果结论。它与官方历史决议的证...",
+  "candidate_type": "framework",
+  "summary": "工作论文使用模型和历史数据解释制度机制，不应被简化为单因果结论。它与官方历史决议的证据类型、作者群和制度位置不同，二者共同使用能够降低单一叙事偏差。",
+  "evidence_ids": [
+    "ev-20260806175133386196-f7a196a3"
+  ],
+  "source_contexts": [
+    "https://www.nber.org/papers/w16361::证据边界"
+  ],
+  "tags": [
+    "methodology",
+    "framework"
+  ],
+  "source_ids": [
+    "https://www.nber.org/papers/w16361"
+  ],
+  "independence_groups": [
+    "nber-meng-qian-yared"
+  ],
+  "id": "candidate-20260806175133386202-8e3c5c29",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": true,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable"
+}

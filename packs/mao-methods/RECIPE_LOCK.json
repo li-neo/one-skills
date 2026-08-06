@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "locked_at": "2026-08-06T17:51:33+00:00",
+  "recipe": {
+    "id": "methodology-standard",
+    "version": "1.0.0",
+    "profile": "methodology",
+    "parser": "structural-text@1.0.0",
+    "chunker": "semantic-section@1.0.0",
+    "extractors": [
+      "framework",
+      "principle",
+      "case",
+      "counterexample",
+      "term"
+    ],
+    "verifier": "six-gates@1.0.0",
+    "builder": "atomic-network@1.0.0"
+  }
+}

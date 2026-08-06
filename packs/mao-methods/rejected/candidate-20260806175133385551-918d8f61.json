@@ -1,0 +1,29 @@
+{
+  "title": "决议第20段指出，文化大革命对当时阶级形势和党政状况的估计是完全错误的，并具体记录了...",
+  "candidate_type": "case",
+  "summary": "决议第20段指出，“文化大革命”对当时阶级形势和党政状况的估计“是完全错误的”，并具体记录了是非与敌我的混淆、知识分子和干部受到打击、党政组织受到冲击等后果。",
+  "evidence_ids": [
+    "ev-20260806175133385542-f307af8d"
+  ],
+  "source_contexts": [
+    "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::决议明确记录的失效"
+  ],
+  "tags": [
+    "methodology",
+    "case"
+  ],
+  "source_ids": [
+    "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm"
+  ],
+  "independence_groups": [
+    "1981-central-resolution"
+  ],
+  "id": "candidate-20260806175133385551-918d8f61",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": true,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable"
+}

@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/li-neo/one-skills/schemas/source-catalog.schema.json",
+  "title": "One Skills Source Catalog",
+  "type": "object",
+  "required": ["schema_version", "subject", "research_questions", "sources"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "subject": {"type": "string", "minLength": 1},
+    "research_questions": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "requirements": {"type": "object"},
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "ingest",
+          "uri",
+          "title",
+          "authority",
+          "directness",
+          "independence_group",
+          "role",
+          "coverage",
+          "access"
+        ],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "ingest": {"type": "string", "minLength": 1},
+          "uri": {"type": "string", "minLength": 1},
+          "title": {"type": "string", "minLength": 1},
+          "creator": {"type": "string"},
+          "authority": {
+            "enum": [
+              "primary",
+              "official",
+              "scholarly",
+              "reputable-secondary",
+              "community",
+              "unknown"
+            ]
+          },
+          "directness": {"enum": ["direct", "derived", "tertiary", "unknown"]},
+          "independence_group": {"type": "string", "minLength": 1},
+          "role": {
+            "enum": [
+              "evidence",
+              "context",
+              "counterevidence",
+              "verification_anchor",
+              "evaluation_only"
+            ]
+          },
+          "coverage": {"type": "array", "items": {"type": "string"}},
+          "temporal_scope": {"enum": ["historical", "evergreen", "current"]},
+          "published_at": {"type": "string"},
+          "locator": {"type": "string"},
+          "license": {"type": "string"},
+          "usage_rights": {"type": "string"},
+          "access": {
+            "enum": ["public", "authorized", "private-local", "unknown"]
+          },
+          "accessible": {"type": "boolean"}
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,29 @@
+{
+  "title": "Claim-Type: principle",
+  "candidate_type": "principle",
+  "summary": "Claim-Type: principle",
+  "evidence_ids": [
+    "ev-20260806175133384245-5a7b3934"
+  ],
+  "source_contexts": [
+    "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：版本与归属"
+  ],
+  "tags": [
+    "methodology",
+    "principle"
+  ],
+  "source_ids": [
+    "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice"
+  ],
+  "independence_groups": [
+    "mao-authorized-works"
+  ],
+  "id": "candidate-20260806175133384252-85f57fcb",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

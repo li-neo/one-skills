@@ -1,0 +1,29 @@
+{
+  "title": "该决议是中共中央的正式历史结论，既有高文本权威，也承担特定政治和组织功能。它能证明官...",
+  "candidate_type": "counterexample",
+  "summary": "该决议是中共中央的正式历史结论，既有高文本权威，也承担特定政治和组织功能。它能证明官方结论与制度反思，不能单独穷尽所有历史因果；具体事实仍需档案和独立研究交叉验证。",
+  "evidence_ids": [
+    "ev-20260806175133385700-1b630e47"
+  ],
+  "source_contexts": [
+    "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::证据边界"
+  ],
+  "tags": [
+    "methodology",
+    "counterexample"
+  ],
+  "source_ids": [
+    "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm"
+  ],
+  "independence_groups": [
+    "1981-central-resolution"
+  ],
+  "id": "candidate-20260806175133385708-d96a7fd5",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": true,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable"
+}

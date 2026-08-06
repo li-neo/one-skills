@@ -1,0 +1,29 @@
+{
+  "title": "《党委会的工作方法》把集体领导写成一组具体工作规则，包括书记善于当班长、把问题摆到桌...",
+  "candidate_type": "framework",
+  "summary": "《党委会的工作方法》把集体领导写成一组具体工作规则，包括书记善于当“班长”、把问题摆到桌面、互通情报、不懂就问、抓紧中心工作并兼顾其他工作。文中“弹钢琴”的比喻强调十个指头都要动作，但要有节奏和配合。",
+  "evidence_ids": [
+    "ev-20260806175133385243-f79f4650"
+  ],
+  "source_contexts": [
+    "https://www.12371.cn/special/mzdxj/d4j/#committee-methods::可核验结构"
+  ],
+  "tags": [
+    "methodology",
+    "framework"
+  ],
+  "source_ids": [
+    "https://www.12371.cn/special/mzdxj/d4j/#committee-methods"
+  ],
+  "independence_groups": [
+    "mao-authorized-works"
+  ],
+  "id": "candidate-20260806175133385251-f5c1ba48",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": true,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts"
+}

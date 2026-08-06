@@ -1,0 +1,25 @@
+{
+  "schema_version": "0.2",
+  "id": "pack-20260806175133311964-d6800ddc",
+  "name": "mao-methods",
+  "slug": "mao-methods",
+  "profile": "methodology",
+  "mode": "deep",
+  "sources": [
+    "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice",
+    "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction",
+    "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods",
+    "https://www.12371.cn/special/mzdxj/d4j/#committee-methods",
+    "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm",
+    "https://www.nber.org/papers/w16361",
+    "https://www.dswxyjy.org.cn/n1/2021/0118/c219000-32003108.html"
+  ],
+  "source_catalog": "examples/mao-methods/SOURCE_CATALOG.json",
+  "access_level": "public",
+  "consent": "not-applicable",
+  "recipe": {
+    "id": "methodology-standard",
+    "version": "1.0.0"
+  },
+  "created_at": "2026-08-06T17:51:33+00:00"
+}

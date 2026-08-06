@@ -1177,18 +1177,20 @@ CLI 与 HTTP API 复用相同知识库、ACL 和持久 Job Queue。HTTP 写请�
 
 ## 19. 从 neo-skills 借鉴的最小执行契约
 
-`li-neo/neo-skills` 是本项目的姊妹仓库。本文最初吸收其最小蒸馏骨架的 7 条硬约束，并在 2026-08-05 重新审计 v0.2.2（commit `104f966a`）新增的 IR / Lineage / Recipe、完整路径 Playbook 和 Guided Distillation Controller。已有能力不重复移植；新增设计按 one-skills 的知识库、权限与血缘协议重新实现。
+`li-neo/neo-skills` 是本项目的姊妹仓库。本文最初吸收其最小蒸馏骨架的 7 条硬约束，2026-08-05 审计 v0.2.2（`104f966a`）的 IR / Lineage / Recipe、完整路径 Playbook 和 Guided Controller，并在 2026-08-06 继续审计 v0.2.8（`d88f6db`）的路由、控制面、来源同步、Runtime Adapter 与 Git 棘轮。已有能力不重复移植；新增设计按 one-skills 的知识库、权限与血缘协议重新实现。
 
 ### 19.1 Frontmatter 静态校验
 
-**规则**：SKILL.md 的 YAML frontmatter 只允许两个键：`name` 和 `description`。任何附加键都必须报错。
+**规则**：SKILL.md 的 YAML frontmatter 必须包含 `name` 和 `description`；按 Agent Skills 开放规范允许 `license`、`compatibility`、`metadata` 和实验性 `allowed-tools`，其他顶层键报错。
 
-- `name`：不超过 64 字符，正则 `[a-z0-9]+(?:-[a-z0-9]+)*`（lowercase hyphen-case）。
-- `description`：不少于 40 字符，必须同时说明"做什么"和"何时触发"，静态校验须匹配 `use|when|for|使用|当|适用于|触发` 至少一处。
+- `name`：不超过 64 字符，正则 `[a-z0-9]+(?:-[a-z0-9]+)*`（lowercase hyphen-case），并与父目录一致。
+- `description`：1-1024 字符，应该同时说明"做什么"和"何时触发"；缺少触发信号产生 warning。
+- `compatibility`：提供时为 1-500 字符。
+- `metadata`：允许缩进的字符串键值映射，用于 one-skills 的 `activation`、`aliases` 等扩展。
 - SKILL.md 正文超过 500 行触发 `warning`，提示走渐进披露（把领域知识拆入 `references/`）。
 - 正文中所有 `[label](path)` 相对引用必须解析到存在的本地文件。
 
-**为什么**：这是跨 runtime（Claude Code / Codex / Cursor / OpenClaw）加载 Skill 的最低共识。任何 runtime 都不接受多余 frontmatter 键；没有 description 触发词的 Skill 会被静默忽略。
+**为什么**：这是跨 runtime 加载 Skill 的开放规范。one-skills 早期“只允许两个键”的校验会错误拒绝合法的官方 Skill，已在 2026-08-06 修正。
 
 ### 19.2 十阶段状态机不可跳阶
 
@@ -1270,7 +1272,7 @@ CLI 与 HTTP API 复用相同知识库、ACL 和持久 Job Queue。HTTP 写请�
 
 ### 19.8 与 neo-skills 的差异（不倒退清单）
 
-截至 neo-skills v0.2.2，双方都已有 IR、Lineage、canonical eval 和 Recipe Loop。以下 5 点仍是 one-skills 的核心增量，不能因为"向姊妹项目学习"而放弃：
+截至 neo-skills v0.2.8，双方都已有 IR、Lineage、canonical eval、Recipe Loop 与 Guided Controller。neo-skills 后续新增了拒答式对象路由、统一控制面、Guided 来源同步、Runtime Adapter 和用户确认的 Git 进化棘轮；完整差异见第 20 节。以下 5 点仍是 one-skills 的核心增量，不能因为"向姊妹项目学习"而放弃：
 
 1. **知识库层**：neo-skills 的 Pack 是孤岛，one-skills 在第 4-9 节定义了跨 Pack 的证据/能力索引和混合检索。
 2. **Person Profile 记忆层**：neo-skills 每次人物蒸馏都从零开始；one-skills 第 6.1 节的 `person_facts` 支持 ADD/UPDATE/REVOKE 三态增量更新和语义召回。
@@ -1318,3 +1320,88 @@ neo-skills v0.2.0 将 Recipe 和 canonical eval 从约定提升为 Pack 内的�
 - canonical cases 必须与 runtime tests 一致，Adapter 漂移不能静默通过。
 
 Recipe Registry 之后晋升新版本不会改变已有 Pack；需要使用新 Recipe 时必须创建新 Pack 或执行显式重蒸馏。
+
+## 20. 2026 来源、召回、学习与经验闭环
+
+完整论文和社区证据见 [`RESEARCH_2026_ARCHITECTURE_AUDIT.md`](RESEARCH_2026_ARCHITECTURE_AUDIT.md)。
+
+### 20.1 Source-Set Quality Gate
+
+过去的 Ingest 只验证文件安全、哈希和访问权限，没有证明“为什么选这些材料”。现在增加：
+
+```text
+Research Questions
+  -> Candidate Source Catalog
+  -> authority/directness/independence/role/coverage/rights
+  -> document-set gate
+  -> captured immutable sources
+```
+
+来源角色分为 `evidence / context / counterevidence / verification_anchor / evaluation_only`。最后一种不进入构建语料，用作 OpenSkill 式泄漏屏障。`independence_group` 显式记录共同作者、机构、镜像或依赖链，防止把同一内容的多个 URL 当作独立证据。
+
+Pack 新增 `SOURCE_QUALITY.json`，其哈希进入 `PROTECTED_CONSTRAINTS.json`；数据库新增 `source_assessments`。
+
+### 20.2 Context Recurrence 与 Source Independence 分离
+
+原 V1 只保存 `section_path`，会把同一文档两章当作独立来源。Candidate 现在分别保存：
+
+- `source_contexts`：方法是否在多个语境复现；
+- `source_ids`：涉及哪些来源；
+- `independence_groups`：来源是否真正独立；
+- `source_independent`：独立组是否至少为二。
+
+Content/Methodology 可以从一本书中的多语境复现提取方法，但 Person/Hybrid 的人物稳定主张要求独立来源组。模型不能覆盖确定性的来源独立性门。
+
+高质量人工捕获可使用 `Claim-Key/Claim-Statement/Claim-Type/Evidence` 显式声明跨来源 Claim Family。系统检查不同来源的声明一致性和独立组，不通过降低语义阈值猜测。
+
+### 20.3 Field-Aware Skill Retrieval
+
+Skill Bank 召回不再把整个 `SKILL.md` 压成一个向量，而是保留：
+
+```text
+name | description | triggers | anti_triggers | procedure | body
+```
+
+每字段独立计算 IDF lexical 与本地 dense 分，再按固定权重组合。结果必须同时通过绝对分和 top-two margin，否则返回 `confirm` 或 `abstain`。明确点名 Skill 时优先；反触发只按明确 lexical overlap 降权，避免完整边界因包含领域词而被过度惩罚。
+
+这对应 Field-Aware Agent Skill Retrieval、SkillSight 与 SRA-Bench 对 skill shadowing、背景文本和 incorporation 的发现。
+
+### 20.4 Learning Path 与 Learner State
+
+`LEARNING_PATH.json` 是 Pack 正式产物：
+
+- 编译前：从自然章节保留来源顺序；
+- 编译后：从 Capability `depends_on` 生成先修图；
+- 节点携带 objectives、mastery checks 和 source locators。
+
+学习者状态单独写入 `learning/states/<learner>.json`，采用单写者更新；掌握证据与 Pack 知识源分离。当前使用透明阈值与间隔复习，不声称是经过真实学生数据训练的 Knowledge Tracing。
+
+### 20.5 Experience Ledger
+
+部署反馈写入 append-only `EXPERIENCE_EVENTS.jsonl`：
+
+```text
+task_signature + skill + outcome + correction + evidence_locator
+```
+
+`training` 与 `evaluation` 事件分离；同一失败至少两次、且 evidence locator 不同，才写入 `EXPERIENCE_CANDIDATES.json`。候选不会自动修改 Skill，仍须冻结 eval、before/after、独立评测和人工 keep/revert。
+
+### 20.6 Source Update 失效语义
+
+增量更新前先把旧 Evidence/Candidate/Decision 归档到 `audit/history/`。旧自动 quote 不再追加保留，非 quote 的会话与人工证据保留；随后从活动 Source Version 重新提取。
+
+SQLite 中仅由非活动 Chunk 支持的 Claim 标为 `superseded`。这修复了“Pack 文件已更新但知识库仍返回旧 Claim”的双真源问题。
+
+### 20.7 最新 neo-skills 差异
+
+本轮已采纳 v0.2.8 的 Object Router 思想，`one route` 在低分或低 margin 时拒绝猜测。
+
+以下保持 P1：
+
+1. Guided 与 Pack 统一 `status/gate/allowed_actions`；
+2. Guided → Pack 同步预览、撤回 tombstone 与 privacy purge；
+3. 当前 Skill 内容哈希绑定 Answer Agent 测试；
+4. Runtime-neutral 单请求 JSON Adapter；
+5. 用户确认 Token 驱动的 Git candidate keep/revert 与中断恢复。
+
+现有 API、Job Queue、ACL 与 Runtime Export 已覆盖部分 Harness 职责，但不应据此声称已实现上述精确控制契约。

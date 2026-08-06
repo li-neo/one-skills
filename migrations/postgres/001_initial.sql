@@ -10,6 +10,19 @@ CREATE TABLE IF NOT EXISTS sources (
   captured_at TIMESTAMPTZ NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS source_assessments (
+  source_id TEXT PRIMARY KEY REFERENCES sources(id),
+  authority TEXT NOT NULL,
+  directness TEXT NOT NULL,
+  independence_group TEXT NOT NULL,
+  source_role TEXT NOT NULL,
+  source_uri TEXT,
+  creator TEXT,
+  published_at TEXT,
+  quality_score DOUBLE PRECISION NOT NULL,
+  quality_json JSONB NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS documents (
   id TEXT PRIMARY KEY,
   title TEXT NOT NULL,

@@ -24,6 +24,12 @@ from .delivery import (
     release_pack,
 )
 from .evaluation import evaluate_pack
+from .experience import (
+    ExperienceError,
+    load_experiences,
+    mine_experience_candidates,
+    record_experience,
+)
 from .guided import (
     CHECKPOINT_STATUSES,
     CHECKPOINTS,
@@ -44,6 +50,14 @@ from .guided import (
 )
 from .ingest import IngestionError
 from .jobs import JobQueue, run_worker_once
+from .learning import (
+    LearningError,
+    build_learning_path,
+    init_learner,
+    load_learner,
+    next_learning_node,
+    record_attempt,
+)
 from .pipeline import (
     PipelineError,
     advance_phase,
@@ -62,6 +76,13 @@ from .postgres import PostgresBackend
 from .provider import OpenAICompatibleProvider, ProviderConfig, ProviderError
 from .recipes import Recipe, promote_recipe, promotion_decision
 from .retrieval import HybridRetriever, local_embedding
+from .routing import route_intent
+from .skill_retrieval import search_skills
+from .source_quality import (
+    SourceQualityError,
+    audit_source_catalog,
+    write_source_catalog_template,
+)
 from .validation import summary, validate_pack, validate_skill
 
 
@@ -82,12 +103,13 @@ def cmd_init(args: argparse.Namespace) -> int:
 def cmd_distill(args: argparse.Namespace) -> int:
     pack = create_pack(
         _path(args.workspace),
-        args.source,
+        args.source or [],
         args.type,
         args.mode,
         args.name,
         args.access,
         args.consent,
+        _path(args.source_catalog) if args.source_catalog else None,
     )
     state = load_state(pack)
     _print(
@@ -167,6 +189,84 @@ def cmd_search(args: argparse.Namespace) -> int:
             for item in results
         ]
     )
+    return 0
+
+
+def cmd_skill_search(args: argparse.Namespace) -> int:
+    result = search_skills(
+        args.query,
+        [_path(root) for root in args.root],
+        args.limit,
+        args.minimum_score,
+        args.minimum_margin,
+    )
+    _print(result)
+    return 1 if result["status"] == "abstain" else 0
+
+
+def cmd_route(args: argparse.Namespace) -> int:
+    _print(route_intent(args.intent, args.source))
+    return 0
+
+
+def cmd_source(args: argparse.Namespace) -> int:
+    if args.source_command == "template":
+        path = write_source_catalog_template(_path(args.output))
+        _print({"catalog_template": str(path)})
+        return 0
+    report = audit_source_catalog(_path(args.catalog), args.type, args.mode)
+    if args.output:
+        from .utils import dump_json
+
+        dump_json(_path(args.output), report)
+    _print(report)
+    return 0 if report["status"] == "passed" else 1
+
+
+def cmd_learn(args: argparse.Namespace) -> int:
+    pack = _path(args.pack)
+    if args.learn_command == "path":
+        _print(build_learning_path(pack))
+    elif args.learn_command == "init":
+        _print(init_learner(pack, args.learner))
+    elif args.learn_command == "record":
+        _print(
+            record_attempt(
+                pack,
+                args.learner,
+                args.node,
+                args.score,
+                args.evidence,
+            )
+        )
+    elif args.learn_command == "next":
+        _print(next_learning_node(pack, args.learner) or {"status": "complete"})
+    else:
+        _print(load_learner(pack, args.learner))
+    return 0
+
+
+def cmd_experience(args: argparse.Namespace) -> int:
+    pack = _path(args.pack)
+    if args.experience_command == "record":
+        _print(
+            record_experience(
+                pack,
+                args.skill,
+                args.task_signature,
+                args.outcome,
+                args.result_summary,
+                args.evidence_locator,
+                args.correction or "",
+                args.access,
+                args.scope,
+            )
+        )
+    elif args.experience_command == "mine":
+        _print(mine_experience_candidates(pack, args.minimum_occurrences))
+    else:
+        events = load_experiences(pack)
+        _print({"count": len(events), "events": events})
     return 0
 
 
@@ -491,7 +591,11 @@ def build_parser() -> argparse.ArgumentParser:
     init.set_defaults(func=cmd_init)
 
     distill = commands.add_parser("distill", help="ingest, index, map, extract, and verify sources")
-    distill.add_argument("--source", action="append", required=True)
+    distill.add_argument("--source", action="append")
+    distill.add_argument(
+        "--source-catalog",
+        help="quality-gated source catalog whose selected ingest paths are added",
+    )
     distill.add_argument("--workspace", default=".")
     distill.add_argument("--type", default="auto", help="built-in or entry-point Profile name")
     distill.add_argument("--mode", choices=MODES, default="standard")
@@ -547,6 +651,107 @@ def build_parser() -> argparse.ArgumentParser:
     search.add_argument("--principal", default="local-user")
     search.add_argument("--limit", type=int, default=10)
     search.set_defaults(func=cmd_search)
+
+    skill_search = commands.add_parser(
+        "skill-search",
+        help="field-aware retrieval over Agent Skill directories",
+    )
+    skill_search.add_argument("query")
+    skill_search.add_argument("--root", action="append", required=True)
+    skill_search.add_argument("--limit", type=int, default=10)
+    skill_search.add_argument("--minimum-score", type=float, default=0.10)
+    skill_search.add_argument("--minimum-margin", type=float, default=0.025)
+    skill_search.set_defaults(func=cmd_skill_search)
+
+    route = commands.add_parser(
+        "route",
+        help="explainably route an intent to a distillation object or abstain",
+    )
+    route.add_argument("--intent", required=True)
+    route.add_argument("--source", action="append", default=[])
+    route.set_defaults(func=cmd_route)
+
+    source = commands.add_parser(
+        "source",
+        help="create or audit high-quality source catalogs",
+    )
+    source_commands = source.add_subparsers(dest="source_command", required=True)
+    source_template = source_commands.add_parser("template")
+    source_template.add_argument("--output", required=True)
+    source_template.set_defaults(func=cmd_source)
+    source_audit = source_commands.add_parser("audit")
+    source_audit.add_argument("--catalog", required=True)
+    source_audit.add_argument("--type", default="content")
+    source_audit.add_argument("--mode", choices=MODES, default="standard")
+    source_audit.add_argument("--output")
+    source_audit.set_defaults(func=cmd_source)
+
+    learn = commands.add_parser(
+        "learn",
+        help="build a prerequisite path and track learner mastery",
+    )
+    learn_commands = learn.add_subparsers(dest="learn_command", required=True)
+    learn_path = learn_commands.add_parser("path")
+    learn_path.add_argument("pack")
+    learn_path.set_defaults(func=cmd_learn)
+    learn_init = learn_commands.add_parser("init")
+    learn_init.add_argument("pack")
+    learn_init.add_argument("--learner", required=True)
+    learn_init.set_defaults(func=cmd_learn)
+    learn_record = learn_commands.add_parser("record")
+    learn_record.add_argument("pack")
+    learn_record.add_argument("--learner", required=True)
+    learn_record.add_argument("--node", required=True)
+    learn_record.add_argument("--score", type=float, required=True)
+    learn_record.add_argument("--evidence", required=True)
+    learn_record.set_defaults(func=cmd_learn)
+    learn_next = learn_commands.add_parser("next")
+    learn_next.add_argument("pack")
+    learn_next.add_argument("--learner", required=True)
+    learn_next.set_defaults(func=cmd_learn)
+    learn_status = learn_commands.add_parser("status")
+    learn_status.add_argument("pack")
+    learn_status.add_argument("--learner", required=True)
+    learn_status.set_defaults(func=cmd_learn)
+
+    experience = commands.add_parser(
+        "experience",
+        help="record deployment feedback and mine conservative evolution candidates",
+    )
+    experience_commands = experience.add_subparsers(
+        dest="experience_command",
+        required=True,
+    )
+    experience_record = experience_commands.add_parser("record")
+    experience_record.add_argument("pack")
+    experience_record.add_argument("--skill", required=True)
+    experience_record.add_argument("--task-signature", required=True)
+    experience_record.add_argument(
+        "--outcome",
+        choices=("success", "failure", "corrected"),
+        required=True,
+    )
+    experience_record.add_argument("--result-summary", required=True)
+    experience_record.add_argument("--evidence-locator", required=True)
+    experience_record.add_argument("--correction")
+    experience_record.add_argument(
+        "--access",
+        choices=("public", "authorized", "private-local", "unknown"),
+        default="private-local",
+    )
+    experience_record.add_argument(
+        "--scope",
+        choices=("training", "evaluation"),
+        default="training",
+    )
+    experience_record.set_defaults(func=cmd_experience)
+    experience_mine = experience_commands.add_parser("mine")
+    experience_mine.add_argument("pack")
+    experience_mine.add_argument("--minimum-occurrences", type=int, default=2)
+    experience_mine.set_defaults(func=cmd_experience)
+    experience_status = experience_commands.add_parser("status")
+    experience_status.add_argument("pack")
+    experience_status.set_defaults(func=cmd_experience)
 
     acl = commands.add_parser("acl", help="manage tenant, principal, and asset grants")
     acl_commands = acl.add_subparsers(dest="acl_command", required=True)
@@ -807,8 +1012,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         DeliveryError,
         IngestionError,
         GuidedSessionError,
+        ExperienceError,
+        LearningError,
         PipelineError,
         ProviderError,
+        SourceQualityError,
         ValueError,
         OSError,
         json.JSONDecodeError,

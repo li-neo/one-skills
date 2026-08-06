@@ -1,0 +1,29 @@
+{
+  "title": "作者说过与后人从作者文本推导必须分开。",
+  "candidate_type": "principle",
+  "summary": "“作者说过”与“后人从作者文本推导”必须分开。",
+  "evidence_ids": [
+    "ev-20260806175133386538-8b3660fd"
+  ],
+  "source_contexts": [
+    "https://www.dswxyjy.org.cn/n1/2021/0118/c219000-32003108.html::对蒸馏的约束"
+  ],
+  "tags": [
+    "methodology",
+    "principle"
+  ],
+  "source_ids": [
+    "https://www.dswxyjy.org.cn/n1/2021/0118/c219000-32003108.html"
+  ],
+  "independence_groups": [
+    "party-history-institute-version-study"
+  ],
+  "id": "candidate-20260806175133386548-249aa441",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate may be generic or underspecified"
+}

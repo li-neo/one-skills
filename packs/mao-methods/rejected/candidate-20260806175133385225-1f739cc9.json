@@ -1,0 +1,29 @@
+{
+  "title": "- 文本性质：工作方法转述，不复制军事操作。",
+  "candidate_type": "framework",
+  "summary": "- 文本性质：工作方法转述，不复制军事操作。",
+  "evidence_ids": [
+    "ev-20260806175133385219-c678cf52"
+  ],
+  "source_contexts": [
+    "https://www.12371.cn/special/mzdxj/d4j/#committee-methods::来源定位"
+  ],
+  "tags": [
+    "methodology",
+    "framework"
+  ],
+  "source_ids": [
+    "https://www.12371.cn/special/mzdxj/d4j/#committee-methods"
+  ],
+  "independence_groups": [
+    "mao-authorized-works"
+  ],
+  "id": "candidate-20260806175133385225-1f739cc9",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate may be generic or underspecified"
+}

@@ -1,0 +1,1156 @@
+{
+  "schema_version": "1.0",
+  "pack_id": "pack-20260806041631466236-ac040845",
+  "profile": "content",
+  "generated_at": "2026-08-06T16:55:59+00:00",
+  "progression": "source-order",
+  "nodes": [
+    {
+      "id": "concept-93807e8f0e3fdca1",
+      "title": "90 分钟一口气搞懂人工智能和神经网络",
+      "kind": "source-concept",
+      "order": 0,
+      "prerequisites": [],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L3"
+      ],
+      "objectives": [
+        "能够用自己的话解释“90 分钟一口气搞懂人工智能和神经网络”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-ea890e1357810201",
+      "title": "课程目标",
+      "kind": "source-concept",
+      "order": 1,
+      "prerequisites": [
+        "concept-93807e8f0e3fdca1"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L12"
+      ],
+      "objectives": [
+        "能够用自己的话解释“课程目标”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-2e2ffca36f79e075",
+      "title": "原片学习地图",
+      "kind": "source-concept",
+      "order": 2,
+      "prerequisites": [
+        "concept-ea890e1357810201"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L26"
+      ],
+      "objectives": [
+        "能够用自己的话解释“原片学习地图”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-8060bd86c07e9d1f",
+      "title": "第 1 章 从达特茅斯会议开始",
+      "kind": "source-concept",
+      "order": 3,
+      "prerequisites": [
+        "concept-2e2ffca36f79e075"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L54"
+      ],
+      "objectives": [
+        "能够用自己的话解释“第 1 章 从达特茅斯会议开始”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-3d2f674dd0d7d245",
+      "title": "检查点",
+      "kind": "source-concept",
+      "order": 4,
+      "prerequisites": [
+        "concept-8060bd86c07e9d1f"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L68"
+      ],
+      "objectives": [
+        "能够用自己的话解释“检查点”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-40d973bdd08ec61b",
+      "title": "第 2 章 智能是输入到输出的函数",
+      "kind": "source-concept",
+      "order": 5,
+      "prerequisites": [
+        "concept-3d2f674dd0d7d245"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L76"
+      ],
+      "objectives": [
+        "能够用自己的话解释“第 2 章 智能是输入到输出的函数”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-f6c348d143018c37",
+      "title": "图灵测试在这条路线中的位置",
+      "kind": "source-concept",
+      "order": 6,
+      "prerequisites": [
+        "concept-40d973bdd08ec61b"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L110"
+      ],
+      "objectives": [
+        "能够用自己的话解释“图灵测试在这条路线中的位置”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-f03e598c2040a744",
+      "title": "本章结论",
+      "kind": "source-concept",
+      "order": 7,
+      "prerequisites": [
+        "concept-f6c348d143018c37"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L114"
+      ],
+      "objectives": [
+        "能够用自己的话解释“本章结论”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-1d9702e464af448b",
+      "title": "第 3 章 符号主义：把知识写成规则",
+      "kind": "source-concept",
+      "order": 8,
+      "prerequisites": [
+        "concept-f03e598c2040a744"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L128"
+      ],
+      "objectives": [
+        "能够用自己的话解释“第 3 章 符号主义：把知识写成规则”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-bccaa725cf2c9cdc",
+      "title": "为什么专家系统遇到瓶颈",
+      "kind": "source-concept",
+      "order": 9,
+      "prerequisites": [
+        "concept-1d9702e464af448b"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L150"
+      ],
+      "objectives": [
+        "能够用自己的话解释“为什么专家系统遇到瓶颈”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-d3dc1abdfc33c2ce",
+      "title": "第 4 章 机器学习：不要把答案写死，让机器自己改",
+      "kind": "source-concept",
+      "order": 10,
+      "prerequisites": [
+        "concept-bccaa725cf2c9cdc"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L167"
+      ],
+      "objectives": [
+        "能够用自己的话解释“第 4 章 机器学习：不要把答案写死，让机器自己改”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-ba0f50ac4259d7ff",
+      "title": "第 5 章 联结主义与感知机",
+      "kind": "source-concept",
+      "order": 11,
+      "prerequisites": [
+        "concept-d3dc1abdfc33c2ce"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L207"
+      ],
+      "objectives": [
+        "能够用自己的话解释“第 5 章 联结主义与感知机”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-c59a627ad85bc327",
+      "title": "5.1 用特征识别苹果",
+      "kind": "source-concept",
+      "order": 12,
+      "prerequisites": [
+        "concept-ba0f50ac4259d7ff"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L213"
+      ],
+      "objectives": [
+        "能够用自己的话解释“5.1 用特征识别苹果”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-8e2dc754e2e9f08c",
+      "title": "5.2 这就是感知机",
+      "kind": "source-concept",
+      "order": 13,
+      "prerequisites": [
+        "concept-c59a627ad85bc327"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L243"
+      ],
+      "objectives": [
+        "能够用自己的话解释“5.2 这就是感知机”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-e2f44312b5298077",
+      "title": "5.3 为什么早期感知机会引发轰动",
+      "kind": "source-concept",
+      "order": 14,
+      "prerequisites": [
+        "concept-8e2dc754e2e9f08c"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L255"
+      ],
+      "objectives": [
+        "能够用自己的话解释“5.3 为什么早期感知机会引发轰动”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-a2724bd8a4b32472",
+      "title": "第 6 章 XOR：单层感知机的天花板",
+      "kind": "source-concept",
+      "order": 15,
+      "prerequisites": [
+        "concept-e2f44312b5298077"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L271"
+      ],
+      "objectives": [
+        "能够用自己的话解释“第 6 章 XOR：单层感知机的天花板”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-3b82372ea13d7eeb",
+      "title": "不要从失败案例推出错误结论",
+      "kind": "source-concept",
+      "order": 16,
+      "prerequisites": [
+        "concept-a2724bd8a4b32472"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L300"
+      ],
+      "objectives": [
+        "能够用自己的话解释“不要从失败案例推出错误结论”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-d3e44fcb633e2302",
+      "title": "第 7 章 多层感知机：组合带来非线性",
+      "kind": "source-concept",
+      "order": 17,
+      "prerequisites": [
+        "concept-3b82372ea13d7eeb"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L312"
+      ],
+      "objectives": [
+        "能够用自己的话解释“第 7 章 多层感知机：组合带来非线性”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-7eca150c28697ada",
+      "title": "7.1 层级特征",
+      "kind": "source-concept",
+      "order": 18,
+      "prerequisites": [
+        "concept-d3e44fcb633e2302"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L341"
+      ],
+      "objectives": [
+        "能够用自己的话解释“7.1 层级特征”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-e2f87e0e05bb68d8",
+      "title": "7.2 从 MLP 到现代架构",
+      "kind": "source-concept",
+      "order": 19,
+      "prerequisites": [
+        "concept-7eca150c28697ada"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L355"
+      ],
+      "objectives": [
+        "能够用自己的话解释“7.2 从 MLP 到现代架构”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-6041bfc22ed5225c",
+      "title": "第 8 章 损失函数：把好坏变成一个数",
+      "kind": "source-concept",
+      "order": 20,
+      "prerequisites": [
+        "concept-e2f87e0e05bb68d8"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L378"
+      ],
+      "objectives": [
+        "能够用自己的话解释“第 8 章 损失函数：把好坏变成一个数”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-94d09953bede7c5a",
+      "title": "第 9 章 梯度下降：在大雾中一步步下山",
+      "kind": "source-concept",
+      "order": 21,
+      "prerequisites": [
+        "concept-6041bfc22ed5225c"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L419"
+      ],
+      "objectives": [
+        "能够用自己的话解释“第 9 章 梯度下降：在大雾中一步步下山”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-c142c757d836b058",
+      "title": "第 10 章 反向传播：从结果倒查每个旋钮",
+      "kind": "source-concept",
+      "order": 22,
+      "prerequisites": [
+        "concept-94d09953bede7c5a"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L481"
+      ],
+      "objectives": [
+        "能够用自己的话解释“第 10 章 反向传播：从结果倒查每个旋钮”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-5ef066f96f52eb11",
+      "title": "三个概念不要混",
+      "kind": "source-concept",
+      "order": 23,
+      "prerequisites": [
+        "concept-c142c757d836b058"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L514"
+      ],
+      "objectives": [
+        "能够用自己的话解释“三个概念不要混”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-f4d34b47d9a13f02",
+      "title": "第 11 章 泛化：从训练题走向新题",
+      "kind": "source-concept",
+      "order": 24,
+      "prerequisites": [
+        "concept-5ef066f96f52eb11"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L532"
+      ],
+      "objectives": [
+        "能够用自己的话解释“第 11 章 泛化：从训练题走向新题”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-1ae89218e8c2f260",
+      "title": "第 12 章 相关不是因果：神经网络的边界",
+      "kind": "source-concept",
+      "order": 25,
+      "prerequisites": [
+        "concept-f4d34b47d9a13f02"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L565"
+      ],
+      "objectives": [
+        "能够用自己的话解释“第 12 章 相关不是因果：神经网络的边界”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-b0e029fcb9dfb1bf",
+      "title": "对抗样本",
+      "kind": "source-concept",
+      "order": 26,
+      "prerequisites": [
+        "concept-1ae89218e8c2f260"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L573"
+      ],
+      "objectives": [
+        "能够用自己的话解释“对抗样本”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-5efc22c82f2ce77f",
+      "title": "第 13 章 大模型不是先想好整句，而是逐 Token 生成",
+      "kind": "source-concept",
+      "order": 27,
+      "prerequisites": [
+        "concept-b0e029fcb9dfb1bf"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L593"
+      ],
+      "objectives": [
+        "能够用自己的话解释“第 13 章 大模型不是先想好整句，而是逐 Token 生成”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-92fce8a6dc26e04c",
+      "title": "第 14 章 从语法规则到统计语言模型",
+      "kind": "source-concept",
+      "order": 28,
+      "prerequisites": [
+        "concept-5efc22c82f2ce77f"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L629"
+      ],
+      "objectives": [
+        "能够用自己的话解释“第 14 章 从语法规则到统计语言模型”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-c05c81ae6cdcf13a",
+      "title": "为什么简单接龙会产生复杂能力",
+      "kind": "source-concept",
+      "order": 29,
+      "prerequisites": [
+        "concept-92fce8a6dc26e04c"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L657"
+      ],
+      "objectives": [
+        "能够用自己的话解释“为什么简单接龙会产生复杂能力”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-45cc7788185b4c39",
+      "title": "第 15 章 为什么叫“大模型”：数据、参数、算力",
+      "kind": "source-concept",
+      "order": 30,
+      "prerequisites": [
+        "concept-c05c81ae6cdcf13a"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L677"
+      ],
+      "objectives": [
+        "能够用自己的话解释“第 15 章 为什么叫“大模型”：数据、参数、算力”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-213e51c4464bf7bc",
+      "title": "第 16 章 幻觉、理解与对齐",
+      "kind": "source-concept",
+      "order": 31,
+      "prerequisites": [
+        "concept-45cc7788185b4c39"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L707"
+      ],
+      "objectives": [
+        "能够用自己的话解释“第 16 章 幻觉、理解与对齐”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-e212052244ade131",
+      "title": "它到底理解了吗",
+      "kind": "source-concept",
+      "order": 32,
+      "prerequisites": [
+        "concept-213e51c4464bf7bc"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L713"
+      ],
+      "objectives": [
+        "能够用自己的话解释“它到底理解了吗”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-a47ee46517ba2335",
+      "title": "从原始模型到助手",
+      "kind": "source-concept",
+      "order": 33,
+      "prerequisites": [
+        "concept-e212052244ade131"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L724"
+      ],
+      "objectives": [
+        "能够用自己的话解释“从原始模型到助手”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-c36150f744daacf2",
+      "title": "第 17 章 从物理扩散到高斯噪声",
+      "kind": "source-concept",
+      "order": 34,
+      "prerequisites": [
+        "concept-a47ee46517ba2335"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L744"
+      ],
+      "objectives": [
+        "能够用自己的话解释“第 17 章 从物理扩散到高斯噪声”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-39ad55cdd7c1859d",
+      "title": "第 18 章 评分函数：给噪声指出回去的方向",
+      "kind": "source-concept",
+      "order": 35,
+      "prerequisites": [
+        "concept-c36150f744daacf2"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L779"
+      ],
+      "objectives": [
+        "能够用自己的话解释“第 18 章 评分函数：给噪声指出回去的方向”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-05d4c03060997c9d",
+      "title": "第 19 章 图像流形：真实图片只占像素空间的一小部分",
+      "kind": "source-concept",
+      "order": 36,
+      "prerequisites": [
+        "concept-39ad55cdd7c1859d"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L807"
+      ],
+      "objectives": [
+        "能够用自己的话解释“第 19 章 图像流形：真实图片只占像素空间的一小部分”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-cea8edeb78ea2f9b",
+      "title": "第 20 章 用神经网络学习去噪",
+      "kind": "source-concept",
+      "order": 37,
+      "prerequisites": [
+        "concept-05d4c03060997c9d"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L836"
+      ],
+      "objectives": [
+        "能够用自己的话解释“第 20 章 用神经网络学习去噪”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-5322bb5cfe2ec52c",
+      "title": "从本章回看全课",
+      "kind": "source-concept",
+      "order": 38,
+      "prerequisites": [
+        "concept-cea8edeb78ea2f9b"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L864"
+      ],
+      "objectives": [
+        "能够用自己的话解释“从本章回看全课”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-c536f99aa84f3c50",
+      "title": "第 21 章 被替代的首先是任务，不一定是整个职业",
+      "kind": "source-concept",
+      "order": 39,
+      "prerequisites": [
+        "concept-5322bb5cfe2ec52c"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L887"
+      ],
+      "objectives": [
+        "能够用自己的话解释“第 21 章 被替代的首先是任务，不一定是整个职业”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-60d2d5e6ca702fca",
+      "title": "AI 当前的重要边界",
+      "kind": "source-concept",
+      "order": 40,
+      "prerequisites": [
+        "concept-c536f99aa84f3c50"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L910"
+      ],
+      "objectives": [
+        "能够用自己的话解释“AI 当前的重要边界”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-4dfc357e681f8b81",
+      "title": "对个人更可执行的策略",
+      "kind": "source-concept",
+      "order": 41,
+      "prerequisites": [
+        "concept-60d2d5e6ca702fca"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L918"
+      ],
+      "objectives": [
+        "能够用自己的话解释“对个人更可执行的策略”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-f737d47fba15ef1c",
+      "title": "一条公式链",
+      "kind": "source-concept",
+      "order": 42,
+      "prerequisites": [
+        "concept-4dfc357e681f8b81"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L930"
+      ],
+      "objectives": [
+        "能够用自己的话解释“一条公式链”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-18f796934a2094c2",
+      "title": "术语表",
+      "kind": "source-concept",
+      "order": 43,
+      "prerequisites": [
+        "concept-f737d47fba15ef1c"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L971"
+      ],
+      "objectives": [
+        "能够用自己的话解释“术语表”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-f728cd4bcfb0e7ff",
+      "title": "结业自测",
+      "kind": "source-concept",
+      "order": 44,
+      "prerequisites": [
+        "concept-18f796934a2094c2"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L997"
+      ],
+      "objectives": [
+        "能够用自己的话解释“结业自测”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-95ee8305543a34fc",
+      "title": "结业标准",
+      "kind": "source-concept",
+      "order": 45,
+      "prerequisites": [
+        "concept-f728cd4bcfb0e7ff"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L1010"
+      ],
+      "objectives": [
+        "能够用自己的话解释“结业标准”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-5ba2c58582487759",
+      "title": "来源与版权",
+      "kind": "source-concept",
+      "order": 46,
+      "prerequisites": [
+        "concept-95ee8305543a34fc"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/FEISHU_COURSE.md#L1032"
+      ],
+      "objectives": [
+        "能够用自己的话解释“来源与版权”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-d25575a8b20d8812",
+      "title": "《一口气搞懂人工智能和神经网络》课程时间线",
+      "kind": "source-concept",
+      "order": 47,
+      "prerequisites": [],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/TIMELINE.md#L3"
+      ],
+      "objectives": [
+        "能够用自己的话解释“《一口气搞懂人工智能和神经网络》课程时间线”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-e4d9f7968bb44ad6",
+      "title": "原片学习路线",
+      "kind": "source-concept",
+      "order": 48,
+      "prerequisites": [
+        "concept-d25575a8b20d8812"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/TIMELINE.md#L8"
+      ],
+      "objectives": [
+        "能够用自己的话解释“原片学习路线”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-fd3711bd49ed4aa0",
+      "title": "四级进步路线",
+      "kind": "source-concept",
+      "order": 49,
+      "prerequisites": [
+        "concept-e4d9f7968bb44ad6"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/TIMELINE.md#L41"
+      ],
+      "objectives": [
+        "能够用自己的话解释“四级进步路线”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-b25f378192037ac6",
+      "title": "来源分工",
+      "kind": "source-concept",
+      "order": 50,
+      "prerequisites": [],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/SOURCE_NOTES.md#L5"
+      ],
+      "objectives": [
+        "能够用自己的话解释“来源分工”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-8a2e15e2c0f56202",
+      "title": "时间线校准",
+      "kind": "source-concept",
+      "order": 51,
+      "prerequisites": [
+        "concept-b25f378192037ac6"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/SOURCE_NOTES.md#L15"
+      ],
+      "objectives": [
+        "能够用自己的话解释“时间线校准”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-e7920d09da1c03d7",
+      "title": "截图清单",
+      "kind": "source-concept",
+      "order": 52,
+      "prerequisites": [
+        "concept-8a2e15e2c0f56202"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/SOURCE_NOTES.md#L23"
+      ],
+      "objectives": [
+        "能够用自己的话解释“截图清单”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-38e74ec038ac6d24",
+      "title": "版权边界",
+      "kind": "source-concept",
+      "order": 53,
+      "prerequisites": [
+        "concept-e7920d09da1c03d7"
+      ],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/SOURCE_NOTES.md#L46"
+      ],
+      "objectives": [
+        "能够用自己的话解释“版权边界”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    },
+    {
+      "id": "concept-b9d1c6ed5a69eb7e",
+      "title": "metadata",
+      "kind": "source-concept",
+      "order": 54,
+      "prerequisites": [],
+      "source_locators": [
+        "courses/ai-neural-networks-90min/sources/metadata.json#L1"
+      ],
+      "objectives": [
+        "能够用自己的话解释“metadata”",
+        "能够指出其适用条件、反例或证据边界"
+      ],
+      "mastery_checks": [
+        "不看原文复述核心机制",
+        "在一个新场景中正确应用",
+        "说明至少一个不应使用的场景"
+      ]
+    }
+  ]
+}

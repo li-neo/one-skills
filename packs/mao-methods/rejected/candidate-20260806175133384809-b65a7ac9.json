@@ -1,0 +1,29 @@
+{
+  "title": "- 核心篇目：《关于领导方法的若干问题》，1943年。",
+  "candidate_type": "framework",
+  "summary": "- 核心篇目：《关于领导方法的若干问题》，1943年。",
+  "evidence_ids": [
+    "ev-20260806175133384802-0a4eb384"
+  ],
+  "source_contexts": [
+    "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::来源定位"
+  ],
+  "tags": [
+    "methodology",
+    "framework"
+  ],
+  "source_ids": [
+    "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods"
+  ],
+  "independence_groups": [
+    "mao-authorized-works"
+  ],
+  "id": "candidate-20260806175133384809-b65a7ac9",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate may be generic or underspecified"
+}

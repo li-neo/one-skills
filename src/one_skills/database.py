@@ -2,15 +2,14 @@
 
 from __future__ import annotations
 
-from contextlib import contextmanager
 import json
-from pathlib import Path
 import sqlite3
+from contextlib import contextmanager
+from pathlib import Path
 from typing import Any, Iterator
 
 from .models import Chunk, SourceDocument
 from .utils import new_id, utc_now
-
 
 SCHEMA = """
 PRAGMA foreign_keys = ON;
@@ -24,6 +23,19 @@ CREATE TABLE IF NOT EXISTS sources (
   access_level TEXT NOT NULL,
   license TEXT,
   captured_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS source_assessments (
+  source_id TEXT PRIMARY KEY REFERENCES sources(id),
+  authority TEXT NOT NULL,
+  directness TEXT NOT NULL,
+  independence_group TEXT NOT NULL,
+  source_role TEXT NOT NULL,
+  source_uri TEXT,
+  creator TEXT,
+  published_at TEXT,
+  quality_score REAL NOT NULL,
+  quality_json TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS documents (
@@ -285,6 +297,23 @@ class KnowledgeDB:
             "SELECT id FROM sources WHERE content_hash = ?", (source.content_hash,)
         ).fetchone()
         if existing:
+            self.connection.execute(
+                "INSERT OR REPLACE INTO source_assessments VALUES "
+                "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    existing["id"],
+                    source.authority,
+                    source.directness,
+                    source.independence_group or source.source,
+                    source.source_role,
+                    source.source_uri,
+                    source.creator,
+                    source.published_at,
+                    source.quality_score,
+                    json.dumps(source.metadata(), ensure_ascii=False),
+                ),
+            )
+            self.connection.commit()
             linked = self.connection.execute(
                 "SELECT document_id, version FROM document_versions "
                 "WHERE source_id = ? ORDER BY version DESC LIMIT 1",
@@ -316,6 +345,21 @@ class KnowledgeDB:
                     now,
                 ),
             )
+            connection.execute(
+                "INSERT INTO source_assessments VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    source_id,
+                    source.authority,
+                    source.directness,
+                    source.independence_group or source.source,
+                    source.source_role,
+                    source.source_uri,
+                    source.creator,
+                    source.published_at,
+                    source.quality_score,
+                    json.dumps(source.metadata(), ensure_ascii=False),
+                ),
+            )
             if previous:
                 connection.execute(
                     "UPDATE documents SET title = ?, type = ?, access_level = ?, active_version = ? "
@@ -340,7 +384,7 @@ class KnowledgeDB:
                     version,
                     source_id,
                     source.content_hash,
-                    "one-skills@0.1",
+                    "one-skills@0.2",
                     normalized_uri,
                     "active",
                     now,
@@ -393,6 +437,25 @@ class KnowledgeDB:
                     "('local', 'local-user', 'chunk', ?, 'owner', ?)",
                     (chunk.id, utc_now()),
                 )
+
+    def invalidate_claims_from_inactive_versions(self) -> int:
+        """Supersede claims supported only by inactive document versions."""
+        with self.transaction() as connection:
+            cursor = connection.execute(
+                "UPDATE claims SET status = 'superseded' "
+                "WHERE status = 'active' AND id IN ("
+                "SELECT DISTINCT el.claim_id FROM evidence_links el "
+                "JOIN chunks c ON c.id = el.chunk_id "
+                "JOIN documents d ON d.id = c.document_id "
+                "WHERE c.document_version <> d.active_version"
+                ") AND id NOT IN ("
+                "SELECT DISTINCT el.claim_id FROM evidence_links el "
+                "JOIN chunks c ON c.id = el.chunk_id "
+                "JOIN documents d ON d.id = c.document_id "
+                "WHERE c.document_version = d.active_version"
+                ")"
+            )
+        return cursor.rowcount
 
     def add_claim(
         self,

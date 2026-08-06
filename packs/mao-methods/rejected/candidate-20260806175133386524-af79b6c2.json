@@ -1,0 +1,29 @@
+{
+  "title": "每条直接引语必须附篇名、版本入口和文本性质。",
+  "candidate_type": "principle",
+  "summary": "每条直接引语必须附篇名、版本入口和文本性质。",
+  "evidence_ids": [
+    "ev-20260806175133386517-95ae581a"
+  ],
+  "source_contexts": [
+    "https://www.dswxyjy.org.cn/n1/2021/0118/c219000-32003108.html::对蒸馏的约束"
+  ],
+  "tags": [
+    "methodology",
+    "principle"
+  ],
+  "source_ids": [
+    "https://www.dswxyjy.org.cn/n1/2021/0118/c219000-32003108.html"
+  ],
+  "independence_groups": [
+    "party-history-institute-version-study"
+  ],
+  "id": "candidate-20260806175133386524-af79b6c2",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate may be generic or underspecified"
+}

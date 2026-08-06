@@ -17,6 +17,9 @@ description: "Distills people, content, methodologies, SOPs, or existing skills 
 6. 生成者不能独自完成最终评分。
 7. 私人个体必须先确认授权和使用范围。
 8. 进化优先直接调用 Darwin，不重复实现优化器。
+9. 深度蒸馏先建立 Source Catalog；搜索摘要只能发现来源，不能充当证据。
+10. 不把同一来源的多个章节、镜像或转述计为独立来源。
+11. 构建材料与 `evaluation_only` holdout 必须隔离。
 
 ## 入口路由
 
@@ -32,7 +35,9 @@ description: "Distills people, content, methodologies, SOPs, or existing skills 
 | 人物、资料、案例、工具和流程混合 | `hybrid` |
 | 输入暂时无法分类 | `auto` |
 
-无法唯一判断时，展示最多三个候选 Profile、判断依据和产物差异，再让用户选择。
+无法唯一判断时，先运行 `one route --intent <minimal-intent>`。返回
+`needs_confirmation=true` 时，只展示最多三个候选和最多两个确认问题，不创建
+Workspace。
 
 ## Phase 0：建立蒸馏契约
 
@@ -62,17 +67,23 @@ description: "Distills people, content, methodologies, SOPs, or existing skills 
 
 ## Phase 1：建立来源账本
 
-对每个来源记录：
+标准/深度任务先按 [来源质量协议](docs/SOURCE_QUALITY.md) 建立
+`SOURCE_CATALOG.json`，再运行 `one source audit`。对每个来源记录：
 
 - 来源 ID
 - 文件、URL 或内容定位
 - 作者和时间
-- 一手、二手或用户陈述
+- `authority` 与 `directness`
+- 独立来源组，不按 URL 个数计数
+- evidence、context、counterevidence、verification anchor 或 evaluation only 角色
+- 对研究问题的覆盖
 - 许可证和发布范围
 - 隐私等级
 - 哈希或版本
 
-重要结论必须能回指来源位置。
+重要结论必须能回指来源位置。`evaluation_only` 不进入构建语料。高质量人工捕获
+可以用 `Claim-Key` 显式声明跨来源同一主张；系统必须验证声明一致和独立来源组，
+不得靠降低语义阈值强行合并。
 
 ## Phase 2：建立对象地图
 
@@ -108,11 +119,12 @@ description: "Distills people, content, methodologies, SOPs, or existing skills 
 每个候选依次检查：
 
 1. **证据**：有可定位来源吗？
-2. **复现**：是否跨来源、场景或时间重复出现？
-3. **生成力**：能处理材料未直接回答的新问题吗？
-4. **独特性**：是否超越通用常识？
-5. **可执行性**：能转成 Agent 步骤吗？
-6. **边界**：知道何时失效吗？
+2. **语境复现**：是否跨场景或时间重复出现？
+3. **来源独立**：人物或混合对象是否有两个独立 provenance group？
+4. **生成力**：能处理材料未直接回答的新问题吗？
+5. **独特性**：是否超越通用常识？
+6. **可执行性**：能转成 Agent 步骤吗？
+7. **边界**：知道何时失效吗？
 
 结果只能是：
 
@@ -174,7 +186,9 @@ Problem → Trigger → Input → Procedure → Output → Done
 
 ### content
 
-摘要只是副产物。核心产物是原子方法论 Skills、术语表、关系图和测试。
+摘要只是副产物。核心产物是原子方法论 Skills、术语表、关系图、测试和
+`LEARNING_PATH.json`。原课程或原书有明确递进时，先保留源顺序；Skill 编译后再
+用 `depends_on` 补先修关系。
 
 ### methodology
 
@@ -228,6 +242,11 @@ Problem → Trigger → Input → Procedure → Output → Done
 
 不得为了通过测试而降低测试难度或删除失败案例。
 
+运行反馈先用 `one experience record` 写入 append-only 账本。单次失败不能改
+Skill；至少两次独立 evidence locator 复现后，才用 `one experience mine`
+形成候选。`evaluation` 事件不参与候选挖掘。完整协议见
+[学习路径与经验进化](docs/LEARNING_AND_EXPERIENCE.md)。
+
 ## 失败与降级
 
 | 触发条件 | 一线处理 | 仍失败时 |
@@ -267,12 +286,16 @@ Problem → Trigger → Input → Procedure → Output → Done
 
 ## 最小执行契约
 
-以下 7 条硬约束吸收自姊妹项目 `li-neo/neo-skills` 的已验证实现，任何 Skill 交付都必须满足。完整规范见 `docs/ARCHITECTURE.md` 第 19 章。
+以下硬约束吸收自姊妹项目与 2026 年检索、来源和学习研究，任何 Skill 交付都必须满足。完整规范见 `docs/ARCHITECTURE.md` 第 19、20 章。
 
-1. **Frontmatter**：只允许 `name`（≤64 字符 hyphen-case）与 `description`（≥40 字符且含触发词）。
+1. **Frontmatter**：必需 `name` 与 `description`；允许官方规范的 `license / compatibility / metadata / allowed-tools`；name 与父目录一致。
 2. **Pipeline 状态机**：十阶段 `contract→ingest→map→extract→verify→compile→link→test→ship→evolve` 由 `PIPELINE_STATE.json` 持久化，不能跳阶。
 3. **证据 Schema**：`EVIDENCE_LEDGER.jsonl` 每条必须含 `id / claim / evidence_type / source / locator / confidence[0,1] / inference_level / permission`；`evidence_type` 使用 `schemas/evidence.schema.json` 的封闭枚举，自述和情景回答不得冒充观察行为或已记录结果。
 4. **测试覆盖**：`test-prompts.json` 必须至少含 `should_trigger / should_not_trigger / edge_case`；静态检查永远不填 `actual_effect` 分，只有独立 Agent 结果才折算。
 5. **交付读回**：安装、导出、切换 `active_version` 后必须读回校验；覆盖已存在目标须先 `.backup-<timestamp>`。
 6. **URL 安全**：默认拒绝私有/环回/链路本地 IP，重定向后再校验；URL ≤20 MiB，本地文件 ≤100 MiB。
 7. **Darwin 降级**：无 Darwin 时只写 `DARWIN_REQUEST.md` 并保持 `status: prepared`，不得声称"已进化"。
+8. **来源质量**：Catalog-backed Pack 必须通过来源集合门，`SOURCE_QUALITY.json` 哈希冻结。
+9. **学习结构**：Pack 必须包含无环 `LEARNING_PATH.json`。
+10. **Skill 召回**：大型 Skill Bank 使用字段感知召回；低分或低 margin 必须确认或拒答。
+11. **经验进化**：部署反馈只生成候选；holdout 不参与挖掘，用户确认前不修改 Skill。

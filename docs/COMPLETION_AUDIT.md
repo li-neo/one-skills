@@ -1,6 +1,6 @@
 # 工程完成审计
 
-审计时间：2026-08-05
+审计时间：2026-08-06
 
 本文件按项目公开承诺逐项列出权威证据。只有代码、可复跑测试、运行产物或外部 CI 可以证明完成；设计意图不算证据。
 
@@ -9,13 +9,16 @@
 | 要求 | 实现证据 | 验证证据 |
 |---|---|---|
 | neo-skills 十阶段状态机不可跳阶 | `pipeline.py` | `test_pipeline_blocks_at_independent_verification_and_cannot_skip` |
-| neo-skills v0.2.2 Guided Controller | `guided.py`、两个 Session Schema | 检查点、授权、证据等级无损入 Pack 测试 |
+| neo-skills v0.2.8 路由与 Guided Controller | `routing.py`、`guided.py`、Session Schema | 拒答路由、检查点、授权、证据等级无损入 Pack 测试 |
 | neo-skills v0.2.0 可复现 Pack | `RECIPE_LOCK.json`、`PROTECTED_CONSTRAINTS.json` | Recipe/Profile 一致性、Source/Eval hash 漂移门测试 |
 | Evidence 强 Schema | `models.py`、`schemas/evidence.schema.json` | Evidence 校验贯穿 Pack 测试 |
 | SSRF、读回、Darwin 降级 | `ingest.py`、`delivery.py` | 私网拒绝、安装/导出、`status: prepared` 测试 |
 | cangjie 多视角提取 | `extraction.extract_candidates_with_model` | 并行 Profile views；非原文 quote 拒绝测试 |
 | 三重验证与 RIA++ | `provider.verify_candidate`、Profile 编译契约 | 独立模型验证集成测试 |
 | 原子 Skill、关系与压力测试 | `compiler.py`、canonical evals | 完整发布链测试 |
+| 2026 Source-Set 质量门 | `source_quality.py`、Source Catalog Schema | 独立来源、角色覆盖、holdout 和质量哈希测试 |
+| 2026 Skill Retrieval | `skill_retrieval.py` | 字段分离、背景 IDF、margin/abstain 与官方 frontmatter 测试 |
+| 2026 Learning / Experience | `learning.py`、`experience.py` | 先修路径、掌握状态、复现门与 holdout 隔离测试 |
 
 ## 2. 蒸馏与 Profile
 
@@ -40,6 +43,8 @@
 | 不可变 Source/Document Version | `database.py`，同 URI 更新生成新 version |
 | 内容寻址源文件 | `LocalBlobStore`；Manifest `raw_uri` 读回 |
 | 全文、语义、关系混合检索 | SQLite FTS5、本地向量、RRF 和 lineage |
+| Skill 字段召回 | name/description/trigger/boundary/procedure 独立 sparse+dense 分 |
+| Source Quality | authority、directness、independence group、role、coverage 入库 |
 | active version | 所有召回 SQL 在检索前过滤 |
 | 多租户 ACL | tenant/principal/asset grants 在召回前过滤 |
 | Person Memory | 三态更新、时序和向量字段 |
@@ -69,12 +74,14 @@
 | Darwin | 冻结保护项、paired 3/5 judges、prepared 降级 |
 | Recipe Loop | Registry、固定 Benchmark、非补偿式晋升 |
 | Knowledge Loop | 增量来源、版本切换、撤销、影响与回归 |
+| Experience Loop | append-only 部署反馈、复现后候选、evaluation holdout 隔离 |
+| Learning Loop | Pack 先修图、学习者掌握证据、间隔复习 |
 
 ## 5. 运行与规模化
 
 | 要求 | 实现证据 |
 |---|---|
-| CLI | `one --help` 的 27 个主入口/命令组 |
+| CLI | `one --help` 的 32 个主入口/命令组 |
 | HTTP API | Bearer 鉴权、限长 JSON、search、job submit/status |
 | 持久 Worker | SQLite lease、超时重领、最大重试、错误隔离 |
 | 批量并发 | 有界 ThreadPool，独立 Pack 和独立错误结果 |
@@ -94,7 +101,7 @@
 ## 7. 最终验证
 
 ```text
-Local unit/integration tests: 21/21
+Local unit/integration tests: 27/27
 Root Skill validation: 0 errors, 0 warnings
 Profile benchmark: 7/7
 Python CI: 3.10 / 3.11 / 3.12 passed

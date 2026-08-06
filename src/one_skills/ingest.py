@@ -2,17 +2,17 @@
 
 from __future__ import annotations
 
-from html.parser import HTMLParser
 import ipaddress
 import mimetypes
-from pathlib import Path
 import re
 import shutil
 import socket
 import subprocess
+import zipfile
+from html.parser import HTMLParser
+from pathlib import Path
 from urllib.parse import urlparse
 from urllib.request import HTTPRedirectHandler, Request, build_opener
-import zipfile
 from xml.etree import ElementTree
 
 from .constants import (
@@ -335,7 +335,13 @@ def structural_chunks(
                 text=text,
                 content_hash=content_hash,
                 access_level=document.access_level,
-                source_locator=f"{document.source}#L{line_number}",
+                source_locator=f"{document.source_uri or document.source}#L{line_number}",
+                source_key=document.source_uri or document.source,
+                independence_group=document.independence_group
+                or document.source_uri
+                or document.source,
+                authority=document.authority,
+                source_role=document.source_role,
             )
         )
     return chunks

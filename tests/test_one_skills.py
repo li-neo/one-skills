@@ -26,7 +26,12 @@ from one_skills.delivery import (
     release_pack,
 )
 from one_skills.evaluation import aggregate_results, evaluate_pack, paired_decision
-from one_skills.extraction import extract_candidates_with_model
+from one_skills.experience import mine_experience_candidates, record_experience
+from one_skills.extraction import (
+    extract_candidates_with_model,
+    extract_structured_claims,
+    verify_candidates,
+)
 from one_skills.guided import (
     GuidedSessionError,
     advance_session,
@@ -46,7 +51,8 @@ from one_skills.ingest import (
     structural_chunks,
 )
 from one_skills.jobs import JobQueue, run_worker_once
-from one_skills.models import Candidate
+from one_skills.learning import init_learner, next_learning_node, record_attempt
+from one_skills.models import Candidate, Chunk
 from one_skills.pipeline import (
     PipelineError,
     advance_phase,
@@ -63,10 +69,193 @@ from one_skills.profiles import Profile, register_profile
 from one_skills.provider import ProviderError
 from one_skills.recipes import promotion_decision
 from one_skills.retrieval import HybridRetriever, local_embedding
+from one_skills.routing import route_intent
+from one_skills.skill_retrieval import search_skills
+from one_skills.source_quality import audit_source_catalog
 from one_skills.validation import validate_pack, validate_skill
 
 
 class IngestionTests(unittest.TestCase):
+    def test_source_catalog_gates_quality_and_materializes_provenance(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            captured = root / "captured"
+            captured.mkdir()
+            for name in ("primary", "critical", "anchor", "holdout"):
+                (captured / f"{name}.md").write_text(
+                    f"# {name}\n\n必须先调查事实，再说明边界和反例。" * 6,
+                    encoding="utf-8",
+                )
+            catalog = {
+                "schema_version": "1.0",
+                "subject": "Historical method",
+                "research_questions": ["method", "failure"],
+                "requirements": {
+                    "minimum_independent_groups": 3,
+                    "minimum_primary_sources": 1,
+                    "required_roles": [
+                        "evidence",
+                        "counterevidence",
+                        "verification_anchor",
+                    ],
+                    "minimum_coverage": 1.0,
+                },
+                "sources": [
+                    {
+                        "id": "primary",
+                        "ingest": "captured/primary.md",
+                        "uri": "https://example.org/primary",
+                        "title": "Primary",
+                        "creator": "Author",
+                        "authority": "primary",
+                        "directness": "direct",
+                        "independence_group": "author",
+                        "role": "evidence",
+                        "coverage": ["method"],
+                        "temporal_scope": "historical",
+                        "locator": "section 1",
+                        "usage_rights": "link-and-short-quotes",
+                        "access": "public",
+                    },
+                    {
+                        "id": "critical",
+                        "ingest": "captured/critical.md",
+                        "uri": "https://example.edu/critical",
+                        "title": "Critical history",
+                        "creator": "University",
+                        "authority": "scholarly",
+                        "directness": "derived",
+                        "independence_group": "university",
+                        "role": "counterevidence",
+                        "coverage": ["failure"],
+                        "temporal_scope": "historical",
+                        "locator": "chapter 2",
+                        "usage_rights": "link-and-short-quotes",
+                        "access": "public",
+                    },
+                    {
+                        "id": "anchor",
+                        "ingest": "captured/anchor.md",
+                        "uri": "https://archive.example/anchor",
+                        "title": "Independent archive",
+                        "creator": "Archive",
+                        "authority": "official",
+                        "directness": "direct",
+                        "independence_group": "archive",
+                        "role": "verification_anchor",
+                        "coverage": ["method", "failure"],
+                        "temporal_scope": "historical",
+                        "locator": "record 3",
+                        "usage_rights": "link-and-short-quotes",
+                        "access": "public",
+                    },
+                    {
+                        "id": "holdout",
+                        "ingest": "captured/holdout.md",
+                        "uri": "https://holdout.example/eval",
+                        "title": "Holdout",
+                        "creator": "Evaluator",
+                        "authority": "scholarly",
+                        "directness": "derived",
+                        "independence_group": "holdout",
+                        "role": "evaluation_only",
+                        "coverage": ["method"],
+                        "temporal_scope": "historical",
+                        "locator": "case 1",
+                        "usage_rights": "link-and-short-quotes",
+                        "access": "public",
+                    },
+                ],
+            }
+            catalog_path = root / "catalog.json"
+            catalog_path.write_text(
+                json.dumps(catalog, ensure_ascii=False),
+                encoding="utf-8",
+            )
+            report = audit_source_catalog(catalog_path, "person", "deep")
+            self.assertEqual(report["status"], "passed")
+            self.assertEqual(report["metrics"]["selected_count"], 3)
+            pack = create_pack(
+                root / "workspace",
+                [],
+                "person",
+                "deep",
+                "historical-method",
+                "public",
+                "public-only",
+                catalog_path,
+            )
+            manifest = json.loads(
+                (pack / "SOURCE_MANIFEST.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual(
+                {item["authority"] for item in manifest["sources"]},
+                {"primary", "scholarly", "official"},
+            )
+            self.assertTrue((pack / "LEARNING_PATH.json").exists())
+            self.assertEqual(
+                [item for item in validate_pack(pack) if item.severity == "error"],
+                [],
+            )
+            with KnowledgeDB(root / "workspace" / ".one" / "knowledge.db") as database:
+                self.assertEqual(
+                    len(database.rows("SELECT * FROM source_assessments")),
+                    3,
+                )
+
+    def test_person_candidate_requires_independent_provenance_groups(self) -> None:
+        candidate = Candidate(
+            title="recurring-method",
+            candidate_type="framework",
+            summary="必须先调查两个独立场景，再根据反证与执行结果持续修正当前判断。",
+            evidence_ids=["a", "b"],
+            source_contexts=["same-source::A", "same-source::B"],
+            source_ids=["same-source"],
+            independence_groups=["same-publisher"],
+        )
+        verified = verify_candidates(
+            [candidate],
+            deep=True,
+            require_independent_sources=True,
+        )[0]
+        self.assertTrue(verified.cross_domain)
+        self.assertTrue(verified.distinctive)
+        self.assertFalse(verified.source_independent)
+        self.assertEqual(verified.status, "rejected")
+
+    def test_structured_claim_keys_join_independent_sources(self) -> None:
+        statement = "必须把一线证据、暂时判断、可逆试验和独立坏消息通道组成闭环。"
+        chunks = [
+            Chunk(
+                id=f"chunk-{index}",
+                document_id=f"document-{index}",
+                document_version=1,
+                section_path="Structured claim",
+                ordinal=0,
+                text=(
+                    "Claim-Key: feedback-integrity\n"
+                    f"Claim-Statement: {statement}\n"
+                    "Claim-Type: framework\n"
+                    f"Evidence: 独立来源{index}提供了可定位的支持证据。"
+                ),
+                content_hash=str(index) * 64,
+                access_level="public",
+                source_locator=f"source-{index}#L1",
+                source_key=f"source-{index}",
+                independence_group=f"group-{index}",
+                authority="primary" if index == 1 else "scholarly",
+            )
+            for index in (1, 2)
+        ]
+        candidates, evidence = extract_structured_claims(chunks, "methodology")
+        self.assertEqual(len(candidates), 1)
+        self.assertEqual(len(evidence), 2)
+        verified = verify_candidates(candidates, deep=True)[0]
+        self.assertTrue(verified.cross_domain)
+        self.assertTrue(verified.source_independent)
+        self.assertTrue(verified.distinctive)
+        self.assertEqual(verified.status, "needs_model_verification")
+
     def test_archive_expansion_budget_is_enforced(self) -> None:
         class Entry:
             file_size = MAX_LOCAL_BYTES + 1
@@ -122,6 +311,82 @@ class IngestionTests(unittest.TestCase):
 
 
 class DatabaseAndRetrievalTests(unittest.TestCase):
+    def test_field_aware_skill_retrieval_and_official_frontmatter(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            investigation = root / "investigation-first"
+            contradiction = root / "contradiction-analysis"
+            investigation.mkdir()
+            contradiction.mkdir()
+            (investigation / "SKILL.md").write_text(
+                "---\n"
+                "name: investigation-first\n"
+                "description: |\n"
+                "  Collects first-hand evidence before high-impact decisions. "
+                "Use when reports conflict or no one has interviewed users.\n"
+                "license: MIT\n"
+                "compatibility: Requires access to source documents.\n"
+                "metadata:\n"
+                "  author: example-org\n"
+                "  version: \"1.0\"\n"
+                "allowed-tools: Read WebSearch\n"
+                "---\n"
+                "# Investigation\n\n"
+                "## 触发场景\n用户只看二手报告、尚未访谈一线用户。\n\n"
+                "## 工作流\n先定义问题，再访谈不同角色，最后记录反证。\n\n"
+                "## 边界\n已有充分一手证据时不要重复调查。\n",
+                encoding="utf-8",
+            )
+            (contradiction / "SKILL.md").write_text(
+                "---\n"
+                "name: contradiction-analysis\n"
+                "description: Maps competing objectives and selects a bottleneck. "
+                "Use when many conflicts compete for attention.\n"
+                "---\n"
+                "# Contradiction\n\n"
+                "## 触发场景\n多个目标和资源矛盾纠缠。\n\n"
+                "## 工作流\n列出矛盾并选择牵动全局的一项。\n\n"
+                "## 边界\n事实信息不足时先调查。\n",
+                encoding="utf-8",
+            )
+            findings = validate_skill(investigation)
+            self.assertNotIn(
+                "frontmatter.keys",
+                {item.code for item in findings if item.severity == "error"},
+            )
+            result = search_skills(
+                "团队只看了行业报告，没有访谈一线用户，先怎么调查？",
+                [root],
+            )
+            self.assertEqual(result["status"], "selected")
+            self.assertEqual(result["results"][0]["name"], "investigation-first")
+            self.assertIn("triggers", result["results"][0]["field_scores"])
+
+            explicit = root / "explicit-only"
+            explicit.mkdir()
+            (explicit / "SKILL.md").write_text(
+                "---\n"
+                "name: explicit-only\n"
+                "description: Handles confidential review methods. "
+                "Use only when explicitly invoked.\n"
+                "metadata:\n"
+                "  one-skills.activation: explicit\n"
+                "  one-skills.aliases: run-explicit,显式审查\n"
+                "---\n"
+                "# Explicit\n\n"
+                "## 触发场景\n仅在明确点名时运行审查。\n\n"
+                "## 工作流\n读取证据并输出审查结果。\n\n"
+                "## 边界\n普通审查问题不自动运行。\n",
+                encoding="utf-8",
+            )
+            self.assertEqual(
+                search_skills("请审查这份材料", [explicit])["status"],
+                "abstain",
+            )
+            selected = search_skills("run-explicit 审查这份材料", [explicit])
+            self.assertEqual(selected["status"], "selected")
+            self.assertTrue(selected["results"][0]["activation_eligible"])
+
     def test_authenticated_http_api_queues_jobs(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -290,6 +555,79 @@ class DatabaseAndRetrievalTests(unittest.TestCase):
 
 
 class PipelineTests(unittest.TestCase):
+    def test_learning_state_and_experience_candidates_are_evidence_gated(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source = root / "course.md"
+            source.write_text(
+                "# Foundation\n\n先理解输入和输出。\n\n"
+                "# Practice\n\n再用新问题检查是否掌握。",
+                encoding="utf-8",
+            )
+            pack = create_pack(
+                root / "workspace",
+                [str(source)],
+                "content",
+                "quick",
+                "course",
+                "public",
+            )
+            init_learner(pack, "alice")
+            first = next_learning_node(pack, "alice")
+            self.assertIsNotNone(first)
+            record_attempt(pack, "alice", first["id"], 0.9, "能够解释并举例")
+            second = next_learning_node(pack, "alice")
+            self.assertIsNotNone(second)
+            self.assertNotEqual(first["id"], second["id"])
+
+            record_experience(
+                pack,
+                "course-skill",
+                "用户把相关性当成因果性",
+                "corrected",
+                "回答缺少因果边界",
+                "run:1",
+                "先列替代解释，再寻找干预证据。",
+                "public",
+            )
+            self.assertEqual(
+                mine_experience_candidates(pack)["candidate_count"],
+                0,
+            )
+            record_experience(
+                pack,
+                "course-skill",
+                "用户把相关性当成因果性",
+                "failure",
+                "再次遗漏替代解释",
+                "run:2",
+                access="public",
+            )
+            record_experience(
+                pack,
+                "course-skill",
+                "用户把相关性当成因果性",
+                "failure",
+                "holdout failure",
+                "eval:1",
+                access="public",
+                scope="evaluation",
+            )
+            report = mine_experience_candidates(pack)
+            self.assertEqual(report["candidate_count"], 1)
+            self.assertEqual(len(report["evaluation_event_ids"]), 1)
+            self.assertNotIn(
+                report["evaluation_event_ids"][0],
+                report["candidates"][0]["supporting_event_ids"],
+            )
+
+    def test_router_abstains_on_ambiguous_intent(self) -> None:
+        routed = route_intent("帮我整理一下这个东西")
+        self.assertTrue(routed["needs_confirmation"])
+        clear = route_intent("把毛泽东的思维方法蒸馏成人物 skill")
+        self.assertFalse(clear["needs_confirmation"])
+        self.assertEqual(clear["selected_object_type"], "person")
+
     def test_guided_session_preserves_evidence_class_in_pack(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -467,8 +805,8 @@ class PipelineTests(unittest.TestCase):
             init_workspace(root)
             source = root / "method.md"
             source.write_text(
-                "# Context A\n\n原则是必须先识别瓶颈，再比较方案。\n\n"
-                "# Context B\n\n案例中应该先识别瓶颈，然后才分配资源。\n",
+                "# Context A\n\n原则是必须先识别真实资源瓶颈，再比较每个候选方案的单位价值与风险。\n\n"
+                "# Context B\n\n案例中应该先识别制约结果的瓶颈，然后才按证据分配有限资源。\n",
                 encoding="utf-8",
             )
             pack = create_pack(root, [str(source)], "methodology", "standard", "bottleneck")
@@ -515,10 +853,17 @@ class PipelineTests(unittest.TestCase):
                 advance_phase(pack, "ship", "completed")
             self.assertTrue((pack / "candidates" / "candidates.json").exists())
             self.assertTrue((pack / "EVIDENCE_LEDGER.jsonl").exists())
+            old_quote_ids = {
+                json.loads(line)["id"]
+                for line in (pack / "EVIDENCE_LEDGER.jsonl")
+                .read_text(encoding="utf-8")
+                .splitlines()
+                if line.strip()
+            }
             initial_manifest = json.loads(
                 (pack / "SOURCE_MANIFEST.json").read_text(encoding="utf-8")
             )
-            self.assertTrue(initial_manifest["sources"][0]["raw_uri"].startswith("file://"))
+            self.assertTrue(initial_manifest["sources"][0]["raw_uri"].startswith("file:"))
             source.write_text(
                 "# Context C\n\n新版本要求必须验证完成标准，并记录回滚路径。\n",
                 encoding="utf-8",
@@ -536,6 +881,20 @@ class PipelineTests(unittest.TestCase):
                 (pack / "PROTECTED_CONSTRAINTS.json").read_text(encoding="utf-8")
             )
             self.assertEqual(len(constraints["source_hashes"]), 2)
+            new_quote_ids = {
+                json.loads(line)["id"]
+                for line in (pack / "EVIDENCE_LEDGER.jsonl")
+                .read_text(encoding="utf-8")
+                .splitlines()
+                if line.strip()
+            }
+            self.assertFalse(old_quote_ids & new_quote_ids)
+            self.assertTrue(any((pack / "audit" / "history").glob("source-update-*")))
+            with KnowledgeDB(root / ".one" / "knowledge.db") as database:
+                superseded = database.rows(
+                    "SELECT id FROM claims WHERE status = 'superseded'"
+                )
+            self.assertTrue(superseded)
             self.assertEqual(
                 [item for item in validate_pack(pack) if item.severity == "error"],
                 [],
@@ -550,7 +909,7 @@ class PipelineTests(unittest.TestCase):
                     payload = json.loads(user)
                     if schema_name != "extract-framework":
                         return {"candidates": []}
-                    chunk = payload["chunks"][0]
+                    chunks = payload["chunks"]
                     return {
                         "candidates": [
                             {
@@ -562,6 +921,7 @@ class PipelineTests(unittest.TestCase):
                                         "chunk_id": chunk["id"],
                                         "quote": chunk["text"],
                                     }
+                                    for chunk in chunks[:2]
                                 ],
                             }
                         ]

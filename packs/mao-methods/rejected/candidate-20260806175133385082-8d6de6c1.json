@@ -1,0 +1,29 @@
+{
+  "title": "Evidence: 《关于领导方法的若干问题》描述从分散经验到系统意见、返回行动检验...",
+  "candidate_type": "framework",
+  "summary": "Evidence: 《关于领导方法的若干问题》描述从分散经验到系统意见、返回行动检验并继续循环的过程，不能只保留“集中意见”一步。",
+  "evidence_ids": [
+    "ev-20260806175133385074-e604eeed"
+  ],
+  "source_contexts": [
+    "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::结构化主张：反馈完整性"
+  ],
+  "tags": [
+    "methodology",
+    "framework"
+  ],
+  "source_ids": [
+    "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods"
+  ],
+  "independence_groups": [
+    "mao-authorized-works"
+  ],
+  "id": "candidate-20260806175133385082-8d6de6c1",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": true,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts"
+}

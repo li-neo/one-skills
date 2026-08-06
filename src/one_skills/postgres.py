@@ -3,20 +3,20 @@
 from __future__ import annotations
 
 import json
+import sqlite3
 from datetime import datetime
 from pathlib import Path
-import sqlite3
 from statistics import median
 from time import perf_counter
 from typing import Any
 
 from .retrieval import local_embedding
 
-
 MIGRATION_TABLES = (
     "tenants",
     "principals",
     "sources",
+    "source_assessments",
     "documents",
     "document_versions",
     "chunks",
@@ -148,6 +148,7 @@ class PostgresBackend:
             "payload_json",
             "result_json",
             "details_json",
+            "quality_json",
         }:
             parsed = json.loads(value) if isinstance(value, str) else value
             return self.Jsonb(parsed)

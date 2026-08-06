@@ -1,0 +1,29 @@
+{
+  "title": "当不同版本影响方法含义时，应并列版本，不选择更方便当前论证的一版。",
+  "candidate_type": "framework",
+  "summary": "当不同版本影响方法含义时，应并列版本，不选择更方便当前论证的一版。",
+  "evidence_ids": [
+    "ev-20260806175133386595-2f2ddeea"
+  ],
+  "source_contexts": [
+    "https://www.dswxyjy.org.cn/n1/2021/0118/c219000-32003108.html::对蒸馏的约束"
+  ],
+  "tags": [
+    "methodology",
+    "framework"
+  ],
+  "source_ids": [
+    "https://www.dswxyjy.org.cn/n1/2021/0118/c219000-32003108.html"
+  ],
+  "independence_groups": [
+    "party-history-institute-version-study"
+  ],
+  "id": "candidate-20260806175133386669-4a8634e5",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": true,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts"
+}

@@ -1,0 +1,29 @@
+{
+  "title": "- 核心篇目：《党委会的工作方法》，1949年；相关阶段方法来自持久战与集中力量的公...",
+  "candidate_type": "framework",
+  "summary": "- 核心篇目：《党委会的工作方法》，1949年；相关阶段方法来自持久战与集中力量的公开文本。",
+  "evidence_ids": [
+    "ev-20260806175133385203-c74e56d4"
+  ],
+  "source_contexts": [
+    "https://www.12371.cn/special/mzdxj/d4j/#committee-methods::来源定位"
+  ],
+  "tags": [
+    "methodology",
+    "framework"
+  ],
+  "source_ids": [
+    "https://www.12371.cn/special/mzdxj/d4j/#committee-methods"
+  ],
+  "independence_groups": [
+    "mao-authorized-works"
+  ],
+  "id": "candidate-20260806175133385210-cf4caa94",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": true,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts"
+}

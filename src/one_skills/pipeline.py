@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-from dataclasses import asdict
 import json
+import shutil
+from dataclasses import asdict
 from pathlib import Path
 from threading import Lock
 from typing import Any
@@ -15,17 +16,32 @@ from .extraction import (
     approve_candidate,
     extract_candidates,
     extract_candidates_with_model,
+    extract_structured_claims,
     merge_candidates,
     verify_candidates,
 )
 from .ingest import expand_sources, structural_chunks
+from .learning import build_learning_path
 from .models import Candidate, Capability, Evidence
 from .profiles import PROFILES, detect_profile, load_profile_plugins, profile_prompt
 from .provider import ModelProvider, model_capability, verify_candidate
 from .recipes import initialize_registry
 from .retrieval import local_embedding
+from .source_quality import (
+    apply_catalog_metadata,
+    audit_source_catalog,
+    source_quality_fingerprint,
+)
 from .storage import LocalBlobStore
-from .utils import append_jsonl, atomic_write, dump_json, load_json, new_id, slugify, utc_now
+from .utils import (
+    append_jsonl,
+    atomic_write,
+    dump_json,
+    load_json,
+    new_id,
+    slugify,
+    utc_now,
+)
 
 
 class PipelineError(RuntimeError):
@@ -190,6 +206,55 @@ def _contract(
 """
 
 
+def _portable_workspace_path(value: str, workspace: Path) -> str:
+    if value.startswith(("http://", "https://")):
+        return value
+    prefix = ""
+    raw = value
+    if value.startswith("file://"):
+        prefix = "file:"
+        raw = value[7:]
+    fragment = ""
+    if "#" in raw:
+        raw, fragment = raw.split("#", 1)
+        fragment = "#" + fragment
+    path = Path(raw).expanduser()
+    if not path.is_absolute():
+        path = (workspace / path).resolve()
+    try:
+        relative = path.resolve().relative_to(workspace.resolve())
+    except ValueError:
+        return value
+    return prefix + relative.as_posix() + fragment
+
+
+def _portable_source_quality(
+    report: dict[str, Any],
+    workspace: Path,
+) -> dict[str, Any]:
+    portable = json.loads(json.dumps(report))
+    if portable.get("catalog"):
+        portable["catalog"] = _portable_workspace_path(
+            portable["catalog"],
+            workspace,
+        )
+    for key in (
+        "selected_sources",
+        "evaluation_only_sources",
+        "excluded_sources",
+    ):
+        for item in portable.get(key, []):
+            original = item.pop("ingest_input", item.get("ingest", ""))
+            item["ingest"] = (
+                original
+                if original
+                and not original.startswith(("http://", "https://"))
+                and not Path(original).expanduser().is_absolute()
+                else _portable_workspace_path(original, workspace)
+            )
+    return portable
+
+
 def create_pack(
     workspace: Path,
     sources: list[str],
@@ -198,6 +263,7 @@ def create_pack(
     name: str | None = None,
     access_level: str = "private-local",
     consent: str | None = None,
+    source_catalog: Path | None = None,
 ) -> Path:
     load_profile_plugins()
     if requested_profile != "auto" and requested_profile not in PROFILES:
@@ -205,8 +271,37 @@ def create_pack(
     if mode not in MODES:
         raise PipelineError(f"unsupported mode: {mode}")
     root = init_workspace(workspace, mode) if not (workspace / ".one").exists() else workspace.resolve()
-    documents = expand_sources(sources, access_level)
-    profile = detect_profile(documents, sources) if requested_profile == "auto" else requested_profile
+    source_quality = None
+    resolved_sources = list(sources)
+    if source_catalog is not None:
+        profile_hint = requested_profile if requested_profile != "auto" else "content"
+        source_quality = audit_source_catalog(source_catalog, profile_hint, mode)
+        if source_quality["status"] != "passed":
+            raise PipelineError(
+                "source quality gate blocked distillation: "
+                + "; ".join(source_quality["gaps"])
+            )
+        resolved_sources.extend(
+            item["ingest"] for item in source_quality["selected_sources"]
+        )
+    resolved_sources = list(dict.fromkeys(resolved_sources))
+    if not resolved_sources:
+        raise PipelineError("distillation requires --source or --source-catalog")
+    documents = expand_sources(resolved_sources, access_level)
+    profile = (
+        detect_profile(documents, resolved_sources)
+        if requested_profile == "auto"
+        else requested_profile
+    )
+    if source_quality is not None and profile != source_quality["profile"]:
+        source_quality = audit_source_catalog(source_catalog, profile, mode)
+        if source_quality["status"] != "passed":
+            raise PipelineError(
+                "source quality gate blocked final Profile: "
+                + "; ".join(source_quality["gaps"])
+            )
+    if source_quality is not None:
+        documents = apply_catalog_metadata(documents, source_quality)
     if profile not in PROFILES:
         raise PipelineError(f"profile has no implementation: {profile}")
     initialize_registry(root / ".one" / "recipes.json")
@@ -223,6 +318,25 @@ def create_pack(
         if consent == "public-only" and access_level != "public":
             raise PipelineError("public-only consent requires --access public")
     resolved_name = name or documents[0].title
+    stored_sources = (
+        [
+            *sources,
+            *(item["uri"] for item in source_quality["selected_sources"]),
+        ]
+        if source_quality is not None
+        else resolved_sources
+    )
+    stored_sources = list(
+        dict.fromkeys(
+            _portable_workspace_path(value, root)
+            for value in stored_sources
+        )
+    )
+    stored_quality = (
+        _portable_source_quality(source_quality, root)
+        if source_quality is not None
+        else None
+    )
     pack = root / "packs" / slugify(resolved_name)
     if pack.exists() and any(pack.iterdir()):
         raise PipelineError(f"pack already exists and is not empty: {pack}")
@@ -247,7 +361,12 @@ def create_pack(
             "slug": pack.name,
             "profile": profile,
             "mode": mode,
-            "sources": sources,
+            "sources": stored_sources,
+            "source_catalog": (
+                _portable_workspace_path(str(source_catalog.resolve()), root)
+                if source_catalog
+                else None
+            ),
             "access_level": access_level,
             "consent": consent or "not-applicable",
             "recipe": {"id": recipe["id"], "version": recipe["version"]},
@@ -285,9 +404,35 @@ def create_pack(
         "# Skill Graph\n\n"
         "No compiled capabilities yet. This index is rebuilt after the compile phase.\n",
     )
+    dump_json(
+        pack / "SOURCE_QUALITY.json",
+        stored_quality
+        or {
+            "schema_version": "1.0",
+            "status": "unassessed",
+            "audited_at": utc_now(),
+            "gaps": [
+                "no source catalog was supplied; provenance quality was not gated"
+            ],
+            "selected_sources": [],
+            "evaluation_only_sources": [],
+            "excluded_sources": [],
+        },
+    )
+    constraints = load_json(pack / "PROTECTED_CONSTRAINTS.json")
+    constraints["source_quality_hash"] = source_quality_fingerprint(
+        load_json(pack / "SOURCE_QUALITY.json")
+    )
+    dump_json(pack / "PROTECTED_CONSTRAINTS.json", constraints)
     atomic_write(
         pack / "DISTILLATION_CONTRACT.md",
-        _contract(resolved_name, profile, mode, sources, consent or "not-applicable"),
+        _contract(
+            resolved_name,
+            profile,
+            mode,
+            stored_sources,
+            consent or "not-applicable",
+        ),
     )
     advance_phase(pack, "contract", "completed", "contract generated from explicit CLI inputs")
     _ingest_documents(root, pack, documents, profile)
@@ -311,6 +456,12 @@ def _ingest_documents(
         for document in documents:
             raw_uri = blob_store.put_source(document)
             source_id, document_id, version, created = database.add_document(document, profile)
+            if not created and any(
+                item.get("source_id") == source_id
+                and item.get("document_version") == version
+                for item in manifest
+            ):
+                continue
             if version > 1:
                 for item in manifest:
                     if item.get("document_id") == document_id:
@@ -322,20 +473,27 @@ def _ingest_documents(
             atomic_write(normalized_path, document.text + "\n")
             chunks = structural_chunks(document, document_id, version)
             database.add_chunks(chunks, {chunk.id: local_embedding(chunk.text) for chunk in chunks})
+            document_metadata = document.metadata()
+            if document.source_uri:
+                document_metadata["source"] = document.source_uri
             manifest.append(
                 {
-                    **document.metadata(),
+                    **document_metadata,
                     "source_id": source_id,
                     "document_id": document_id,
                     "document_version": version,
                     "created": created,
                     "active": True,
-                    "normalized_uri": str(normalized_path),
-                    "raw_uri": raw_uri,
+                    "normalized_uri": _portable_workspace_path(
+                        str(normalized_path),
+                        workspace,
+                    ),
+                    "raw_uri": _portable_workspace_path(raw_uri, workspace),
                     "chunk_ids": [chunk.id for chunk in chunks],
                 }
             )
             all_chunks.extend(asdict(chunk) for chunk in chunks)
+        database.invalidate_claims_from_inactive_versions()
     dump_json(pack / "SOURCE_MANIFEST.json", {"profile": profile, "sources": manifest})
     dump_json(pack / "sources" / "chunks.json", all_chunks)
     constraints_path = pack / "PROTECTED_CONSTRAINTS.json"
@@ -346,13 +504,75 @@ def _ingest_documents(
     }
     dump_json(constraints_path, constraints)
     advance_phase(pack, "ingest", "completed", f"indexed {len(documents)} sources")
+    build_learning_path(pack)
     _write_object_map(pack, profile, manifest)
+
+
+def _reset_extraction_artifacts(pack: Path) -> None:
+    history = pack / "audit" / "history" / new_id("source-update")
+    history.mkdir(parents=True, exist_ok=True)
+    for relative in (
+        "EVIDENCE_LEDGER.jsonl",
+        "candidates",
+        "verified",
+        "rejected",
+    ):
+        source = pack / relative
+        if not source.exists():
+            continue
+        destination = history / relative
+        if source.is_dir():
+            shutil.copytree(source, destination, dirs_exist_ok=True)
+        else:
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source, destination)
+
+    ledger = pack / "EVIDENCE_LEDGER.jsonl"
+    preserved: list[str] = []
+    if ledger.exists():
+        for line in ledger.read_text(encoding="utf-8").splitlines():
+            if not line.strip():
+                continue
+            item = json.loads(line)
+            if item.get("evidence_type") != "quote":
+                preserved.append(json.dumps(item, ensure_ascii=False))
+    atomic_write(ledger, "\n".join(preserved) + ("\n" if preserved else ""))
+    for relative in ("candidates", "verified", "rejected"):
+        directory = pack / relative
+        directory.mkdir(parents=True, exist_ok=True)
+        for path in directory.glob("*.json"):
+            path.unlink()
 
 
 def update_pack(pack: Path, sources: list[str]) -> dict[str, Any]:
     """Incrementally ingest changed sources and invalidate downstream phases."""
     metadata = load_json(pack / "pack.json")
+    workspace = workspace_for(pack)
     documents = expand_sources(sources, metadata["access_level"])
+    quality_path = pack / "SOURCE_QUALITY.json"
+    if metadata.get("source_catalog") and quality_path.exists():
+        catalog_path = Path(metadata["source_catalog"]).expanduser()
+        if not catalog_path.is_absolute():
+            catalog_path = workspace / catalog_path
+        runtime_quality = audit_source_catalog(
+            catalog_path,
+            metadata["profile"],
+            metadata["mode"],
+        )
+        if runtime_quality["status"] != "passed":
+            raise PipelineError(
+                "updated source catalog no longer passes: "
+                + "; ".join(runtime_quality["gaps"])
+            )
+        constraints = load_json(pack / "PROTECTED_CONSTRAINTS.json")
+        if constraints.get("source_quality_hash") != source_quality_fingerprint(
+            runtime_quality
+        ):
+            raise PipelineError(
+                "source catalog decisions changed; create a new Pack or explicitly "
+                "re-freeze source quality before updating"
+            )
+        documents = apply_catalog_metadata(documents, runtime_quality)
     before = load_json(pack / "SOURCE_MANIFEST.json")["sources"]
     state = load_state(pack)
     for phase in PHASES[PHASE_INDEX["ingest"] :]:
@@ -363,10 +583,17 @@ def update_pack(pack: Path, sources: list[str]) -> dict[str, Any]:
         }
     state["current_phase"] = "ingest"
     save_state(pack, state)
-    metadata["sources"] = list(dict.fromkeys([*metadata["sources"], *sources]))
+    metadata["sources"] = list(
+        dict.fromkeys(
+            [
+                *metadata["sources"],
+                *(_portable_workspace_path(source, workspace) for source in sources),
+            ]
+        )
+    )
     metadata["updated_at"] = utc_now()
     dump_json(pack / "pack.json", metadata)
-    workspace = workspace_for(pack)
+    _reset_extraction_artifacts(pack)
     _ingest_documents(workspace, pack, documents, metadata["profile"], append=True)
     after = load_json(pack / "SOURCE_MANIFEST.json")["sources"]
     changed = [item for item in after[len(before) :] if item["created"]]
@@ -525,18 +752,27 @@ def extract_pack(pack: Path) -> tuple[list[Candidate], list[Evidence]]:
     from .models import Chunk
 
     chunks = [Chunk(**value) for value in chunk_values]
-    candidates, evidence = extract_candidates(
+    structured_candidates, structured_evidence = extract_structured_claims(
+        chunks,
+        metadata["profile"],
+    )
+    heuristic_candidates, heuristic_evidence = extract_candidates(
         chunks,
         metadata["profile"],
         {"quick": 6, "standard": 12, "deep": 24, "continuous": 12}[metadata["mode"]],
     )
-    candidates = merge_candidates(candidates)
+    candidates = merge_candidates([*structured_candidates, *heuristic_candidates])
+    evidence = [*structured_evidence, *heuristic_evidence]
     dump_json(pack / "candidates" / "candidates.json", [_candidate_dict(item) for item in candidates])
     for item in evidence:
         append_jsonl(pack / "EVIDENCE_LEDGER.jsonl", item.to_dict())
     _index_evidence(pack, evidence)
     advance_phase(pack, "extract", "completed", f"extracted {len(candidates)} candidates")
-    verified = verify_candidates(candidates, deep=metadata["mode"] == "deep")
+    verified = verify_candidates(
+        candidates,
+        deep=metadata["mode"] == "deep",
+        require_independent_sources=metadata["profile"] in {"person", "hybrid"},
+    )
     dump_json(pack / "verified" / "decisions.json", [_candidate_dict(item) for item in verified])
     for item in verified:
         if item.status == "rejected":
@@ -571,7 +807,11 @@ def reextract_with_model(
     for item in evidence:
         append_jsonl(pack / "EVIDENCE_LEDGER.jsonl", item.to_dict())
     _index_evidence(pack, evidence)
-    verified = verify_candidates(candidates, deep=True)
+    verified = verify_candidates(
+        candidates,
+        deep=True,
+        require_independent_sources=metadata["profile"] in {"person", "hybrid"},
+    )
     dump_json(pack / "verified" / "decisions.json", [_candidate_dict(item) for item in verified])
     state = load_state(pack)
     state["phases"]["extract"] = {
@@ -593,10 +833,24 @@ def _index_evidence(pack: Path, evidence: list[Evidence]) -> None:
     workspace = workspace_for(pack)
     with KnowledgeDB(workspace / ".one" / "knowledge.db") as database:
         for item in evidence:
-            chunk_rows = database.rows(
-                "SELECT id FROM chunks WHERE document_id = ? AND source_locator = ?",
-                (item.source, item.locator),
-            )
+            if item.chunk_id:
+                chunk_rows = database.rows(
+                    "SELECT id FROM chunks WHERE id = ? AND document_id = ? "
+                    "AND document_version = ?",
+                    (item.chunk_id, item.source, item.document_version),
+                )
+            else:
+                chunk_rows = database.rows(
+                    "SELECT c.id FROM chunks c "
+                    "JOIN documents d ON d.id = c.document_id "
+                    "WHERE c.document_id = ? AND c.source_locator = ? "
+                    "AND c.document_version = d.active_version",
+                    (item.source, item.locator),
+                )
+            if not chunk_rows:
+                raise PipelineError(
+                    f"evidence {item.id} does not resolve to an active source chunk"
+                )
             database.add_claim(
                 item.claim,
                 item.confidence,
@@ -612,7 +866,14 @@ def approve_and_compile(pack: Path, candidate_id: str, reason: str) -> Path:
     target = next((item for item in candidates if item.id == candidate_id), None)
     if not target:
         raise PipelineError(f"candidate not found: {candidate_id}")
-    if target.status == "rejected" and not (target.cross_domain and target.actionable and target.distinctive):
+    profile = load_json(pack / "pack.json")["profile"]
+    source_gate = target.source_independent or profile not in {"person", "hybrid"}
+    if target.status == "rejected" and not (
+        target.cross_domain
+        and source_gate
+        and target.actionable
+        and target.distinctive
+    ):
         raise PipelineError("candidate failed deterministic gates and cannot be approved without re-extraction")
     approve_candidate(target, reason)
     dump_json(decisions_path, [_candidate_dict(item) for item in candidates])
@@ -622,7 +883,6 @@ def approve_and_compile(pack: Path, candidate_id: str, reason: str) -> Path:
         if line.strip()
     ]
     linked = [item for item in evidence if item.get("id") in target.evidence_ids]
-    profile = load_json(pack / "pack.json")["profile"]
     capability = capability_from_candidate(target, profile)
     skill_dir = compile_skill(pack, capability, linked, profile=profile)
     workspace = workspace_for(pack)
@@ -677,13 +937,27 @@ def verify_and_compile_with_model(
             # The independent verifier also sees nearby evidence so it can test recurrence.
             verification = verify_candidate(provider, asdict(candidate), evidence[:50], contract)
             audit.append({"candidate_id": candidate.id, **verification})
-            candidate.cross_domain = verification["cross_domain"]
+            candidate.cross_domain = (
+                verification["cross_domain"]
+                and len(set(candidate.source_contexts)) >= 2
+            )
+            candidate.source_independent = len(
+                set(candidate.independence_groups)
+            ) >= 2
             candidate.predictive = verification["predictive"]
             candidate.distinctive = verification["distinctive"]
             candidate.actionable = verification["actionable"]
-            if not verification["accepted"]:
+            source_gate = (
+                candidate.source_independent
+                or metadata["profile"] not in {"person", "hybrid"}
+            )
+            if not verification["accepted"] or not candidate.cross_domain or not source_gate:
                 candidate.status = "rejected"
-                candidate.rejection_reason = verification["reason"]
+                candidate.rejection_reason = (
+                    verification["reason"]
+                    if source_gate
+                    else "person and hybrid Profiles require two independent provenance groups"
+                )
                 dump_json(pack / "rejected" / f"{candidate.id}.json", _candidate_dict(candidate))
                 continue
             candidate.status = "accepted"
@@ -733,6 +1007,7 @@ def _build_index(pack: Path) -> None:
         "## Relations\n\nNo relation is emitted without explicit evidence.\n",
     )
     _write_distillation_ir(pack, skills)
+    build_learning_path(pack)
     advance_phase(pack, "link", "completed", f"linked {len(skills)} skills")
 
 
@@ -777,5 +1052,6 @@ def _write_distillation_ir(pack: Path, skills: list[Path]) -> None:
             "forbidden_patterns": ["identity impersonation", "unsupported sensitive inference"],
         },
         "evals": evals,
+        "learning_path": load_json(pack / "LEARNING_PATH.json"),
     }
     dump_json(pack / "ir" / "distillation.json", ir)

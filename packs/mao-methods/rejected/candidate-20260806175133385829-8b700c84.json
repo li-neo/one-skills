@@ -1,0 +1,29 @@
+{
+  "title": "Evidence: 决议明确记录文化大革命中是非与敌我的混淆，以及错误分类给干部、知...",
+  "candidate_type": "counterexample",
+  "summary": "Evidence: 决议明确记录文化大革命中是非与敌我的混淆，以及错误分类给干部、知识分子和社会组织造成的严重后果。",
+  "evidence_ids": [
+    "ev-20260806175133385822-afc384e9"
+  ],
+  "source_contexts": [
+    "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::结构化主张：阶段性分类"
+  ],
+  "tags": [
+    "methodology",
+    "counterexample"
+  ],
+  "source_ids": [
+    "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm"
+  ],
+  "independence_groups": [
+    "1981-central-resolution"
+  ],
+  "id": "candidate-20260806175133385829-8b700c84",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": true,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable"
+}

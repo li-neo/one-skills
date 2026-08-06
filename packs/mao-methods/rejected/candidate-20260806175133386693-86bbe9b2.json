@@ -1,0 +1,29 @@
+{
+  "title": "最终 Skill 不使用第一人称冒充历史人物，也不生成伪造语录。面对毛泽东没有讨论过...",
+  "candidate_type": "framework",
+  "summary": "最终 Skill 不使用第一人称冒充历史人物，也不生成伪造语录。面对毛泽东没有讨论过的现代问题，只能说“这是基于公开方法的现代迁移”，并给出迁移在哪些条件下会失效。",
+  "evidence_ids": [
+    "ev-20260806175133386686-1cac8124"
+  ],
+  "source_contexts": [
+    "https://www.dswxyjy.org.cn/n1/2021/0118/c219000-32003108.html::现代输出纪律"
+  ],
+  "tags": [
+    "methodology",
+    "framework"
+  ],
+  "source_ids": [
+    "https://www.dswxyjy.org.cn/n1/2021/0118/c219000-32003108.html"
+  ],
+  "independence_groups": [
+    "party-history-institute-version-study"
+  ],
+  "id": "candidate-20260806175133386693-86bbe9b2",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": true,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts"
+}

@@ -1,0 +1,29 @@
+{
+  "title": "公开定稿可以支持最终观点，不能自动证明某年当场的原始措辞。",
+  "candidate_type": "counterexample",
+  "summary": "公开定稿可以支持最终观点，不能自动证明某年当场的原始措辞。",
+  "evidence_ids": [
+    "ev-20260806175133386559-1592c7a0"
+  ],
+  "source_contexts": [
+    "https://www.dswxyjy.org.cn/n1/2021/0118/c219000-32003108.html::对蒸馏的约束"
+  ],
+  "tags": [
+    "methodology",
+    "counterexample"
+  ],
+  "source_ids": [
+    "https://www.dswxyjy.org.cn/n1/2021/0118/c219000-32003108.html"
+  ],
+  "independence_groups": [
+    "party-history-institute-version-study"
+  ],
+  "id": "candidate-20260806175133386566-9f59cbe0",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": true,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable"
+}

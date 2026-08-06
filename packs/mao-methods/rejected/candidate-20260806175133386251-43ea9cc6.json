@@ -1,0 +1,29 @@
+{
+  "title": "Evidence: 论文的制度模型把异常结果与中央计划体制难以及时收集并响应新信息联...",
+  "candidate_type": "framework",
+  "summary": "Evidence: 论文的制度模型把异常结果与中央计划体制难以及时收集并响应新信息联系起来，说明总量信息和领导意愿不能替代分布监测与独立上行通道。",
+  "evidence_ids": [
+    "ev-20260806175133386244-484b79aa"
+  ],
+  "source_contexts": [
+    "https://www.nber.org/papers/w16361::结构化主张：反馈完整性"
+  ],
+  "tags": [
+    "methodology",
+    "framework"
+  ],
+  "source_ids": [
+    "https://www.nber.org/papers/w16361"
+  ],
+  "independence_groups": [
+    "nber-meng-qian-yared"
+  ],
+  "id": "candidate-20260806175133386251-43ea9cc6",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": true,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable"
+}

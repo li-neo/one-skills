@@ -1,0 +1,29 @@
+{
+  "title": "局部集中也不是永远只做一件事。安全、合规、现金流和人员健康等约束可能必须并行维护；中...",
+  "candidate_type": "principle",
+  "summary": "局部集中也不是永远只做一件事。安全、合规、现金流和人员健康等约束可能必须并行维护；“中心工作”不能成为忽视系统性风险的借口。",
+  "evidence_ids": [
+    "ev-20260806175133385412-d314d611"
+  ],
+  "source_contexts": [
+    "https://www.12371.cn/special/mzdxj/d4j/#committee-methods::证据边界"
+  ],
+  "tags": [
+    "methodology",
+    "principle"
+  ],
+  "source_ids": [
+    "https://www.12371.cn/special/mzdxj/d4j/#committee-methods"
+  ],
+  "independence_groups": [
+    "mao-authorized-works"
+  ],
+  "id": "candidate-20260806175133385419-248215cf",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": true,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts"
+}

@@ -69,3 +69,14 @@ python3 scripts/one.py update "$PACK" \
 ```
 
 内容发生变化时会创建新的 `document_version`，原子切换 active version，并使下游阶段失效。影响范围记录在 `reports/IMPACT.md`。
+
+## 5. 真实历史人物方法案例
+
+[毛泽东著作方法案例](mao-methods/README.md) 展示：
+
+- Source Catalog 与独立来源组；
+- 一手文本、官方反证、独立学术锚点和 holdout 分离；
+- Claim-Key 跨来源复现；
+- 与 GitHub 同类 Skills 的架构对比；
+- 显式激活、非人格冒充和权利边界；
+- `verify: blocked` 时仍可交付的候选产物与未完成证明。

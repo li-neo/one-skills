@@ -1,0 +1,29 @@
+{
+  "title": "调查本身也不会自动产生正确判断。样本选择、提问方式、权力在场和既有立场都可能污染材料...",
+  "candidate_type": "principle",
+  "summary": "调查本身也不会自动产生正确判断。样本选择、提问方式、权力在场和既有立场都可能污染材料；因此现代迁移必须增加反证样本、独立记录和可撤回试点。",
+  "evidence_ids": [
+    "ev-20260806175133384069-6fc0137e"
+  ],
+  "source_contexts": [
+    "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::证据边界"
+  ],
+  "tags": [
+    "methodology",
+    "principle"
+  ],
+  "source_ids": [
+    "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice"
+  ],
+  "independence_groups": [
+    "mao-authorized-works"
+  ],
+  "id": "candidate-20260806175133384077-8f51bd26",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": true,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts"
+}

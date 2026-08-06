@@ -15,5 +15,6 @@
     "canonical_evals"
   ],
   "canonical_eval_hashes": {},
-  "runtime_eval_hashes": {}
+  "runtime_eval_hashes": {},
+  "source_quality_hash": "2afe8dad1ea5cc5e37d26a54e6697058e9c46d6c270d7171c68b0f4a7c2ce4c9"
 }

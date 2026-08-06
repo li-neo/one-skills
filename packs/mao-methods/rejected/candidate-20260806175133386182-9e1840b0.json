@@ -1,0 +1,29 @@
+{
+  "title": "因此，任何调查—集中—执行的现代流程都必须加入：",
+  "candidate_type": "principle",
+  "summary": "因此，任何“调查—集中—执行”的现代流程都必须加入：",
+  "evidence_ids": [
+    "ev-20260806175133386175-1104a5b7"
+  ],
+  "source_contexts": [
+    "https://www.nber.org/papers/w16361::对 Skill 的意义"
+  ],
+  "tags": [
+    "methodology",
+    "principle"
+  ],
+  "source_ids": [
+    "https://www.nber.org/papers/w16361"
+  ],
+  "independence_groups": [
+    "nber-meng-qian-yared"
+  ],
+  "id": "candidate-20260806175133386182-9e1840b0",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate may be generic or underspecified"
+}

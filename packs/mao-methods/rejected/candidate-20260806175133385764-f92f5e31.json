@@ -1,0 +1,29 @@
+{
+  "title": "Evidence: 决议把个人专断、集体领导受损和民主法制制度化不足列入持续失效原因...",
+  "candidate_type": "counterexample",
+  "summary": "Evidence: 决议把个人专断、集体领导受损和民主法制制度化不足列入持续失效原因，表明理念上的调查不能替代独立反馈制度。",
+  "evidence_ids": [
+    "ev-20260806175133385756-450b29f0"
+  ],
+  "source_contexts": [
+    "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::结构化主张：反馈完整性"
+  ],
+  "tags": [
+    "methodology",
+    "counterexample"
+  ],
+  "source_ids": [
+    "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm"
+  ],
+  "independence_groups": [
+    "1981-central-resolution"
+  ],
+  "id": "candidate-20260806175133385764-f92f5e31",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": true,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable"
+}

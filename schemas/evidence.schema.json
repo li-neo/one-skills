@@ -34,6 +34,20 @@
     "confidence": {"type": "number", "minimum": 0, "maximum": 1},
     "inference_level": {"enum": ["none", "low", "medium", "high"]},
     "permission": {"enum": ["public", "authorized", "private-local", "unknown"]},
+    "source_key": {"type": "string"},
+    "independence_group": {"type": "string"},
+    "authority": {
+      "enum": [
+        "primary",
+        "official",
+        "scholarly",
+        "reputable-secondary",
+        "community",
+        "unknown"
+      ]
+    },
+    "chunk_id": {"type": "string"},
+    "document_version": {"type": ["integer", "null"], "minimum": 1},
     "notes": {"type": "string"},
     "recorded_at": {"type": "string"}
   },

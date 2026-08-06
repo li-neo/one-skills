@@ -1,0 +1,29 @@
+{
+  "title": "根据执行结果修订，不把一次动员或多数意见当成永久授权。",
+  "candidate_type": "case",
+  "summary": "根据执行结果修订，不把一次动员或多数意见当成永久授权。",
+  "evidence_ids": [
+    "ev-20260806175133384945-f987818d"
+  ],
+  "source_contexts": [
+    "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::可迁移机制"
+  ],
+  "tags": [
+    "methodology",
+    "case"
+  ],
+  "source_ids": [
+    "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods"
+  ],
+  "independence_groups": [
+    "mao-authorized-works"
+  ],
+  "id": "candidate-20260806175133384953-75ab7e28",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

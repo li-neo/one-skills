@@ -1,0 +1,29 @@
+{
+  "title": "优先收集异常、失败和坏消息，再修正解释。",
+  "candidate_type": "framework",
+  "summary": "优先收集异常、失败和坏消息，再修正解释。",
+  "evidence_ids": [
+    "ev-20260806175133383837-5ef6e23a"
+  ],
+  "source_contexts": [
+    "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::可迁移机制"
+  ],
+  "tags": [
+    "methodology",
+    "framework"
+  ],
+  "source_ids": [
+    "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice"
+  ],
+  "independence_groups": [
+    "mao-authorized-works"
+  ],
+  "id": "candidate-20260806175133384005-86aa38d1",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate may be generic or underspecified"
+}

@@ -1,0 +1,29 @@
+{
+  "title": "Evidence: 决议指出问题应以符合宪法、法律和党章的措施解决，不能采用文化大革...",
+  "candidate_type": "framework",
+  "summary": "Evidence: 决议指出问题应以符合宪法、法律和党章的措施解决，不能采用文化大革命的理论和方法。",
+  "evidence_ids": [
+    "ev-20260806175133385872-849b520a"
+  ],
+  "source_contexts": [
+    "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::结构化主张：现代迁移边界"
+  ],
+  "tags": [
+    "methodology",
+    "framework"
+  ],
+  "source_ids": [
+    "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm"
+  ],
+  "independence_groups": [
+    "1981-central-resolution"
+  ],
+  "id": "candidate-20260806175133385879-88dff73e",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": true,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts"
+}

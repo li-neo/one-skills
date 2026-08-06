@@ -2,14 +2,16 @@
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
 import json
-from pathlib import Path
 import re
+from dataclasses import asdict, dataclass
+from pathlib import Path
 from typing import Any
 
 from .constants import EVIDENCE_TYPES, INFERENCE_LEVELS, PERMISSIONS, TEST_TYPES
-from .pipeline import load_state
+from .learning import validate_learning_path
+from .pipeline import PipelineError, load_state
+from .source_quality import source_quality_fingerprint
 from .utils import load_json, stable_json_hash
 
 
@@ -31,11 +33,45 @@ def parse_frontmatter(text: str) -> tuple[dict[str, str], str]:
     if end < 0:
         return {}, text
     values: dict[str, str] = {}
-    for line in text[4:end].splitlines():
+    lines = text[4:end].splitlines()
+    index = 0
+    while index < len(lines):
+        line = lines[index]
+        if line and line[0].isspace():
+            index += 1
+            continue
         if ":" not in line or line.lstrip().startswith("#"):
+            index += 1
             continue
         key, value = line.split(":", 1)
-        values[key.strip()] = value.strip().strip("\"'")
+        key = key.strip()
+        value = value.strip()
+        if value in {"|", ">"}:
+            folded = value == ">"
+            block: list[str] = []
+            index += 1
+            while index < len(lines):
+                nested = lines[index]
+                if nested and not nested[0].isspace():
+                    break
+                block.append(nested.strip())
+                index += 1
+            values[key] = (" " if folded else "\n").join(block).strip()
+            continue
+        if key == "metadata" and not value:
+            nested_values: list[str] = []
+            index += 1
+            while index < len(lines):
+                nested = lines[index]
+                if nested and not nested[0].isspace():
+                    break
+                if nested.strip():
+                    nested_values.append(nested.strip())
+                index += 1
+            values[key] = "\n".join(nested_values)
+            continue
+        values[key] = value.strip("\"'")
+        index += 1
     return values, text[end + 5 :]
 
 
@@ -46,18 +82,68 @@ def validate_skill(skill_dir: Path) -> list[Finding]:
     text = path.read_text(encoding="utf-8")
     metadata, body = parse_frontmatter(text)
     findings: list[Finding] = []
-    if set(metadata) != {"name", "description"}:
+    allowed_keys = {
+        "name",
+        "description",
+        "license",
+        "compatibility",
+        "metadata",
+        "allowed-tools",
+    }
+    missing_keys = {"name", "description"} - set(metadata)
+    extra_keys = set(metadata) - allowed_keys
+    if missing_keys:
         findings.append(
-            Finding("error", "frontmatter.keys", "frontmatter must contain only name and description", str(path))
+            Finding(
+                "error",
+                "frontmatter.keys",
+                f"frontmatter missing: {', '.join(sorted(missing_keys))}",
+                str(path),
+            )
+        )
+    if extra_keys:
+        findings.append(
+            Finding(
+                "error",
+                "frontmatter.keys",
+                f"unsupported frontmatter keys: {', '.join(sorted(extra_keys))}",
+                str(path),
+            )
         )
     name = metadata.get("name", "")
     if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", name) or len(name) > 64:
         findings.append(Finding("error", "frontmatter.name", "name must be <=64 character hyphen-case", str(path)))
+    elif skill_dir.name != name:
+        findings.append(
+            Finding(
+                "error",
+                "frontmatter.directory_name",
+                "name must match the parent directory",
+                str(path),
+            )
+        )
     description = metadata.get("description", "")
-    if len(description) < 40:
-        findings.append(Finding("error", "frontmatter.description", "description must be at least 40 characters", str(path)))
+    if not description or len(description) > 1024:
+        findings.append(
+            Finding(
+                "error",
+                "frontmatter.description",
+                "description must contain 1-1024 characters",
+                str(path),
+            )
+        )
     if not re.search(r"\b(use|when|for)\b|使用|当|适用于|触发", description, re.IGNORECASE):
         findings.append(Finding("warning", "frontmatter.trigger", "description may not encode a trigger", str(path)))
+    compatibility = metadata.get("compatibility")
+    if compatibility is not None and not 1 <= len(compatibility) <= 500:
+        findings.append(
+            Finding(
+                "error",
+                "frontmatter.compatibility",
+                "compatibility must contain 1-500 characters",
+                str(path),
+            )
+        )
     requirements = {
         "workflow": r"工作流|workflow|步骤",
         "boundary": r"边界|boundary|不要|禁止",
@@ -421,6 +507,40 @@ def validate_reproducibility(pack: Path) -> list[Finding]:
                 str(paths["constraints"]),
             )
         )
+    quality_path = pack / "SOURCE_QUALITY.json"
+    if quality_path.exists():
+        try:
+            quality = load_json(quality_path)
+        except (OSError, json.JSONDecodeError) as exc:
+            findings.append(
+                Finding(
+                    "error",
+                    "source.quality_parse",
+                    str(exc),
+                    str(quality_path),
+                )
+            )
+        else:
+            if constraints.get("source_quality_hash") != source_quality_fingerprint(
+                quality
+            ):
+                findings.append(
+                    Finding(
+                        "error",
+                        "source.quality_drift",
+                        "SOURCE_QUALITY.json is not frozen or has drifted",
+                        str(quality_path),
+                    )
+                )
+            if metadata.get("source_catalog") and quality.get("status") != "passed":
+                findings.append(
+                    Finding(
+                        "error",
+                        "source.quality_gate",
+                        "catalog-backed Pack did not pass its source quality gate",
+                        str(quality_path),
+                    )
+                )
     return findings
 
 
@@ -433,6 +553,8 @@ def validate_pack(pack: Path) -> list[Finding]:
         "DISTILLATION_CONTRACT.md",
         "PIPELINE_STATE.json",
         "SOURCE_MANIFEST.json",
+        "SOURCE_QUALITY.json",
+        "LEARNING_PATH.json",
         "OBJECT_MAP.md",
         "EVIDENCE_LEDGER.jsonl",
         "INDEX.md",
@@ -467,6 +589,22 @@ def validate_pack(pack: Path) -> list[Finding]:
     except (PipelineError, OSError, json.JSONDecodeError) as exc:
         findings.append(Finding("error", "state.invalid", str(exc), str(pack / "PIPELINE_STATE.json")))
     findings.extend(validate_evidence(pack / "EVIDENCE_LEDGER.jsonl"))
+    learning_path = pack / "LEARNING_PATH.json"
+    if learning_path.exists():
+        try:
+            for error in validate_learning_path(load_json(learning_path)):
+                findings.append(
+                    Finding(
+                        "error",
+                        "learning.path",
+                        error,
+                        str(learning_path),
+                    )
+                )
+        except (OSError, json.JSONDecodeError) as exc:
+            findings.append(
+                Finding("error", "learning.parse", str(exc), str(learning_path))
+            )
     findings.extend(validate_reproducibility(pack))
     findings.extend(validate_frozen_evals(pack))
     for skill_file in sorted((pack / "skills").glob("*/SKILL.md")):
@@ -485,6 +623,3 @@ def summary(findings: list[Finding]) -> dict[str, Any]:
         "warnings": sum(item.severity == "warning" for item in findings),
         "findings": [item.to_dict() for item in findings],
     }
-
-
-from .pipeline import PipelineError

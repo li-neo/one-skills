@@ -1,0 +1,243 @@
+{
+  "schema_version": "1.0",
+  "catalog": "examples/mao-methods/SOURCE_CATALOG.json",
+  "catalog_hash": "44d0f8814ce31394a6837bd85d8861d1b934a9d4dabb091e895aaaf84475b3b3",
+  "subject": "毛泽东公开著作中的可迁移分析与工作方法",
+  "profile": "methodology",
+  "mode": "deep",
+  "audited_at": "2026-08-06T17:51:33+00:00",
+  "status": "passed",
+  "requirements": {
+    "minimum_independent_groups": 3,
+    "minimum_primary_sources": 4,
+    "required_roles": [
+      "evidence",
+      "counterevidence",
+      "verification_anchor"
+    ],
+    "minimum_coverage": 1.0,
+    "require_evaluation_holdout": true
+  },
+  "research_questions": [
+    "调查与实践如何形成可纠错的认识循环",
+    "如何区分多重矛盾并进行阶段性优先级排序",
+    "如何把分散的一线经验转化为方案并返回现场验证",
+    "弱势条件下如何用阶段、试点和局部集中积累能力",
+    "这些方法在权力集中、坏消息受罚和敌我标签化时如何失效",
+    "如何在现代组织中做非暴力、守法、可逆且保护权利的迁移"
+  ],
+  "metrics": {
+    "candidate_count": 8,
+    "selected_count": 7,
+    "evaluation_only_count": 1,
+    "independent_groups": 4,
+    "primary_sources": 4,
+    "coverage_rate": 1.0,
+    "mean_quality": 0.965
+  },
+  "gaps": [],
+  "selected_sources": [
+    {
+      "id": "mao-investigation-practice",
+      "ingest": "sources/01-investigation-practice.md",
+      "uri": "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice",
+      "title": "调查研究与实践认识循环",
+      "creator": "毛泽东；共产党员网公开《毛泽东选集》第一卷",
+      "authority": "primary",
+      "directness": "direct",
+      "independence_group": "mao-authorized-works",
+      "role": "evidence",
+      "coverage": [
+        "调查与实践如何形成可纠错的认识循环",
+        "如何在现代组织中做非暴力、守法、可逆且保护权利的迁移"
+      ],
+      "temporal_scope": "historical",
+      "published_at": "1937-07-01",
+      "locator": "《湖南农民运动考察报告》《实践论》及版本说明",
+      "license": "unknown",
+      "usage_rights": "link, paraphrase, and short quotation only",
+      "access": "public",
+      "accessible": true,
+      "quality_score": 1.0,
+      "eligible": true,
+      "reasons": []
+    },
+    {
+      "id": "mao-contradiction",
+      "ingest": "sources/02-contradiction-prioritization.md",
+      "uri": "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction",
+      "title": "矛盾特殊性与阶段性优先级",
+      "creator": "毛泽东；共产党员网公开《毛泽东选集》第一卷",
+      "authority": "primary",
+      "directness": "direct",
+      "independence_group": "mao-authorized-works",
+      "role": "evidence",
+      "coverage": [
+        "如何区分多重矛盾并进行阶段性优先级排序",
+        "如何在现代组织中做非暴力、守法、可逆且保护权利的迁移"
+      ],
+      "temporal_scope": "historical",
+      "published_at": "1937-08-01",
+      "locator": "《矛盾论》主要矛盾、特殊性及转化相关段落",
+      "license": "unknown",
+      "usage_rights": "link, paraphrase, and short quotation only",
+      "access": "public",
+      "accessible": true,
+      "quality_score": 1.0,
+      "eligible": true,
+      "reasons": []
+    },
+    {
+      "id": "mao-leadership-feedback",
+      "ingest": "sources/03-leadership-feedback.md",
+      "uri": "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods",
+      "title": "从一线经验到方案再到检验",
+      "creator": "毛泽东；共产党员网公开《毛泽东选集》第三卷",
+      "authority": "primary",
+      "directness": "direct",
+      "independence_group": "mao-authorized-works",
+      "role": "evidence",
+      "coverage": [
+        "如何把分散的一线经验转化为方案并返回现场验证",
+        "调查与实践如何形成可纠错的认识循环"
+      ],
+      "temporal_scope": "historical",
+      "published_at": "1943-06-01",
+      "locator": "《关于领导方法的若干问题》",
+      "license": "unknown",
+      "usage_rights": "link, paraphrase, and short quotation only",
+      "access": "public",
+      "accessible": true,
+      "quality_score": 1.0,
+      "eligible": true,
+      "reasons": []
+    },
+    {
+      "id": "mao-organization-stages",
+      "ingest": "sources/04-organization-and-stages.md",
+      "uri": "https://www.12371.cn/special/mzdxj/d4j/#committee-methods",
+      "title": "组织认知、试点与阶段推进",
+      "creator": "毛泽东；共产党员网公开《毛泽东选集》第四卷",
+      "authority": "primary",
+      "directness": "direct",
+      "independence_group": "mao-authorized-works",
+      "role": "evidence",
+      "coverage": [
+        "弱势条件下如何用阶段、试点和局部集中积累能力",
+        "如何把分散的一线经验转化为方案并返回现场验证"
+      ],
+      "temporal_scope": "historical",
+      "published_at": "1949-03-13",
+      "locator": "《党委会的工作方法》及阶段战略文本",
+      "license": "unknown",
+      "usage_rights": "link, paraphrase, and short quotation only",
+      "access": "public",
+      "accessible": true,
+      "quality_score": 1.0,
+      "eligible": true,
+      "reasons": []
+    },
+    {
+      "id": "official-historical-boundary",
+      "ingest": "sources/05-official-historical-boundaries.md",
+      "uri": "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm",
+      "title": "1981年历史决议中的失效边界",
+      "creator": "中国共产党第十一届中央委员会第六次全体会议",
+      "authority": "official",
+      "directness": "direct",
+      "independence_group": "1981-central-resolution",
+      "role": "counterevidence",
+      "coverage": [
+        "这些方法在权力集中、坏消息受罚和敌我标签化时如何失效",
+        "如何在现代组织中做非暴力、守法、可逆且保护权利的迁移"
+      ],
+      "temporal_scope": "historical",
+      "published_at": "1981-06-27",
+      "locator": "第19、20、22、24段",
+      "license": "unknown",
+      "usage_rights": "link, paraphrase, and short quotation only",
+      "access": "public",
+      "accessible": true,
+      "quality_score": 0.985,
+      "eligible": true,
+      "reasons": []
+    },
+    {
+      "id": "nber-information-failure",
+      "ingest": "sources/06-scholarly-information-failure.md",
+      "uri": "https://www.nber.org/papers/w16361",
+      "title": "The Institutional Causes of China's Great Famine",
+      "creator": "Xin Meng, Nancy Qian, Pierre Yared",
+      "authority": "scholarly",
+      "directness": "derived",
+      "independence_group": "nber-meng-qian-yared",
+      "role": "verification_anchor",
+      "coverage": [
+        "这些方法在权力集中、坏消息受罚和敌我标签化时如何失效",
+        "如何在现代组织中做非暴力、守法、可逆且保护权利的迁移"
+      ],
+      "temporal_scope": "historical",
+      "published_at": "2010-09-01",
+      "locator": "abstract and institutional model",
+      "license": "working-paper terms",
+      "usage_rights": "link, paraphrase, and short quotation only",
+      "access": "public",
+      "accessible": true,
+      "quality_score": 0.885,
+      "eligible": true,
+      "reasons": []
+    },
+    {
+      "id": "practice-version-study",
+      "ingest": "sources/07-version-and-attribution.md",
+      "uri": "https://www.dswxyjy.org.cn/n1/2021/0118/c219000-32003108.html",
+      "title": "《实践论》的版本演变及国际传播",
+      "creator": "龚格格；中共中央党史和文献研究院",
+      "authority": "scholarly",
+      "directness": "derived",
+      "independence_group": "party-history-institute-version-study",
+      "role": "context",
+      "coverage": [
+        "调查与实践如何形成可纠错的认识循环",
+        "如何在现代组织中做非暴力、守法、可逆且保护权利的迁移"
+      ],
+      "temporal_scope": "historical",
+      "published_at": "2021-01-18",
+      "locator": "创作背景与版本演变",
+      "license": "unknown",
+      "usage_rights": "link and paraphrase only",
+      "access": "public",
+      "accessible": true,
+      "quality_score": 0.885,
+      "eligible": true,
+      "reasons": []
+    }
+  ],
+  "evaluation_only_sources": [
+    {
+      "id": "holdout-public-health",
+      "ingest": "sources/99-holdout-public-health.md",
+      "uri": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4331212/",
+      "title": "An exploration of China's mortality decline under Mao",
+      "creator": "Grant Miller, Karen Eggleston, Qing Zhang, others",
+      "authority": "scholarly",
+      "directness": "derived",
+      "independence_group": "stanford-population-health-study",
+      "role": "evaluation_only",
+      "coverage": [
+        "这些方法在权力集中、坏消息受罚和敌我标签化时如何失效"
+      ],
+      "temporal_scope": "historical",
+      "published_at": "2015-03-01",
+      "locator": "abstract, introduction, data-quality and conclusion sections",
+      "license": "PMC author manuscript",
+      "usage_rights": "holdout evaluation; do not ingest into construction corpus",
+      "access": "public",
+      "accessible": true,
+      "quality_score": 0.885,
+      "eligible": true,
+      "reasons": []
+    }
+  ],
+  "excluded_sources": []
+}
