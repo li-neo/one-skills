@@ -1,0 +1,22 @@
+{
+  "title": "视频用柴犬与面包说明：如果训练数据让黄色、长条状等特征频繁和面包标签同时出现，模型可...",
+  "candidate_type": "framework",
+  "summary": "视频用“柴犬与面包”说明：如果训练数据让“黄色、长条状”等特征频繁和面包标签同时出现，模型可能把柴犬误判为面包。更严重时，偏差数据会让模型把族群特征与犯罪、信用等结论错误绑定。",
+  "evidence_ids": [
+    "ev-20260806041631561767-5d7fdd99"
+  ],
+  "source_contexts": [
+    "第 12 章 相关不是因果：神经网络的边界"
+  ],
+  "tags": [
+    "content",
+    "framework"
+  ],
+  "id": "candidate-20260806041631561774-34e98edc",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate may be generic or underspecified"
+}

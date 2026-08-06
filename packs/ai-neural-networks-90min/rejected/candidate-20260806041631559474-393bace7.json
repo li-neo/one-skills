@@ -1,0 +1,22 @@
+{
+  "title": "训练方法：怎样根据错误调整模型。",
+  "candidate_type": "framework",
+  "summary": "**训练方法**：怎样根据错误调整模型。",
+  "evidence_ids": [
+    "ev-20260806041631559467-6cc063f2"
+  ],
+  "source_contexts": [
+    "第 4 章 机器学习：不要把答案写死，让机器自己改"
+  ],
+  "tags": [
+    "content",
+    "framework"
+  ],
+  "id": "candidate-20260806041631559474-393bace7",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate may be generic or underspecified"
+}

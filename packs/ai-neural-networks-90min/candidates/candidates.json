@@ -1,0 +1,1344 @@
+[
+  {
+    "title": "使用方法：按顺序学习。每章末尾先回答检查点，再进入下一章。",
+    "candidate_type": "framework",
+    "summary": "> 使用方法：按顺序学习。每章末尾先回答“检查点”，再进入下一章。",
+    "evidence_ids": [
+      "ev-20260806041631558144-7b615d47"
+    ],
+    "source_contexts": [
+      "90 分钟一口气搞懂人工智能和神经网络"
+    ],
+    "tags": [
+      "content",
+      "framework"
+    ],
+    "id": "candidate-20260806041631558321-44d390bb",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "学完后，你应该能够不用堆术语，沿着一条完整因果链解释：",
+    "candidate_type": "principle",
+    "summary": "学完后，你应该能够不用堆术语，沿着一条完整因果链解释：",
+    "evidence_ids": [
+      "ev-20260806041631558354-77810ce8"
+    ],
+    "source_contexts": [
+      "课程目标"
+    ],
+    "tags": [
+      "content",
+      "principle"
+    ],
+    "id": "candidate-20260806041631558364-9efbc4f9",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "多层神经网络为什么更强，模型又是如何从数据中学会参数的。",
+    "candidate_type": "framework",
+    "summary": "多层神经网络为什么更强，模型又是如何从数据中学会参数的。",
+    "evidence_ids": [
+      "ev-20260806041631558418-69d7fda5"
+    ],
+    "source_contexts": [
+      "课程目标"
+    ],
+    "tags": [
+      "content",
+      "framework"
+    ],
+    "id": "candidate-20260806041631558427-5d5d71a9",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "泛化为什么让 AI 有用，相关性学习又为什么会带来错误。",
+    "candidate_type": "counterexample",
+    "summary": "泛化为什么让 AI 有用，相关性学习又为什么会带来错误。",
+    "evidence_ids": [
+      "ev-20260806041631558453-091281e7"
+    ],
+    "source_contexts": [
+      "课程目标"
+    ],
+    "tags": [
+      "content",
+      "counterexample"
+    ],
+    "id": "candidate-20260806041631558461-d7dcba3c",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "符号规则不够灵活，于是让机器从数据中学习",
+    "candidate_type": "principle",
+    "summary": "符号规则不够灵活，于是让机器从数据中学习",
+    "evidence_ids": [
+      "ev-20260806041631558513-fe0175b1"
+    ],
+    "source_contexts": [
+      "原片学习地图"
+    ],
+    "tags": [
+      "content",
+      "principle"
+    ],
+    "id": "candidate-20260806041631558521-5a92fa2b",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "这次会议通常被视为人工智能作为研究领域的起点。后来出现的 AlphaGo、GPT、图...",
+    "candidate_type": "framework",
+    "summary": "这次会议通常被视为“人工智能”作为研究领域的起点。后来出现的 AlphaGo、GPT、图像生成模型，采用的技术路线各不相同，但都在回答同一个问题：**怎样用人工系统实现原本需要智能才能完成的任务？**",
+    "evidence_ids": [
+      "ev-20260806041631558641-4728ef00"
+    ],
+    "source_contexts": [
+      "第 1 章 从达特茅斯会议开始"
+    ],
+    "tags": [
+      "content",
+      "framework"
+    ],
+    "id": "candidate-20260806041631558650-bc9dd358",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "- $x$ 是情境或输入，例如人脸像素、棋盘状态、上文。",
+    "candidate_type": "case",
+    "summary": "- $x$ 是情境或输入，例如人脸像素、棋盘状态、上文。",
+    "evidence_ids": [
+      "ev-20260806041631558823-7e7f6c5c"
+    ],
+    "source_contexts": [
+      "第 2 章 智能是输入到输出的函数"
+    ],
+    "tags": [
+      "content",
+      "case"
+    ],
+    "id": "candidate-20260806041631558830-2733f129",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "- $y$ 是输出，例如身份、下一步棋、回答。",
+    "candidate_type": "case",
+    "summary": "- $y$ 是输出，例如身份、下一步棋、回答。",
+    "evidence_ids": [
+      "ev-20260806041631558843-805cb0ff"
+    ],
+    "source_contexts": [
+      "第 2 章 智能是输入到输出的函数"
+    ],
+    "tags": [
+      "content",
+      "case"
+    ],
+    "id": "candidate-20260806041631558851-2487179b",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "如果系统无论输入什么都输出同一个结果，它虽然也有一个函数，却没有完成目标。真正有用的...",
+    "candidate_type": "principle",
+    "summary": "如果系统无论输入什么都输出同一个结果，它虽然也有一个函数，却没有完成目标。真正有用的“智能函数”必须捕捉任务规律。",
+    "evidence_ids": [
+      "ev-20260806041631558937-e93d5f3d"
+    ],
+    "source_contexts": [
+      "第 2 章 智能是输入到输出的函数"
+    ],
+    "tags": [
+      "content",
+      "principle"
+    ],
+    "id": "candidate-20260806041631558945-ee6922fc",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "图灵测试不要求我们打开机器检查它是否真的像人一样思考，而是观察交互输出。如果在对话中...",
+    "candidate_type": "principle",
+    "summary": "图灵测试不要求我们打开机器检查它是否“真的像人一样思考”，而是观察交互输出。如果在对话中无法区分人和机器，至少从外部行为看，这个系统实现了接近人的输入输出关系。",
+    "evidence_ids": [
+      "ev-20260806041631559008-cf8eebec"
+    ],
+    "source_contexts": [
+      "图灵测试在这条路线中的位置"
+    ],
+    "tags": [
+      "content",
+      "principle"
+    ],
+    "id": "candidate-20260806041631559016-9fee0adf",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "第一种直觉是：人会推理，那么把推理规则写进机器就行。",
+    "candidate_type": "principle",
+    "summary": "第一种直觉是：人会推理，那么把推理规则写进机器就行。",
+    "evidence_ids": [
+      "ev-20260806041631559161-9ee373d6"
+    ],
+    "source_contexts": [
+      "第 3 章 符号主义：把知识写成规则"
+    ],
+    "tags": [
+      "content",
+      "principle"
+    ],
+    "id": "candidate-20260806041631559168-bf966e61",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "系统保存大量符号、事实和如果……那么……规则，再通过逻辑推演得到结论。这就是符号主义...",
+    "candidate_type": "framework",
+    "summary": "系统保存大量符号、事实和“如果……那么……”规则，再通过逻辑推演得到结论。这就是**符号主义**。专家系统是它的典型产物：把医生或金融专家的知识写成规则库，系统据此诊断或给出建议。",
+    "evidence_ids": [
+      "ev-20260806041631559181-c8df204f"
+    ],
+    "source_contexts": [
+      "第 3 章 符号主义：把知识写成规则"
+    ],
+    "tags": [
+      "content",
+      "framework"
+    ],
+    "id": "candidate-20260806041631559189-eb8dbae1",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "!符号主义与逻辑规则(assets/03-symbolism.jpg)",
+    "candidate_type": "principle",
+    "summary": "![符号主义与逻辑规则](assets/03-symbolism.jpg)",
+    "evidence_ids": [
+      "ev-20260806041631559200-adc8dfc5"
+    ],
+    "source_contexts": [
+      "第 3 章 符号主义：把知识写成规则"
+    ],
+    "tags": [
+      "content",
+      "principle"
+    ],
+    "id": "candidate-20260806041631559207-fd54f559",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "规则难以穷举：真实世界充满模糊情况。",
+    "candidate_type": "principle",
+    "summary": "**规则难以穷举**：真实世界充满模糊情况。",
+    "evidence_ids": [
+      "ev-20260806041631559223-e13ef6d6"
+    ],
+    "source_contexts": [
+      "为什么专家系统遇到瓶颈"
+    ],
+    "tags": [
+      "content",
+      "principle"
+    ],
+    "id": "candidate-20260806041631559230-e96a946d",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "维护成本高：新情况出现后，要人工补规则。",
+    "candidate_type": "principle",
+    "summary": "**维护成本高**：新情况出现后，要人工补规则。",
+    "evidence_ids": [
+      "ev-20260806041631559256-3cf0d05a"
+    ],
+    "source_contexts": [
+      "为什么专家系统遇到瓶颈"
+    ],
+    "tags": [
+      "content",
+      "principle"
+    ],
+    "id": "candidate-20260806041631559263-48a72714",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "符号主义并没有消失。数据库规则、形式验证、知识图谱和业务规则引擎仍然重要。问题只在于...",
+    "candidate_type": "principle",
+    "summary": "符号主义并没有消失。数据库规则、形式验证、知识图谱和业务规则引擎仍然重要。问题只在于：**它不适合独自承包所有智能。**",
+    "evidence_ids": [
+      "ev-20260806041631559300-9c15a7c6"
+    ],
+    "source_contexts": [
+      "为什么专家系统遇到瓶颈"
+    ],
+    "tags": [
+      "content",
+      "principle"
+    ],
+    "id": "candidate-20260806041631559307-0afac8c5",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "哪类任务更适合规则系统：税率计算，还是识别照片里的猫？为什么？",
+    "candidate_type": "principle",
+    "summary": "哪类任务更适合规则系统：税率计算，还是识别照片里的猫？为什么？",
+    "evidence_ids": [
+      "ev-20260806041631559320-1c4a9380"
+    ],
+    "source_contexts": [
+      "检查点"
+    ],
+    "tags": [
+      "content",
+      "principle"
+    ],
+    "id": "candidate-20260806041631559327-0f162dd4",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "参考答案：税率计算。它有明确、可审计的规则；猫的外观变化太多，很难穷举规则。",
+    "candidate_type": "principle",
+    "summary": "> 参考答案：税率计算。它有明确、可审计的规则；猫的外观变化太多，很难穷举规则。",
+    "evidence_ids": [
+      "ev-20260806041631559339-fa64c266"
+    ],
+    "source_contexts": [
+      "检查点"
+    ],
+    "tags": [
+      "content",
+      "principle"
+    ],
+    "id": "candidate-20260806041631559346-4e16c75b",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "能否不给出完整规则，只提供数据和反馈，让系统自己调整？",
+    "candidate_type": "principle",
+    "summary": "> 能否不给出完整规则，只提供数据和反馈，让系统自己调整？",
+    "evidence_ids": [
+      "ev-20260806041631559383-52cfe0f8"
+    ],
+    "source_contexts": [
+      "第 4 章 机器学习：不要把答案写死，让机器自己改"
+    ],
+    "tags": [
+      "content",
+      "principle"
+    ],
+    "id": "candidate-20260806041631559390-b2ff9058",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "训练数字识别模型时，我们提供大量图片和正确标签。模型先预测，再根据预测与答案的差距调...",
+    "candidate_type": "framework",
+    "summary": "训练数字识别模型时，我们提供大量图片和正确标签。模型先预测，再根据预测与答案的差距调整自己。反复训练后，它逐渐建立“图片 $\\rightarrow$ 数字”的映射。",
+    "evidence_ids": [
+      "ev-20260806041631559402-05229a00"
+    ],
+    "source_contexts": [
+      "第 4 章 机器学习：不要把答案写死，让机器自己改"
+    ],
+    "tags": [
+      "content",
+      "framework"
+    ],
+    "id": "candidate-20260806041631559409-46c26d7e",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "模型：什么形式的黑箱可以被调节。",
+    "candidate_type": "framework",
+    "summary": "**模型**：什么形式的黑箱可以被调节。",
+    "evidence_ids": [
+      "ev-20260806041631559452-28d1b215"
+    ],
+    "source_contexts": [
+      "第 4 章 机器学习：不要把答案写死，让机器自己改"
+    ],
+    "tags": [
+      "content",
+      "framework"
+    ],
+    "id": "candidate-20260806041631559459-46f37bd8",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "训练方法：怎样根据错误调整模型。",
+    "candidate_type": "framework",
+    "summary": "**训练方法**：怎样根据错误调整模型。",
+    "evidence_ids": [
+      "ev-20260806041631559467-6cc063f2"
+    ],
+    "source_contexts": [
+      "第 4 章 机器学习：不要把答案写死，让机器自己改"
+    ],
+    "tags": [
+      "content",
+      "framework"
+    ],
+    "id": "candidate-20260806041631559474-393bace7",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "联结主义从大脑获得灵感：智能也许来自大量简单单元的连接，而不是一张完整规则表。",
+    "candidate_type": "principle",
+    "summary": "联结主义从大脑获得灵感：智能也许来自大量简单单元的连接，而不是一张完整规则表。",
+    "evidence_ids": [
+      "ev-20260806041631559552-53af046b"
+    ],
+    "source_contexts": [
+      "第 5 章 联结主义与感知机"
+    ],
+    "tags": [
+      "content",
+      "principle"
+    ],
+    "id": "candidate-20260806041631559558-d57640b8",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "计算机擅长精确算术，却很难理解像素。照片在计算机眼中只是数字矩阵。感知机展示了一种可...",
+    "candidate_type": "principle",
+    "summary": "计算机擅长精确算术，却很难理解像素。照片在计算机眼中只是数字矩阵。感知机展示了一种可能：不为每张图片手写规则，而是让机器调整参数，从像素中学会分类。",
+    "evidence_ids": [
+      "ev-20260806041631559761-7f026824"
+    ],
+    "source_contexts": [
+      "5.3 为什么早期感知机会引发轰动"
+    ],
+    "tags": [
+      "content",
+      "principle"
+    ],
+    "id": "candidate-20260806041631559769-fc0157ab",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "参考答案：模型规定可计算的结构和函数族；参数是在这个结构里通过训练确定的具体数值。",
+    "candidate_type": "framework",
+    "summary": "> 参考答案：模型规定可计算的结构和函数族；参数是在这个结构里通过训练确定的具体数值。",
+    "evidence_ids": [
+      "ev-20260806041631559852-45adbd78"
+    ],
+    "source_contexts": [
+      "检查点"
+    ],
+    "tags": [
+      "content",
+      "framework"
+    ],
+    "id": "candidate-20260806041631559859-1e3d7f4c",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "1969 年，马文·闵斯基与西摩·派普特系统讨论了感知机的限制。在资金、算力和训练方...",
+    "candidate_type": "framework",
+    "summary": "1969 年，马文·闵斯基与西摩·派普特系统讨论了感知机的限制。在资金、算力和训练方法等因素共同作用下，联结主义研究随后经历低谷。",
+    "evidence_ids": [
+      "ev-20260806041631559987-7fe626db"
+    ],
+    "source_contexts": [
+      "第 6 章 XOR：单层感知机的天花板"
+    ],
+    "tags": [
+      "content",
+      "framework"
+    ],
+    "id": "candidate-20260806041631559994-b7ccfaee",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "参考答案：它只有一条线性决策边界，而 XOR 不是线性可分问题。",
+    "candidate_type": "principle",
+    "summary": "> 参考答案：它只有一条线性决策边界，而 XOR 不是线性可分问题。",
+    "evidence_ids": [
+      "ev-20260806041631560077-51c519a5"
+    ],
+    "source_contexts": [
+      "检查点"
+    ],
+    "tags": [
+      "content",
+      "principle"
+    ],
+    "id": "candidate-20260806041631560084-07b5d3d1",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "一个感知机不够，就让多个感知机先处理中间条件，再把结果交给下一层。",
+    "candidate_type": "framework",
+    "summary": "一个感知机不够，就让多个感知机先处理中间条件，再把结果交给下一层。",
+    "evidence_ids": [
+      "ev-20260806041631560117-3e6b529a"
+    ],
+    "source_contexts": [
+      "第 7 章 多层感知机：组合带来非线性"
+    ],
+    "tags": [
+      "content",
+      "framework"
+    ],
+    "id": "candidate-20260806041631560124-90923dd5",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "其中 $\\sigma$ 是非线性激活函数。如果每层都只有线性变换，多层叠加仍然等价于...",
+    "candidate_type": "principle",
+    "summary": "其中 $\\sigma$ 是非线性激活函数。如果每层都只有线性变换，多层叠加仍然等价于一层线性变换；非线性激活是表达复杂函数的关键。",
+    "evidence_ids": [
+      "ev-20260806041631560248-ca9fb3fa"
+    ],
+    "source_contexts": [
+      "第 7 章 多层感知机：组合带来非线性"
+    ],
+    "tags": [
+      "content",
+      "principle"
+    ],
+    "id": "candidate-20260806041631560255-506fd6d1",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "- Transformer/Attention：让模型按内容关系选择和组合信息，是...",
+    "candidate_type": "framework",
+    "summary": "- **Transformer/Attention**：让模型按内容关系选择和组合信息，是 GPT 的基础。",
+    "evidence_ids": [
+      "ev-20260806041631560377-854775e8"
+    ],
+    "source_contexts": [
+      "7.2 从 MLP 到现代架构"
+    ],
+    "tags": [
+      "content",
+      "framework"
+    ],
+    "id": "candidate-20260806041631560385-dbc83dca",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "严谨补充：万能近似定理在特定激活函数和条件下说明网络能近似广泛的连续函数，但存在一组...",
+    "candidate_type": "framework",
+    "summary": "> 严谨补充：万能近似定理在特定激活函数和条件下说明网络能近似广泛的连续函数，但“存在一组参数”不等于“训练一定找得到”“数据一定够”或“模型一定能泛化”。",
+    "evidence_ids": [
+      "ev-20260806041631560399-5ea3b555"
+    ],
+    "source_contexts": [
+      "7.2 从 MLP 到现代架构"
+    ],
+    "tags": [
+      "content",
+      "framework"
+    ],
+    "id": "candidate-20260806041631560408-7b512004",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "模型有大量参数。怎样判断一组参数好不好？",
+    "candidate_type": "framework",
+    "summary": "模型有大量参数。怎样判断一组参数好不好？",
+    "evidence_ids": [
+      "ev-20260806041631560489-aa0385a6"
+    ],
+    "source_contexts": [
+      "第 8 章 损失函数：把好坏变成一个数"
+    ],
+    "tags": [
+      "content",
+      "framework"
+    ],
+    "id": "candidate-20260806041631560496-5141a079",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "| 损失函数 | 模型参数 $k0,\\ldots,k5$ | 一个表示误差的分数 |",
+    "candidate_type": "framework",
+    "summary": "| 损失函数 | 模型参数 $k_0,\\ldots,k_5$ | 一个表示误差的分数 |",
+    "evidence_ids": [
+      "ev-20260806041631560629-88dc8ae5"
+    ],
+    "source_contexts": [
+      "第 8 章 损失函数：把好坏变成一个数"
+    ],
+    "tags": [
+      "content",
+      "framework"
+    ],
+    "id": "candidate-20260806041631560636-6afac7f2",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "如果只有一个参数 $k$，导数表示损失随参数变化的局部速度：",
+    "candidate_type": "principle",
+    "summary": "如果只有一个参数 $k$，导数表示损失随参数变化的局部速度：",
+    "evidence_ids": [
+      "ev-20260806041631560832-96c70473"
+    ],
+    "source_contexts": [
+      "第 9 章 梯度下降：在大雾中一步步下山"
+    ],
+    "tags": [
+      "content",
+      "principle"
+    ],
+    "id": "candidate-20260806041631560839-1a0273be",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "模型把训练样本记住并不难。真正有用的是：遇到没见过的新输入，仍能给出合理结果。这叫泛...",
+    "candidate_type": "framework",
+    "summary": "模型把训练样本记住并不难。真正有用的是：遇到没见过的新输入，仍能给出合理结果。这叫**泛化**。",
+    "evidence_ids": [
+      "ev-20260806041631561522-57a9e67a"
+    ],
+    "source_contexts": [
+      "第 11 章 泛化：从训练题走向新题"
+    ],
+    "tags": [
+      "content",
+      "framework"
+    ],
+    "id": "candidate-20260806041631561531-5cddce1f",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "- 验证集：用于选择模型和超参数。",
+    "candidate_type": "framework",
+    "summary": "- **验证集**：用于选择模型和超参数。",
+    "evidence_ids": [
+      "ev-20260806041631561641-6851bcbf"
+    ],
+    "source_contexts": [
+      "第 11 章 泛化：从训练题走向新题"
+    ],
+    "tags": [
+      "content",
+      "framework"
+    ],
+    "id": "candidate-20260806041631561648-30dbf3b8",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "如果训练误差很低、测试误差很高，模型可能过拟合了。",
+    "candidate_type": "framework",
+    "summary": "如果训练误差很低、测试误差很高，模型可能过拟合了。",
+    "evidence_ids": [
+      "ev-20260806041631561670-213f3fa2"
+    ],
+    "source_contexts": [
+      "第 11 章 泛化：从训练题走向新题"
+    ],
+    "tags": [
+      "content",
+      "framework"
+    ],
+    "id": "candidate-20260806041631561677-7b7613d8",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "训练集准确率 100%为什么不能证明模型真正学会了？",
+    "candidate_type": "framework",
+    "summary": "“训练集准确率 100%”为什么不能证明模型真正学会了？",
+    "evidence_ids": [
+      "ev-20260806041631561688-5dec8cd9"
+    ],
+    "source_contexts": [
+      "检查点"
+    ],
+    "tags": [
+      "content",
+      "framework"
+    ],
+    "id": "candidate-20260806041631561695-2e7190ef",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "视频用柴犬与面包说明：如果训练数据让黄色、长条状等特征频繁和面包标签同时出现，模型可...",
+    "candidate_type": "framework",
+    "summary": "视频用“柴犬与面包”说明：如果训练数据让“黄色、长条状”等特征频繁和面包标签同时出现，模型可能把柴犬误判为面包。更严重时，偏差数据会让模型把族群特征与犯罪、信用等结论错误绑定。",
+    "evidence_ids": [
+      "ev-20260806041631561767-5d7fdd99"
+    ],
+    "source_contexts": [
+      "第 12 章 相关不是因果：神经网络的边界"
+    ],
+    "tags": [
+      "content",
+      "framework"
+    ],
+    "id": "candidate-20260806041631561774-34e98edc",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "在原图上加入人眼几乎看不出的特殊噪声，模型可能从熊猫变成高置信度的长臂猿或其他错误类...",
+    "candidate_type": "framework",
+    "summary": "在原图上加入人眼几乎看不出的特殊噪声，模型可能从“熊猫”变成高置信度的“长臂猿”或其他错误类别。噪声不是随机破坏，而是有方向地利用模型的决策边界。",
+    "evidence_ids": [
+      "ev-20260806041631561791-837c9799"
+    ],
+    "source_contexts": [
+      "对抗样本"
+    ],
+    "tags": [
+      "content",
+      "framework"
+    ],
+    "id": "candidate-20260806041631561799-c17ee799",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "参考答案：如果新增数据延续同样的选择偏差和错误关联，模型只会更稳定地学会偏差。",
+    "candidate_type": "framework",
+    "summary": "> 参考答案：如果新增数据延续同样的选择偏差和错误关联，模型只会更稳定地学会偏差。",
+    "evidence_ids": [
+      "ev-20260806041631561822-a68da121"
+    ],
+    "source_contexts": [
+      "检查点"
+    ],
+    "tags": [
+      "content",
+      "framework"
+    ],
+    "id": "candidate-20260806041631561829-98332f70",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "视频在这里进入第二个专题：GPT 和大语言模型。",
+    "candidate_type": "framework",
+    "summary": "视频在这里进入第二个专题：GPT 和大语言模型。",
+    "evidence_ids": [
+      "ev-20260806041631561864-97e2ea40"
+    ],
+    "source_contexts": [
+      "第 13 章 大模型不是先想好整句，而是逐 Token 生成"
+    ],
+    "tags": [
+      "content",
+      "framework"
+    ],
+    "id": "candidate-20260806041631561870-10096fe4",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "人说话时，常常对句子目标和结构有粗略计划。自回归语言模型的基本操作更机械：",
+    "candidate_type": "framework",
+    "summary": "人说话时，常常对句子目标和结构有粗略计划。自回归语言模型的基本操作更机械：",
+    "evidence_ids": [
+      "ev-20260806041631561880-842ba0e4"
+    ],
+    "source_contexts": [
+      "第 13 章 大模型不是先想好整句，而是逐 Token 生成"
+    ],
+    "tags": [
+      "content",
+      "framework"
+    ],
+    "id": "candidate-20260806041631561887-85ebe7a1",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "!大模型逐 Token 生成(assets/12-next-token-genera...",
+    "candidate_type": "framework",
+    "summary": "![大模型逐 Token 生成](assets/12-next-token-generation.jpg)",
+    "evidence_ids": [
+      "ev-20260806041631561896-33c7ad0f"
+    ],
+    "source_contexts": [
+      "第 13 章 大模型不是先想好整句，而是逐 Token 生成"
+    ],
+    "tags": [
+      "content",
+      "framework"
+    ],
+    "id": "candidate-20260806041631561904-ec142d94",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "早期统计语言模型不再手写全部规则，而是统计词序列：",
+    "candidate_type": "principle",
+    "summary": "早期统计语言模型不再手写全部规则，而是统计词序列：",
+    "evidence_ids": [
+      "ev-20260806041631562108-752aa8cc"
+    ],
+    "source_contexts": [
+      "第 14 章 从语法规则到统计语言模型"
+    ],
+    "tags": [
+      "content",
+      "principle"
+    ],
+    "id": "candidate-20260806041631562115-49f40a07",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "参考答案：背诵可能是模型行为的一部分，但要在海量不同语境中降低预测误差，模型还必须压...",
+    "candidate_type": "principle",
+    "summary": "> 参考答案：背诵可能是模型行为的一部分，但要在海量不同语境中降低预测误差，模型还必须压缩和复用词法、语法、语义及世界模式。",
+    "evidence_ids": [
+      "ev-20260806041631562429-ac3dbda0"
+    ],
+    "source_contexts": [
+      "检查点"
+    ],
+    "tags": [
+      "content",
+      "principle"
+    ],
+    "id": "candidate-20260806041631562436-a318566d",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "语言模型首先优化的是生成统计上合理的后文，不是每句话都可验证为真。当证据不足时，它仍...",
+    "candidate_type": "counterexample",
+    "summary": "语言模型首先优化的是“生成统计上合理的后文”，不是“每句话都可验证为真”。当证据不足时，它仍可能继续生成语言形式正确但事实错误的内容，这就是常说的**幻觉**。",
+    "evidence_ids": [
+      "ev-20260806041631562623-de06a1e2"
+    ],
+    "source_contexts": [
+      "第 16 章 幻觉、理解与对齐"
+    ],
+    "tags": [
+      "content",
+      "counterexample"
+    ],
+    "id": "candidate-20260806041631562631-4ca8400f",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "对齐改善行为，但不能保证消除幻觉，也不能把模型变成事实数据库。",
+    "candidate_type": "counterexample",
+    "summary": "对齐改善行为，但不能保证消除幻觉，也不能把模型变成事实数据库。",
+    "evidence_ids": [
+      "ev-20260806041631562767-7d8b6665"
+    ],
+    "source_contexts": [
+      "从原始模型到助手"
+    ],
+    "tags": [
+      "content",
+      "counterexample"
+    ],
+    "id": "candidate-20260806041631562773-a744fee0",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "为什么提示请不要编造不能从根本上消除幻觉？",
+    "candidate_type": "principle",
+    "summary": "为什么提示“请不要编造”不能从根本上消除幻觉？",
+    "evidence_ids": [
+      "ev-20260806041631562784-b21976de"
+    ],
+    "source_contexts": [
+      "检查点"
+    ],
+    "tags": [
+      "content",
+      "principle"
+    ],
+    "id": "candidate-20260806041631562791-039597c0",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "参考答案：提示只能影响生成分布，不能补上缺失知识，也不能提供外部事实验证机制。",
+    "candidate_type": "counterexample",
+    "summary": "> 参考答案：提示只能影响生成分布，不能补上缺失知识，也不能提供外部事实验证机制。",
+    "evidence_ids": [
+      "ev-20260806041631562804-683d8ed1"
+    ],
+    "source_contexts": [
+      "检查点"
+    ],
+    "tags": [
+      "content",
+      "counterexample"
+    ],
+    "id": "candidate-20260806041631562861-11ef0161",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "因此，真实图片集中在高维空间中很小、但结构复杂的数据区域，常被直观称为数据流形。",
+    "candidate_type": "term",
+    "summary": "因此，真实图片集中在高维空间中很小、但结构复杂的数据区域，常被直观称为**数据流形**。",
+    "evidence_ids": [
+      "ev-20260806041631563407-4623bbb7"
+    ],
+    "source_contexts": [
+      "第 19 章 图像流形：真实图片只占像素空间的一小部分"
+    ],
+    "tags": [
+      "content",
+      "term"
+    ],
+    "id": "candidate-20260806041631563415-77465568",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "视频生成在像素结构之外，还要保持时间连续性。每一帧都清晰仍然不够，人物身份、物体运动...",
+    "candidate_type": "principle",
+    "summary": "视频生成在像素结构之外，还要保持时间连续性。每一帧都清晰仍然不够，人物身份、物体运动和镜头变化必须前后一致。",
+    "evidence_ids": [
+      "ev-20260806041631563693-359282f8"
+    ],
+    "source_contexts": [
+      "第 20 章 用神经网络学习去噪"
+    ],
+    "tags": [
+      "content",
+      "principle"
+    ],
+    "id": "candidate-20260806041631563701-32b66c3c",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "理解数据、损失和边界，避免把 AI 当魔法。",
+    "candidate_type": "counterexample",
+    "summary": "理解数据、损失和边界，避免把 AI 当魔法。",
+    "evidence_ids": [
+      "ev-20260806041631564011-5e51d7cd"
+    ],
+    "source_contexts": [
+      "对个人更可执行的策略"
+    ],
+    "tags": [
+      "content",
+      "counterexample"
+    ],
+    "id": "candidate-20260806041631564018-75a9bd32",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "| 符号主义 | 用符号、知识和逻辑规则实现智能 |",
+    "candidate_type": "principle",
+    "summary": "| 符号主义 | 用符号、知识和逻辑规则实现智能 |",
+    "evidence_ids": [
+      "ev-20260806041631564305-f7d29fc8"
+    ],
+    "source_contexts": [
+      "术语表"
+    ],
+    "tags": [
+      "content",
+      "principle"
+    ],
+    "id": "candidate-20260806041631564311-be52dd0c",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "单层感知机为什么不能解决 XOR？多层网络如何突破？",
+    "candidate_type": "counterexample",
+    "summary": "单层感知机为什么不能解决 XOR？多层网络如何突破？",
+    "evidence_ids": [
+      "ev-20260806041631564596-19e76ab4"
+    ],
+    "source_contexts": [
+      "结业自测"
+    ],
+    "tags": [
+      "content",
+      "counterexample"
+    ],
+    "id": "candidate-20260806041631564603-935e06ab",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "大模型为什么会幻觉？对齐为什么不能保证消除幻觉？",
+    "candidate_type": "counterexample",
+    "summary": "大模型为什么会幻觉？对齐为什么不能保证消除幻觉？",
+    "evidence_ids": [
+      "ev-20260806041631564640-482b4c6c"
+    ],
+    "source_contexts": [
+      "结业自测"
+    ],
+    "tags": [
+      "content",
+      "counterexample"
+    ],
+    "id": "candidate-20260806041631564647-d33823ca",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "用本课框架分析自己的一个工作任务：输入、输出、数据、损失、风险分别是什么？",
+    "candidate_type": "counterexample",
+    "summary": "用本课框架分析自己的一个工作任务：输入、输出、数据、损失、风险分别是什么？",
+    "evidence_ids": [
+      "ev-20260806041631564671-a951ec78"
+    ],
+    "source_contexts": [
+      "结业自测"
+    ],
+    "tags": [
+      "content",
+      "counterexample"
+    ],
+    "id": "candidate-20260806041631564678-d1b00cd9",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "| 05:46-08:01 | 符号主义 | 能否用符号、知识和逻辑规则造出智能 |",
+    "candidate_type": "principle",
+    "summary": "| 05:46-08:01 | 符号主义 | 能否用符号、知识和逻辑规则造出智能 |",
+    "evidence_ids": [
+      "ev-20260806041631565061-aa2d7a28"
+    ],
+    "source_contexts": [
+      "原片学习路线"
+    ],
+    "tags": [
+      "content",
+      "principle"
+    ],
+    "id": "candidate-20260806041631565069-ee64d570",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "| 55:44-58:45 | 语言的规律 | 语法规则为什么不足以表达语言和意义...",
+    "candidate_type": "principle",
+    "summary": "| 55:44-58:45 | 语言的规律 | 语法规则为什么不足以表达语言和意义 |",
+    "evidence_ids": [
+      "ev-20260806041631565458-9b56fbd1"
+    ],
+    "source_contexts": [
+      "原片学习路线"
+    ],
+    "tags": [
+      "content",
+      "principle"
+    ],
+    "id": "candidate-20260806041631565466-17b02ceb",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "- 本课程是学习研究用途的转换性文字笔记，不能替代原视频，也不能冒充原作者作品。",
+    "candidate_type": "counterexample",
+    "summary": "- 本课程是学习研究用途的转换性文字笔记，不能替代原视频，也不能冒充原作者作品。",
+    "evidence_ids": [
+      "ev-20260806041631567089-156d0c76"
+    ],
+    "source_contexts": [
+      "版权边界"
+    ],
+    "tags": [
+      "content",
+      "counterexample"
+    ],
+    "id": "candidate-20260806041631567096-d00d9653",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  },
+  {
+    "title": "transcriptwarning: Lilys页面在外部素材切换后出现时间戳跳变...",
+    "candidate_type": "counterexample",
+    "summary": "\"transcript_warning\": \"Lilys页面在外部素材切换后出现时间戳跳变，不能作为88:58版本的时间轴\"",
+    "evidence_ids": [
+      "ev-20260806041631567760-f4156f95"
+    ],
+    "source_contexts": [
+      "metadata"
+    ],
+    "tags": [
+      "content",
+      "counterexample"
+    ],
+    "id": "candidate-20260806041631567768-773498f4",
+    "cross_domain": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": ""
+  }
+]

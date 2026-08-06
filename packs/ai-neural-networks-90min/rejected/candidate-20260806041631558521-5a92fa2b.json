@@ -1,0 +1,22 @@
+{
+  "title": "符号规则不够灵活，于是让机器从数据中学习",
+  "candidate_type": "principle",
+  "summary": "符号规则不够灵活，于是让机器从数据中学习",
+  "evidence_ids": [
+    "ev-20260806041631558513-fe0175b1"
+  ],
+  "source_contexts": [
+    "原片学习地图"
+  ],
+  "tags": [
+    "content",
+    "principle"
+  ],
+  "id": "candidate-20260806041631558521-5a92fa2b",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

@@ -1,0 +1,22 @@
+{
+  "title": "泛化为什么让 AI 有用，相关性学习又为什么会带来错误。",
+  "candidate_type": "counterexample",
+  "summary": "泛化为什么让 AI 有用，相关性学习又为什么会带来错误。",
+  "evidence_ids": [
+    "ev-20260806041631558453-091281e7"
+  ],
+  "source_contexts": [
+    "课程目标"
+  ],
+  "tags": [
+    "content",
+    "counterexample"
+  ],
+  "id": "candidate-20260806041631558461-d7dcba3c",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

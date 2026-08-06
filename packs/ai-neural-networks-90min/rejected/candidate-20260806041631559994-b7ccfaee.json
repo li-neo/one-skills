@@ -1,0 +1,22 @@
+{
+  "title": "1969 年，马文·闵斯基与西摩·派普特系统讨论了感知机的限制。在资金、算力和训练方...",
+  "candidate_type": "framework",
+  "summary": "1969 年，马文·闵斯基与西摩·派普特系统讨论了感知机的限制。在资金、算力和训练方法等因素共同作用下，联结主义研究随后经历低谷。",
+  "evidence_ids": [
+    "ev-20260806041631559987-7fe626db"
+  ],
+  "source_contexts": [
+    "第 6 章 XOR：单层感知机的天花板"
+  ],
+  "tags": [
+    "content",
+    "framework"
+  ],
+  "id": "candidate-20260806041631559994-b7ccfaee",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate may be generic or underspecified"
+}

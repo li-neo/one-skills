@@ -1,0 +1,22 @@
+{
+  "title": "参考答案：模型规定可计算的结构和函数族；参数是在这个结构里通过训练确定的具体数值。",
+  "candidate_type": "framework",
+  "summary": "> 参考答案：模型规定可计算的结构和函数族；参数是在这个结构里通过训练确定的具体数值。",
+  "evidence_ids": [
+    "ev-20260806041631559852-45adbd78"
+  ],
+  "source_contexts": [
+    "检查点"
+  ],
+  "tags": [
+    "content",
+    "framework"
+  ],
+  "id": "candidate-20260806041631559859-1e3d7f4c",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

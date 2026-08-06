@@ -1,0 +1,22 @@
+{
+  "title": "用本课框架分析自己的一个工作任务：输入、输出、数据、损失、风险分别是什么？",
+  "candidate_type": "counterexample",
+  "summary": "用本课框架分析自己的一个工作任务：输入、输出、数据、损失、风险分别是什么？",
+  "evidence_ids": [
+    "ev-20260806041631564671-a951ec78"
+  ],
+  "source_contexts": [
+    "结业自测"
+  ],
+  "tags": [
+    "content",
+    "counterexample"
+  ],
+  "id": "candidate-20260806041631564678-d1b00cd9",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

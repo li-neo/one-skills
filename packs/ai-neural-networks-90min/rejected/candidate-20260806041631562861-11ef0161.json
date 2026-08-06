@@ -1,0 +1,22 @@
+{
+  "title": "参考答案：提示只能影响生成分布，不能补上缺失知识，也不能提供外部事实验证机制。",
+  "candidate_type": "counterexample",
+  "summary": "> 参考答案：提示只能影响生成分布，不能补上缺失知识，也不能提供外部事实验证机制。",
+  "evidence_ids": [
+    "ev-20260806041631562804-683d8ed1"
+  ],
+  "source_contexts": [
+    "检查点"
+  ],
+  "tags": [
+    "content",
+    "counterexample"
+  ],
+  "id": "candidate-20260806041631562861-11ef0161",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

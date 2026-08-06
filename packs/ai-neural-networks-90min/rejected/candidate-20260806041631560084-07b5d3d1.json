@@ -1,0 +1,22 @@
+{
+  "title": "参考答案：它只有一条线性决策边界，而 XOR 不是线性可分问题。",
+  "candidate_type": "principle",
+  "summary": "> 参考答案：它只有一条线性决策边界，而 XOR 不是线性可分问题。",
+  "evidence_ids": [
+    "ev-20260806041631560077-51c519a5"
+  ],
+  "source_contexts": [
+    "检查点"
+  ],
+  "tags": [
+    "content",
+    "principle"
+  ],
+  "id": "candidate-20260806041631560084-07b5d3d1",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

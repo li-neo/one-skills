@@ -1,0 +1,22 @@
+{
+  "title": "因此，真实图片集中在高维空间中很小、但结构复杂的数据区域，常被直观称为数据流形。",
+  "candidate_type": "term",
+  "summary": "因此，真实图片集中在高维空间中很小、但结构复杂的数据区域，常被直观称为**数据流形**。",
+  "evidence_ids": [
+    "ev-20260806041631563407-4623bbb7"
+  ],
+  "source_contexts": [
+    "第 19 章 图像流形：真实图片只占像素空间的一小部分"
+  ],
+  "tags": [
+    "content",
+    "term"
+  ],
+  "id": "candidate-20260806041631563415-77465568",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

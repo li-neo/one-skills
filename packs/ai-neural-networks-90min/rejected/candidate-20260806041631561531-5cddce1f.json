@@ -1,0 +1,22 @@
+{
+  "title": "模型把训练样本记住并不难。真正有用的是：遇到没见过的新输入，仍能给出合理结果。这叫泛...",
+  "candidate_type": "framework",
+  "summary": "模型把训练样本记住并不难。真正有用的是：遇到没见过的新输入，仍能给出合理结果。这叫**泛化**。",
+  "evidence_ids": [
+    "ev-20260806041631561522-57a9e67a"
+  ],
+  "source_contexts": [
+    "第 11 章 泛化：从训练题走向新题"
+  ],
+  "tags": [
+    "content",
+    "framework"
+  ],
+  "id": "candidate-20260806041631561531-5cddce1f",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

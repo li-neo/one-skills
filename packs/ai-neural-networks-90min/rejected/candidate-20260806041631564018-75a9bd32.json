@@ -1,0 +1,22 @@
+{
+  "title": "理解数据、损失和边界，避免把 AI 当魔法。",
+  "candidate_type": "counterexample",
+  "summary": "理解数据、损失和边界，避免把 AI 当魔法。",
+  "evidence_ids": [
+    "ev-20260806041631564011-5e51d7cd"
+  ],
+  "source_contexts": [
+    "对个人更可执行的策略"
+  ],
+  "tags": [
+    "content",
+    "counterexample"
+  ],
+  "id": "candidate-20260806041631564018-75a9bd32",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

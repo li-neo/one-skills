@@ -1,0 +1,22 @@
+{
+  "title": "视频在这里进入第二个专题：GPT 和大语言模型。",
+  "candidate_type": "framework",
+  "summary": "视频在这里进入第二个专题：GPT 和大语言模型。",
+  "evidence_ids": [
+    "ev-20260806041631561864-97e2ea40"
+  ],
+  "source_contexts": [
+    "第 13 章 大模型不是先想好整句，而是逐 Token 生成"
+  ],
+  "tags": [
+    "content",
+    "framework"
+  ],
+  "id": "candidate-20260806041631561870-10096fe4",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

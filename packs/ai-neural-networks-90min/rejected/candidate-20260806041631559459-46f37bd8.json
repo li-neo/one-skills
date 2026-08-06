@@ -1,0 +1,22 @@
+{
+  "title": "模型：什么形式的黑箱可以被调节。",
+  "candidate_type": "framework",
+  "summary": "**模型**：什么形式的黑箱可以被调节。",
+  "evidence_ids": [
+    "ev-20260806041631559452-28d1b215"
+  ],
+  "source_contexts": [
+    "第 4 章 机器学习：不要把答案写死，让机器自己改"
+  ],
+  "tags": [
+    "content",
+    "framework"
+  ],
+  "id": "candidate-20260806041631559459-46f37bd8",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

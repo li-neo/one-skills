@@ -1,0 +1,22 @@
+{
+  "title": "系统保存大量符号、事实和如果……那么……规则，再通过逻辑推演得到结论。这就是符号主义...",
+  "candidate_type": "framework",
+  "summary": "系统保存大量符号、事实和“如果……那么……”规则，再通过逻辑推演得到结论。这就是**符号主义**。专家系统是它的典型产物：把医生或金融专家的知识写成规则库，系统据此诊断或给出建议。",
+  "evidence_ids": [
+    "ev-20260806041631559181-c8df204f"
+  ],
+  "source_contexts": [
+    "第 3 章 符号主义：把知识写成规则"
+  ],
+  "tags": [
+    "content",
+    "framework"
+  ],
+  "id": "candidate-20260806041631559189-eb8dbae1",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate may be generic or underspecified"
+}

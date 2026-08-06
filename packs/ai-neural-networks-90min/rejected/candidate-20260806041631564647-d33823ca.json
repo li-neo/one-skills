@@ -1,0 +1,22 @@
+{
+  "title": "大模型为什么会幻觉？对齐为什么不能保证消除幻觉？",
+  "candidate_type": "counterexample",
+  "summary": "大模型为什么会幻觉？对齐为什么不能保证消除幻觉？",
+  "evidence_ids": [
+    "ev-20260806041631564640-482b4c6c"
+  ],
+  "source_contexts": [
+    "结业自测"
+  ],
+  "tags": [
+    "content",
+    "counterexample"
+  ],
+  "id": "candidate-20260806041631564647-d33823ca",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

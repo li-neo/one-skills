@@ -1,0 +1,22 @@
+{
+  "title": "为什么提示请不要编造不能从根本上消除幻觉？",
+  "candidate_type": "principle",
+  "summary": "为什么提示“请不要编造”不能从根本上消除幻觉？",
+  "evidence_ids": [
+    "ev-20260806041631562784-b21976de"
+  ],
+  "source_contexts": [
+    "检查点"
+  ],
+  "tags": [
+    "content",
+    "principle"
+  ],
+  "id": "candidate-20260806041631562791-039597c0",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

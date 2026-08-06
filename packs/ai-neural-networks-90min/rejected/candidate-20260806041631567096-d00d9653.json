@@ -1,0 +1,22 @@
+{
+  "title": "- 本课程是学习研究用途的转换性文字笔记，不能替代原视频，也不能冒充原作者作品。",
+  "candidate_type": "counterexample",
+  "summary": "- 本课程是学习研究用途的转换性文字笔记，不能替代原视频，也不能冒充原作者作品。",
+  "evidence_ids": [
+    "ev-20260806041631567089-156d0c76"
+  ],
+  "source_contexts": [
+    "版权边界"
+  ],
+  "tags": [
+    "content",
+    "counterexample"
+  ],
+  "id": "candidate-20260806041631567096-d00d9653",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

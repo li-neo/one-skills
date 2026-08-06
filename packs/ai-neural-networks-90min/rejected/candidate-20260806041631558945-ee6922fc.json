@@ -1,0 +1,22 @@
+{
+  "title": "如果系统无论输入什么都输出同一个结果，它虽然也有一个函数，却没有完成目标。真正有用的...",
+  "candidate_type": "principle",
+  "summary": "如果系统无论输入什么都输出同一个结果，它虽然也有一个函数，却没有完成目标。真正有用的“智能函数”必须捕捉任务规律。",
+  "evidence_ids": [
+    "ev-20260806041631558937-e93d5f3d"
+  ],
+  "source_contexts": [
+    "第 2 章 智能是输入到输出的函数"
+  ],
+  "tags": [
+    "content",
+    "principle"
+  ],
+  "id": "candidate-20260806041631558945-ee6922fc",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate may be generic or underspecified"
+}

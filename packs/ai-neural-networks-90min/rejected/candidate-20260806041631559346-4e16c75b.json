@@ -1,0 +1,22 @@
+{
+  "title": "参考答案：税率计算。它有明确、可审计的规则；猫的外观变化太多，很难穷举规则。",
+  "candidate_type": "principle",
+  "summary": "> 参考答案：税率计算。它有明确、可审计的规则；猫的外观变化太多，很难穷举规则。",
+  "evidence_ids": [
+    "ev-20260806041631559339-fa64c266"
+  ],
+  "source_contexts": [
+    "检查点"
+  ],
+  "tags": [
+    "content",
+    "principle"
+  ],
+  "id": "candidate-20260806041631559346-4e16c75b",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

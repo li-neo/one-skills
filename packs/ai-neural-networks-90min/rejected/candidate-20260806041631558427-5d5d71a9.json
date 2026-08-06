@@ -1,0 +1,22 @@
+{
+  "title": "多层神经网络为什么更强，模型又是如何从数据中学会参数的。",
+  "candidate_type": "framework",
+  "summary": "多层神经网络为什么更强，模型又是如何从数据中学会参数的。",
+  "evidence_ids": [
+    "ev-20260806041631558418-69d7fda5"
+  ],
+  "source_contexts": [
+    "课程目标"
+  ],
+  "tags": [
+    "content",
+    "framework"
+  ],
+  "id": "candidate-20260806041631558427-5d5d71a9",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

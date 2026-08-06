@@ -1,0 +1,22 @@
+{
+  "title": "| 损失函数 | 模型参数 $k0,\\ldots,k5$ | 一个表示误差的分数 |",
+  "candidate_type": "framework",
+  "summary": "| 损失函数 | 模型参数 $k_0,\\ldots,k_5$ | 一个表示误差的分数 |",
+  "evidence_ids": [
+    "ev-20260806041631560629-88dc8ae5"
+  ],
+  "source_contexts": [
+    "第 8 章 损失函数：把好坏变成一个数"
+  ],
+  "tags": [
+    "content",
+    "framework"
+  ],
+  "id": "candidate-20260806041631560636-6afac7f2",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

@@ -1,0 +1,22 @@
+{
+  "title": "严谨补充：万能近似定理在特定激活函数和条件下说明网络能近似广泛的连续函数，但存在一组...",
+  "candidate_type": "framework",
+  "summary": "> 严谨补充：万能近似定理在特定激活函数和条件下说明网络能近似广泛的连续函数，但“存在一组参数”不等于“训练一定找得到”“数据一定够”或“模型一定能泛化”。",
+  "evidence_ids": [
+    "ev-20260806041631560399-5ea3b555"
+  ],
+  "source_contexts": [
+    "7.2 从 MLP 到现代架构"
+  ],
+  "tags": [
+    "content",
+    "framework"
+  ],
+  "id": "candidate-20260806041631560408-7b512004",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

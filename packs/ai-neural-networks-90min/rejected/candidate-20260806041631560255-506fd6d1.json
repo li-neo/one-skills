@@ -1,0 +1,22 @@
+{
+  "title": "其中 $\\sigma$ 是非线性激活函数。如果每层都只有线性变换，多层叠加仍然等价于...",
+  "candidate_type": "principle",
+  "summary": "其中 $\\sigma$ 是非线性激活函数。如果每层都只有线性变换，多层叠加仍然等价于一层线性变换；非线性激活是表达复杂函数的关键。",
+  "evidence_ids": [
+    "ev-20260806041631560248-ca9fb3fa"
+  ],
+  "source_contexts": [
+    "第 7 章 多层感知机：组合带来非线性"
+  ],
+  "tags": [
+    "content",
+    "principle"
+  ],
+  "id": "candidate-20260806041631560255-506fd6d1",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate may be generic or underspecified"
+}

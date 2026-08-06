@@ -1,0 +1,22 @@
+{
+  "title": "参考答案：背诵可能是模型行为的一部分，但要在海量不同语境中降低预测误差，模型还必须压...",
+  "candidate_type": "principle",
+  "summary": "> 参考答案：背诵可能是模型行为的一部分，但要在海量不同语境中降低预测误差，模型还必须压缩和复用词法、语法、语义及世界模式。",
+  "evidence_ids": [
+    "ev-20260806041631562429-ac3dbda0"
+  ],
+  "source_contexts": [
+    "检查点"
+  ],
+  "tags": [
+    "content",
+    "principle"
+  ],
+  "id": "candidate-20260806041631562436-a318566d",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate may be generic or underspecified"
+}

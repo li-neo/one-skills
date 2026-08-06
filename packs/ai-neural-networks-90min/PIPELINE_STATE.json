@@ -1,0 +1,59 @@
+{
+  "schema_version": "0.1",
+  "pack_id": "pack-20260806041631466236-ac040845",
+  "current_phase": "verify",
+  "created_at": "2026-08-06T04:16:31+00:00",
+  "updated_at": "2026-08-06T04:16:31+00:00",
+  "phases": {
+    "contract": {
+      "status": "completed",
+      "updated_at": "2026-08-06T04:16:31+00:00",
+      "notes": "contract generated from explicit CLI inputs"
+    },
+    "ingest": {
+      "status": "completed",
+      "updated_at": "2026-08-06T04:16:31+00:00",
+      "notes": "indexed 4 sources"
+    },
+    "map": {
+      "status": "completed",
+      "updated_at": "2026-08-06T04:16:31+00:00",
+      "notes": "profile map initialized"
+    },
+    "extract": {
+      "status": "completed",
+      "updated_at": "2026-08-06T04:16:31+00:00",
+      "notes": "extracted 61 candidates"
+    },
+    "verify": {
+      "status": "blocked",
+      "updated_at": "2026-08-06T04:16:31+00:00",
+      "notes": "V2 predictive-power judgments require model or human approval"
+    },
+    "compile": {
+      "status": "pending",
+      "updated_at": null,
+      "notes": ""
+    },
+    "link": {
+      "status": "pending",
+      "updated_at": null,
+      "notes": ""
+    },
+    "test": {
+      "status": "pending",
+      "updated_at": null,
+      "notes": ""
+    },
+    "ship": {
+      "status": "pending",
+      "updated_at": null,
+      "notes": ""
+    },
+    "evolve": {
+      "status": "pending",
+      "updated_at": null,
+      "notes": ""
+    }
+  }
+}

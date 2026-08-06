@@ -1,0 +1,22 @@
+{
+  "title": "单层感知机为什么不能解决 XOR？多层网络如何突破？",
+  "candidate_type": "counterexample",
+  "summary": "单层感知机为什么不能解决 XOR？多层网络如何突破？",
+  "evidence_ids": [
+    "ev-20260806041631564596-19e76ab4"
+  ],
+  "source_contexts": [
+    "结业自测"
+  ],
+  "tags": [
+    "content",
+    "counterexample"
+  ],
+  "id": "candidate-20260806041631564603-935e06ab",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

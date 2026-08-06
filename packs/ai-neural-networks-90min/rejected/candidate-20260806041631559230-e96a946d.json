@@ -1,0 +1,22 @@
+{
+  "title": "规则难以穷举：真实世界充满模糊情况。",
+  "candidate_type": "principle",
+  "summary": "**规则难以穷举**：真实世界充满模糊情况。",
+  "evidence_ids": [
+    "ev-20260806041631559223-e13ef6d6"
+  ],
+  "source_contexts": [
+    "为什么专家系统遇到瓶颈"
+  ],
+  "tags": [
+    "content",
+    "principle"
+  ],
+  "id": "candidate-20260806041631559230-e96a946d",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

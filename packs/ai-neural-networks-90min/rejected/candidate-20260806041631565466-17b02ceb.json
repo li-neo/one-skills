@@ -1,0 +1,22 @@
+{
+  "title": "| 55:44-58:45 | 语言的规律 | 语法规则为什么不足以表达语言和意义...",
+  "candidate_type": "principle",
+  "summary": "| 55:44-58:45 | 语言的规律 | 语法规则为什么不足以表达语言和意义 |",
+  "evidence_ids": [
+    "ev-20260806041631565458-9b56fbd1"
+  ],
+  "source_contexts": [
+    "原片学习路线"
+  ],
+  "tags": [
+    "content",
+    "principle"
+  ],
+  "id": "candidate-20260806041631565466-17b02ceb",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

@@ -1,0 +1,22 @@
+{
+  "title": "联结主义从大脑获得灵感：智能也许来自大量简单单元的连接，而不是一张完整规则表。",
+  "candidate_type": "principle",
+  "summary": "联结主义从大脑获得灵感：智能也许来自大量简单单元的连接，而不是一张完整规则表。",
+  "evidence_ids": [
+    "ev-20260806041631559552-53af046b"
+  ],
+  "source_contexts": [
+    "第 5 章 联结主义与感知机"
+  ],
+  "tags": [
+    "content",
+    "principle"
+  ],
+  "id": "candidate-20260806041631559558-d57640b8",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

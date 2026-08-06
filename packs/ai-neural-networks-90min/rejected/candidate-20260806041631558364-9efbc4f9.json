@@ -1,0 +1,22 @@
+{
+  "title": "学完后，你应该能够不用堆术语，沿着一条完整因果链解释：",
+  "candidate_type": "principle",
+  "summary": "学完后，你应该能够不用堆术语，沿着一条完整因果链解释：",
+  "evidence_ids": [
+    "ev-20260806041631558354-77810ce8"
+  ],
+  "source_contexts": [
+    "课程目标"
+  ],
+  "tags": [
+    "content",
+    "principle"
+  ],
+  "id": "candidate-20260806041631558364-9efbc4f9",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate may be generic or underspecified"
+}

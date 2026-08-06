@@ -14,6 +14,8 @@ venv/
 *.sqlite3
 data/
 index/
+.one/
+knowledge/
 
 # Secrets
 .env

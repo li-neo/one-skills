@@ -1,0 +1,22 @@
+{
+  "title": "图灵测试不要求我们打开机器检查它是否真的像人一样思考，而是观察交互输出。如果在对话中...",
+  "candidate_type": "principle",
+  "summary": "图灵测试不要求我们打开机器检查它是否“真的像人一样思考”，而是观察交互输出。如果在对话中无法区分人和机器，至少从外部行为看，这个系统实现了接近人的输入输出关系。",
+  "evidence_ids": [
+    "ev-20260806041631559008-cf8eebec"
+  ],
+  "source_contexts": [
+    "图灵测试在这条路线中的位置"
+  ],
+  "tags": [
+    "content",
+    "principle"
+  ],
+  "id": "candidate-20260806041631559016-9fee0adf",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate may be generic or underspecified"
+}

@@ -1,0 +1,22 @@
+{
+  "title": "使用方法：按顺序学习。每章末尾先回答检查点，再进入下一章。",
+  "candidate_type": "framework",
+  "summary": "> 使用方法：按顺序学习。每章末尾先回答“检查点”，再进入下一章。",
+  "evidence_ids": [
+    "ev-20260806041631558144-7b615d47"
+  ],
+  "source_contexts": [
+    "90 分钟一口气搞懂人工智能和神经网络"
+  ],
+  "tags": [
+    "content",
+    "framework"
+  ],
+  "id": "candidate-20260806041631558321-44d390bb",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate may be generic or underspecified"
+}

@@ -1,0 +1,22 @@
+{
+  "title": "| 符号主义 | 用符号、知识和逻辑规则实现智能 |",
+  "candidate_type": "principle",
+  "summary": "| 符号主义 | 用符号、知识和逻辑规则实现智能 |",
+  "evidence_ids": [
+    "ev-20260806041631564305-f7d29fc8"
+  ],
+  "source_contexts": [
+    "术语表"
+  ],
+  "tags": [
+    "content",
+    "principle"
+  ],
+  "id": "candidate-20260806041631564311-be52dd0c",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

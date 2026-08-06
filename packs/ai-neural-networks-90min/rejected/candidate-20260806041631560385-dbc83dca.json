@@ -1,0 +1,22 @@
+{
+  "title": "- Transformer/Attention：让模型按内容关系选择和组合信息，是...",
+  "candidate_type": "framework",
+  "summary": "- **Transformer/Attention**：让模型按内容关系选择和组合信息，是 GPT 的基础。",
+  "evidence_ids": [
+    "ev-20260806041631560377-854775e8"
+  ],
+  "source_contexts": [
+    "7.2 从 MLP 到现代架构"
+  ],
+  "tags": [
+    "content",
+    "framework"
+  ],
+  "id": "candidate-20260806041631560385-dbc83dca",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

@@ -1,0 +1,22 @@
+{
+  "title": "一个感知机不够，就让多个感知机先处理中间条件，再把结果交给下一层。",
+  "candidate_type": "framework",
+  "summary": "一个感知机不够，就让多个感知机先处理中间条件，再把结果交给下一层。",
+  "evidence_ids": [
+    "ev-20260806041631560117-3e6b529a"
+  ],
+  "source_contexts": [
+    "第 7 章 多层感知机：组合带来非线性"
+  ],
+  "tags": [
+    "content",
+    "framework"
+  ],
+  "id": "candidate-20260806041631560124-90923dd5",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate may be generic or underspecified"
+}

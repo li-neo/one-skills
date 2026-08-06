@@ -1,0 +1,22 @@
+{
+  "title": "在原图上加入人眼几乎看不出的特殊噪声，模型可能从熊猫变成高置信度的长臂猿或其他错误类...",
+  "candidate_type": "framework",
+  "summary": "在原图上加入人眼几乎看不出的特殊噪声，模型可能从“熊猫”变成高置信度的“长臂猿”或其他错误类别。噪声不是随机破坏，而是有方向地利用模型的决策边界。",
+  "evidence_ids": [
+    "ev-20260806041631561791-837c9799"
+  ],
+  "source_contexts": [
+    "对抗样本"
+  ],
+  "tags": [
+    "content",
+    "framework"
+  ],
+  "id": "candidate-20260806041631561799-c17ee799",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

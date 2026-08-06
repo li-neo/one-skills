@@ -1,0 +1,22 @@
+{
+  "title": "第一种直觉是：人会推理，那么把推理规则写进机器就行。",
+  "candidate_type": "principle",
+  "summary": "第一种直觉是：人会推理，那么把推理规则写进机器就行。",
+  "evidence_ids": [
+    "ev-20260806041631559161-9ee373d6"
+  ],
+  "source_contexts": [
+    "第 3 章 符号主义：把知识写成规则"
+  ],
+  "tags": [
+    "content",
+    "principle"
+  ],
+  "id": "candidate-20260806041631559168-bf966e61",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

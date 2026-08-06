@@ -1,0 +1,22 @@
+{
+  "title": "早期统计语言模型不再手写全部规则，而是统计词序列：",
+  "candidate_type": "principle",
+  "summary": "早期统计语言模型不再手写全部规则，而是统计词序列：",
+  "evidence_ids": [
+    "ev-20260806041631562108-752aa8cc"
+  ],
+  "source_contexts": [
+    "第 14 章 从语法规则到统计语言模型"
+  ],
+  "tags": [
+    "content",
+    "principle"
+  ],
+  "id": "candidate-20260806041631562115-49f40a07",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate may be generic or underspecified"
+}

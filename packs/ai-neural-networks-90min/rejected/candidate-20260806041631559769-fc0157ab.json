@@ -1,0 +1,22 @@
+{
+  "title": "计算机擅长精确算术，却很难理解像素。照片在计算机眼中只是数字矩阵。感知机展示了一种可...",
+  "candidate_type": "principle",
+  "summary": "计算机擅长精确算术，却很难理解像素。照片在计算机眼中只是数字矩阵。感知机展示了一种可能：不为每张图片手写规则，而是让机器调整参数，从像素中学会分类。",
+  "evidence_ids": [
+    "ev-20260806041631559761-7f026824"
+  ],
+  "source_contexts": [
+    "5.3 为什么早期感知机会引发轰动"
+  ],
+  "tags": [
+    "content",
+    "principle"
+  ],
+  "id": "candidate-20260806041631559769-fc0157ab",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

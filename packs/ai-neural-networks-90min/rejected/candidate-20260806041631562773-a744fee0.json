@@ -1,0 +1,22 @@
+{
+  "title": "对齐改善行为，但不能保证消除幻觉，也不能把模型变成事实数据库。",
+  "candidate_type": "counterexample",
+  "summary": "对齐改善行为，但不能保证消除幻觉，也不能把模型变成事实数据库。",
+  "evidence_ids": [
+    "ev-20260806041631562767-7d8b6665"
+  ],
+  "source_contexts": [
+    "从原始模型到助手"
+  ],
+  "tags": [
+    "content",
+    "counterexample"
+  ],
+  "id": "candidate-20260806041631562773-a744fee0",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

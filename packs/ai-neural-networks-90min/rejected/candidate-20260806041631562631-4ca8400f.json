@@ -1,0 +1,22 @@
+{
+  "title": "语言模型首先优化的是生成统计上合理的后文，不是每句话都可验证为真。当证据不足时，它仍...",
+  "candidate_type": "counterexample",
+  "summary": "语言模型首先优化的是“生成统计上合理的后文”，不是“每句话都可验证为真”。当证据不足时，它仍可能继续生成语言形式正确但事实错误的内容，这就是常说的**幻觉**。",
+  "evidence_ids": [
+    "ev-20260806041631562623-de06a1e2"
+  ],
+  "source_contexts": [
+    "第 16 章 幻觉、理解与对齐"
+  ],
+  "tags": [
+    "content",
+    "counterexample"
+  ],
+  "id": "candidate-20260806041631562631-4ca8400f",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate may be generic or underspecified"
+}

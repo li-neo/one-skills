@@ -1,0 +1,22 @@
+{
+  "title": "| 05:46-08:01 | 符号主义 | 能否用符号、知识和逻辑规则造出智能 |",
+  "candidate_type": "principle",
+  "summary": "| 05:46-08:01 | 符号主义 | 能否用符号、知识和逻辑规则造出智能 |",
+  "evidence_ids": [
+    "ev-20260806041631565061-aa2d7a28"
+  ],
+  "source_contexts": [
+    "原片学习路线"
+  ],
+  "tags": [
+    "content",
+    "principle"
+  ],
+  "id": "candidate-20260806041631565069-ee64d570",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

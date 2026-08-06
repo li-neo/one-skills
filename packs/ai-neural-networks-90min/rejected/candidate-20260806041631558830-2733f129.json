@@ -1,0 +1,22 @@
+{
+  "title": "- $x$ 是情境或输入，例如人脸像素、棋盘状态、上文。",
+  "candidate_type": "case",
+  "summary": "- $x$ 是情境或输入，例如人脸像素、棋盘状态、上文。",
+  "evidence_ids": [
+    "ev-20260806041631558823-7e7f6c5c"
+  ],
+  "source_contexts": [
+    "第 2 章 智能是输入到输出的函数"
+  ],
+  "tags": [
+    "content",
+    "case"
+  ],
+  "id": "candidate-20260806041631558830-2733f129",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

@@ -1,0 +1,22 @@
+{
+  "title": "这次会议通常被视为人工智能作为研究领域的起点。后来出现的 AlphaGo、GPT、图...",
+  "candidate_type": "framework",
+  "summary": "这次会议通常被视为“人工智能”作为研究领域的起点。后来出现的 AlphaGo、GPT、图像生成模型，采用的技术路线各不相同，但都在回答同一个问题：**怎样用人工系统实现原本需要智能才能完成的任务？**",
+  "evidence_ids": [
+    "ev-20260806041631558641-4728ef00"
+  ],
+  "source_contexts": [
+    "第 1 章 从达特茅斯会议开始"
+  ],
+  "tags": [
+    "content",
+    "framework"
+  ],
+  "id": "candidate-20260806041631558650-bc9dd358",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

@@ -1,0 +1,22 @@
+{
+  "title": "- $y$ 是输出，例如身份、下一步棋、回答。",
+  "candidate_type": "case",
+  "summary": "- $y$ 是输出，例如身份、下一步棋、回答。",
+  "evidence_ids": [
+    "ev-20260806041631558843-805cb0ff"
+  ],
+  "source_contexts": [
+    "第 2 章 智能是输入到输出的函数"
+  ],
+  "tags": [
+    "content",
+    "case"
+  ],
+  "id": "candidate-20260806041631558851-2487179b",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

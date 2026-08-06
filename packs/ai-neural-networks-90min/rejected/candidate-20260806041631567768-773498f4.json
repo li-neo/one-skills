@@ -1,0 +1,22 @@
+{
+  "title": "transcriptwarning: Lilys页面在外部素材切换后出现时间戳跳变...",
+  "candidate_type": "counterexample",
+  "summary": "\"transcript_warning\": \"Lilys页面在外部素材切换后出现时间戳跳变，不能作为88:58版本的时间轴\"",
+  "evidence_ids": [
+    "ev-20260806041631567760-f4156f95"
+  ],
+  "source_contexts": [
+    "metadata"
+  ],
+  "tags": [
+    "content",
+    "counterexample"
+  ],
+  "id": "candidate-20260806041631567768-773498f4",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

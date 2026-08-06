@@ -1,0 +1,22 @@
+{
+  "title": "哪类任务更适合规则系统：税率计算，还是识别照片里的猫？为什么？",
+  "candidate_type": "principle",
+  "summary": "哪类任务更适合规则系统：税率计算，还是识别照片里的猫？为什么？",
+  "evidence_ids": [
+    "ev-20260806041631559320-1c4a9380"
+  ],
+  "source_contexts": [
+    "检查点"
+  ],
+  "tags": [
+    "content",
+    "principle"
+  ],
+  "id": "candidate-20260806041631559327-0f162dd4",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

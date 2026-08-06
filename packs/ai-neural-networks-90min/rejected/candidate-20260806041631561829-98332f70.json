@@ -1,0 +1,22 @@
+{
+  "title": "参考答案：如果新增数据延续同样的选择偏差和错误关联，模型只会更稳定地学会偏差。",
+  "candidate_type": "framework",
+  "summary": "> 参考答案：如果新增数据延续同样的选择偏差和错误关联，模型只会更稳定地学会偏差。",
+  "evidence_ids": [
+    "ev-20260806041631561822-a68da121"
+  ],
+  "source_contexts": [
+    "检查点"
+  ],
+  "tags": [
+    "content",
+    "framework"
+  ],
+  "id": "candidate-20260806041631561829-98332f70",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate may be generic or underspecified"
+}

@@ -1,0 +1,22 @@
+{
+  "title": "!大模型逐 Token 生成(assets/12-next-token-genera...",
+  "candidate_type": "framework",
+  "summary": "![大模型逐 Token 生成](assets/12-next-token-generation.jpg)",
+  "evidence_ids": [
+    "ev-20260806041631561896-33c7ad0f"
+  ],
+  "source_contexts": [
+    "第 13 章 大模型不是先想好整句，而是逐 Token 生成"
+  ],
+  "tags": [
+    "content",
+    "framework"
+  ],
+  "id": "candidate-20260806041631561904-ec142d94",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

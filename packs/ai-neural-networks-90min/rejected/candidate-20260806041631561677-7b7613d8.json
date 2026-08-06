@@ -1,0 +1,22 @@
+{
+  "title": "如果训练误差很低、测试误差很高，模型可能过拟合了。",
+  "candidate_type": "framework",
+  "summary": "如果训练误差很低、测试误差很高，模型可能过拟合了。",
+  "evidence_ids": [
+    "ev-20260806041631561670-213f3fa2"
+  ],
+  "source_contexts": [
+    "第 11 章 泛化：从训练题走向新题"
+  ],
+  "tags": [
+    "content",
+    "framework"
+  ],
+  "id": "candidate-20260806041631561677-7b7613d8",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate may be generic or underspecified"
+}

@@ -1,0 +1,53 @@
+{
+  "course_id": "ai-neural-networks-90min",
+  "title": "90分钟深度！一口气看明白人工智能和神经网络",
+  "author": "漫士沉思录",
+  "captured_at": "2026-08-06",
+  "sources": [
+    {
+      "id": "douyin-7427381362337778980",
+      "role": "work_identity",
+      "kind": "author_published_video_page",
+      "url": "https://jingxuan.douyin.com/m/video/7427381362337778980",
+      "authority": "primary",
+      "access": "public",
+      "license": "unknown",
+      "use": "确认抖音作品、作者与标题"
+    },
+    {
+      "id": "bilibili-BV1atCRYsE7x",
+      "role": "canonical_timeline_and_visuals",
+      "kind": "author_published_video",
+      "url": "https://www.bilibili.com/video/BV1atCRYsE7x",
+      "authority": "primary",
+      "access": "public",
+      "license": "unknown",
+      "duration_seconds": 5338,
+      "bvid": "BV1atCRYsE7x",
+      "aid": 113332711333508,
+      "cid": 26360022345,
+      "use": "固定88:58版本的学习顺序、时间线和课程截图"
+    },
+    {
+      "id": "lilys-LF9sd-2jCoY",
+      "role": "transcript_cross_check",
+      "kind": "timestamped_transcript_mirror",
+      "url": "https://lilys.ai/zh/notes/physical-ai-20251225/deep-dive-ai-neural-networks-explained",
+      "authority": "secondary",
+      "access": "public",
+      "license": "unknown",
+      "use": "交叉核对前半段逐句文本与概念顺序；不采用页面异常时间戳"
+    }
+  ],
+  "calibration": {
+    "timeline_source": "bilibili-BV1atCRYsE7x",
+    "method": "作者同版视频音轨本地ASR定位后，以片内画面和语义转场人工复核",
+    "asr_role": "只用于定位时间，不作为课程事实或逐字稿的权威来源",
+    "transcript_warning": "Lilys页面在外部素材切换后出现时间戳跳变，不能作为88:58版本的时间轴"
+  },
+  "copyright": {
+    "video_and_frames": "版权归原作者及相应素材权利人所有",
+    "course_use": "学习研究用途的转换性课程笔记",
+    "redistribution": "不得将截图或课程文档冒充原创视频、替代原视频传播或用于未经授权的商业再发布"
+  }
+}

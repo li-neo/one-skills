@@ -1,0 +1,22 @@
+{
+  "title": "如果只有一个参数 $k$，导数表示损失随参数变化的局部速度：",
+  "candidate_type": "principle",
+  "summary": "如果只有一个参数 $k$，导数表示损失随参数变化的局部速度：",
+  "evidence_ids": [
+    "ev-20260806041631560832-96c70473"
+  ],
+  "source_contexts": [
+    "第 9 章 梯度下降：在大雾中一步步下山"
+  ],
+  "tags": [
+    "content",
+    "principle"
+  ],
+  "id": "candidate-20260806041631560839-1a0273be",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate may be generic or underspecified"
+}

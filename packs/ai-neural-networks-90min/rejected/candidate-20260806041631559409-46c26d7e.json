@@ -1,0 +1,22 @@
+{
+  "title": "训练数字识别模型时，我们提供大量图片和正确标签。模型先预测，再根据预测与答案的差距调...",
+  "candidate_type": "framework",
+  "summary": "训练数字识别模型时，我们提供大量图片和正确标签。模型先预测，再根据预测与答案的差距调整自己。反复训练后，它逐渐建立“图片 $\\rightarrow$ 数字”的映射。",
+  "evidence_ids": [
+    "ev-20260806041631559402-05229a00"
+  ],
+  "source_contexts": [
+    "第 4 章 机器学习：不要把答案写死，让机器自己改"
+  ],
+  "tags": [
+    "content",
+    "framework"
+  ],
+  "id": "candidate-20260806041631559409-46c26d7e",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate may be generic or underspecified"
+}

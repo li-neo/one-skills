@@ -1,0 +1,22 @@
+{
+  "title": "视频生成在像素结构之外，还要保持时间连续性。每一帧都清晰仍然不够，人物身份、物体运动...",
+  "candidate_type": "principle",
+  "summary": "视频生成在像素结构之外，还要保持时间连续性。每一帧都清晰仍然不够，人物身份、物体运动和镜头变化必须前后一致。",
+  "evidence_ids": [
+    "ev-20260806041631563693-359282f8"
+  ],
+  "source_contexts": [
+    "第 20 章 用神经网络学习去噪"
+  ],
+  "tags": [
+    "content",
+    "principle"
+  ],
+  "id": "candidate-20260806041631563701-32b66c3c",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate may be generic or underspecified"
+}

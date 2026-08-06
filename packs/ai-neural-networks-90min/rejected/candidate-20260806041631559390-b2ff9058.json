@@ -1,0 +1,22 @@
+{
+  "title": "能否不给出完整规则，只提供数据和反馈，让系统自己调整？",
+  "candidate_type": "principle",
+  "summary": "> 能否不给出完整规则，只提供数据和反馈，让系统自己调整？",
+  "evidence_ids": [
+    "ev-20260806041631559383-52cfe0f8"
+  ],
+  "source_contexts": [
+    "第 4 章 机器学习：不要把答案写死，让机器自己改"
+  ],
+  "tags": [
+    "content",
+    "principle"
+  ],
+  "id": "candidate-20260806041631559390-b2ff9058",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

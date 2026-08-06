@@ -1,0 +1,22 @@
+{
+  "title": "!符号主义与逻辑规则(assets/03-symbolism.jpg)",
+  "candidate_type": "principle",
+  "summary": "![符号主义与逻辑规则](assets/03-symbolism.jpg)",
+  "evidence_ids": [
+    "ev-20260806041631559200-adc8dfc5"
+  ],
+  "source_contexts": [
+    "第 3 章 符号主义：把知识写成规则"
+  ],
+  "tags": [
+    "content",
+    "principle"
+  ],
+  "id": "candidate-20260806041631559207-fd54f559",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

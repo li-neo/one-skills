@@ -1,0 +1,22 @@
+{
+  "title": "符号主义并没有消失。数据库规则、形式验证、知识图谱和业务规则引擎仍然重要。问题只在于...",
+  "candidate_type": "principle",
+  "summary": "符号主义并没有消失。数据库规则、形式验证、知识图谱和业务规则引擎仍然重要。问题只在于：**它不适合独自承包所有智能。**",
+  "evidence_ids": [
+    "ev-20260806041631559300-9c15a7c6"
+  ],
+  "source_contexts": [
+    "为什么专家系统遇到瓶颈"
+  ],
+  "tags": [
+    "content",
+    "principle"
+  ],
+  "id": "candidate-20260806041631559307-0afac8c5",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}

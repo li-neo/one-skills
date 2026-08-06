@@ -1,0 +1,22 @@
+{
+  "title": "维护成本高：新情况出现后，要人工补规则。",
+  "candidate_type": "principle",
+  "summary": "**维护成本高**：新情况出现后，要人工补规则。",
+  "evidence_ids": [
+    "ev-20260806041631559256-3cf0d05a"
+  ],
+  "source_contexts": [
+    "为什么专家系统遇到瓶颈"
+  ],
+  "tags": [
+    "content",
+    "principle"
+  ],
+  "id": "candidate-20260806041631559263-48a72714",
+  "cross_domain": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires at least two independent source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+}
