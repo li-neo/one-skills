@@ -35,7 +35,14 @@
         "properties": {
           "id": {"type": "string", "minLength": 1},
           "title": {"type": "string", "minLength": 1},
-          "kind": {"enum": ["source-concept", "executable-capability"]},
+          "kind": {
+            "enum": [
+              "source-concept",
+              "candidate-capability",
+              "executable-capability",
+              "governance"
+            ]
+          },
           "order": {"type": "integer", "minimum": 0},
           "prerequisites": {"type": "array", "items": {"type": "string"}},
           "source_locators": {"type": "array", "items": {"type": "string"}},

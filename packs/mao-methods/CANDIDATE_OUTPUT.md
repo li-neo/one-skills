@@ -1,21 +1,21 @@
 # Candidate Output
 
-候选 Skill 位于：
+v0.3 的正式产物位于：
 
-[`../../examples/mao-methods/skill/mao-methods/SKILL.md`](../../examples/mao-methods/skill/mao-methods/SKILL.md)
+- [Runtime Skill](skills/mao-methods/SKILL.md)
+- [能力图谱与学习入口](INDEX.md)
+- [验证后能力组合](VERIFIED_PORTFOLIO.md)
+- [盲测比较报告](evaluations/comparison-report.json)
+- [发布质量报告](reports/QUALITY.md)
 
-当前 Pack 保持 `verify: blocked`，原因不是结构或来源失败，而是 one-skills 要求 V2 预测力和最终行为结果由独立 Answer Agent 或人工评审提供。
+## 发布状态
 
-已确定完成：
+- Pack phase：`evolve`
+- 入口 / 内部节点：`1 / 12`
+- 独立评测：`60 / 60`
+- one-skills / Cangjie：`99.7950 / 77.0797`
+- 加权领先：`22.7153`
+- 不可补偿硬门：全部通过
+- Skill Hash：`7f0063e6acff919e61ebf94728de079cb587596e000f795049aad2a40f7032a0`
 
-- Source Catalog 集合质量门通过；
-- 4 个结构化 Claim 在多个语境复现，并有独立 provenance group；
-- 候选 Skill 通过静态结构、链接和 canonical/runtime 一致性检查；
-- `evaluation_only` holdout 未进入构建语料。
-
-尚未声称完成：
-
-- canonical 行为题的独立执行；
-- holdout 的盲测；
-- 与 GitHub 对照 Skills 的同题 paired 比较；
-- release / install / Darwin evolve。
+旧 v0.2 候选仅用于回归审计，不再代表当前发布产物。

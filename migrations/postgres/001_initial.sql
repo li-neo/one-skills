@@ -98,6 +98,20 @@ CREATE TABLE IF NOT EXISTS lineage_edges (
   PRIMARY KEY (from_type, from_id, relation, to_type, to_id)
 );
 
+CREATE TABLE IF NOT EXISTS graph_edges (
+  pack_id TEXT NOT NULL,
+  from_type TEXT NOT NULL,
+  from_id TEXT NOT NULL,
+  relation TEXT NOT NULL,
+  to_type TEXT NOT NULL,
+  to_id TEXT NOT NULL,
+  evidence_ids_json JSONB NOT NULL,
+  confidence DOUBLE PRECISION NOT NULL,
+  status TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL,
+  PRIMARY KEY (pack_id, from_type, from_id, relation, to_type, to_id)
+);
+
 CREATE TABLE IF NOT EXISTS skill_versions (
   skill_id TEXT NOT NULL,
   version TEXT NOT NULL,
@@ -217,6 +231,7 @@ CREATE INDEX IF NOT EXISTS idx_chunks_embedding ON chunks USING hnsw (embedding 
 CREATE INDEX IF NOT EXISTS idx_chunks_access ON chunks(access_level);
 CREATE INDEX IF NOT EXISTS idx_edges_from ON lineage_edges(from_type, from_id);
 CREATE INDEX IF NOT EXISTS idx_edges_to ON lineage_edges(to_type, to_id);
+CREATE INDEX IF NOT EXISTS idx_graph_edges_pack ON graph_edges(pack_id, from_type, from_id);
 CREATE INDEX IF NOT EXISTS idx_acl_asset ON asset_acl(tenant_id, asset_type, asset_id);
 CREATE INDEX IF NOT EXISTS idx_jobs_status ON jobs(status, created_at);
 CREATE INDEX IF NOT EXISTS idx_audit_asset ON audit_events(asset_type, asset_id, created_at);

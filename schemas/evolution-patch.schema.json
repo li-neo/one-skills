@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/li-neo/one-skills/schemas/evolution-patch.schema.json",
+  "title": "One Skills Evolution Patch",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "id",
+    "action",
+    "target",
+    "supporting_event_ids",
+    "expected_dimension",
+    "protected_gates",
+    "before_hash",
+    "status"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "id": {"type": "string"},
+    "action": {"enum": ["CREATE", "UPDATE", "MERGE", "PRUNE", "NOOP"]},
+    "target": {"type": "string"},
+    "content": {"type": "string"},
+    "source_targets": {"type": "array", "items": {"type": "string"}},
+    "supporting_event_ids": {
+      "type": "array",
+      "minItems": 2,
+      "items": {"type": "string"}
+    },
+    "expected_dimension": {"type": "string"},
+    "protected_gates": {"type": "array", "items": {"type": "string"}},
+    "before_hash": {"type": "string"},
+    "after_hash": {"type": ["string", "null"]},
+    "comparison": {"type": ["object", "null"]},
+    "status": {"enum": ["proposed", "applied", "kept", "reverted", "rejected"]},
+    "decision_reason": {"type": "string"}
+  },
+  "additionalProperties": false
+}

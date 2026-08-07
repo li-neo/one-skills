@@ -1,0 +1,58 @@
+{
+  "name": "阶段性主要问题与改判",
+  "problem": "多个问题争夺注意力，当前优先项不清楚",
+  "trigger": "所有部门都说自己最重要",
+  "inputs": [
+    "候选关系",
+    "支持和反证",
+    "牵引影响",
+    "外溢成本"
+  ],
+  "procedure": [
+    "提出至少两个主要问题候选",
+    "若旧优先项已改善或出现新证据，返回调查与实践循环核验后再排序",
+    "检查改善后哪些问题会缓解",
+    "检查恶化后哪些问题会放大",
+    "评估是否向弱势方转移成本",
+    "选择阶段优先项并冻结改判信号"
+  ],
+  "output": "候选排序、备选解释、改判条件和复核日期",
+  "done": "优先项可被新事实推翻，底线约束未被取消",
+  "boundaries": [
+    "主要问题不是永久真理",
+    "不得把普通分歧转成敌我身份"
+  ],
+  "failures": [
+    "为了聚焦忽略并行底线",
+    "把容易做当成最关键"
+  ],
+  "fallback": "无法排序时并行维护底线并继续补证",
+  "evidence_ids": [
+    "ev-20260807074344778094-b5dc328e",
+    "ev-20260807074344778101-39371ae4"
+  ],
+  "confidence": 0.65,
+  "id": "contradiction-reclassification",
+  "relations": [
+    {
+      "relation": "depends_on",
+      "target": "relational-problem-map"
+    },
+    {
+      "relation": "composes_with",
+      "target": "practice-test-loop"
+    }
+  ],
+  "anti_triggers": [
+    "多个安全风险必须并行处理",
+    "事实不足以比较候选"
+  ],
+  "assumptions": [
+    "安全、法律和基本权利底线已单独保留",
+    "候选问题可被证据比较"
+  ],
+  "branches": [],
+  "examples": [],
+  "module_type": "internal",
+  "status": "supporting"
+}

@@ -32,7 +32,18 @@
       "type": "object",
       "additionalProperties": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
     },
-    "source_quality_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+    "source_quality_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "object_overview_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "capability_portfolio_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "capability_graph_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "evaluation_suite_hashes": {
+      "type": "object",
+      "additionalProperties": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+    },
+    "skill_hashes": {
+      "type": "object",
+      "additionalProperties": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+    }
   },
   "additionalProperties": false
 }

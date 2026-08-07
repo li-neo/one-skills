@@ -1,0 +1,67 @@
+{
+  "title": "优先收集异常、失败和坏消息，再修正解释。",
+  "candidate_type": "framework",
+  "summary": "优先收集异常、失败和坏消息，再修正解释。",
+  "evidence_ids": [
+    "ev-20260807074344779129-8dc39dcc"
+  ],
+  "source_contexts": [
+    "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::可迁移机制"
+  ],
+  "tags": [
+    "methodology",
+    "framework"
+  ],
+  "source_ids": [
+    "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice"
+  ],
+  "independence_groups": [
+    "mao-authorized-works"
+  ],
+  "id": "candidate-20260807074344779287-663d86dc",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": false,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate may be generic or underspecified",
+  "problem": "在相关场景中判断何时以及如何应用“优先收集异常、失败和坏消息，再修正解释。”",
+  "assumptions": [
+    "来源语境与当前问题具有可解释的结构对应"
+  ],
+  "mechanism": [
+    "优先收集异常、失败和坏消息，再修正解释。"
+  ],
+  "triggers": [
+    "用户明确需要处理与“优先收集异常、失败和坏消息，再修正解释。”对应的问题"
+  ],
+  "anti_triggers": [
+    "纯信息查询",
+    "关键事实或成立假设缺失"
+  ],
+  "inputs": [
+    "用户目标",
+    "当前约束",
+    "可验证事实"
+  ],
+  "procedure": [
+    "确认目标、成立假设和关键事实",
+    "按证据运行候选机制并保留备选解释",
+    "定义完成、改判、停止和降级条件"
+  ],
+  "branches": [],
+  "output": "带证据、边界和改判条件的可执行结果",
+  "done": "结果可由来源和后续行动复核",
+  "boundaries": [
+    "不得把来源未支持的推断写成事实"
+  ],
+  "failures": [
+    "证据不足",
+    "成立假设不满足"
+  ],
+  "counterexamples": [],
+  "related_ids": [],
+  "verification": {},
+  "disposition": "independent-module"
+}

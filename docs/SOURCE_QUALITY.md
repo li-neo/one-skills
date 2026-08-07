@@ -19,6 +19,26 @@ one-skills 使用 `SOURCE_CATALOG.json` 在摄取前回答：
 one source template --output SOURCE_CATALOG.json
 ```
 
+## 候选发现
+
+```bash
+one source discover \
+  --adapter local|github|huggingface|manifest \
+  --target <path-or-id> \
+  --subject <subject> \
+  --question <research-question> \
+  --output SOURCE_CANDIDATES.json
+
+one source shortlist \
+  --candidates SOURCE_CANDIDATES.json \
+  --id <reviewed-source-id> \
+  --output SOURCE_SHORTLIST.json
+```
+
+发现层只记录身份、revision、license/card 和访问状态，不自动填写 authority、
+directness、independence group 或 evidence role。Shortlist 仍需人工建立 Source
+Catalog；搜索热度、Star、下载量和模型判断都不能替代来源质量门。
+
 候选来源字段：
 
 | 字段 | 含义 |

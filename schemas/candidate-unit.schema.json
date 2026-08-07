@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/li-neo/one-skills/schemas/candidate-unit.schema.json",
+  "title": "One Skills Candidate Unit",
+  "type": "object",
+  "required": [
+    "id",
+    "title",
+    "candidate_type",
+    "summary",
+    "evidence_ids",
+    "source_contexts",
+    "source_ids",
+    "independence_groups",
+    "status"
+  ],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "title": {"type": "string", "minLength": 1},
+    "candidate_type": {"type": "string", "minLength": 1},
+    "summary": {"type": "string", "minLength": 1},
+    "problem": {"type": "string"},
+    "assumptions": {"type": "array", "items": {"type": "string"}},
+    "mechanism": {"type": "array", "items": {"type": "string"}},
+    "triggers": {"type": "array", "items": {"type": "string"}},
+    "anti_triggers": {"type": "array", "items": {"type": "string"}},
+    "inputs": {"type": "array", "items": {"type": "string"}},
+    "procedure": {"type": "array", "items": {"type": "string"}},
+    "branches": {"type": "array", "items": {"type": "object"}},
+    "output": {"type": "string"},
+    "done": {"type": "string"},
+    "boundaries": {"type": "array", "items": {"type": "string"}},
+    "failures": {"type": "array", "items": {"type": "string"}},
+    "counterexamples": {"type": "array", "items": {"type": "string"}},
+    "evidence_ids": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "source_contexts": {"type": "array", "items": {"type": "string"}},
+    "source_ids": {"type": "array", "items": {"type": "string"}},
+    "independence_groups": {"type": "array", "items": {"type": "string"}},
+    "tags": {"type": "array", "items": {"type": "string"}},
+    "related_ids": {"type": "array", "items": {"type": "object"}},
+    "verification": {"type": "object"},
+    "disposition": {
+      "enum": ["independent-module", "shared-principle", "governance", "case", "counterexample", "term", "rejected"]
+    },
+    "status": {
+      "enum": ["pending", "needs_evidence", "needs_model_verification", "accepted", "rejected"]
+    },
+    "rejection_reason": {"type": "string"},
+    "cross_domain": {"type": "boolean"},
+    "source_independent": {"type": "boolean"},
+    "predictive": {"type": "boolean"},
+    "distinctive": {"type": "boolean"},
+    "actionable": {"type": "boolean"}
+  },
+  "additionalProperties": false
+}

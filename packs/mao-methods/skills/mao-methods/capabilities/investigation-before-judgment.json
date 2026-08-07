@@ -1,0 +1,56 @@
+{
+  "name": "调查先于判断",
+  "problem": "重要结论主要来自转述、单一样本或管理层想象",
+  "trigger": "只有二手报告",
+  "inputs": [
+    "唯一核心问题",
+    "当前判断",
+    "不同处境的对象",
+    "改判证据"
+  ],
+  "procedure": [
+    "写下当前判断和能推翻它的证据",
+    "覆盖直接受影响者、一线执行者和失败者",
+    "追问具体事件、行为、时间和结果",
+    "记录反证、未知和样本限制"
+  ],
+  "output": "调查前假设、证据清单、调查后判断和剩余缺口",
+  "done": "至少两类角色提供可定位材料，并出现一个反证或明确未知项",
+  "boundaries": [
+    "不得用职位压力强迫表态",
+    "调查数量不等于代表性"
+  ],
+  "failures": [
+    "上级或同伴在场污染回答",
+    "只访问支持原方案的人"
+  ],
+  "fallback": "缩小结论范围，只输出补证问题",
+  "evidence_ids": [
+    "ev-20260807074344778189-a07f6c8d",
+    "ev-20260807074344778195-aa17d49c"
+  ],
+  "confidence": 0.65,
+  "id": "investigation-before-judgment",
+  "relations": [
+    {
+      "relation": "depends_on",
+      "target": "rights-bound-transfer"
+    },
+    {
+      "relation": "composes_with",
+      "target": "practice-test-loop"
+    }
+  ],
+  "anti_triggers": [
+    "普通事实查询",
+    "证据充分且可快速撤销的低风险选择"
+  ],
+  "assumptions": [
+    "可以接触不同处境的直接受影响者",
+    "调查不会造成报复或不可逆伤害"
+  ],
+  "branches": [],
+  "examples": [],
+  "module_type": "internal",
+  "status": "supporting"
+}

@@ -7,6 +7,8 @@
 - 编译前按原来源结构保留学习顺序；
 - 编译后优先使用 Capability 的 `depends_on` 关系；
 - 每个节点记录目标、先修节点、来源定位和掌握检查。
+- v0.3 从 Capability Graph 做稳定拓扑排序；
+- 顶层 Runtime Skill 不重复成为学习节点，内部模块才是掌握单元。
 
 ```bash
 one learn path <pack>
@@ -64,6 +66,24 @@ one experience status <pack>
 - holdout 事件不参与候选挖掘；
 - 候选不会自动改 Skill；
 - 晋升仍需冻结 eval、before/after、独立结果和人工 keep/revert。
+
+重复失败可以生成结构化 whole-folder patch：
+
+```bash
+one evolution propose <pack> \
+  --action UPDATE \
+  --target skills/example/SKILL.md \
+  --event <event-1> --event <event-2> \
+  --dimension task_effect
+
+one evolution apply <pack> --id <patch> --comparison before-after.json
+one evolution resolve <pack> --id <patch> \
+  --decision keep|revert --reason <reason>
+```
+
+动作仅允许 `CREATE/UPDATE/MERGE/PRUNE/NOOP`。Canonical、runtime tests 和
+evaluation holdout 不允许被 patch 修改；比较未改善或任一 protected gate 失败时，
+候选直接拒绝。
 
 ## 适用边界
 

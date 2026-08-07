@@ -1,0 +1,67 @@
+{
+  "title": "第22段明确认为毛泽东对这场全局性、长时间的严重错误负有主要责任。第24段又把持续失...",
+  "candidate_type": "counterexample",
+  "summary": "第22段明确认为毛泽东对这场全局性、长时间的严重错误负有主要责任。第24段又把持续失效与个人专断、集体领导和民主集中制受损、法律和制度化不足联系起来。",
+  "evidence_ids": [
+    "ev-20260807074344781636-036dc3b6"
+  ],
+  "source_contexts": [
+    "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::决议明确记录的失效"
+  ],
+  "tags": [
+    "methodology",
+    "counterexample"
+  ],
+  "source_ids": [
+    "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm"
+  ],
+  "independence_groups": [
+    "1981-central-resolution"
+  ],
+  "id": "candidate-20260807074344781643-dbfc4f90",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": true,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable",
+  "problem": "在相关场景中判断何时以及如何应用“第22段明确认为毛泽东对这场全局性、长时间的严重错误负有主要责任。第24段又把持续失...”",
+  "assumptions": [
+    "来源语境与当前问题具有可解释的结构对应"
+  ],
+  "mechanism": [
+    "第22段明确认为毛泽东对这场全局性、长时间的严重错误负有主要责任。第24段又把持续失效与个人专断、集体领导和民主集中制受损、法律和制度化不足联系起来。"
+  ],
+  "triggers": [
+    "用户明确需要处理与“第22段明确认为毛泽东对这场全局性、长时间的严重错误负有主要责任。第24段又把持续失...”对应的问题"
+  ],
+  "anti_triggers": [
+    "纯信息查询",
+    "关键事实或成立假设缺失"
+  ],
+  "inputs": [
+    "用户目标",
+    "当前约束",
+    "可验证事实"
+  ],
+  "procedure": [
+    "确认目标、成立假设和关键事实",
+    "按证据运行候选机制并保留备选解释",
+    "定义完成、改判、停止和降级条件"
+  ],
+  "branches": [],
+  "output": "带证据、边界和改判条件的可执行结果",
+  "done": "结果可由来源和后续行动复核",
+  "boundaries": [
+    "不得把来源未支持的推断写成事实"
+  ],
+  "failures": [
+    "证据不足",
+    "成立假设不满足"
+  ],
+  "counterexamples": [],
+  "related_ids": [],
+  "verification": {},
+  "disposition": "counterexample"
+}

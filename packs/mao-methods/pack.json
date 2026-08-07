@@ -1,6 +1,6 @@
 {
-  "schema_version": "0.2",
-  "id": "pack-20260806175133311964-d6800ddc",
+  "schema_version": "0.3",
+  "id": "pack-20260807074344701780-f226577d",
   "name": "mao-methods",
   "slug": "mao-methods",
   "profile": "methodology",
@@ -19,7 +19,21 @@
   "consent": "not-applicable",
   "recipe": {
     "id": "methodology-standard",
-    "version": "1.0.0"
+    "version": "2.0.0"
   },
-  "created_at": "2026-08-06T17:51:33+00:00"
+  "object_overview_hash": "c24e33c2d123109584c8b1890f73f86355bedd13246302f3d7d1dec1988531cb",
+  "capability_portfolio_hash": "43e56d8a1eadb34a18627a742948d0f4d329bee09b13adcb76bf7904d97d41ff",
+  "capability_graph_hash": "361873953f5f38123746df8afcd1aa51867844d1eaee8bb7816fee7096f7f4f4",
+  "semantic_contract": {
+    "overview_confirmation": "confirmed",
+    "capability_confirmation": "confirmed"
+  },
+  "activation_aliases": [
+    "mao-methods",
+    "毛泽东方法",
+    "毛选方法",
+    "用毛选",
+    "毛泽东著作方法"
+  ],
+  "created_at": "2026-08-07T07:43:44+00:00"
 }

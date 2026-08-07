@@ -1,0 +1,59 @@
+{
+  "name": "实践检验与改判",
+  "problem": "方法结论停留在解释层，无法被现实结果推翻",
+  "trigger": "结论未经行动检验",
+  "inputs": [
+    "暂时假设",
+    "支持与反证",
+    "可逆行动",
+    "成功失败停止条件"
+  ],
+  "procedure": [
+    "把结论写成可证伪假设",
+    "设计短周期可逆试验",
+    "预先冻结成功失败和停止条件",
+    "优先检查异常与负面结果",
+    "根据结果保持、修改或放弃假设"
+  ],
+  "output": "假设、试验、结果和改判记录",
+  "done": "结果能够改变原判断，且失败可安全回滚",
+  "boundaries": [
+    "不能用行动规模代替证据",
+    "不能在基本权利上试错"
+  ],
+  "failures": [
+    "指标只允许证明成功",
+    "试点无法退出"
+  ],
+  "fallback": "先寻找代理指标或更小的低风险试验",
+  "evidence_ids": [
+    "ev-20260807074344778209-9d9f6592",
+    "ev-20260807074344778216-0a7f7cef"
+  ],
+  "confidence": 0.65,
+  "id": "practice-test-loop",
+  "relations": [
+    {
+      "relation": "depends_on",
+      "target": "investigation-before-judgment"
+    },
+    {
+      "relation": "composes_with",
+      "target": "stage-experimentation"
+    }
+  ],
+  "anti_triggers": [
+    "不可逆高风险决策",
+    "无法观察结果的空泛主张",
+    "需要把方案返回参与者并说明采纳或未采纳理由",
+    "多个竞争解释尚未完成关系、反证和外溢比较"
+  ],
+  "assumptions": [
+    "可以设计范围有限且可撤回的行动",
+    "存在可观察结果"
+  ],
+  "branches": [],
+  "examples": [],
+  "module_type": "internal",
+  "status": "supporting"
+}

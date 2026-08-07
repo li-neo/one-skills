@@ -1,0 +1,67 @@
+{
+  "title": "Evidence: 决议把个人专断、集体领导受损以及民主法制制度化不足列为持续失效原...",
+  "candidate_type": "counterexample",
+  "summary": "Evidence: 决议把个人专断、集体领导受损以及民主法制制度化不足列为持续失效原因，说明反馈和复核不能集中在同一权力链。",
+  "evidence_ids": [
+    "ev-20260807074344781996-5de6b2c4"
+  ],
+  "source_contexts": [
+    "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::结构化主张：异议与坏消息保护"
+  ],
+  "tags": [
+    "methodology",
+    "counterexample"
+  ],
+  "source_ids": [
+    "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm"
+  ],
+  "independence_groups": [
+    "1981-central-resolution"
+  ],
+  "id": "candidate-20260807074344782004-daa6a67b",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": true,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable",
+  "problem": "在相关场景中判断何时以及如何应用“Evidence: 决议把个人专断、集体领导受损以及民主法制制度化不足列为持续失效原...”",
+  "assumptions": [
+    "来源语境与当前问题具有可解释的结构对应"
+  ],
+  "mechanism": [
+    "Evidence: 决议把个人专断、集体领导受损以及民主法制制度化不足列为持续失效原因，说明反馈和复核不能集中在同一权力链。"
+  ],
+  "triggers": [
+    "用户明确需要处理与“Evidence: 决议把个人专断、集体领导受损以及民主法制制度化不足列为持续失效原...”对应的问题"
+  ],
+  "anti_triggers": [
+    "纯信息查询",
+    "关键事实或成立假设缺失"
+  ],
+  "inputs": [
+    "用户目标",
+    "当前约束",
+    "可验证事实"
+  ],
+  "procedure": [
+    "确认目标、成立假设和关键事实",
+    "按证据运行候选机制并保留备选解释",
+    "定义完成、改判、停止和降级条件"
+  ],
+  "branches": [],
+  "output": "带证据、边界和改判条件的可执行结果",
+  "done": "结果可由来源和后续行动复核",
+  "boundaries": [
+    "不得把来源未支持的推断写成事实"
+  ],
+  "failures": [
+    "证据不足",
+    "成立假设不满足"
+  ],
+  "counterexamples": [],
+  "related_ids": [],
+  "verification": {},
+  "disposition": "counterexample"
+}

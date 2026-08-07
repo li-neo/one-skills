@@ -26,13 +26,17 @@ def default_recipes() -> dict[str, Recipe]:
     return {
         profile: Recipe(
             id=f"{profile}-standard",
-            version="1.0.0",
+            version="2.0.0",
             profile=profile,
-            parser="structural-text@1.0.0",
-            chunker="semantic-section@1.0.0",
-            extractors=definition.candidate_kinds,
-            verifier="six-gates@1.0.0",
-            builder=f"{definition.compiler}@1.0.0",
+            parser="structural-text@2.0.0",
+            chunker="semantic-section@2.0.0",
+            extractors=(
+                definition.spec.extractor_views
+                if definition.spec
+                else definition.candidate_kinds
+            ),
+            verifier="portfolio-v1-v2-v3@2.0.0",
+            builder=f"{definition.spec.compiler if definition.spec else definition.compiler}@2.0.0",
         )
         for profile, definition in PROFILES.items()
     }
@@ -44,7 +48,20 @@ def initialize_registry(path: Path) -> None:
         registry = load_json(path)
         changed = False
         for name, recipe in defaults.items():
-            if name not in registry["active"]:
+            active = registry["active"].get(name)
+            if active != asdict(recipe):
+                if active:
+                    registry.setdefault("history", []).append(
+                        {
+                            "profile": name,
+                            "previous": active,
+                            "promoted_at": utc_now(),
+                            "decision": {
+                                "promote": True,
+                                "reason": "built-in v0.3 semantic contract upgrade",
+                            },
+                        }
+                    )
                 registry["active"][name] = asdict(recipe)
                 changed = True
         if changed:

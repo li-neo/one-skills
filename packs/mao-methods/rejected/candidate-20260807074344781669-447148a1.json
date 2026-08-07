@@ -1,0 +1,67 @@
+{
+  "title": "这些材料表明，方法论文本中的调查、群众、矛盾、纠错不会自动约束实际权力。只要出现以下...",
+  "candidate_type": "framework",
+  "summary": "这些材料表明，方法论文本中的“调查、群众、矛盾、纠错”不会自动约束实际权力。只要出现以下条件，就应停止套用历史框架：",
+  "evidence_ids": [
+    "ev-20260807074344781662-a2204f8b"
+  ],
+  "source_contexts": [
+    "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::对方法迁移的硬约束"
+  ],
+  "tags": [
+    "methodology",
+    "framework"
+  ],
+  "source_ids": [
+    "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm"
+  ],
+  "independence_groups": [
+    "1981-central-resolution"
+  ],
+  "id": "candidate-20260807074344781669-447148a1",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": true,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts",
+  "problem": "在相关场景中判断何时以及如何应用“这些材料表明，方法论文本中的调查、群众、矛盾、纠错不会自动约束实际权力。只要出现以下...”",
+  "assumptions": [
+    "来源语境与当前问题具有可解释的结构对应"
+  ],
+  "mechanism": [
+    "这些材料表明，方法论文本中的“调查、群众、矛盾、纠错”不会自动约束实际权力。只要出现以下条件，就应停止套用历史框架："
+  ],
+  "triggers": [
+    "用户明确需要处理与“这些材料表明，方法论文本中的调查、群众、矛盾、纠错不会自动约束实际权力。只要出现以下...”对应的问题"
+  ],
+  "anti_triggers": [
+    "纯信息查询",
+    "关键事实或成立假设缺失"
+  ],
+  "inputs": [
+    "用户目标",
+    "当前约束",
+    "可验证事实"
+  ],
+  "procedure": [
+    "确认目标、成立假设和关键事实",
+    "按证据运行候选机制并保留备选解释",
+    "定义完成、改判、停止和降级条件"
+  ],
+  "branches": [],
+  "output": "带证据、边界和改判条件的可执行结果",
+  "done": "结果可由来源和后续行动复核",
+  "boundaries": [
+    "不得把来源未支持的推断写成事实"
+  ],
+  "failures": [
+    "证据不足",
+    "成立假设不满足"
+  ],
+  "counterexamples": [],
+  "related_ids": [],
+  "verification": {},
+  "disposition": "independent-module"
+}

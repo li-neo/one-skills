@@ -1,0 +1,57 @@
+{
+  "name": "关系化问题地图",
+  "problem": "复杂问题被简化为某个人或群体有问题",
+  "trigger": "团队冲突",
+  "inputs": [
+    "参与者目标",
+    "资源约束",
+    "事实争议",
+    "流程断点",
+    "权利影响"
+  ],
+  "procedure": [
+    "把谁有问题改写成关系问题",
+    "为每个关系记录双方目标和证据",
+    "提出两个以上候选解释",
+    "检查成本是否被转移给弱势方",
+    "选择可验证的阶段性关系"
+  ],
+  "output": "关系、证据、替代解释和外溢影响地图",
+  "done": "问题不依赖永久身份标签，且至少两个解释可比较",
+  "boundaries": [
+    "禁止敌我化和人格化",
+    "权利冲突不能只按效率排序"
+  ],
+  "failures": [
+    "把相关性写成责任",
+    "只保留管理层视角"
+  ],
+  "fallback": "返回调查模块补充缺失事实",
+  "evidence_ids": [
+    "ev-20260807074344778262-ea442209",
+    "ev-20260807074344778269-469ea6c2"
+  ],
+  "confidence": 0.65,
+  "id": "relational-problem-map",
+  "relations": [
+    {
+      "relation": "depends_on",
+      "target": "investigation-before-judgment"
+    },
+    {
+      "relation": "composes_with",
+      "target": "contradiction-reclassification"
+    }
+  ],
+  "anti_triggers": [
+    "单一明确技术故障",
+    "需要立即保护人身安全的紧急事件"
+  ],
+  "assumptions": [
+    "可以区分目标、资源、事实、流程和权利关系"
+  ],
+  "branches": [],
+  "examples": [],
+  "module_type": "internal",
+  "status": "supporting"
+}

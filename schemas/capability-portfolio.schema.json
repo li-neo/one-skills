@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/li-neo/one-skills/schemas/capability-portfolio.schema.json",
+  "title": "One Skills Capability Portfolio",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "pack_id",
+    "profile",
+    "kind",
+    "status",
+    "accepted",
+    "degraded",
+    "merged",
+    "rejected",
+    "coverage",
+    "metrics"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "pack_id": {"type": "string"},
+    "profile": {"type": "string"},
+    "kind": {"enum": ["candidate", "verified"]},
+    "status": {"enum": ["candidate", "confirmed", "stale"]},
+    "accepted": {"type": "array", "items": {"type": "string"}},
+    "degraded": {"type": "array", "items": {"type": "object"}},
+    "merged": {"type": "array", "items": {"type": "object"}},
+    "rejected": {"type": "array", "items": {"type": "object"}},
+    "coverage": {"type": "object"},
+    "metrics": {
+      "type": "object",
+      "required": ["candidate_count", "accepted_count", "overlap_rate", "fragmentation_rate"],
+      "properties": {
+        "candidate_count": {"type": "integer", "minimum": 0},
+        "accepted_count": {"type": "integer", "minimum": 0},
+        "overlap_rate": {"type": "number", "minimum": 0, "maximum": 1},
+        "fragmentation_rate": {"type": "number", "minimum": 0, "maximum": 1}
+      },
+      "additionalProperties": true
+    },
+    "confirmed_at": {"type": ["string", "null"]},
+    "confirmation_notes": {"type": "string"},
+    "generated_at": {"type": "string"},
+    "candidates": {
+      "type": "array",
+      "items": {"$ref": "candidate-unit.schema.json"}
+    }
+  },
+  "additionalProperties": false
+}

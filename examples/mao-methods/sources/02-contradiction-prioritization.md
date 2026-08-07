@@ -37,6 +37,13 @@ Claim-Statement: 矛盾排序必须是可改判的阶段假设，并禁止把普
 Claim-Type: framework
 Evidence: 《矛盾论》要求具体分析矛盾的特殊性、主次和条件转化，因此“主要矛盾”不能成为脱离新证据的永久标签。
 
+## 结构化主张：关系化问题地图
+
+Claim-Key: relational-problem-map
+Claim-Statement: 复杂问题应先改写为目标、资源、事实、流程或权利关系，再比较候选解释，不能先把责任固定到个人身份。
+Claim-Type: framework
+Evidence: 《矛盾论》要求具体分析不同矛盾的特殊性和相互条件，支持先描述关系和条件而不是先做人身归因。
+
 ## 结构化主张：现代迁移边界
 
 Claim-Key: rights-bound-transfer

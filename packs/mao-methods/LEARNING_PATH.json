@@ -1,813 +1,276 @@
 {
   "schema_version": "1.0",
-  "pack_id": "pack-20260806175133311964-d6800ddc",
+  "pack_id": "pack-20260807074344701780-f226577d",
   "profile": "methodology",
-  "generated_at": "2026-08-06T17:51:33+00:00",
-  "progression": "source-order",
+  "generated_at": "2026-08-07T09:09:49+00:00",
+  "progression": "capability-prerequisite",
   "nodes": [
     {
-      "id": "concept-a1bbcc4c6dcca242",
-      "title": "来源定位",
-      "kind": "source-concept",
+      "id": "rights-bound-transfer",
+      "title": "历史方法现代迁移治理门",
+      "kind": "candidate-capability",
       "order": 0,
       "prerequisites": [],
       "source_locators": [
-        "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice#L5"
+        "ev-20260807074344778283-896714d3",
+        "ev-20260807074344778290-f366b05d",
+        "ev-20260807074344778297-358e3c96"
       ],
       "objectives": [
-        "能够用自己的话解释“来源定位”",
-        "能够指出其适用条件、反例或证据边界"
+        "历史战争、政治和运动语言被直接套到现代组织与个人",
+        "在“任何历史方法现代应用”出现时正确调用"
       ],
       "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
+        "不存在被历史术语掩盖的暴力、违法或权利剥夺",
+        "能说明边界：这是所有模块的强制治理门，不能被用户覆盖",
+        "能从失败中恢复：只输出补证和治理修复，必要时升级专业人员"
       ]
     },
     {
-      "id": "concept-e339243e778c06c3",
-      "title": "可核验短引",
-      "kind": "source-concept",
+      "id": "investigation-before-judgment",
+      "title": "调查先于判断",
+      "kind": "candidate-capability",
       "order": 1,
       "prerequisites": [
-        "concept-a1bbcc4c6dcca242"
+        "rights-bound-transfer"
       ],
       "source_locators": [
-        "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice#L11"
+        "ev-20260807074344778189-a07f6c8d",
+        "ev-20260807074344778195-aa17d49c"
       ],
       "objectives": [
-        "能够用自己的话解释“可核验短引”",
-        "能够指出其适用条件、反例或证据边界"
+        "重要结论主要来自转述、单一样本或管理层想象",
+        "在“只有二手报告”出现时正确调用"
       ],
       "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
+        "至少两类角色提供可定位材料，并出现一个反证或明确未知项",
+        "能说明边界：不得用职位压力强迫表态；调查数量不等于代表性",
+        "能从失败中恢复：缩小结论范围，只输出补证问题"
       ]
     },
     {
-      "id": "concept-b2303dcf4f40a271",
-      "title": "可迁移机制",
-      "kind": "source-concept",
+      "id": "protected-dissent-channel",
+      "title": "异议与坏消息保护",
+      "kind": "executable-capability",
       "order": 2,
       "prerequisites": [
-        "concept-e339243e778c06c3"
+        "rights-bound-transfer"
       ],
       "source_locators": [
-        "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice#L19"
+        "ev-20260807074344778232-95cbaab2",
+        "ev-20260807074344778239-072a7e52",
+        "ev-20260807074344778246-355277b4"
       ],
       "objectives": [
-        "能够用自己的话解释“可迁移机制”",
-        "能够指出其适用条件、反例或证据边界"
+        "坏消息会使报告者受罚，决策系统只能收到支持性信息",
+        "在“周报永远绿色”出现时正确调用"
       ],
       "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
+        "报告者可安全上行，执行者不能单独关闭复核",
+        "能说明边界：保护异议不等于免除事实责任；遵守隐私和合法程序",
+        "能从失败中恢复：停止大范围行动并引入外部独立审查"
       ]
     },
     {
-      "id": "concept-85642903c068f386",
-      "title": "证据边界",
-      "kind": "source-concept",
+      "id": "version-attribution",
+      "title": "版本、归属与推断纪律",
+      "kind": "candidate-capability",
       "order": 3,
       "prerequisites": [
-        "concept-b2303dcf4f40a271"
+        "rights-bound-transfer"
       ],
       "source_locators": [
-        "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice#L29"
+        "ev-20260807074344778376-3f396dbb",
+        "ev-20260807074344778383-9602587b"
       ],
       "objectives": [
-        "能够用自己的话解释“证据边界”",
-        "能够指出其适用条件、反例或证据边界"
+        "公开定稿、现场记录、编辑文本和现代推断被混成作者原话",
+        "在“引用历史文本”出现时正确调用"
       ],
       "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
+        "读者能够区分本人原文、后续版本和现代迁移",
+        "能说明边界：不伪造语录；不把公开定稿称为现场逐字记录",
+        "能从失败中恢复：取消直接归属，只保留有来源的条件式说明"
       ]
     },
     {
-      "id": "concept-4af235b4df83d88f",
-      "title": "结构化主张：反馈完整性",
-      "kind": "source-concept",
+      "id": "anti-dogmatism-correction",
+      "title": "事实触发反教条纠错",
+      "kind": "candidate-capability",
       "order": 4,
       "prerequisites": [
-        "concept-85642903c068f386"
+        "version-attribution"
       ],
       "source_locators": [
-        "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice#L35"
+        "ev-20260807074344778009-3494d9f2",
+        "ev-20260807074344778030-78f124b5",
+        "ev-20260807074344778043-2b1625d0"
       ],
       "objectives": [
-        "能够用自己的话解释“结构化主张：反馈完整性”",
-        "能够指出其适用条件、反例或证据边界"
+        "理论、上级转述或既有文本与可核验事实冲突",
+        "在“现场与报告不一致”出现时正确调用"
       ],
       "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
+        "新结论解释异常且明确保留未知",
+        "能说明边界：不因反权威而忽略证据质量；不把怀疑变成任意否定",
+        "能从失败中恢复：并列冲突来源，停在未决状态"
       ]
     },
     {
-      "id": "concept-45ad02d5e63bef82",
-      "title": "结构化主张：版本与归属",
-      "kind": "source-concept",
+      "id": "distribution-before-aggregate",
+      "title": "分布检查优先于总体指标",
+      "kind": "executable-capability",
       "order": 5,
       "prerequisites": [
-        "concept-4af235b4df83d88f"
+        "investigation-before-judgment"
       ],
       "source_locators": [
-        "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice#L42"
+        "ev-20260807074344778122-9f367d4a",
+        "ev-20260807074344778130-37784376"
       ],
       "objectives": [
-        "能够用自己的话解释“结构化主张：版本与归属”",
-        "能够指出其适用条件、反例或证据边界"
+        "总体数据、高频声音或资源聚焦掩盖无发言权群体承担的局部损害",
+        "在“总体指标很好但局部投诉严重”出现时正确调用"
       ],
       "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
+        "结论不再依赖单一平均值，且受影响群体复核前保持暂停扩展",
+        "能说明边界：不从小样本推断敏感属性；不公开可识别的弱势个体",
+        "能从失败中恢复：暂停扩大，收缩结论并补充匿名且合法的分布与反馈数据"
       ]
     },
     {
-      "id": "concept-c2702393cf1d0692",
-      "title": "来源定位",
-      "kind": "source-concept",
+      "id": "feedback-integrity",
+      "title": "一线反馈完整闭环",
+      "kind": "executable-capability",
       "order": 6,
-      "prerequisites": [],
+      "prerequisites": [
+        "protected-dissent-channel"
+      ],
       "source_locators": [
-        "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction#L5"
+        "ev-20260807074344778145-fde1eae4",
+        "ev-20260807074344778152-1651d763",
+        "ev-20260807074344778159-ef36a626",
+        "ev-20260807074344778167-4e30fe24",
+        "ev-20260807074344778174-9bf8a104"
       ],
       "objectives": [
-        "能够用自己的话解释“来源定位”",
-        "能够指出其适用条件、反例或证据边界"
+        "组织收集了意见，但没有形成可修正的方案与结果返回",
+        "在“用户意见很多但无法执行”出现时正确调用"
       ],
       "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
+        "参与者知道意见如何处理，试点结果能够改变原方案",
+        "能说明边界：多数声量不等于真实同意；不得取消退出申诉和复核",
+        "能从失败中恢复：暂停扩大，先修复反馈制度"
       ]
     },
     {
-      "id": "concept-0e769d258f2df3a5",
-      "title": "可核验短引",
-      "kind": "source-concept",
+      "id": "practice-test-loop",
+      "title": "实践检验与改判",
+      "kind": "candidate-capability",
       "order": 7,
       "prerequisites": [
-        "concept-c2702393cf1d0692"
+        "investigation-before-judgment"
       ],
       "source_locators": [
-        "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction#L11"
+        "ev-20260807074344778209-9d9f6592",
+        "ev-20260807074344778216-0a7f7cef"
       ],
       "objectives": [
-        "能够用自己的话解释“可核验短引”",
-        "能够指出其适用条件、反例或证据边界"
+        "方法结论停留在解释层，无法被现实结果推翻",
+        "在“结论未经行动检验”出现时正确调用"
       ],
       "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
+        "结果能够改变原判断，且失败可安全回滚",
+        "能说明边界：不能用行动规模代替证据；不能在基本权利上试错",
+        "能从失败中恢复：先寻找代理指标或更小的低风险试验"
       ]
     },
     {
-      "id": "concept-fc080a7df37a0288",
-      "title": "可迁移机制",
-      "kind": "source-concept",
+      "id": "relational-problem-map",
+      "title": "关系化问题地图",
+      "kind": "candidate-capability",
       "order": 8,
       "prerequisites": [
-        "concept-0e769d258f2df3a5"
+        "investigation-before-judgment"
       ],
       "source_locators": [
-        "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction#L19"
+        "ev-20260807074344778262-ea442209",
+        "ev-20260807074344778269-469ea6c2"
       ],
       "objectives": [
-        "能够用自己的话解释“可迁移机制”",
-        "能够指出其适用条件、反例或证据边界"
+        "复杂问题被简化为某个人或群体有问题",
+        "在“团队冲突”出现时正确调用"
       ],
       "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
+        "问题不依赖永久身份标签，且至少两个解释可比较",
+        "能说明边界：禁止敌我化和人格化；权利冲突不能只按效率排序",
+        "能从失败中恢复：返回调查模块补充缺失事实"
       ]
     },
     {
-      "id": "concept-16e41351c8c2f02f",
-      "title": "证据边界",
-      "kind": "source-concept",
+      "id": "contradiction-reclassification",
+      "title": "阶段性主要问题与改判",
+      "kind": "candidate-capability",
       "order": 9,
       "prerequisites": [
-        "concept-fc080a7df37a0288"
+        "relational-problem-map"
       ],
       "source_locators": [
-        "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction#L29"
+        "ev-20260807074344778094-b5dc328e",
+        "ev-20260807074344778101-39371ae4"
       ],
       "objectives": [
-        "能够用自己的话解释“证据边界”",
-        "能够指出其适用条件、反例或证据边界"
+        "多个问题争夺注意力，当前优先项不清楚",
+        "在“所有部门都说自己最重要”出现时正确调用"
       ],
       "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
+        "优先项可被新事实推翻，底线约束未被取消",
+        "能说明边界：主要问题不是永久真理；不得把普通分歧转成敌我身份",
+        "能从失败中恢复：无法排序时并行维护底线并继续补证"
       ]
     },
     {
-      "id": "concept-c29ecb9ef2e5d22c",
-      "title": "结构化主张：阶段性分类",
-      "kind": "source-concept",
+      "id": "stage-experimentation",
+      "title": "阶段识别与窄目标试点",
+      "kind": "candidate-capability",
       "order": 10,
       "prerequisites": [
-        "concept-16e41351c8c2f02f"
+        "practice-test-loop"
       ],
       "source_locators": [
-        "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction#L35"
+        "ev-20260807074344778354-518e182b",
+        "ev-20260807074344778362-55b202a3"
       ],
       "objectives": [
-        "能够用自己的话解释“结构化主张：阶段性分类”",
-        "能够指出其适用条件、反例或证据边界"
+        "资源弱或不确定性高，却试图一次全面推进",
+        "在“初创团队多线作战”出现时正确调用"
       ],
       "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
+        "局部结果可重复且阶段切换有明确证据",
+        "能说明边界：不迁移歼灭包围等战争语言；聚焦不能取消并行底线",
+        "能从失败中恢复：回到探索阶段，缩小目标或收缩资源"
       ]
     },
     {
-      "id": "concept-695cecb3fa45c4a6",
-      "title": "结构化主张：现代迁移边界",
-      "kind": "source-concept",
+      "id": "center-work-coordination",
+      "title": "中心任务与并行底线协调",
+      "kind": "candidate-capability",
       "order": 11,
       "prerequisites": [
-        "concept-c29ecb9ef2e5d22c"
+        "contradiction-reclassification"
       ],
       "source_locators": [
-        "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction#L42"
+        "ev-20260807074344778067-2c334f4a",
+        "ev-20260807074344778076-2b3036a9"
       ],
       "objectives": [
-        "能够用自己的话解释“结构化主张：现代迁移边界”",
-        "能够指出其适用条件、反例或证据边界"
+        "组织需要聚焦，但多个底线和必要协同不能停止",
+        "在“季度目标过多”出现时正确调用"
       ],
       "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
-      ]
-    },
-    {
-      "id": "concept-84c658322596f9a7",
-      "title": "来源定位",
-      "kind": "source-concept",
-      "order": 12,
-      "prerequisites": [],
-      "source_locators": [
-        "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods#L5"
-      ],
-      "objectives": [
-        "能够用自己的话解释“来源定位”",
-        "能够指出其适用条件、反例或证据边界"
-      ],
-      "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
-      ]
-    },
-    {
-      "id": "concept-ed8692ace090a83f",
-      "title": "可核验短引",
-      "kind": "source-concept",
-      "order": 13,
-      "prerequisites": [
-        "concept-84c658322596f9a7"
-      ],
-      "source_locators": [
-        "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods#L11"
-      ],
-      "objectives": [
-        "能够用自己的话解释“可核验短引”",
-        "能够指出其适用条件、反例或证据边界"
-      ],
-      "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
-      ]
-    },
-    {
-      "id": "concept-f54fba0b102654f8",
-      "title": "可迁移机制",
-      "kind": "source-concept",
-      "order": 14,
-      "prerequisites": [
-        "concept-ed8692ace090a83f"
-      ],
-      "source_locators": [
-        "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods#L19"
-      ],
-      "objectives": [
-        "能够用自己的话解释“可迁移机制”",
-        "能够指出其适用条件、反例或证据边界"
-      ],
-      "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
-      ]
-    },
-    {
-      "id": "concept-15d07e54ea1f92f3",
-      "title": "证据边界",
-      "kind": "source-concept",
-      "order": 15,
-      "prerequisites": [
-        "concept-f54fba0b102654f8"
-      ],
-      "source_locators": [
-        "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods#L30"
-      ],
-      "objectives": [
-        "能够用自己的话解释“证据边界”",
-        "能够指出其适用条件、反例或证据边界"
-      ],
-      "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
-      ]
-    },
-    {
-      "id": "concept-9d8db72bf8d8dc5f",
-      "title": "结构化主张：反馈完整性",
-      "kind": "source-concept",
-      "order": 16,
-      "prerequisites": [
-        "concept-15d07e54ea1f92f3"
-      ],
-      "source_locators": [
-        "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods#L36"
-      ],
-      "objectives": [
-        "能够用自己的话解释“结构化主张：反馈完整性”",
-        "能够指出其适用条件、反例或证据边界"
-      ],
-      "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
-      ]
-    },
-    {
-      "id": "concept-bfe18902e3f97b00",
-      "title": "结构化主张：现代迁移边界",
-      "kind": "source-concept",
-      "order": 17,
-      "prerequisites": [
-        "concept-9d8db72bf8d8dc5f"
-      ],
-      "source_locators": [
-        "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods#L43"
-      ],
-      "objectives": [
-        "能够用自己的话解释“结构化主张：现代迁移边界”",
-        "能够指出其适用条件、反例或证据边界"
-      ],
-      "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
-      ]
-    },
-    {
-      "id": "concept-a8bf72d814f58d41",
-      "title": "来源定位",
-      "kind": "source-concept",
-      "order": 18,
-      "prerequisites": [],
-      "source_locators": [
-        "https://www.12371.cn/special/mzdxj/d4j/#committee-methods#L5"
-      ],
-      "objectives": [
-        "能够用自己的话解释“来源定位”",
-        "能够指出其适用条件、反例或证据边界"
-      ],
-      "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
-      ]
-    },
-    {
-      "id": "concept-5ded2b5e0da109c4",
-      "title": "可核验结构",
-      "kind": "source-concept",
-      "order": 19,
-      "prerequisites": [
-        "concept-a8bf72d814f58d41"
-      ],
-      "source_locators": [
-        "https://www.12371.cn/special/mzdxj/d4j/#committee-methods#L11"
-      ],
-      "objectives": [
-        "能够用自己的话解释“可核验结构”",
-        "能够指出其适用条件、反例或证据边界"
-      ],
-      "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
-      ]
-    },
-    {
-      "id": "concept-e0056723c13b33b0",
-      "title": "可迁移机制",
-      "kind": "source-concept",
-      "order": 20,
-      "prerequisites": [
-        "concept-5ded2b5e0da109c4"
-      ],
-      "source_locators": [
-        "https://www.12371.cn/special/mzdxj/d4j/#committee-methods#L17"
-      ],
-      "objectives": [
-        "能够用自己的话解释“可迁移机制”",
-        "能够指出其适用条件、反例或证据边界"
-      ],
-      "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
-      ]
-    },
-    {
-      "id": "concept-23492376ee947477",
-      "title": "证据边界",
-      "kind": "source-concept",
-      "order": 21,
-      "prerequisites": [
-        "concept-e0056723c13b33b0"
-      ],
-      "source_locators": [
-        "https://www.12371.cn/special/mzdxj/d4j/#committee-methods#L28"
-      ],
-      "objectives": [
-        "能够用自己的话解释“证据边界”",
-        "能够指出其适用条件、反例或证据边界"
-      ],
-      "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
-      ]
-    },
-    {
-      "id": "concept-4ba054fca2e44ebc",
-      "title": "来源定位",
-      "kind": "source-concept",
-      "order": 22,
-      "prerequisites": [],
-      "source_locators": [
-        "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm#L5"
-      ],
-      "objectives": [
-        "能够用自己的话解释“来源定位”",
-        "能够指出其适用条件、反例或证据边界"
-      ],
-      "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
-      ]
-    },
-    {
-      "id": "concept-b466a5abbe572fe2",
-      "title": "决议明确记录的失效",
-      "kind": "source-concept",
-      "order": 23,
-      "prerequisites": [
-        "concept-4ba054fca2e44ebc"
-      ],
-      "source_locators": [
-        "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm#L11"
-      ],
-      "objectives": [
-        "能够用自己的话解释“决议明确记录的失效”",
-        "能够指出其适用条件、反例或证据边界"
-      ],
-      "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
-      ]
-    },
-    {
-      "id": "concept-2731987182d68007",
-      "title": "对方法迁移的硬约束",
-      "kind": "source-concept",
-      "order": 24,
-      "prerequisites": [
-        "concept-b466a5abbe572fe2"
-      ],
-      "source_locators": [
-        "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm#L21"
-      ],
-      "objectives": [
-        "能够用自己的话解释“对方法迁移的硬约束”",
-        "能够指出其适用条件、反例或证据边界"
-      ],
-      "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
-      ]
-    },
-    {
-      "id": "concept-1b3041c57cfa3951",
-      "title": "证据边界",
-      "kind": "source-concept",
-      "order": 25,
-      "prerequisites": [
-        "concept-2731987182d68007"
-      ],
-      "source_locators": [
-        "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm#L31"
-      ],
-      "objectives": [
-        "能够用自己的话解释“证据边界”",
-        "能够指出其适用条件、反例或证据边界"
-      ],
-      "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
-      ]
-    },
-    {
-      "id": "concept-47e3d16a796c7fc2",
-      "title": "结构化主张：反馈完整性",
-      "kind": "source-concept",
-      "order": 26,
-      "prerequisites": [
-        "concept-1b3041c57cfa3951"
-      ],
-      "source_locators": [
-        "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm#L35"
-      ],
-      "objectives": [
-        "能够用自己的话解释“结构化主张：反馈完整性”",
-        "能够指出其适用条件、反例或证据边界"
-      ],
-      "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
-      ]
-    },
-    {
-      "id": "concept-3f5391c462a6770b",
-      "title": "结构化主张：阶段性分类",
-      "kind": "source-concept",
-      "order": 27,
-      "prerequisites": [
-        "concept-47e3d16a796c7fc2"
-      ],
-      "source_locators": [
-        "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm#L42"
-      ],
-      "objectives": [
-        "能够用自己的话解释“结构化主张：阶段性分类”",
-        "能够指出其适用条件、反例或证据边界"
-      ],
-      "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
-      ]
-    },
-    {
-      "id": "concept-43730a11f25a9427",
-      "title": "结构化主张：现代迁移边界",
-      "kind": "source-concept",
-      "order": 28,
-      "prerequisites": [
-        "concept-3f5391c462a6770b"
-      ],
-      "source_locators": [
-        "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm#L49"
-      ],
-      "objectives": [
-        "能够用自己的话解释“结构化主张：现代迁移边界”",
-        "能够指出其适用条件、反例或证据边界"
-      ],
-      "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
-      ]
-    },
-    {
-      "id": "concept-4a7f0c7270a864fa",
-      "title": "来源定位",
-      "kind": "source-concept",
-      "order": 29,
-      "prerequisites": [],
-      "source_locators": [
-        "https://www.nber.org/papers/w16361#L5"
-      ],
-      "objectives": [
-        "能够用自己的话解释“来源定位”",
-        "能够指出其适用条件、反例或证据边界"
-      ],
-      "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
-      ]
-    },
-    {
-      "id": "concept-43ec1bc98b5fa27a",
-      "title": "摘要层面的可核验结论",
-      "kind": "source-concept",
-      "order": 30,
-      "prerequisites": [
-        "concept-4a7f0c7270a864fa"
-      ],
-      "source_locators": [
-        "https://www.nber.org/papers/w16361#L12"
-      ],
-      "objectives": [
-        "能够用自己的话解释“摘要层面的可核验结论”",
-        "能够指出其适用条件、反例或证据边界"
-      ],
-      "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
-      ]
-    },
-    {
-      "id": "concept-3ddffc4d9c05b106",
-      "title": "对 Skill 的意义",
-      "kind": "source-concept",
-      "order": 31,
-      "prerequisites": [
-        "concept-43ec1bc98b5fa27a"
-      ],
-      "source_locators": [
-        "https://www.nber.org/papers/w16361#L16"
-      ],
-      "objectives": [
-        "能够用自己的话解释“对 Skill 的意义”",
-        "能够指出其适用条件、反例或证据边界"
-      ],
-      "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
-      ]
-    },
-    {
-      "id": "concept-9dc9c66a2f72de17",
-      "title": "证据边界",
-      "kind": "source-concept",
-      "order": 32,
-      "prerequisites": [
-        "concept-3ddffc4d9c05b106"
-      ],
-      "source_locators": [
-        "https://www.nber.org/papers/w16361#L32"
-      ],
-      "objectives": [
-        "能够用自己的话解释“证据边界”",
-        "能够指出其适用条件、反例或证据边界"
-      ],
-      "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
-      ]
-    },
-    {
-      "id": "concept-4675c4166572cdde",
-      "title": "结构化主张：反馈完整性",
-      "kind": "source-concept",
-      "order": 33,
-      "prerequisites": [
-        "concept-9dc9c66a2f72de17"
-      ],
-      "source_locators": [
-        "https://www.nber.org/papers/w16361#L36"
-      ],
-      "objectives": [
-        "能够用自己的话解释“结构化主张：反馈完整性”",
-        "能够指出其适用条件、反例或证据边界"
-      ],
-      "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
-      ]
-    },
-    {
-      "id": "concept-e436e3d0e6819a44",
-      "title": "来源定位",
-      "kind": "source-concept",
-      "order": 34,
-      "prerequisites": [],
-      "source_locators": [
-        "https://www.dswxyjy.org.cn/n1/2021/0118/c219000-32003108.html#L5"
-      ],
-      "objectives": [
-        "能够用自己的话解释“来源定位”",
-        "能够指出其适用条件、反例或证据边界"
-      ],
-      "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
-      ]
-    },
-    {
-      "id": "concept-5fce86fd134b4e3c",
-      "title": "可核验结论",
-      "kind": "source-concept",
-      "order": 35,
-      "prerequisites": [
-        "concept-e436e3d0e6819a44"
-      ],
-      "source_locators": [
-        "https://www.dswxyjy.org.cn/n1/2021/0118/c219000-32003108.html#L12"
-      ],
-      "objectives": [
-        "能够用自己的话解释“可核验结论”",
-        "能够指出其适用条件、反例或证据边界"
-      ],
-      "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
-      ]
-    },
-    {
-      "id": "concept-dcf9bfcfe2ad9b1a",
-      "title": "对蒸馏的约束",
-      "kind": "source-concept",
-      "order": 36,
-      "prerequisites": [
-        "concept-5fce86fd134b4e3c"
-      ],
-      "source_locators": [
-        "https://www.dswxyjy.org.cn/n1/2021/0118/c219000-32003108.html#L18"
-      ],
-      "objectives": [
-        "能够用自己的话解释“对蒸馏的约束”",
-        "能够指出其适用条件、反例或证据边界"
-      ],
-      "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
-      ]
-    },
-    {
-      "id": "concept-f489d6843177f78b",
-      "title": "现代输出纪律",
-      "kind": "source-concept",
-      "order": 37,
-      "prerequisites": [
-        "concept-dcf9bfcfe2ad9b1a"
-      ],
-      "source_locators": [
-        "https://www.dswxyjy.org.cn/n1/2021/0118/c219000-32003108.html#L26"
-      ],
-      "objectives": [
-        "能够用自己的话解释“现代输出纪律”",
-        "能够指出其适用条件、反例或证据边界"
-      ],
-      "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
-      ]
-    },
-    {
-      "id": "concept-4272e5f3a0347a1b",
-      "title": "结构化主张：版本与归属",
-      "kind": "source-concept",
-      "order": 38,
-      "prerequisites": [
-        "concept-f489d6843177f78b"
-      ],
-      "source_locators": [
-        "https://www.dswxyjy.org.cn/n1/2021/0118/c219000-32003108.html#L30"
-      ],
-      "objectives": [
-        "能够用自己的话解释“结构化主张：版本与归属”",
-        "能够指出其适用条件、反例或证据边界"
-      ],
-      "mastery_checks": [
-        "不看原文复述核心机制",
-        "在一个新场景中正确应用",
-        "说明至少一个不应使用的场景"
+        "主要资源形成聚焦且任一底线未失守",
+        "能说明边界：中心任务不能成为绕过法律和权利的理由",
+        "能从失败中恢复：降低目标密度或增加必要资源，不取消底线"
       ]
     }
   ]

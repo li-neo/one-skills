@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/li-neo/one-skills/schemas/capability-graph.schema.json",
+  "title": "One Skills Capability Graph",
+  "type": "object",
+  "required": ["schema_version", "pack_id", "nodes", "edges"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "pack_id": {"type": "string"},
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "title", "status"],
+        "properties": {
+          "id": {"type": "string"},
+          "type": {
+            "enum": ["term", "claim", "case", "counterexample", "capability", "governance"]
+          },
+          "title": {"type": "string"},
+          "status": {"enum": ["candidate", "supporting", "verified", "released", "stale", "rejected"]},
+          "evidence_ids": {"type": "array", "items": {"type": "string"}}
+        },
+        "additionalProperties": true
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "from_type",
+          "from_id",
+          "relation",
+          "to_type",
+          "to_id",
+          "evidence_ids",
+          "confidence",
+          "status"
+        ],
+        "properties": {
+          "from_type": {"type": "string"},
+          "from_id": {"type": "string"},
+          "relation": {
+            "enum": [
+              "supports",
+              "contradicts",
+              "depends_on",
+              "contrasts_with",
+              "composes_with",
+              "invalidates",
+              "routes_to",
+              "hands_off_to",
+              "rolls_back_to",
+              "reads",
+              "writes",
+              "verifies",
+              "shadows",
+              "supersedes"
+            ]
+          },
+          "to_type": {"type": "string"},
+          "to_id": {"type": "string"},
+          "evidence_ids": {"type": "array", "items": {"type": "string"}},
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+          "status": {"enum": ["candidate", "supporting", "verified", "released", "stale"]}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

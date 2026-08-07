@@ -1,11 +1,115 @@
 [
   {
+    "title": "anti-dogmatism-correction",
+    "candidate_type": "principle",
+    "summary": "当抽象理论、上级转述或既有文本与现场事实冲突时，必须让可核验证据触发纠错而不是维护原结论。",
+    "evidence_ids": [
+      "ev-20260807074344778009-3494d9f2",
+      "ev-20260807074344778030-78f124b5",
+      "ev-20260807074344778043-2b1625d0"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：反教条纠错",
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::结构化主张：反教条纠错",
+      "https://www.nber.org/papers/w16361::结构化主张：反教条纠错"
+    ],
+    "tags": [
+      "methodology",
+      "structured-claim",
+      "anti-dogmatism-correction"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice",
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm",
+      "https://www.nber.org/papers/w16361"
+    ],
+    "independence_groups": [
+      "mao-authorized-works",
+      "1981-central-resolution",
+      "nber-meng-qian-yared"
+    ],
+    "id": "candidate-20260807074344778055-dbc3a3a1",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "center-work-coordination",
+    "candidate_type": "framework",
+    "summary": "组织可以设置阶段性中心任务，但安全、合规、现金流、人员健康和必要协同必须作为不可被排序取消的并行底线。",
+    "evidence_ids": [
+      "ev-20260807074344778067-2c334f4a",
+      "ev-20260807074344778076-2b3036a9"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/d4j/#committee-methods::结构化主张：中心任务与底线协调",
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::结构化主张：中心任务与底线协调"
+    ],
+    "tags": [
+      "methodology",
+      "structured-claim",
+      "center-work-coordination"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/d4j/#committee-methods",
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm"
+    ],
+    "independence_groups": [
+      "mao-authorized-works",
+      "1981-central-resolution"
+    ],
+    "id": "candidate-20260807074344778085-391b2ee6",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
     "title": "contradiction-reclassification",
     "candidate_type": "framework",
     "summary": "矛盾排序必须是可改判的阶段假设，并禁止把普通分歧转化为敌我身份。",
     "evidence_ids": [
-      "ev-20260806175133382918-ac087ad7",
-      "ev-20260806175133382950-9b608ed4"
+      "ev-20260807074344778094-b5dc328e",
+      "ev-20260807074344778101-39371ae4"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction::结构化主张：阶段性分类",
@@ -24,28 +128,96 @@
       "mao-authorized-works",
       "1981-central-resolution"
     ],
-    "id": "candidate-20260806175133382965-b399b31b",
+    "id": "candidate-20260807074344778111-9665c934",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "distribution-before-aggregate",
+    "candidate_type": "principle",
+    "summary": "组织不能把高频声音、参与总量或总体指标直接当作代表性，必须检查沉默者、分布和承担成本的群体。",
+    "evidence_ids": [
+      "ev-20260807074344778122-9f367d4a",
+      "ev-20260807074344778130-37784376"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::结构化主张：分布优先于总量",
+      "https://www.nber.org/papers/w16361::结构化主张：分布优先于总量"
+    ],
+    "tags": [
+      "methodology",
+      "structured-claim",
+      "distribution-before-aggregate"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods",
+      "https://www.nber.org/papers/w16361"
+    ],
+    "independence_groups": [
+      "mao-authorized-works",
+      "nber-meng-qian-yared"
+    ],
+    "id": "candidate-20260807074344778137-05c57763",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "feedback-integrity",
     "candidate_type": "framework",
     "summary": "可用的反馈方法必须把一线证据、暂时判断、可逆试验和独立坏消息通道组成闭环。",
     "evidence_ids": [
-      "ev-20260806175133382979-ba5b5b95",
-      "ev-20260806175133382989-33cf22cf",
-      "ev-20260806175133382997-b6604d2f",
-      "ev-20260806175133383005-042bef4c"
+      "ev-20260807074344778145-fde1eae4",
+      "ev-20260807074344778152-1651d763",
+      "ev-20260807074344778159-ef36a626",
+      "ev-20260807074344778167-4e30fe24",
+      "ev-20260807074344778174-9bf8a104"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：反馈完整性",
       "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::结构化主张：反馈完整性",
+      "https://www.12371.cn/special/mzdxj/d4j/#committee-methods::结构化主张：反馈完整性",
       "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::结构化主张：反馈完整性",
       "https://www.nber.org/papers/w16361::结构化主张：反馈完整性"
     ],
@@ -57,6 +229,7 @@
     "source_ids": [
       "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice",
       "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods",
+      "https://www.12371.cn/special/mzdxj/d4j/#committee-methods",
       "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm",
       "https://www.nber.org/papers/w16361"
     ],
@@ -65,23 +238,242 @@
       "1981-central-resolution",
       "nber-meng-qian-yared"
     ],
-    "id": "candidate-20260806175133383016-818e71f5",
+    "id": "candidate-20260807074344778182-0ee8ac42",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "investigation-before-judgment",
+    "candidate_type": "framework",
+    "summary": "高影响判断必须先取得不同处境的一手事实，并预先写明什么证据会改变当前结论。",
+    "evidence_ids": [
+      "ev-20260807074344778189-a07f6c8d",
+      "ev-20260807074344778195-aa17d49c"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：先调查再判断",
+      "https://www.nber.org/papers/w16361::结构化主张：先调查再判断"
+    ],
+    "tags": [
+      "methodology",
+      "structured-claim",
+      "investigation-before-judgment"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice",
+      "https://www.nber.org/papers/w16361"
+    ],
+    "independence_groups": [
+      "mao-authorized-works",
+      "nber-meng-qian-yared"
+    ],
+    "id": "candidate-20260807074344778202-53bb3a86",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "practice-test-loop",
+    "candidate_type": "framework",
+    "summary": "方法结论只能作为暂时假设，必须通过范围有限、结果可观察的实践再次检验和修正。",
+    "evidence_ids": [
+      "ev-20260807074344778209-9d9f6592",
+      "ev-20260807074344778216-0a7f7cef"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：实践检验循环",
+      "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::结构化主张：实践检验循环"
+    ],
+    "tags": [
+      "methodology",
+      "structured-claim",
+      "practice-test-loop"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice",
+      "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "candidate-20260807074344778224-e463185a",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "protected-dissent-channel",
+    "candidate_type": "principle",
+    "summary": "可用的组织反馈必须让异议和坏消息安全上行，并把收集、解释、执行和复核至少在角色上分开。",
+    "evidence_ids": [
+      "ev-20260807074344778232-95cbaab2",
+      "ev-20260807074344778239-072a7e52",
+      "ev-20260807074344778246-355277b4"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::结构化主张：异议与坏消息保护",
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::结构化主张：异议与坏消息保护",
+      "https://www.nber.org/papers/w16361::结构化主张：异议与坏消息保护"
+    ],
+    "tags": [
+      "methodology",
+      "structured-claim",
+      "protected-dissent-channel"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods",
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm",
+      "https://www.nber.org/papers/w16361"
+    ],
+    "independence_groups": [
+      "mao-authorized-works",
+      "1981-central-resolution",
+      "nber-meng-qian-yared"
+    ],
+    "id": "candidate-20260807074344778254-fb30d7e1",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "relational-problem-map",
+    "candidate_type": "framework",
+    "summary": "复杂问题应先改写为目标、资源、事实、流程或权利关系，再比较候选解释，不能先把责任固定到个人身份。",
+    "evidence_ids": [
+      "ev-20260807074344778262-ea442209",
+      "ev-20260807074344778269-469ea6c2"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction::结构化主张：关系化问题地图",
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::结构化主张：关系化问题地图"
+    ],
+    "tags": [
+      "methodology",
+      "structured-claim",
+      "relational-problem-map"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction",
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm"
+    ],
+    "independence_groups": [
+      "mao-authorized-works",
+      "1981-central-resolution"
+    ],
+    "id": "candidate-20260807074344778276-4bb2cb51",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "rights-bound-transfer",
     "candidate_type": "principle",
     "summary": "历史方法的现代迁移必须以非暴力、守法、可逆、保留申辩和复核为硬边界。",
     "evidence_ids": [
-      "ev-20260806175133383023-57bb97ec",
-      "ev-20260806175133383032-ca24e71b",
-      "ev-20260806175133383040-c9ffa765"
+      "ev-20260807074344778283-896714d3",
+      "ev-20260807074344778290-f366b05d",
+      "ev-20260807074344778297-358e3c96"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction::结构化主张：现代迁移边界",
@@ -102,22 +494,88 @@
       "mao-authorized-works",
       "1981-central-resolution"
     ],
-    "id": "candidate-20260806175133383048-3ba6acd8",
+    "id": "candidate-20260807074344778304-1412bd13",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "stage-experimentation",
+    "candidate_type": "framework",
+    "summary": "弱势或高不确定条件下应先识别探索、验证、扩展或收缩阶段，再用窄目标和可逆试点积累证据与能力。",
+    "evidence_ids": [
+      "ev-20260807074344778354-518e182b",
+      "ev-20260807074344778362-55b202a3"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/d4j/#committee-methods::结构化主张：阶段化试点",
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::结构化主张：阶段化试点"
+    ],
+    "tags": [
+      "methodology",
+      "structured-claim",
+      "stage-experimentation"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/d4j/#committee-methods",
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm"
+    ],
+    "independence_groups": [
+      "mao-authorized-works",
+      "1981-central-resolution"
+    ],
+    "id": "candidate-20260807074344778369-e471cfb4",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "version-attribution",
     "candidate_type": "principle",
     "summary": "历史文本的方法蒸馏必须区分最终公开版本、现场记录和现代推断，不能伪造人物立场。",
     "evidence_ids": [
-      "ev-20260806175133383055-b0abe1be",
-      "ev-20260806175133383062-a70cee0c"
+      "ev-20260807074344778376-3f396dbb",
+      "ev-20260807074344778383-9602587b"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：版本与归属",
@@ -136,21 +594,37 @@
       "mao-authorized-works",
       "party-history-institute-version-study"
     ],
-    "id": "candidate-20260806175133383070-868d9a97",
+    "id": "candidate-20260807074344778390-7386c615",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "优先收集异常、失败和坏消息，再修正解释。",
     "candidate_type": "framework",
     "summary": "优先收集异常、失败和坏消息，再修正解释。",
     "evidence_ids": [
-      "ev-20260806175133383837-5ef6e23a"
+      "ev-20260807074344779129-8dc39dcc"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::可迁移机制"
@@ -165,21 +639,37 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384005-86aa38d1",
+    "id": "candidate-20260807074344779287-663d86dc",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "中共中央党史和文献研究院的版本研究说明，《实践论》源自1937年讲课提纲，新中国成立...",
     "candidate_type": "counterexample",
     "summary": "中共中央党史和文献研究院的版本研究说明，《实践论》源自1937年讲课提纲，新中国成立后经过较大内容修改和多次文字处理。现行选集文本适合代表最终公开版本，但不能无说明地当作1937年现场逐字稿。",
     "evidence_ids": [
-      "ev-20260806175133384041-7849349c"
+      "ev-20260807074344779324-43190daf"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::证据边界"
@@ -194,21 +684,37 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384051-3c2e5af1",
+    "id": "candidate-20260807074344779334-5145db33",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "调查本身也不会自动产生正确判断。样本选择、提问方式、权力在场和既有立场都可能污染材料...",
     "candidate_type": "principle",
     "summary": "调查本身也不会自动产生正确判断。样本选择、提问方式、权力在场和既有立场都可能污染材料；因此现代迁移必须增加反证样本、独立记录和可撤回试点。",
     "evidence_ids": [
-      "ev-20260806175133384069-6fc0137e"
+      "ev-20260807074344779354-b00a0425"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::证据边界"
@@ -223,21 +729,37 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384077-8f51bd26",
+    "id": "candidate-20260807074344779363-2346b81d",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "Claim-Statement: 可用的反馈方法必须把一线证据、暂时判断、可逆试验和...",
     "candidate_type": "framework",
     "summary": "Claim-Statement: 可用的反馈方法必须把一线证据、暂时判断、可逆试验和独立坏消息通道组成闭环。",
     "evidence_ids": [
-      "ev-20260806175133384117-43686885"
+      "ev-20260807074344779402-1923940a"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：反馈完整性"
@@ -252,21 +774,37 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384126-02f8e7a9",
+    "id": "candidate-20260807074344779410-1fda6fc0",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "Claim-Type: framework",
     "candidate_type": "framework",
     "summary": "Claim-Type: framework",
     "evidence_ids": [
-      "ev-20260806175133384137-c6b8ed6b"
+      "ev-20260807074344779420-2e58c895"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：反馈完整性"
@@ -281,53 +819,40 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384144-1ef3e83d",
+    "id": "candidate-20260807074344779427-6125d226",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
-    "title": "Claim-Statement: 历史文本的方法蒸馏必须区分最终公开版本、现场记录和...",
-    "candidate_type": "framework",
-    "summary": "Claim-Statement: 历史文本的方法蒸馏必须区分最终公开版本、现场记录和现代推断，不能伪造人物立场。",
-    "evidence_ids": [
-      "ev-20260806175133384228-dad13b0a"
-    ],
-    "source_contexts": [
-      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：版本与归属"
-    ],
-    "tags": [
-      "methodology",
-      "framework"
-    ],
-    "source_ids": [
-      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice"
-    ],
-    "independence_groups": [
-      "mao-authorized-works"
-    ],
-    "id": "candidate-20260806175133384236-88bc2269",
-    "cross_domain": false,
-    "source_independent": false,
-    "predictive": false,
-    "distinctive": false,
-    "actionable": false,
-    "status": "pending",
-    "rejection_reason": ""
-  },
-  {
-    "title": "Claim-Type: principle",
+    "title": "Claim-Statement: 高影响判断必须先取得不同处境的一手事实，并预先写明...",
     "candidate_type": "principle",
-    "summary": "Claim-Type: principle",
+    "summary": "Claim-Statement: 高影响判断必须先取得不同处境的一手事实，并预先写明什么证据会改变当前结论。",
     "evidence_ids": [
-      "ev-20260806175133384245-5a7b3934"
+      "ev-20260807074344779525-5e06b20f"
     ],
     "source_contexts": [
-      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：版本与归属"
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：先调查再判断"
     ],
     "tags": [
       "methodology",
@@ -339,21 +864,307 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384252-85f57fcb",
+    "id": "candidate-20260807074344779533-5aa06d70",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Evidence: 五县三十二天实地考察所得与城市转述完全相反，说明判断必须允许现场...",
+    "candidate_type": "principle",
+    "summary": "Evidence: 五县三十二天实地考察所得与城市转述完全相反，说明判断必须允许现场材料推翻先验。",
+    "evidence_ids": [
+      "ev-20260807074344779548-403ec5b6"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：先调查再判断"
+    ],
+    "tags": [
+      "methodology",
+      "principle"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "candidate-20260807074344779555-798f7f15",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Claim-Statement: 方法结论只能作为暂时假设，必须通过范围有限、结果可...",
+    "candidate_type": "framework",
+    "summary": "Claim-Statement: 方法结论只能作为暂时假设，必须通过范围有限、结果可观察的实践再次检验和修正。",
+    "evidence_ids": [
+      "ev-20260807074344779589-352a8aa9"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：实践检验循环"
+    ],
+    "tags": [
+      "methodology",
+      "framework"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "candidate-20260807074344779598-96ab5418",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Claim-Statement: 当抽象理论、上级转述或既有文本与现场事实冲突时，必...",
+    "candidate_type": "principle",
+    "summary": "Claim-Statement: 当抽象理论、上级转述或既有文本与现场事实冲突时，必须让可核验证据触发纠错而不是维护原结论。",
+    "evidence_ids": [
+      "ev-20260807074344779685-94193b28"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：反教条纠错"
+    ],
+    "tags": [
+      "methodology",
+      "principle"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "candidate-20260807074344779693-1a0696e1",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Claim-Type: principle",
+    "candidate_type": "principle",
+    "summary": "Claim-Type: principle",
+    "evidence_ids": [
+      "ev-20260807074344779703-23c65009"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：反教条纠错"
+    ],
+    "tags": [
+      "methodology",
+      "principle"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "candidate-20260807074344779709-bef708f1",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Evidence: 调查结果与城市听闻相反，证明既有说法和抽象文本不能替代现场事实与...",
+    "candidate_type": "case",
+    "summary": "Evidence: 调查结果与城市听闻相反，证明既有说法和抽象文本不能替代现场事实与后续检验。",
+    "evidence_ids": [
+      "ev-20260807074344779723-277798da"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：反教条纠错"
+    ],
+    "tags": [
+      "methodology",
+      "case"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "candidate-20260807074344779730-a105b9c6",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Claim-Statement: 历史文本的方法蒸馏必须区分最终公开版本、现场记录和...",
+    "candidate_type": "framework",
+    "summary": "Claim-Statement: 历史文本的方法蒸馏必须区分最终公开版本、现场记录和现代推断，不能伪造人物立场。",
+    "evidence_ids": [
+      "ev-20260807074344779766-e0005a3f"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：版本与归属"
+    ],
+    "tags": [
+      "methodology",
+      "framework"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "candidate-20260807074344779773-ab7c6730",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "Evidence: 《实践论》现行公开文本经过作者后续较大修改和多次文字处理，不能无...",
     "candidate_type": "counterexample",
     "summary": "Evidence: 《实践论》现行公开文本经过作者后续较大修改和多次文字处理，不能无说明地当作1937年课堂逐字记录。",
     "evidence_ids": [
-      "ev-20260806175133384270-876c4f82"
+      "ev-20260807074344779795-af9e7ee2"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：版本与归属"
@@ -368,21 +1179,37 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384278-08aaa7eb",
+    "id": "candidate-20260807074344779802-142bbc01",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "同一篇文本反复强调具体分析矛盾的特殊性，不能把在一种场景有效的处理方式机械套到另一种...",
     "candidate_type": "counterexample",
     "summary": "同一篇文本反复强调具体分析矛盾的特殊性，不能把在一种场景有效的处理方式机械套到另一种场景。",
     "evidence_ids": [
-      "ev-20260806175133384412-3dd1ea90"
+      "ev-20260807074344779933-04350ed1"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction::可核验短引"
@@ -397,21 +1224,37 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384421-f1d8f6a9",
+    "id": "candidate-20260807074344779941-cc270a2e",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "抓主要矛盾容易制造过度压缩。复杂系统可能同时存在多个不可互相约减的目标，解决一个瓶颈...",
     "candidate_type": "principle",
     "summary": "“抓主要矛盾”容易制造过度压缩。复杂系统可能同时存在多个不可互相约减的目标，解决一个瓶颈也可能把风险转移给弱势群体。现代使用时必须保留备选解释、独立复核、申辩和改判机制。",
     "evidence_ids": [
-      "ev-20260806175133384562-fb640b7e"
+      "ev-20260807074344780077-acb34a28"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction::证据边界"
@@ -426,21 +1269,37 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384570-8832248a",
+    "id": "candidate-20260807074344780085-376d642f",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "本方法不能用于把同事、客户、社会群体或异议者敌人化，也不能把普通意见分歧升级为需要斗...",
     "candidate_type": "framework",
     "summary": "本方法不能用于把同事、客户、社会群体或异议者敌人化，也不能把普通意见分歧升级为需要“斗争”的人格判断。",
     "evidence_ids": [
-      "ev-20260806175133384580-c4f184f4"
+      "ev-20260807074344780095-26510978"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction::证据边界"
@@ -455,21 +1314,37 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384587-43b288ff",
+    "id": "candidate-20260807074344780102-26612677",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "Claim-Statement: 矛盾排序必须是可改判的阶段假设，并禁止把普通分歧转...",
     "candidate_type": "principle",
     "summary": "Claim-Statement: 矛盾排序必须是可改判的阶段假设，并禁止把普通分歧转化为敌我身份。",
     "evidence_ids": [
-      "ev-20260806175133384635-97ede70e"
+      "ev-20260807074344780150-c2317d76"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction::结构化主张：阶段性分类"
@@ -484,21 +1359,37 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384642-6fb5ca2c",
+    "id": "candidate-20260807074344780157-8d3a1c10",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "Evidence: 《矛盾论》要求具体分析矛盾的特殊性、主次和条件转化，因此主要矛盾...",
     "candidate_type": "counterexample",
     "summary": "Evidence: 《矛盾论》要求具体分析矛盾的特殊性、主次和条件转化，因此“主要矛盾”不能成为脱离新证据的永久标签。",
     "evidence_ids": [
-      "ev-20260806175133384662-ca545ebc"
+      "ev-20260807074344780177-49417df7"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction::结构化主张：阶段性分类"
@@ -513,21 +1404,82 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384669-77507368",
+    "id": "candidate-20260807074344780184-3b904788",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Claim-Statement: 复杂问题应先改写为目标、资源、事实、流程或权利关系...",
+    "candidate_type": "framework",
+    "summary": "Claim-Statement: 复杂问题应先改写为目标、资源、事实、流程或权利关系，再比较候选解释，不能先把责任固定到个人身份。",
+    "evidence_ids": [
+      "ev-20260807074344780223-60c796b4"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction::结构化主张：关系化问题地图"
+    ],
+    "tags": [
+      "methodology",
+      "framework"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "candidate-20260807074344780230-ca4999ce",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "Claim-Statement: 历史方法的现代迁移必须以非暴力、守法、可逆、保留申...",
     "candidate_type": "framework",
     "summary": "Claim-Statement: 历史方法的现代迁移必须以非暴力、守法、可逆、保留申辩和复核为硬边界。",
     "evidence_ids": [
-      "ev-20260806175133384707-5da94f16"
+      "ev-20260807074344780311-bd093d92"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction::结构化主张：现代迁移边界"
@@ -542,21 +1494,37 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384714-43162ed7",
+    "id": "candidate-20260807074344780318-92c8156f",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "Evidence: 普通组织中的意见分歧不能沿用战争和敌我分类，排序工具必须服从法律...",
     "candidate_type": "principle",
     "summary": "Evidence: 普通组织中的意见分歧不能沿用战争和敌我分类，排序工具必须服从法律、安全与基本权利。",
     "evidence_ids": [
-      "ev-20260806175133384729-b7744414"
+      "ev-20260807074344780333-ada8089f"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction::结构化主张：现代迁移边界"
@@ -571,21 +1539,37 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384736-78e83599",
+    "id": "candidate-20260807074344780339-09b5ff13",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "- 核心篇目：《关于领导方法的若干问题》，1943年。",
     "candidate_type": "framework",
     "summary": "- 核心篇目：《关于领导方法的若干问题》，1943年。",
     "evidence_ids": [
-      "ev-20260806175133384802-0a4eb384"
+      "ev-20260807074344780402-25fae6c4"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::来源定位"
@@ -600,21 +1584,37 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384809-b65a7ac9",
+    "id": "candidate-20260807074344780409-3e73d0db",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "原文所描述的完整过程并不止于听取意见：先把群众中分散的、不系统的意见集中起来，经过研...",
     "candidate_type": "framework",
     "summary": "原文所描述的完整过程并不止于“听取意见”：先把群众中分散的、不系统的意见集中起来，经过研究形成集中的、系统的意见，再回到群众中宣传解释、在行动中检验，然后继续循环。",
     "evidence_ids": [
-      "ev-20260806175133384825-70339faa"
+      "ev-20260807074344780427-883d9cd3"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::可核验短引"
@@ -629,21 +1629,37 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384833-73503b1c",
+    "id": "candidate-20260807074344780434-f58614b4",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "根据执行结果修订，不把一次动员或多数意见当成永久授权。",
     "candidate_type": "case",
     "summary": "根据执行结果修订，不把一次动员或多数意见当成永久授权。",
     "evidence_ids": [
-      "ev-20260806175133384945-f987818d"
+      "ev-20260807074344780540-b5c03194"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::可迁移机制"
@@ -658,21 +1674,37 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384953-75ab7e28",
+    "id": "candidate-20260807074344780547-67b20b26",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "群众不是同质整体。声量最大者不一定最受影响，多数意见也不能取消少数人的基本权利。现代...",
     "candidate_type": "principle",
     "summary": "“群众”不是同质整体。声量最大者不一定最受影响，多数意见也不能取消少数人的基本权利。现代迁移必须提供安全反馈、知情参与、退出、申诉和独立复核机制。",
     "evidence_ids": [
-      "ev-20260806175133384977-1ff5e205"
+      "ev-20260807074344780567-9257bf42"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::证据边界"
@@ -687,21 +1719,37 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384985-42a25d83",
+    "id": "candidate-20260807074344780574-d9dc8b1f",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "Evidence: 《关于领导方法的若干问题》描述从分散经验到系统意见、返回行动检验...",
     "candidate_type": "framework",
     "summary": "Evidence: 《关于领导方法的若干问题》描述从分散经验到系统意见、返回行动检验并继续循环的过程，不能只保留“集中意见”一步。",
     "evidence_ids": [
-      "ev-20260806175133385074-e604eeed"
+      "ev-20260807074344780662-6bb58f92"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::结构化主张：反馈完整性"
@@ -716,21 +1764,217 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133385082-8d6de6c1",
+    "id": "candidate-20260807074344780669-dd7d185d",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Evidence: 分散意见经研究形成方案后仍要返回行动中检验并继续循环，方案不能因...",
+    "candidate_type": "counterexample",
+    "summary": "Evidence: 分散意见经研究形成方案后仍要返回行动中检验并继续循环，方案不能因“已经集中”而免于修正。",
+    "evidence_ids": [
+      "ev-20260807074344780714-2a3bf3c6"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::结构化主张：实践检验循环"
+    ],
+    "tags": [
+      "methodology",
+      "counterexample"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "candidate-20260807074344780721-f26c10cb",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Claim-Statement: 可用的组织反馈必须让异议和坏消息安全上行，并把收集...",
+    "candidate_type": "principle",
+    "summary": "Claim-Statement: 可用的组织反馈必须让异议和坏消息安全上行，并把收集、解释、执行和复核至少在角色上分开。",
+    "evidence_ids": [
+      "ev-20260807074344780765-9cc9e837"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::结构化主张：异议与坏消息保护"
+    ],
+    "tags": [
+      "methodology",
+      "principle"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "candidate-20260807074344780772-776fe090",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Claim-Statement: 组织不能把高频声音、参与总量或总体指标直接当作代表...",
+    "candidate_type": "principle",
+    "summary": "Claim-Statement: 组织不能把高频声音、参与总量或总体指标直接当作代表性，必须检查沉默者、分布和承担成本的群体。",
+    "evidence_ids": [
+      "ev-20260807074344780870-29c37257"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::结构化主张：分布优先于总量"
+    ],
+    "tags": [
+      "methodology",
+      "principle"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "candidate-20260807074344780876-f0c64a94",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Evidence: 群众并非同质整体，声量最大者不一定最受影响，多数意见也不能取消少...",
+    "candidate_type": "counterexample",
+    "summary": "Evidence: “群众”并非同质整体，声量最大者不一定最受影响，多数意见也不能取消少数人的基本权利。",
+    "evidence_ids": [
+      "ev-20260807074344780895-f21dc1eb"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::结构化主张：分布优先于总量"
+    ],
+    "tags": [
+      "methodology",
+      "counterexample"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "candidate-20260807074344780902-91357a7b",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "Evidence: 群众并非同质整体，现代反馈必须保护少数意见，并提供知情参与、退出...",
     "candidate_type": "principle",
     "summary": "Evidence: “群众”并非同质整体，现代反馈必须保护少数意见，并提供知情参与、退出、申诉和独立复核。",
     "evidence_ids": [
-      "ev-20260806175133385128-14682462"
+      "ev-20260807074344780947-3a6c75fb"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::结构化主张：现代迁移边界"
@@ -745,21 +1989,37 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133385136-5115e468",
+    "id": "candidate-20260807074344780956-a9f147b5",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "- 核心篇目：《党委会的工作方法》，1949年；相关阶段方法来自持久战与集中力量的公...",
     "candidate_type": "framework",
     "summary": "- 核心篇目：《党委会的工作方法》，1949年；相关阶段方法来自持久战与集中力量的公开文本。",
     "evidence_ids": [
-      "ev-20260806175133385203-c74e56d4"
+      "ev-20260807074344781020-8b640655"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/d4j/#committee-methods::来源定位"
@@ -774,21 +2034,37 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133385210-cf4caa94",
+    "id": "candidate-20260807074344781027-ff17e703",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "- 文本性质：工作方法转述，不复制军事操作。",
     "candidate_type": "framework",
     "summary": "- 文本性质：工作方法转述，不复制军事操作。",
     "evidence_ids": [
-      "ev-20260806175133385219-c678cf52"
+      "ev-20260807074344781038-07df972f"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/d4j/#committee-methods::来源定位"
@@ -803,21 +2079,37 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133385225-1f739cc9",
+    "id": "candidate-20260807074344781044-ac68f5b9",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "《党委会的工作方法》把集体领导写成一组具体工作规则，包括书记善于当班长、把问题摆到桌...",
     "candidate_type": "framework",
     "summary": "《党委会的工作方法》把集体领导写成一组具体工作规则，包括书记善于当“班长”、把问题摆到桌面、互通情报、不懂就问、抓紧中心工作并兼顾其他工作。文中“弹钢琴”的比喻强调十个指头都要动作，但要有节奏和配合。",
     "evidence_ids": [
-      "ev-20260806175133385243-f79f4650"
+      "ev-20260807074344781062-19f1d9b9"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/d4j/#committee-methods::可核验结构"
@@ -832,21 +2124,37 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133385251-f5c1ba48",
+    "id": "candidate-20260807074344781070-351b2a97",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "选择一个窄目标集中资源，同时写明不能牺牲的安全和权利约束。",
     "candidate_type": "counterexample",
     "summary": "选择一个窄目标集中资源，同时写明不能牺牲的安全和权利约束。",
     "evidence_ids": [
-      "ev-20260806175133385324-70ada191"
+      "ev-20260807074344781137-13bb495e"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/d4j/#committee-methods::可迁移机制"
@@ -861,21 +2169,37 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133385331-304e8153",
+    "id": "candidate-20260807074344781143-8b3b7118",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "战争中的集中、保密和命令逻辑不能直接迁移到普通公司、家庭、学校、社区或公共治理。现代...",
     "candidate_type": "counterexample",
     "summary": "战争中的集中、保密和命令逻辑不能直接迁移到普通公司、家庭、学校、社区或公共治理。现代组织中的参与者拥有法律、合同和基本权利，不是可被“歼灭”“孤立”或工具化的对象。",
     "evidence_ids": [
-      "ev-20260806175133385390-dde005c2"
+      "ev-20260807074344781201-9f2582d0"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/d4j/#committee-methods::证据边界"
@@ -890,21 +2214,37 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133385398-7afb0c7d",
+    "id": "candidate-20260807074344781208-aae53afa",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "局部集中也不是永远只做一件事。安全、合规、现金流和人员健康等约束可能必须并行维护；中...",
     "candidate_type": "principle",
     "summary": "局部集中也不是永远只做一件事。安全、合规、现金流和人员健康等约束可能必须并行维护；“中心工作”不能成为忽视系统性风险的借口。",
     "evidence_ids": [
-      "ev-20260806175133385412-d314d611"
+      "ev-20260807074344781223-2285f272"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/d4j/#committee-methods::证据边界"
@@ -919,21 +2259,217 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133385419-248215cf",
+    "id": "candidate-20260807074344781229-c8c6ef52",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Claim-Statement: 弱势或高不确定条件下应先识别探索、验证、扩展或收缩...",
+    "candidate_type": "framework",
+    "summary": "Claim-Statement: 弱势或高不确定条件下应先识别探索、验证、扩展或收缩阶段，再用窄目标和可逆试点积累证据与能力。",
+    "evidence_ids": [
+      "ev-20260807074344781268-73a169ae"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/d4j/#committee-methods::结构化主张：阶段化试点"
+    ],
+    "tags": [
+      "methodology",
+      "framework"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/d4j/#committee-methods"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "candidate-20260807074344781275-87bad603",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Evidence: 相关文本区分长期阶段和具体行动，局部行动需要有限目标、准备和反馈...",
+    "candidate_type": "counterexample",
+    "summary": "Evidence: 相关文本区分长期阶段和具体行动，局部行动需要有限目标、准备和反馈，不能用一次全面推广代替阶段检验。",
+    "evidence_ids": [
+      "ev-20260807074344781294-3168c817"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/d4j/#committee-methods::结构化主张：阶段化试点"
+    ],
+    "tags": [
+      "methodology",
+      "counterexample"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/d4j/#committee-methods"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "candidate-20260807074344781301-c1d7ba53",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Claim-Statement: 组织可以设置阶段性中心任务，但安全、合规、现金流、...",
+    "candidate_type": "principle",
+    "summary": "Claim-Statement: 组织可以设置阶段性中心任务，但安全、合规、现金流、人员健康和必要协同必须作为不可被排序取消的并行底线。",
+    "evidence_ids": [
+      "ev-20260807074344781366-f1f40027"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/d4j/#committee-methods::结构化主张：中心任务与底线协调"
+    ],
+    "tags": [
+      "methodology",
+      "principle"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/d4j/#committee-methods"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "candidate-20260807074344781374-656d2004",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Evidence: 《党委会的工作方法》既要求抓紧中心工作，也用弹钢琴强调其他工作仍...",
+    "candidate_type": "framework",
+    "summary": "Evidence: 《党委会的工作方法》既要求抓紧中心工作，也用“弹钢琴”强调其他工作仍需有节奏地配合。",
+    "evidence_ids": [
+      "ev-20260807074344781386-f9b60ea6"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/d4j/#committee-methods::结构化主张：中心任务与底线协调"
+    ],
+    "tags": [
+      "methodology",
+      "framework"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/d4j/#committee-methods"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "candidate-20260807074344781393-1d4df5a5",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "决议第20段指出，文化大革命对当时阶级形势和党政状况的估计是完全错误的，并具体记录了...",
     "candidate_type": "case",
     "summary": "决议第20段指出，“文化大革命”对当时阶级形势和党政状况的估计“是完全错误的”，并具体记录了是非与敌我的混淆、知识分子和干部受到打击、党政组织受到冲击等后果。",
     "evidence_ids": [
-      "ev-20260806175133385542-f307af8d"
+      "ev-20260807074344781582-c8e09420"
     ],
     "source_contexts": [
       "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::决议明确记录的失效"
@@ -948,21 +2484,37 @@
     "independence_groups": [
       "1981-central-resolution"
     ],
-    "id": "candidate-20260806175133385551-918d8f61",
+    "id": "candidate-20260807074344781591-ad9aeea1",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "第22段明确认为毛泽东对这场全局性、长时间的严重错误负有主要责任。第24段又把持续失...",
     "candidate_type": "counterexample",
     "summary": "第22段明确认为毛泽东对这场全局性、长时间的严重错误负有主要责任。第24段又把持续失效与个人专断、集体领导和民主集中制受损、法律和制度化不足联系起来。",
     "evidence_ids": [
-      "ev-20260806175133385596-b9a59c31"
+      "ev-20260807074344781636-036dc3b6"
     ],
     "source_contexts": [
       "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::决议明确记录的失效"
@@ -977,21 +2529,37 @@
     "independence_groups": [
       "1981-central-resolution"
     ],
-    "id": "candidate-20260806175133385603-3b2fbfde",
+    "id": "candidate-20260807074344781643-dbfc4f90",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "这些材料表明，方法论文本中的调查、群众、矛盾、纠错不会自动约束实际权力。只要出现以下...",
     "candidate_type": "framework",
     "summary": "这些材料表明，方法论文本中的“调查、群众、矛盾、纠错”不会自动约束实际权力。只要出现以下条件，就应停止套用历史框架：",
     "evidence_ids": [
-      "ev-20260806175133385621-275cfca0"
+      "ev-20260807074344781662-a2204f8b"
     ],
     "source_contexts": [
       "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::对方法迁移的硬约束"
@@ -1006,21 +2574,37 @@
     "independence_groups": [
       "1981-central-resolution"
     ],
-    "id": "candidate-20260806175133385628-4ee0495e",
+    "id": "candidate-20260807074344781669-447148a1",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "该决议是中共中央的正式历史结论，既有高文本权威，也承担特定政治和组织功能。它能证明官...",
     "candidate_type": "counterexample",
     "summary": "该决议是中共中央的正式历史结论，既有高文本权威，也承担特定政治和组织功能。它能证明官方结论与制度反思，不能单独穷尽所有历史因果；具体事实仍需档案和独立研究交叉验证。",
     "evidence_ids": [
-      "ev-20260806175133385700-1b630e47"
+      "ev-20260807074344781739-a6e18059"
     ],
     "source_contexts": [
       "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::证据边界"
@@ -1035,21 +2619,37 @@
     "independence_groups": [
       "1981-central-resolution"
     ],
-    "id": "candidate-20260806175133385708-d96a7fd5",
+    "id": "candidate-20260807074344781746-eae6a9bc",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "Evidence: 决议把个人专断、集体领导受损和民主法制制度化不足列入持续失效原因...",
     "candidate_type": "counterexample",
     "summary": "Evidence: 决议把个人专断、集体领导受损和民主法制制度化不足列入持续失效原因，表明理念上的调查不能替代独立反馈制度。",
     "evidence_ids": [
-      "ev-20260806175133385756-450b29f0"
+      "ev-20260807074344781794-b2a08bd3"
     ],
     "source_contexts": [
       "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::结构化主张：反馈完整性"
@@ -1064,21 +2664,37 @@
     "independence_groups": [
       "1981-central-resolution"
     ],
-    "id": "candidate-20260806175133385764-f92f5e31",
+    "id": "candidate-20260807074344781801-ebad90e2",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "Evidence: 决议明确记录文化大革命中是非与敌我的混淆，以及错误分类给干部、知...",
     "candidate_type": "counterexample",
     "summary": "Evidence: 决议明确记录文化大革命中是非与敌我的混淆，以及错误分类给干部、知识分子和社会组织造成的严重后果。",
     "evidence_ids": [
-      "ev-20260806175133385822-afc384e9"
+      "ev-20260807074344781859-136e538b"
     ],
     "source_contexts": [
       "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::结构化主张：阶段性分类"
@@ -1093,21 +2709,217 @@
     "independence_groups": [
       "1981-central-resolution"
     ],
-    "id": "candidate-20260806175133385829-8b700c84",
+    "id": "candidate-20260807074344781865-a6b00f33",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Evidence: 决议把个人专断、集体领导受损以及民主法制制度化不足列为持续失效原...",
+    "candidate_type": "counterexample",
+    "summary": "Evidence: 决议把个人专断、集体领导受损以及民主法制制度化不足列为持续失效原因，说明反馈和复核不能集中在同一权力链。",
+    "evidence_ids": [
+      "ev-20260807074344781996-5de6b2c4"
+    ],
+    "source_contexts": [
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::结构化主张：异议与坏消息保护"
+    ],
+    "tags": [
+      "methodology",
+      "counterexample"
+    ],
+    "source_ids": [
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm"
+    ],
+    "independence_groups": [
+      "1981-central-resolution"
+    ],
+    "id": "candidate-20260807074344782004-daa6a67b",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Evidence: 决议记录大规模运动替代制度化纠错造成全局性长期后果，反向说明高不...",
+    "candidate_type": "principle",
+    "summary": "Evidence: 决议记录大规模运动替代制度化纠错造成全局性长期后果，反向说明高不确定变更必须可撤回、可复核而非一次全面发动。",
+    "evidence_ids": [
+      "ev-20260807074344782050-6d003879"
+    ],
+    "source_contexts": [
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::结构化主张：阶段化试点"
+    ],
+    "tags": [
+      "methodology",
+      "principle"
+    ],
+    "source_ids": [
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm"
+    ],
+    "independence_groups": [
+      "1981-central-resolution"
+    ],
+    "id": "candidate-20260807074344782058-518a8e4f",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Evidence: 决议把民主法制、集体领导和组织制度受损列为重要原因，表明任何中心...",
+    "candidate_type": "counterexample",
+    "summary": "Evidence: 决议把民主法制、集体领导和组织制度受损列为重要原因，表明任何中心任务都不能取消制度与权利底线。",
+    "evidence_ids": [
+      "ev-20260807074344782111-348cddc7"
+    ],
+    "source_contexts": [
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::结构化主张：中心任务与底线协调"
+    ],
+    "tags": [
+      "methodology",
+      "counterexample"
+    ],
+    "source_ids": [
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm"
+    ],
+    "independence_groups": [
+      "1981-central-resolution"
+    ],
+    "id": "candidate-20260807074344782120-cb565f17",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Evidence: 决议明确判定当时阶级形势和党政状况估计完全错误，说明理论化判断不...",
+    "candidate_type": "case",
+    "summary": "Evidence: 决议明确判定当时阶级形势和党政状况估计完全错误，说明理论化判断不能在反事实结果出现后继续免于纠正。",
+    "evidence_ids": [
+      "ev-20260807074344782171-b6177e60"
+    ],
+    "source_contexts": [
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::结构化主张：反教条纠错"
+    ],
+    "tags": [
+      "methodology",
+      "case"
+    ],
+    "source_ids": [
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm"
+    ],
+    "independence_groups": [
+      "1981-central-resolution"
+    ],
+    "id": "candidate-20260807074344782178-4979fff6",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "Evidence: 决议指出问题应以符合宪法、法律和党章的措施解决，不能采用文化大革...",
     "candidate_type": "framework",
     "summary": "Evidence: 决议指出问题应以符合宪法、法律和党章的措施解决，不能采用文化大革命的理论和方法。",
     "evidence_ids": [
-      "ev-20260806175133385872-849b520a"
+      "ev-20260807074344782220-49488e11"
     ],
     "source_contexts": [
       "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::结构化主张：现代迁移边界"
@@ -1122,21 +2934,37 @@
     "independence_groups": [
       "1981-central-resolution"
     ],
-    "id": "candidate-20260806175133385879-88dff73e",
+    "id": "candidate-20260807074344782227-4d87c6cf",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "论文摘要报告两个经验发现：饥荒开始的1959年，总体粮食产量仍显著高于人口生存需要...",
     "candidate_type": "framework",
     "summary": "论文摘要报告两个经验发现：饥荒开始的1959年，总体粮食产量仍显著高于人口生存需要；当年人均粮食产量较高的地区反而经历更高的饥荒死亡率。作者提出的制度模型认为，这些模式与中央计划体制在总产量冲击下无法容易收集并响应新信息的情形一致。",
     "evidence_ids": [
-      "ev-20260806175133386080-eee5ae17"
+      "ev-20260807074344782424-1a4b4928"
     ],
     "source_contexts": [
       "https://www.nber.org/papers/w16361::摘要层面的可核验结论"
@@ -1151,21 +2979,37 @@
     "independence_groups": [
       "nber-meng-qian-yared"
     ],
-    "id": "candidate-20260806175133386088-5d88c70b",
+    "id": "candidate-20260807074344782432-6254cbea",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "这项研究不直接评价某一句方法论文本，而是提供一个独立的系统反例：",
     "candidate_type": "framework",
     "summary": "这项研究不直接评价某一句方法论文本，而是提供一个独立的系统反例：",
     "evidence_ids": [
-      "ev-20260806175133386106-9f83d1dc"
+      "ev-20260807074344782451-d01eda0a"
     ],
     "source_contexts": [
       "https://www.nber.org/papers/w16361::对 Skill 的意义"
@@ -1180,21 +3024,37 @@
     "independence_groups": [
       "nber-meng-qian-yared"
     ],
-    "id": "candidate-20260806175133386112-410da436",
+    "id": "candidate-20260807074344782457-d3329e0a",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "- 纠错不能只依赖领导者愿意调查，还需要信息可安全上行、地方异常可被看见、政策可及时...",
     "candidate_type": "counterexample",
     "summary": "- 纠错不能只依赖领导者愿意调查，还需要信息可安全上行、地方异常可被看见、政策可及时调整。",
     "evidence_ids": [
-      "ev-20260806175133386158-3e54ff68"
+      "ev-20260807074344782502-0d8a1fdc"
     ],
     "source_contexts": [
       "https://www.nber.org/papers/w16361::对 Skill 的意义"
@@ -1209,21 +3069,37 @@
     "independence_groups": [
       "nber-meng-qian-yared"
     ],
-    "id": "candidate-20260806175133386164-722d0f68",
+    "id": "candidate-20260807074344782508-e0079221",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "因此，任何调查—集中—执行的现代流程都必须加入：",
     "candidate_type": "principle",
     "summary": "因此，任何“调查—集中—执行”的现代流程都必须加入：",
     "evidence_ids": [
-      "ev-20260806175133386175-1104a5b7"
+      "ev-20260807074344782521-ba8ec12c"
     ],
     "source_contexts": [
       "https://www.nber.org/papers/w16361::对 Skill 的意义"
@@ -1238,21 +3114,37 @@
     "independence_groups": [
       "nber-meng-qian-yared"
     ],
-    "id": "candidate-20260806175133386182-9e1840b0",
+    "id": "candidate-20260807074344782528-96a9a274",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "工作论文使用模型和历史数据解释制度机制，不应被简化为单因果结论。它与官方历史决议的证...",
     "candidate_type": "framework",
     "summary": "工作论文使用模型和历史数据解释制度机制，不应被简化为单因果结论。它与官方历史决议的证据类型、作者群和制度位置不同，二者共同使用能够降低单一叙事偏差。",
     "evidence_ids": [
-      "ev-20260806175133386196-f7a196a3"
+      "ev-20260807074344782541-e1ec1592"
     ],
     "source_contexts": [
       "https://www.nber.org/papers/w16361::证据边界"
@@ -1267,21 +3159,37 @@
     "independence_groups": [
       "nber-meng-qian-yared"
     ],
-    "id": "candidate-20260806175133386202-8e3c5c29",
+    "id": "candidate-20260807074344782548-10a9ea49",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "Evidence: 论文的制度模型把异常结果与中央计划体制难以及时收集并响应新信息联...",
     "candidate_type": "framework",
     "summary": "Evidence: 论文的制度模型把异常结果与中央计划体制难以及时收集并响应新信息联系起来，说明总量信息和领导意愿不能替代分布监测与独立上行通道。",
     "evidence_ids": [
-      "ev-20260806175133386244-484b79aa"
+      "ev-20260807074344782587-3ca2db46"
     ],
     "source_contexts": [
       "https://www.nber.org/papers/w16361::结构化主张：反馈完整性"
@@ -1296,21 +3204,172 @@
     "independence_groups": [
       "nber-meng-qian-yared"
     ],
-    "id": "candidate-20260806175133386251-43ea9cc6",
+    "id": "candidate-20260807074344782594-9062030c",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Evidence: 制度模型把严重结果与新信息难以及时收集和响应联系起来，支持独立异...",
+    "candidate_type": "framework",
+    "summary": "Evidence: 制度模型把严重结果与新信息难以及时收集和响应联系起来，支持独立异常监测、坏消息保护和复核角色分离。",
+    "evidence_ids": [
+      "ev-20260807074344782721-b95e5582"
+    ],
+    "source_contexts": [
+      "https://www.nber.org/papers/w16361::结构化主张：异议与坏消息保护"
+    ],
+    "tags": [
+      "methodology",
+      "framework"
+    ],
+    "source_ids": [
+      "https://www.nber.org/papers/w16361"
+    ],
+    "independence_groups": [
+      "nber-meng-qian-yared"
+    ],
+    "id": "candidate-20260807074344782728-a651e69a",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Evidence: 论文报告总产量仍高于生存需要时，高产地区反而出现更高死亡率，证明...",
+    "candidate_type": "case",
+    "summary": "Evidence: 论文报告总产量仍高于生存需要时，高产地区反而出现更高死亡率，证明总体充足不能代表局部分配与结果。",
+    "evidence_ids": [
+      "ev-20260807074344782784-e283415b"
+    ],
+    "source_contexts": [
+      "https://www.nber.org/papers/w16361::结构化主张：分布优先于总量"
+    ],
+    "tags": [
+      "methodology",
+      "case"
+    ],
+    "source_ids": [
+      "https://www.nber.org/papers/w16361"
+    ],
+    "independence_groups": [
+      "nber-meng-qian-yared"
+    ],
+    "id": "candidate-20260807074344782791-896c1d80",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Evidence: 反直觉的地区数据要求制度解释响应事实，而不能用既定总量判断覆盖异...",
+    "candidate_type": "case",
+    "summary": "Evidence: 反直觉的地区数据要求制度解释响应事实，而不能用既定总量判断覆盖异常结果。",
+    "evidence_ids": [
+      "ev-20260807074344782842-a381c208"
+    ],
+    "source_contexts": [
+      "https://www.nber.org/papers/w16361::结构化主张：反教条纠错"
+    ],
+    "tags": [
+      "methodology",
+      "case"
+    ],
+    "source_ids": [
+      "https://www.nber.org/papers/w16361"
+    ],
+    "independence_groups": [
+      "nber-meng-qian-yared"
+    ],
+    "id": "candidate-20260807074344782850-abde1902",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": false,
+    "actionable": false,
+    "status": "pending",
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "每条直接引语必须附篇名、版本入口和文本性质。",
     "candidate_type": "principle",
     "summary": "每条直接引语必须附篇名、版本入口和文本性质。",
     "evidence_ids": [
-      "ev-20260806175133386517-95ae581a"
+      "ev-20260807074344783110-9d76f02b"
     ],
     "source_contexts": [
       "https://www.dswxyjy.org.cn/n1/2021/0118/c219000-32003108.html::对蒸馏的约束"
@@ -1325,21 +3384,37 @@
     "independence_groups": [
       "party-history-institute-version-study"
     ],
-    "id": "candidate-20260806175133386524-af79b6c2",
+    "id": "candidate-20260807074344783117-4967a45b",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "作者说过与后人从作者文本推导必须分开。",
     "candidate_type": "principle",
     "summary": "“作者说过”与“后人从作者文本推导”必须分开。",
     "evidence_ids": [
-      "ev-20260806175133386538-8b3660fd"
+      "ev-20260807074344783130-407c1618"
     ],
     "source_contexts": [
       "https://www.dswxyjy.org.cn/n1/2021/0118/c219000-32003108.html::对蒸馏的约束"
@@ -1354,21 +3429,37 @@
     "independence_groups": [
       "party-history-institute-version-study"
     ],
-    "id": "candidate-20260806175133386548-249aa441",
+    "id": "candidate-20260807074344783137-6fc4eeb2",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "公开定稿可以支持最终观点，不能自动证明某年当场的原始措辞。",
     "candidate_type": "counterexample",
     "summary": "公开定稿可以支持最终观点，不能自动证明某年当场的原始措辞。",
     "evidence_ids": [
-      "ev-20260806175133386559-1592c7a0"
+      "ev-20260807074344783149-5e0b04e3"
     ],
     "source_contexts": [
       "https://www.dswxyjy.org.cn/n1/2021/0118/c219000-32003108.html::对蒸馏的约束"
@@ -1383,21 +3474,37 @@
     "independence_groups": [
       "party-history-institute-version-study"
     ],
-    "id": "candidate-20260806175133386566-9f59cbe0",
+    "id": "candidate-20260807074344783155-92a19e95",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "讲话整理稿、集体文件、编辑题注和个人手稿不能给予相同证据等级。",
     "candidate_type": "counterexample",
     "summary": "讲话整理稿、集体文件、编辑题注和个人手稿不能给予相同证据等级。",
     "evidence_ids": [
-      "ev-20260806175133386580-41e5eaee"
+      "ev-20260807074344783168-d46266a7"
     ],
     "source_contexts": [
       "https://www.dswxyjy.org.cn/n1/2021/0118/c219000-32003108.html::对蒸馏的约束"
@@ -1412,21 +3519,37 @@
     "independence_groups": [
       "party-history-institute-version-study"
     ],
-    "id": "candidate-20260806175133386586-fb1a003c",
+    "id": "candidate-20260807074344783175-0c6a604d",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "当不同版本影响方法含义时，应并列版本，不选择更方便当前论证的一版。",
     "candidate_type": "framework",
     "summary": "当不同版本影响方法含义时，应并列版本，不选择更方便当前论证的一版。",
     "evidence_ids": [
-      "ev-20260806175133386595-2f2ddeea"
+      "ev-20260807074344783184-2fa96734"
     ],
     "source_contexts": [
       "https://www.dswxyjy.org.cn/n1/2021/0118/c219000-32003108.html::对蒸馏的约束"
@@ -1441,42 +3564,29 @@
     "independence_groups": [
       "party-history-institute-version-study"
     ],
-    "id": "candidate-20260806175133386669-4a8634e5",
+    "id": "candidate-20260807074344783190-0b8d451f",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "pending",
-    "rejection_reason": ""
-  },
-  {
-    "title": "最终 Skill 不使用第一人称冒充历史人物，也不生成伪造语录。面对毛泽东没有讨论过...",
-    "candidate_type": "framework",
-    "summary": "最终 Skill 不使用第一人称冒充历史人物，也不生成伪造语录。面对毛泽东没有讨论过的现代问题，只能说“这是基于公开方法的现代迁移”，并给出迁移在哪些条件下会失效。",
-    "evidence_ids": [
-      "ev-20260806175133386686-1cac8124"
-    ],
-    "source_contexts": [
-      "https://www.dswxyjy.org.cn/n1/2021/0118/c219000-32003108.html::现代输出纪律"
-    ],
-    "tags": [
-      "methodology",
-      "framework"
-    ],
-    "source_ids": [
-      "https://www.dswxyjy.org.cn/n1/2021/0118/c219000-32003108.html"
-    ],
-    "independence_groups": [
-      "party-history-institute-version-study"
-    ],
-    "id": "candidate-20260806175133386693-86bbe9b2",
-    "cross_domain": false,
-    "source_independent": false,
-    "predictive": false,
-    "distinctive": false,
-    "actionable": false,
-    "status": "pending",
-    "rejection_reason": ""
+    "rejection_reason": "",
+    "problem": "",
+    "assumptions": [],
+    "mechanism": [],
+    "triggers": [],
+    "anti_triggers": [],
+    "inputs": [],
+    "procedure": [],
+    "branches": [],
+    "output": "",
+    "done": "",
+    "boundaries": [],
+    "failures": [],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   }
 ]

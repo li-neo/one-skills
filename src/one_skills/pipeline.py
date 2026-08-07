@@ -23,8 +23,15 @@ from .extraction import (
 from .ingest import expand_sources, structural_chunks
 from .learning import build_learning_path
 from .models import Candidate, Capability, Evidence
+from .overview import build_object_overview
+from .portfolio import build_portfolio
 from .profiles import PROFILES, detect_profile, load_profile_plugins, profile_prompt
-from .provider import ModelProvider, model_capability, verify_candidate
+from .provider import (
+    ModelProvider,
+    model_capability,
+    verify_candidate,
+    verify_candidate_with_roles,
+)
 from .recipes import initialize_registry
 from .retrieval import local_embedding
 from .source_quality import (
@@ -264,6 +271,7 @@ def create_pack(
     access_level: str = "private-local",
     consent: str | None = None,
     source_catalog: Path | None = None,
+    activation_aliases: list[str] | None = None,
 ) -> Path:
     load_profile_plugins()
     if requested_profile != "auto" and requested_profile not in PROFILES:
@@ -355,7 +363,7 @@ def create_pack(
     dump_json(
         pack / "pack.json",
         {
-            "schema_version": "0.2",
+            "schema_version": "0.3",
             "id": pack_id,
             "name": resolved_name,
             "slug": pack.name,
@@ -370,6 +378,14 @@ def create_pack(
             "access_level": access_level,
             "consent": consent or "not-applicable",
             "recipe": {"id": recipe["id"], "version": recipe["version"]},
+            "object_overview_hash": None,
+            "capability_portfolio_hash": None,
+            "capability_graph_hash": None,
+            "semantic_contract": {
+                "overview_confirmation": "pending",
+                "capability_confirmation": "pending",
+            },
+            "activation_aliases": list(dict.fromkeys(activation_aliases or [])),
             "created_at": utc_now(),
         },
     )
@@ -396,6 +412,8 @@ def create_pack(
             ],
             "canonical_eval_hashes": {},
             "runtime_eval_hashes": {},
+            "evaluation_suite_hashes": {},
+            "skill_hashes": {},
         },
     )
     atomic_write(pack / "EVIDENCE_LEDGER.jsonl", "")
@@ -710,11 +728,15 @@ def select_regression_tests(pack: Path, affected_skills: list[str]) -> dict[str,
 
 def _write_object_map(pack: Path, profile: str, manifest: list[dict[str, Any]]) -> None:
     profile_definition = PROFILES[profile]
+    overview = build_object_overview(pack)
     source_rows = "\n".join(
         f"- {item['title']}：{item['character_count']} chars，sha256 `{item['content_hash']}`"
         for item in manifest
     )
-    dimensions = "\n".join(f"- {dimension}: 待提取" for dimension in profile_definition.map_dimensions)
+    dimensions = "\n".join(
+        f"- {item['title']}：{item['summary']}"
+        for item in overview["structure"]
+    )
     atomic_write(
         pack / "OBJECT_MAP.md",
         f"""# Object Map
@@ -730,6 +752,9 @@ def _write_object_map(pack: Path, profile: str, manifest: list[dict[str, Any]]) 
 ## 地图维度
 
 {dimensions}
+
+完整对象地图见 [OBJECT_OVERVIEW.md](OBJECT_OVERVIEW.md)。当前状态：
+`{overview['status']}`，进入模型验证前必须显式确认。
 
 ## 抽取契约
 
@@ -764,6 +789,7 @@ def extract_pack(pack: Path) -> tuple[list[Candidate], list[Evidence]]:
     candidates = merge_candidates([*structured_candidates, *heuristic_candidates])
     evidence = [*structured_evidence, *heuristic_evidence]
     dump_json(pack / "candidates" / "candidates.json", [_candidate_dict(item) for item in candidates])
+    build_portfolio(pack, candidates, kind="candidate")
     for item in evidence:
         append_jsonl(pack / "EVIDENCE_LEDGER.jsonl", item.to_dict())
     _index_evidence(pack, evidence)
@@ -774,6 +800,7 @@ def extract_pack(pack: Path) -> tuple[list[Candidate], list[Evidence]]:
         require_independent_sources=metadata["profile"] in {"person", "hybrid"},
     )
     dump_json(pack / "verified" / "decisions.json", [_candidate_dict(item) for item in verified])
+    build_portfolio(pack, verified, kind="verified")
     for item in verified:
         if item.status == "rejected":
             dump_json(pack / "rejected" / f"{item.id}.json", _candidate_dict(item))
@@ -800,10 +827,20 @@ def reextract_with_model(
     from .models import Chunk
 
     chunks = [Chunk(**value) for value in load_json(pack / "sources" / "chunks.json")]
+    overview = (
+        load_json(pack / "OBJECT_OVERVIEW.json")
+        if (pack / "OBJECT_OVERVIEW.json").exists()
+        else {}
+    )
     candidates, evidence = extract_candidates_with_model(
-        provider, chunks, metadata["profile"], workers
+        provider,
+        chunks,
+        metadata["profile"],
+        workers,
+        overview,
     )
     dump_json(pack / "candidates" / "semantic-candidates.json", [_candidate_dict(item) for item in candidates])
+    build_portfolio(pack, candidates, kind="candidate")
     for item in evidence:
         append_jsonl(pack / "EVIDENCE_LEDGER.jsonl", item.to_dict())
     _index_evidence(pack, evidence)
@@ -813,11 +850,18 @@ def reextract_with_model(
         require_independent_sources=metadata["profile"] in {"person", "hybrid"},
     )
     dump_json(pack / "verified" / "decisions.json", [_candidate_dict(item) for item in verified])
+    build_portfolio(pack, verified, kind="verified")
+    definition = PROFILES[metadata["profile"]]
+    view_count = len(
+        definition.spec.extractor_views
+        if definition.spec
+        else definition.candidate_kinds
+    )
     state = load_state(pack)
     state["phases"]["extract"] = {
         "status": "completed",
         "updated_at": utc_now(),
-        "notes": f"{len(PROFILES[metadata['profile']].candidate_kinds)} semantic views",
+        "notes": f"{view_count} semantic views",
     }
     state["phases"]["verify"] = {
         "status": "blocked",
@@ -905,6 +949,187 @@ def approve_and_compile(pack: Path, candidate_id: str, reason: str) -> Path:
     return skill_dir
 
 
+def verify_pack_with_roles(
+    pack: Path,
+    roles: Any,
+    allow_sensitive_data: bool = False,
+    semantic_extract: bool = True,
+) -> dict[str, Any]:
+    """Verify a v0.3 portfolio without compiling before human confirmation."""
+    metadata = load_json(pack / "pack.json")
+    if (
+        metadata.get("semantic_contract", {}).get("overview_confirmation")
+        != "confirmed"
+    ):
+        raise PipelineError("confirm Object Overview before model verification")
+    if metadata["access_level"] != "public" and not allow_sensitive_data:
+        raise PipelineError(
+            "non-public Pack data cannot be sent to model roles without explicit "
+            "--allow-sensitive-data authorization"
+        )
+    providers = roles.providers()
+    if semantic_extract:
+        reextract_with_model(
+            pack,
+            providers["builder"],
+            allow_sensitive_data,
+        )
+    decisions_path = pack / "verified" / "decisions.json"
+    candidates = [Candidate(**value) for value in load_json(decisions_path)]
+    evidence = [
+        json.loads(line)
+        for line in (pack / "EVIDENCE_LEDGER.jsonl")
+        .read_text(encoding="utf-8")
+        .splitlines()
+        if line.strip()
+    ]
+    contract = profile_prompt(metadata["profile"])
+    audit: list[dict[str, Any]] = []
+    accepted = 0
+    for candidate in candidates:
+        if candidate.status == "rejected" and not candidate.cross_domain:
+            audit.append(
+                {
+                    "candidate_id": candidate.id,
+                    "accepted": False,
+                    "reason": candidate.rejection_reason,
+                    "stage": "deterministic-v1",
+                }
+            )
+            continue
+        related = [
+            item for item in evidence if item.get("id") in candidate.evidence_ids
+        ]
+        verification = verify_candidate_with_roles(
+            providers["answer"],
+            providers["judge"],
+            asdict(candidate),
+            related or evidence[:50],
+            contract,
+        )
+        candidate.cross_domain = (
+            verification["cross_domain"]
+            and len(set(candidate.source_contexts)) >= 2
+        )
+        candidate.source_independent = len(set(candidate.independence_groups)) >= 2
+        candidate.predictive = verification["predictive"]
+        candidate.distinctive = verification["distinctive"]
+        candidate.actionable = verification["actionable"]
+        source_gate = (
+            candidate.source_independent
+            or metadata["profile"] not in {"person", "hybrid"}
+        )
+        if verification["accepted"] and candidate.cross_domain and source_gate:
+            generated = model_capability(
+                providers["builder"],
+                asdict(candidate),
+                related,
+                contract,
+            )
+            candidate.problem = generated["problem"]
+            candidate.triggers = [generated["trigger"]]
+            candidate.inputs = generated["inputs"]
+            candidate.procedure = generated["procedure"]
+            candidate.output = generated["output"]
+            candidate.done = generated["done"]
+            candidate.boundaries = generated["boundaries"]
+            candidate.failures = generated["failures"]
+            candidate.status = "accepted"
+            candidate.rejection_reason = ""
+            candidate.verification = {
+                **verification,
+                "fallback": generated["fallback"],
+                "generated_name": generated["name"],
+                "isolation_level": roles.isolation_level,
+            }
+            accepted += 1
+        else:
+            candidate.status = "rejected"
+            candidate.rejection_reason = (
+                verification["reason"]
+                if source_gate
+                else "selected Profile requires two independent provenance groups"
+            )
+            candidate.verification = {
+                **verification,
+                "isolation_level": roles.isolation_level,
+            }
+            dump_json(
+                pack / "rejected" / f"{candidate.id}.json",
+                _candidate_dict(candidate),
+            )
+        audit.append(
+            {
+                "candidate_id": candidate.id,
+                "isolation_level": roles.isolation_level,
+                **verification,
+            }
+        )
+    dump_json(decisions_path, [_candidate_dict(item) for item in candidates])
+    dump_json(
+        pack / "audit" / "model-verification.json",
+        {
+            "generated_at": utc_now(),
+            "isolation_level": roles.isolation_level,
+            "records": audit,
+        },
+    )
+    portfolio = build_portfolio(pack, candidates, kind="verified")
+    advance_phase(
+        pack,
+        "verify",
+        "blocked",
+        (
+            f"{accepted} candidates passed role-separated V1/V2/V3; "
+            "confirm VERIFIED_PORTFOLIO before compile"
+        ),
+    )
+    return {
+        "accepted": accepted,
+        "rejected": len(candidates) - accepted,
+        "portfolio": str(pack / "VERIFIED_PORTFOLIO.json"),
+        "portfolio_status": portfolio["status"],
+        "isolation_level": roles.isolation_level,
+    }
+
+
+def compile_confirmed_portfolio(pack: Path) -> dict[str, Any]:
+    """Compile a confirmed v0.3 portfolio through its Profile-specific compiler."""
+    metadata = load_json(pack / "pack.json")
+    semantic = metadata.get("semantic_contract", {})
+    if semantic.get("overview_confirmation") != "confirmed":
+        raise PipelineError("Object Overview is not confirmed")
+    if semantic.get("capability_confirmation") != "confirmed":
+        raise PipelineError("Verified Capability Portfolio is not confirmed")
+    from .compiler import compile_verified_portfolio
+
+    advance_phase(
+        pack,
+        "verify",
+        "completed",
+        "role-separated V1/V2/V3 and human portfolio confirmation passed",
+    )
+    skill_dir, capabilities = compile_verified_portfolio(pack)
+    advance_phase(
+        pack,
+        "compile",
+        "completed",
+        f"compiled {len(capabilities)} internal modules behind {skill_dir.name}",
+    )
+    _write_distillation_ir(pack, [skill_dir])
+    advance_phase(
+        pack,
+        "link",
+        "completed",
+        "capability graph, index, glossary, digest, and learning path projected",
+    )
+    return {
+        "skill": str(skill_dir),
+        "modules": len(capabilities),
+        "current_phase": load_state(pack)["current_phase"],
+    }
+
+
 def verify_and_compile_with_model(
     pack: Path,
     provider: ModelProvider,
@@ -981,6 +1206,7 @@ def verify_and_compile_with_model(
             database.add_edge("capability", capability.id, "produces", "skill", skill_dir.name)
     dump_json(decisions_path, [_candidate_dict(item) for item in candidates])
     dump_json(pack / "audit" / "model-verification.json", audit)
+    build_portfolio(pack, candidates, kind="verified")
     if not compiled:
         advance_phase(pack, "verify", "blocked", "independent model accepted no candidates")
         return []
@@ -1053,5 +1279,21 @@ def _write_distillation_ir(pack: Path, skills: list[Path]) -> None:
         },
         "evals": evals,
         "learning_path": load_json(pack / "LEARNING_PATH.json"),
+        "object_overview": (
+            load_json(pack / "OBJECT_OVERVIEW.json")
+            if (pack / "OBJECT_OVERVIEW.json").exists()
+            else {}
+        ),
+        "capability_portfolio": (
+            load_json(pack / "VERIFIED_PORTFOLIO.json")
+            if (pack / "VERIFIED_PORTFOLIO.json").exists()
+            else {}
+        ),
+        "capability_graph": (
+            load_json(pack / "CAPABILITY_GRAPH.json")
+            if (pack / "CAPABILITY_GRAPH.json").exists()
+            else {}
+        ),
+        "evaluation_runs": [],
     }
     dump_json(pack / "ir" / "distillation.json", ir)

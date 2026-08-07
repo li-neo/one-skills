@@ -38,6 +38,27 @@ Claim-Statement: 可用的反馈方法必须把一线证据、暂时判断、可
 Claim-Type: framework
 Evidence: 《关于领导方法的若干问题》描述从分散经验到系统意见、返回行动检验并继续循环的过程，不能只保留“集中意见”一步。
 
+## 结构化主张：实践检验循环
+
+Claim-Key: practice-test-loop
+Claim-Statement: 方法结论只能作为暂时假设，必须通过范围有限、结果可观察的实践再次检验和修正。
+Claim-Type: framework
+Evidence: 分散意见经研究形成方案后仍要返回行动中检验并继续循环，方案不能因“已经集中”而免于修正。
+
+## 结构化主张：异议与坏消息保护
+
+Claim-Key: protected-dissent-channel
+Claim-Statement: 可用的组织反馈必须让异议和坏消息安全上行，并把收集、解释、执行和复核至少在角色上分开。
+Claim-Type: principle
+Evidence: 从分散意见到返回检验的完整循环要求不同经验能够进入系统；若组织者预设唯一答案，反馈会退化为确认仪式。
+
+## 结构化主张：分布优先于总量
+
+Claim-Key: distribution-before-aggregate
+Claim-Statement: 组织不能把高频声音、参与总量或总体指标直接当作代表性，必须检查沉默者、分布和承担成本的群体。
+Claim-Type: principle
+Evidence: “群众”并非同质整体，声量最大者不一定最受影响，多数意见也不能取消少数人的基本权利。
+
 ## 结构化主张：现代迁移边界
 
 Claim-Key: rights-bound-transfer

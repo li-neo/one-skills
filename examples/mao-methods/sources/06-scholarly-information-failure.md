@@ -37,3 +37,31 @@ Claim-Key: feedback-integrity
 Claim-Statement: 可用的反馈方法必须把一线证据、暂时判断、可逆试验和独立坏消息通道组成闭环。
 Claim-Type: framework
 Evidence: 论文的制度模型把异常结果与中央计划体制难以及时收集并响应新信息联系起来，说明总量信息和领导意愿不能替代分布监测与独立上行通道。
+
+## 结构化主张：先调查再判断
+
+Claim-Key: investigation-before-judgment
+Claim-Statement: 高影响判断必须先取得不同处境的一手事实，并预先写明什么证据会改变当前结论。
+Claim-Type: framework
+Evidence: 论文发现总体产量与地区死亡率呈现反直觉关系，说明只看中央总量会遗漏地方分布和受影响者事实。
+
+## 结构化主张：异议与坏消息保护
+
+Claim-Key: protected-dissent-channel
+Claim-Statement: 可用的组织反馈必须让异议和坏消息安全上行，并把收集、解释、执行和复核至少在角色上分开。
+Claim-Type: principle
+Evidence: 制度模型把严重结果与新信息难以及时收集和响应联系起来，支持独立异常监测、坏消息保护和复核角色分离。
+
+## 结构化主张：分布优先于总量
+
+Claim-Key: distribution-before-aggregate
+Claim-Statement: 组织不能把高频声音、参与总量或总体指标直接当作代表性，必须检查沉默者、分布和承担成本的群体。
+Claim-Type: principle
+Evidence: 论文报告总产量仍高于生存需要时，高产地区反而出现更高死亡率，证明总体充足不能代表局部分配与结果。
+
+## 结构化主张：反教条纠错
+
+Claim-Key: anti-dogmatism-correction
+Claim-Statement: 当抽象理论、上级转述或既有文本与现场事实冲突时，必须让可核验证据触发纠错而不是维护原结论。
+Claim-Type: principle
+Evidence: 反直觉的地区数据要求制度解释响应事实，而不能用既定总量判断覆盖异常结果。

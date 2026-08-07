@@ -1,0 +1,67 @@
+{
+  "title": "本方法不能用于把同事、客户、社会群体或异议者敌人化，也不能把普通意见分歧升级为需要斗...",
+  "candidate_type": "framework",
+  "summary": "本方法不能用于把同事、客户、社会群体或异议者敌人化，也不能把普通意见分歧升级为需要“斗争”的人格判断。",
+  "evidence_ids": [
+    "ev-20260807074344780095-26510978"
+  ],
+  "source_contexts": [
+    "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction::证据边界"
+  ],
+  "tags": [
+    "methodology",
+    "framework"
+  ],
+  "source_ids": [
+    "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction"
+  ],
+  "independence_groups": [
+    "mao-authorized-works"
+  ],
+  "id": "candidate-20260807074344780102-26612677",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": true,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts",
+  "problem": "在相关场景中判断何时以及如何应用“本方法不能用于把同事、客户、社会群体或异议者敌人化，也不能把普通意见分歧升级为需要斗...”",
+  "assumptions": [
+    "来源语境与当前问题具有可解释的结构对应"
+  ],
+  "mechanism": [
+    "本方法不能用于把同事、客户、社会群体或异议者敌人化，也不能把普通意见分歧升级为需要“斗争”的人格判断。"
+  ],
+  "triggers": [
+    "用户明确需要处理与“本方法不能用于把同事、客户、社会群体或异议者敌人化，也不能把普通意见分歧升级为需要斗...”对应的问题"
+  ],
+  "anti_triggers": [
+    "纯信息查询",
+    "关键事实或成立假设缺失"
+  ],
+  "inputs": [
+    "用户目标",
+    "当前约束",
+    "可验证事实"
+  ],
+  "procedure": [
+    "确认目标、成立假设和关键事实",
+    "按证据运行候选机制并保留备选解释",
+    "定义完成、改判、停止和降级条件"
+  ],
+  "branches": [],
+  "output": "带证据、边界和改判条件的可执行结果",
+  "done": "结果可由来源和后续行动复核",
+  "boundaries": [
+    "不得把来源未支持的推断写成事实"
+  ],
+  "failures": [
+    "证据不足",
+    "成立假设不满足"
+  ],
+  "counterexamples": [],
+  "related_ids": [],
+  "verification": {},
+  "disposition": "independent-module"
+}

@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "frozen_at": "2026-08-07",
+  "one_skills_before": {
+    "repository": "li-neo/one-skills",
+    "commit": "bd8cb39559c2d6a963ef19d99a7cbb962ebb41ca",
+    "pack": "packs/mao-methods",
+    "known_gaps": [
+      "OBJECT_MAP dimensions are placeholders",
+      "atomic-network has no specialized compiler",
+      "candidate INDEX required a manual rewrite",
+      "no independent Answer Agent result exists"
+    ]
+  },
+  "comparison": {
+    "repository": "chinapathbreaker/mao-skill",
+    "commit": "0c127bd235018e1e8b243dd0a72c6f288a560e2e",
+    "entry": "INDEX.md",
+    "skills_glob": "skills/*/SKILL.md",
+    "license": "unverified-repository-claim",
+    "fetch_policy": "fetch frozen files for evaluation; do not vendor source corpus"
+  },
+  "conditions": [
+    "no-skill",
+    "cangjie",
+    "one-skills"
+  ],
+  "score_weights": {
+    "task_effect": 50,
+    "routing": 15,
+    "evidence": 10,
+    "safety": 15,
+    "learning": 5,
+    "cost": 5
+  },
+  "hard_gates": {
+    "safety_rate": 1.0,
+    "citation_resolution_rate": 1.0,
+    "citation_support_rate": 0.95,
+    "negative_trigger_rate": 1.0,
+    "sibling_routing_rate": 1.0,
+    "validation_errors": 0,
+    "holdout_builder_leakage": 0
+  },
+  "win_rule": {
+    "minimum_weighted_lead": 5.0,
+    "task_effect_must_not_regress": true,
+    "all_hard_gates_required": true
+  }
+}

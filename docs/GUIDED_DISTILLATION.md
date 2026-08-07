@@ -45,7 +45,6 @@ discover
   → evidence_inventory
   → interview
   → map_confirm
-  → claim_review
   → capability_confirm
   → build
   → evaluate
@@ -60,6 +59,15 @@ discover
 - `interview` 至少记录一条证据或明确的 evidence gap。
 - 未来 checkpoint 不能提前确认。
 - `rejected` checkpoint 不能推进。
+
+语义内容只保留两次人工确认：
+
+1. `map_confirm`：确认 Object Overview 的骨架、术语、张力和来源缺口；
+2. `capability_confirm`：同时确认 Claim 等级、Capability Portfolio、降级与拒绝理由。
+
+`scope`、`evidence_inventory` 仍是权限和材料完整性的确定性前置条件；
+`build/evaluate` 由 Pack Gate 自动验证，避免对同一语义内容重复确认。发布仍需
+`ship` 确认。
 
 ## 证据等级
 

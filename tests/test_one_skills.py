@@ -46,6 +46,7 @@ from one_skills.guided import (
 from one_skills.ingest import (
     IngestionError,
     _assert_archive_budget,
+    _line_locator,
     assert_public_host,
     ingest_file,
     structural_chunks,
@@ -76,6 +77,17 @@ from one_skills.validation import validate_pack, validate_skill
 
 
 class IngestionTests(unittest.TestCase):
+    def test_line_locator_merges_existing_fragment(self) -> None:
+        self.assertEqual(
+            _line_locator("https://example.org/book#chapter", 42),
+            "https://example.org/book#chapter",
+        )
+        self.assertEqual(
+            _line_locator("https://example.org/book", 42),
+            "https://example.org/book",
+        )
+        self.assertEqual(_line_locator("/tmp/book.md", 42), "/tmp/book.md#L42")
+
     def test_source_catalog_gates_quality_and_materializes_provenance(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -907,7 +919,7 @@ class PipelineTests(unittest.TestCase):
                 del system
                 if schema_name.startswith("extract-"):
                     payload = json.loads(user)
-                    if schema_name != "extract-framework":
+                    if schema_name != "extract-assumptions":
                         return {"candidates": []}
                     chunks = payload["chunks"]
                     return {

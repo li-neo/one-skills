@@ -1,0 +1,58 @@
+{
+  "name": "事实触发反教条纠错",
+  "problem": "理论、上级转述或既有文本与可核验事实冲突",
+  "trigger": "现场与报告不一致",
+  "inputs": [
+    "原结论",
+    "冲突事实",
+    "来源等级",
+    "替代解释"
+  ],
+  "procedure": [
+    "分开记录理论陈述和事实结果",
+    "核验冲突事实的来源与版本",
+    "提出至少一个替代解释",
+    "定义支持或推翻各解释的新证据",
+    "修改结论并保留变更理由"
+  ],
+  "output": "理论—事实冲突表和纠错决议",
+  "done": "新结论解释异常且明确保留未知",
+  "boundaries": [
+    "不因反权威而忽略证据质量",
+    "不把怀疑变成任意否定"
+  ],
+  "failures": [
+    "只更换措辞不改变结论",
+    "选择更方便立场的版本"
+  ],
+  "fallback": "并列冲突来源，停在未决状态",
+  "evidence_ids": [
+    "ev-20260807074344778009-3494d9f2",
+    "ev-20260807074344778030-78f124b5",
+    "ev-20260807074344778043-2b1625d0"
+  ],
+  "confidence": 0.65,
+  "id": "anti-dogmatism-correction",
+  "relations": [
+    {
+      "relation": "depends_on",
+      "target": "version-attribution"
+    },
+    {
+      "relation": "composes_with",
+      "target": "practice-test-loop"
+    }
+  ],
+  "anti_triggers": [
+    "只需要说明理论原意",
+    "事实尚未核验"
+  ],
+  "assumptions": [
+    "冲突事实可以被独立记录",
+    "结论允许修改"
+  ],
+  "branches": [],
+  "examples": [],
+  "module_type": "internal",
+  "status": "supporting"
+}

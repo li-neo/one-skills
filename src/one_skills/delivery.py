@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+import hashlib
 import json
 import os
-from pathlib import Path
 import shutil
+from datetime import datetime
+from pathlib import Path
 
+from .comparison import local_skill_context
 from .database import KnowledgeDB
 from .evaluation import paired_decision
 from .pipeline import advance_phase, load_state, workspace_for
@@ -29,6 +31,25 @@ def _assert_tested(pack: Path) -> None:
     ]
     if drift:
         raise DeliveryError(f"evaluation freeze check failed: {drift[0].code}")
+    metadata = load_json(pack / "pack.json") if (pack / "pack.json").exists() else {}
+    if (
+        metadata.get("schema_version") == "0.3"
+        and (pack / "CAPABILITY_GRAPH.json").exists()
+    ):
+        comparison_path = pack / "evaluations" / "comparison-report.json"
+        if not comparison_path.exists():
+            raise DeliveryError("v0.3 release requires a blind comparison report")
+        comparison = load_json(comparison_path)
+        if not comparison.get("passed"):
+            raise DeliveryError("v0.3 blind comparison or a non-compensating hard gate failed")
+        expected_skill_hash = comparison.get("skill_hashes", {}).get("one-skills")
+        current_skill_hash = hashlib.sha256(
+            local_skill_context(pack).encode("utf-8")
+        ).hexdigest()
+        if expected_skill_hash != current_skill_hash:
+            raise DeliveryError(
+                "v0.3 blind comparison report does not match the current Skill context"
+            )
     path = pack / "test-results.json"
     if not path.exists():
         raise DeliveryError("missing test-results.json")
@@ -69,10 +90,20 @@ def release_pack(pack: Path) -> dict:
         f"independent pass {skill['agent_results']['rate']:.1%}"
         for skill in skills
     )
+    comparison_path = pack / "evaluations" / "comparison-report.json"
+    comparison_text = ""
+    if comparison_path.exists():
+        comparison = load_json(comparison_path)
+        comparison_text = (
+            f"\n- Weighted lead over baseline: {comparison.get('weighted_lead', 0):.2f}\n"
+            f"- Comparison passed: `{comparison.get('passed', False)}`\n"
+        )
     atomic_write(
         reports / "QUALITY.md",
         f"# Quality Report\n\n{quality_rows}\n\n"
-        "Hard gates: safety, should-not-trigger, and sibling confusion all passed 100%.\n",
+        "Hard gates: safety, should-not-trigger, sibling confusion, citations, "
+        "hash consistency, and holdout isolation passed.\n"
+        + comparison_text,
     )
     atomic_write(
         reports / "PROVENANCE.md",
@@ -88,12 +119,16 @@ def release_pack(pack: Path) -> dict:
         "- Known limitation: semantic claims are bounded by captured sources and verification time.\n"
         "- Revocation: remove or revoke the source, then rebuild affected lineage.\n",
     )
-    atomic_write(
-        pack / "DIGEST.md",
-        "# Digest\n\n"
-        + "\n".join(f"- [{skill['name']}](skills/{skill['name']}/SKILL.md)" for skill in skills)
-        + "\n",
-    )
+    if not (pack / "DIGEST.md").exists():
+        atomic_write(
+            pack / "DIGEST.md",
+            "# Digest\n\n"
+            + "\n".join(
+                f"- [{skill['name']}](skills/{skill['name']}/SKILL.md)"
+                for skill in skills
+            )
+            + "\n",
+        )
     workspace = workspace_for(pack)
     with KnowledgeDB(workspace / ".one" / "knowledge.db") as database:
         graph_path = write_evidence_graph(pack, database)

@@ -1,0 +1,58 @@
+{
+  "name": "阶段识别与窄目标试点",
+  "problem": "资源弱或不确定性高，却试图一次全面推进",
+  "trigger": "初创团队多线作战",
+  "inputs": [
+    "关键假设",
+    "资源能力",
+    "窄目标",
+    "底线约束",
+    "阶段指标"
+  ],
+  "procedure": [
+    "标记当前阶段",
+    "选择最有学习价值的窄目标",
+    "冻结安全合规和健康底线",
+    "运行短周期试点",
+    "按切换条件扩展、保持、收缩或停止"
+  ],
+  "output": "阶段判断、窄目标、里程碑和切换决议",
+  "done": "局部结果可重复且阶段切换有明确证据",
+  "boundaries": [
+    "不迁移歼灭包围等战争语言",
+    "聚焦不能取消并行底线"
+  ],
+  "failures": [
+    "延长周期只是为失败找借口",
+    "局部成功不可复用"
+  ],
+  "fallback": "回到探索阶段，缩小目标或收缩资源",
+  "evidence_ids": [
+    "ev-20260807074344778354-518e182b",
+    "ev-20260807074344778362-55b202a3"
+  ],
+  "confidence": 0.65,
+  "id": "stage-experimentation",
+  "relations": [
+    {
+      "relation": "depends_on",
+      "target": "practice-test-loop"
+    },
+    {
+      "relation": "composes_with",
+      "target": "center-work-coordination"
+    }
+  ],
+  "anti_triggers": [
+    "必须并行处理的安全事件",
+    "目标和结果均不可观察"
+  ],
+  "assumptions": [
+    "当前能力和资源可测量",
+    "阶段切换可以由结果触发"
+  ],
+  "branches": [],
+  "examples": [],
+  "module_type": "internal",
+  "status": "supporting"
+}

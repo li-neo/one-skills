@@ -279,6 +279,16 @@ def expand_sources(values: list[str], access_level: str = "private-local") -> li
     return documents
 
 
+def _line_locator(source: str, line_number: int) -> str:
+    if urlparse(source).scheme in {"http", "https"}:
+        return source
+    if "#" not in source:
+        return f"{source}#L{line_number}"
+    base, fragment = source.split("#", 1)
+    fragment = fragment.rstrip("-")
+    return f"{base}#{fragment}-L{line_number}" if fragment else f"{base}#L{line_number}"
+
+
 def structural_chunks(
     document: SourceDocument,
     document_id: str,
@@ -335,7 +345,10 @@ def structural_chunks(
                 text=text,
                 content_hash=content_hash,
                 access_level=document.access_level,
-                source_locator=f"{document.source_uri or document.source}#L{line_number}",
+                source_locator=_line_locator(
+                    document.source_uri or document.source,
+                    line_number,
+                ),
                 source_key=document.source_uri or document.source,
                 independence_group=document.independence_group
                 or document.source_uri

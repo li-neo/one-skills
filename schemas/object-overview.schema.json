@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/li-neo/one-skills/schemas/object-overview.schema.json",
+  "title": "One Skills Object Overview",
+  "type": "object",
+  "required": [
+    "id",
+    "profile",
+    "subject",
+    "thesis",
+    "structure",
+    "key_terms",
+    "mechanism_chain",
+    "timeline_or_state_model",
+    "tensions",
+    "limitations",
+    "research_gaps",
+    "source_coverage",
+    "status",
+    "generated_at"
+  ],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "profile": {"type": "string", "minLength": 1},
+    "subject": {"type": "string", "minLength": 1},
+    "thesis": {"type": "string", "minLength": 1},
+    "structure": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["title", "summary", "source_locators"],
+        "properties": {
+          "title": {"type": "string", "minLength": 1},
+          "summary": {"type": "string", "minLength": 1},
+          "relation": {"type": "string"},
+          "source_locators": {"type": "array", "items": {"type": "string"}}
+        },
+        "additionalProperties": false
+      }
+    },
+    "key_terms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["term", "definition"],
+        "properties": {
+          "term": {"type": "string"},
+          "definition": {"type": "string"},
+          "source_locator": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "mechanism_chain": {"type": "array", "items": {"type": "string"}},
+    "timeline_or_state_model": {"type": "array", "items": {"type": "string"}},
+    "tensions": {"type": "array", "items": {"type": "string"}},
+    "limitations": {"type": "array", "items": {"type": "string"}},
+    "research_gaps": {"type": "array", "items": {"type": "string"}},
+    "source_coverage": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {"type": "string"}
+      }
+    },
+    "status": {"enum": ["candidate", "confirmed", "stale"]},
+    "generated_at": {"type": "string"},
+    "confirmed_at": {"type": "string"},
+    "confirmation_notes": {"type": "string"}
+  },
+  "additionalProperties": false
+}

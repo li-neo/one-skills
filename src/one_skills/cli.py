@@ -13,6 +13,13 @@ from . import __version__
 from .api import create_api_server
 from .batch import distill_batch, load_jobs
 from .benchmark import run_profile_benchmark
+from .comparison import (
+    fetch_github_skill_context,
+    import_blind_artifacts,
+    local_skill_context,
+    run_blind_comparison,
+    run_condition,
+)
 from .compiler import export_profile_templates
 from .constants import CONSENT_LEVELS, MODES, PHASES
 from .database import KnowledgeDB
@@ -24,6 +31,7 @@ from .delivery import (
     release_pack,
 )
 from .evaluation import evaluate_pack
+from .evolution import apply_patch_candidate, propose_patch, resolve_patch
 from .experience import (
     ExperienceError,
     load_experiences,
@@ -58,10 +66,14 @@ from .learning import (
     next_learning_node,
     record_attempt,
 )
+from .migrations import migrate_pack_to_v03
+from .model_roles import load_model_roles, model_status
+from .overview import confirm_object_overview
 from .pipeline import (
     PipelineError,
     advance_phase,
     approve_and_compile,
+    compile_confirmed_portfolio,
     create_pack,
     init_workspace,
     lineage,
@@ -69,15 +81,17 @@ from .pipeline import (
     revoke_source,
     select_regression_tests,
     update_pack,
-    verify_and_compile_with_model,
+    verify_pack_with_roles,
     workspace_for,
 )
+from .portfolio import confirm_portfolio
 from .postgres import PostgresBackend
-from .provider import OpenAICompatibleProvider, ProviderConfig, ProviderError
+from .provider import ProviderError
 from .recipes import Recipe, promote_recipe, promotion_decision
 from .retrieval import HybridRetriever, local_embedding
 from .routing import route_intent
 from .skill_retrieval import search_skills
+from .source_discovery import discover_sources, shortlist_sources
 from .source_quality import (
     SourceQualityError,
     audit_source_catalog,
@@ -110,6 +124,7 @@ def cmd_distill(args: argparse.Namespace) -> int:
         args.access,
         args.consent,
         _path(args.source_catalog) if args.source_catalog else None,
+        args.alias,
     )
     state = load_state(pack)
     _print(
@@ -117,7 +132,10 @@ def cmd_distill(args: argparse.Namespace) -> int:
             "pack": str(pack),
             "phase": state["current_phase"],
             "status": state["phases"][state["current_phase"]]["status"],
-            "next": "review verified/decisions.json, then run `one approve` with an independently verified candidate",
+            "next": (
+                "review OBJECT_OVERVIEW.md, run `one semantic confirm --artifact overview`, "
+                "then run role-separated `one verify-model`"
+            ),
         }
     )
     return 0
@@ -156,19 +174,95 @@ def cmd_approve(args: argparse.Namespace) -> int:
 
 
 def cmd_verify_model(args: argparse.Namespace) -> int:
-    config = ProviderConfig.from_environment()
-    if config is None:
+    roles = load_model_roles()
+    if roles is None:
         raise ProviderError(
-            "set ONE_SKILLS_MODEL_BASE_URL, ONE_SKILLS_MODEL_API_KEY, and ONE_SKILLS_MODEL"
+            "configure all Builder/Answer/Judge role variables or the ONE_SKILLS_MODEL fallback"
         )
-    skills = verify_and_compile_with_model(
+    report = verify_pack_with_roles(
         _path(args.pack),
-        OpenAICompatibleProvider(config),
+        roles,
         args.allow_sensitive_data,
         not args.skip_semantic_extract,
     )
-    _print({"compiled": [str(skill) for skill in skills], "count": len(skills)})
-    return 0 if skills else 1
+    _print(report)
+    return 0 if report["accepted"] else 1
+
+
+def cmd_model(args: argparse.Namespace) -> int:
+    del args
+    status = model_status()
+    _print(status)
+    return 0 if status["configured"] else 1
+
+
+def cmd_compile(args: argparse.Namespace) -> int:
+    _print(compile_confirmed_portfolio(_path(args.pack)))
+    return 0
+
+
+def cmd_evaluate(args: argparse.Namespace) -> int:
+    roles = load_model_roles()
+    if roles is None:
+        raise ProviderError("model roles are not configured")
+    pack = _path(args.pack)
+    suite = json.loads(_path(args.suite).read_text(encoding="utf-8"))
+    if args.condition == "one-skills":
+        context = local_skill_context(pack)
+    elif args.condition == "cangjie":
+        baseline = json.loads(_path(args.baseline).read_text(encoding="utf-8"))
+        definition = baseline["comparison"]
+        context = fetch_github_skill_context(
+            definition["repository"],
+            definition["commit"],
+        )
+    else:
+        context = ""
+    _print(
+        run_condition(
+            pack,
+            suite,
+            args.condition,
+            context,
+            roles,
+            "A",
+        )
+    )
+    return 0
+
+
+def cmd_compare(args: argparse.Namespace) -> int:
+    if args.compare_command == "report":
+        _print(
+            json.loads(
+                (_path(args.pack) / "evaluations" / "comparison-report.json")
+                .read_text(encoding="utf-8")
+            )
+        )
+        return 0
+    if args.compare_command == "import":
+        report = import_blind_artifacts(
+            _path(args.pack),
+            _path(args.suite),
+            _path(args.baseline),
+            _path(args.artifacts),
+            answer_model=args.answer_model,
+            judge_model=args.judge_model,
+            isolation_level=args.isolation_level,
+        )
+        _print(report)
+        return 0 if report["passed"] else 1
+    roles = load_model_roles()
+    if roles is None:
+        raise ProviderError("model roles are not configured")
+    report = run_blind_comparison(
+        _path(args.pack),
+        _path(args.suite),
+        _path(args.baseline),
+        roles,
+    )
+    _print(report)
+    return 0 if report["passed"] else 1
 
 
 def cmd_search(args: argparse.Namespace) -> int:
@@ -214,6 +308,28 @@ def cmd_source(args: argparse.Namespace) -> int:
         path = write_source_catalog_template(_path(args.output))
         _print({"catalog_template": str(path)})
         return 0
+    if args.source_command == "discover":
+        result = discover_sources(
+            args.adapter,
+            args.target,
+            args.subject,
+            args.question,
+            huggingface_kind=args.huggingface_kind,
+        )
+        if args.output:
+            from .utils import dump_json
+
+            dump_json(_path(args.output), result)
+        _print(result)
+        return 0
+    if args.source_command == "shortlist":
+        result = shortlist_sources(_path(args.candidates), args.id)
+        if args.output:
+            from .utils import dump_json
+
+            dump_json(_path(args.output), result)
+        _print(result)
+        return 0
     report = audit_source_catalog(_path(args.catalog), args.type, args.mode)
     if args.output:
         from .utils import dump_json
@@ -221,6 +337,22 @@ def cmd_source(args: argparse.Namespace) -> int:
         dump_json(_path(args.output), report)
     _print(report)
     return 0 if report["status"] == "passed" else 1
+
+
+def cmd_migrate(args: argparse.Namespace) -> int:
+    _print(migrate_pack_to_v03(_path(args.pack)))
+    return 0
+
+
+def cmd_semantic(args: argparse.Namespace) -> int:
+    pack = _path(args.pack)
+    if args.artifact == "overview":
+        _print(confirm_object_overview(pack, args.notes))
+        return 0
+    if args.artifact == "portfolio":
+        _print(confirm_portfolio(pack, args.notes))
+        return 0
+    raise ValueError(f"unsupported semantic artifact: {args.artifact}")
 
 
 def cmd_learn(args: argparse.Namespace) -> int:
@@ -390,6 +522,37 @@ def cmd_evolve(args: argparse.Namespace) -> int:
         _path(args.comparisons) if args.comparisons else None,
     )
     _print(request)
+    return 0
+
+
+def cmd_evolution(args: argparse.Namespace) -> int:
+    pack = _path(args.pack)
+    if args.evolution_command == "propose":
+        _print(
+            propose_patch(
+                pack,
+                args.action,
+                args.target,
+                args.content or "",
+                args.event,
+                args.dimension,
+                args.source_target,
+            )
+        )
+    elif args.evolution_command == "apply":
+        comparison = json.loads(
+            _path(args.comparison).read_text(encoding="utf-8")
+        )
+        _print(apply_patch_candidate(pack, args.id, comparison))
+    elif args.evolution_command == "resolve":
+        _print(resolve_patch(pack, args.id, args.decision, args.reason))
+    else:
+        directory = pack / "evolution" / "proposals"
+        values = [
+            json.loads(path.read_text(encoding="utf-8"))
+            for path in sorted(directory.glob("*.json"))
+        ] if directory.exists() else []
+        _print({"count": len(values), "proposals": values})
     return 0
 
 
@@ -602,6 +765,12 @@ def build_parser() -> argparse.ArgumentParser:
     distill.add_argument("--name")
     distill.add_argument("--access", choices=("public", "authorized", "private-local"), default="private-local")
     distill.add_argument("--consent", choices=CONSENT_LEVELS)
+    distill.add_argument(
+        "--alias",
+        action="append",
+        default=[],
+        help="explicit activation alias for the compiled top-level Skill",
+    )
     distill.set_defaults(func=cmd_distill)
 
     inspect = commands.add_parser("inspect", help="inspect Pack state")
@@ -643,6 +812,83 @@ def build_parser() -> argparse.ArgumentParser:
     )
     verify_model.set_defaults(func=cmd_verify_model)
 
+    model = commands.add_parser(
+        "model",
+        help="inspect Builder, Answer Agent, and Judge role configuration",
+    )
+    model_commands = model.add_subparsers(dest="model_command", required=True)
+    model_status_parser = model_commands.add_parser("status")
+    model_status_parser.set_defaults(func=cmd_model)
+
+    compile_parser = commands.add_parser(
+        "compile",
+        help="compile a confirmed v0.3 Capability Portfolio",
+    )
+    compile_parser.add_argument("pack")
+    compile_parser.set_defaults(func=cmd_compile)
+
+    evaluate = commands.add_parser(
+        "evaluate",
+        help="run a role-separated blind evaluation condition",
+    )
+    evaluate_commands = evaluate.add_subparsers(
+        dest="evaluate_command",
+        required=True,
+    )
+    evaluate_run = evaluate_commands.add_parser("run")
+    evaluate_run.add_argument("pack")
+    evaluate_run.add_argument("--suite", required=True)
+    evaluate_run.add_argument(
+        "--condition",
+        choices=("no-skill", "cangjie", "one-skills"),
+        required=True,
+    )
+    evaluate_run.add_argument(
+        "--baseline",
+        default="benchmarks/mao-methods/baselines.json",
+    )
+    evaluate_run.set_defaults(func=cmd_evaluate)
+
+    compare = commands.add_parser(
+        "compare",
+        help="run or inspect a no-skill/Cangjie/one-skills comparison",
+    )
+    compare_commands = compare.add_subparsers(
+        dest="compare_command",
+        required=True,
+    )
+    compare_run = compare_commands.add_parser("run")
+    compare_run.add_argument("pack")
+    compare_run.add_argument("--suite", required=True)
+    compare_run.add_argument(
+        "--baseline",
+        default="benchmarks/mao-methods/baselines.json",
+    )
+    compare_run.set_defaults(func=cmd_compare)
+    compare_import = compare_commands.add_parser("import")
+    compare_import.add_argument("pack")
+    compare_import.add_argument("--suite", required=True)
+    compare_import.add_argument(
+        "--baseline",
+        default="benchmarks/mao-methods/baselines.json",
+    )
+    compare_import.add_argument("--artifacts", required=True)
+    compare_import.add_argument("--answer-model", required=True)
+    compare_import.add_argument("--judge-model", required=True)
+    compare_import.add_argument(
+        "--isolation-level",
+        choices=(
+            "provider-separated",
+            "model-separated",
+            "model-shared/session-separated",
+        ),
+        required=True,
+    )
+    compare_import.set_defaults(func=cmd_compare)
+    compare_report = compare_commands.add_parser("report")
+    compare_report.add_argument("pack")
+    compare_report.set_defaults(func=cmd_compare)
+
     search = commands.add_parser("search", help="ACL-aware keyword, semantic, and graph retrieval")
     search.add_argument("query")
     search.add_argument("--workspace", default=".")
@@ -679,12 +925,64 @@ def build_parser() -> argparse.ArgumentParser:
     source_template = source_commands.add_parser("template")
     source_template.add_argument("--output", required=True)
     source_template.set_defaults(func=cmd_source)
+    source_discover = source_commands.add_parser(
+        "discover",
+        help="discover source candidates without ingesting them",
+    )
+    source_discover.add_argument(
+        "--adapter",
+        choices=("local", "github", "huggingface", "manifest"),
+        required=True,
+    )
+    source_discover.add_argument("--target", required=True)
+    source_discover.add_argument("--subject", required=True)
+    source_discover.add_argument("--question", action="append", required=True)
+    source_discover.add_argument(
+        "--huggingface-kind",
+        choices=("dataset", "model"),
+        default="dataset",
+    )
+    source_discover.add_argument("--output")
+    source_discover.set_defaults(func=cmd_source)
+    source_shortlist = source_commands.add_parser(
+        "shortlist",
+        help="mark reviewed source candidates for Catalog authoring",
+    )
+    source_shortlist.add_argument("--candidates", required=True)
+    source_shortlist.add_argument("--id", action="append", required=True)
+    source_shortlist.add_argument("--output")
+    source_shortlist.set_defaults(func=cmd_source)
     source_audit = source_commands.add_parser("audit")
     source_audit.add_argument("--catalog", required=True)
     source_audit.add_argument("--type", default="content")
     source_audit.add_argument("--mode", choices=MODES, default="standard")
     source_audit.add_argument("--output")
     source_audit.set_defaults(func=cmd_source)
+
+    migrate = commands.add_parser(
+        "migrate",
+        help="migrate Pack metadata without inventing semantic artifacts",
+    )
+    migrate.add_argument("pack")
+    migrate.set_defaults(func=cmd_migrate)
+
+    semantic = commands.add_parser(
+        "semantic",
+        help="confirm evidence-linked semantic artifacts",
+    )
+    semantic_commands = semantic.add_subparsers(
+        dest="semantic_command",
+        required=True,
+    )
+    semantic_confirm = semantic_commands.add_parser("confirm")
+    semantic_confirm.add_argument("pack")
+    semantic_confirm.add_argument(
+        "--artifact",
+        choices=("overview", "portfolio"),
+        required=True,
+    )
+    semantic_confirm.add_argument("--notes", required=True)
+    semantic_confirm.set_defaults(func=cmd_semantic)
 
     learn = commands.add_parser(
         "learn",
@@ -859,6 +1157,46 @@ def build_parser() -> argparse.ArgumentParser:
     evolve.add_argument("--skill")
     evolve.add_argument("--comparisons")
     evolve.set_defaults(func=cmd_evolve)
+
+    evolution = commands.add_parser(
+        "evolution",
+        help="propose, compare, keep, or revert structured Skill patches",
+    )
+    evolution_commands = evolution.add_subparsers(
+        dest="evolution_command",
+        required=True,
+    )
+    evolution_propose = evolution_commands.add_parser("propose")
+    evolution_propose.add_argument("pack")
+    evolution_propose.add_argument(
+        "--action",
+        choices=("CREATE", "UPDATE", "MERGE", "PRUNE", "NOOP"),
+        required=True,
+    )
+    evolution_propose.add_argument("--target", required=True)
+    evolution_propose.add_argument("--content")
+    evolution_propose.add_argument("--source-target", action="append", default=[])
+    evolution_propose.add_argument("--event", action="append", required=True)
+    evolution_propose.add_argument("--dimension", required=True)
+    evolution_propose.set_defaults(func=cmd_evolution)
+    evolution_apply = evolution_commands.add_parser("apply")
+    evolution_apply.add_argument("pack")
+    evolution_apply.add_argument("--id", required=True)
+    evolution_apply.add_argument("--comparison", required=True)
+    evolution_apply.set_defaults(func=cmd_evolution)
+    evolution_resolve = evolution_commands.add_parser("resolve")
+    evolution_resolve.add_argument("pack")
+    evolution_resolve.add_argument("--id", required=True)
+    evolution_resolve.add_argument(
+        "--decision",
+        choices=("keep", "revert"),
+        required=True,
+    )
+    evolution_resolve.add_argument("--reason", required=True)
+    evolution_resolve.set_defaults(func=cmd_evolution)
+    evolution_status = evolution_commands.add_parser("status")
+    evolution_status.add_argument("pack")
+    evolution_status.set_defaults(func=cmd_evolution)
 
     benchmark = commands.add_parser("benchmark", help="run a frozen Profile benchmark suite")
     benchmark.add_argument(

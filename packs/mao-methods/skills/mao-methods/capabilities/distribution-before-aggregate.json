@@ -1,0 +1,57 @@
+{
+  "name": "分布检查优先于总体指标",
+  "problem": "总体数据、高频声音或资源聚焦掩盖无发言权群体承担的局部损害",
+  "trigger": "总体指标很好但局部投诉严重",
+  "inputs": [
+    "总体指标",
+    "分组结果",
+    "沉默样本",
+    "成本承担者"
+  ],
+  "procedure": [
+    "列出总体指标掩盖的维度",
+    "按直接受影响程度分组",
+    "比较收益和损害分布",
+    "寻找反常组、沉默样本和无发言权的成本承担者",
+    "若成本集中于无发言权群体，暂停阶段扩展并组合 feedback-integrity",
+    "把方案与采纳理由返回受影响群体复核，将结果写入停止、补偿或重设计条件"
+  ],
+  "output": "总体—分布对照、异常群体、反馈复核和扩展治理条件",
+  "done": "结论不再依赖单一平均值，且受影响群体复核前保持暂停扩展",
+  "boundaries": [
+    "不从小样本推断敏感属性",
+    "不公开可识别的弱势个体"
+  ],
+  "failures": [
+    "只分组不检查样本偏差",
+    "用总体改善合理化严重局部损害"
+  ],
+  "fallback": "暂停扩大，收缩结论并补充匿名且合法的分布与反馈数据",
+  "evidence_ids": [
+    "ev-20260807074344778122-9f367d4a",
+    "ev-20260807074344778130-37784376"
+  ],
+  "confidence": 0.85,
+  "id": "distribution-before-aggregate",
+  "relations": [
+    {
+      "relation": "depends_on",
+      "target": "investigation-before-judgment"
+    },
+    {
+      "relation": "composes_with",
+      "target": "feedback-integrity"
+    }
+  ],
+  "anti_triggers": [
+    "数据无法合法细分",
+    "样本小到无法支持群体结论"
+  ],
+  "assumptions": [
+    "能够按群体、地区、角色或时间拆分结果"
+  ],
+  "branches": [],
+  "examples": [],
+  "module_type": "internal",
+  "status": "verified"
+}

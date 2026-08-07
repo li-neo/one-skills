@@ -17,7 +17,7 @@
     "created_at"
   ],
   "properties": {
-    "schema_version": {"const": "0.2"},
+    "schema_version": {"enum": ["0.2", "0.3"]},
     "id": {"type": "string", "minLength": 1},
     "name": {"type": "string", "minLength": 1},
     "slug": {"type": "string", "pattern": "^[a-z0-9\\u4e00-\\u9fff]+(?:-[a-z0-9\\u4e00-\\u9fff]+)*$"},
@@ -25,6 +25,22 @@
     "mode": {"enum": ["quick", "standard", "deep", "continuous"]},
     "sources": {"type": "array", "items": {"type": "string"}, "minItems": 1},
     "source_catalog": {"type": ["string", "null"]},
+    "object_overview_hash": {"type": ["string", "null"]},
+    "capability_portfolio_hash": {"type": ["string", "null"]},
+    "capability_graph_hash": {"type": ["string", "null"]},
+    "activation_aliases": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "semantic_contract": {
+      "type": "object",
+      "properties": {
+        "overview_confirmation": {"enum": ["pending", "confirmed", "stale"]},
+        "capability_confirmation": {"enum": ["pending", "confirmed", "stale"]}
+      },
+      "additionalProperties": false
+    },
     "access_level": {"enum": ["public", "authorized", "private-local"]},
     "consent": {
       "enum": ["self", "consented", "work-authorized", "public-only", "not-applicable"]
@@ -39,7 +55,8 @@
       "additionalProperties": false
     },
     "created_at": {"type": "string"},
-    "updated_at": {"type": "string"}
+    "updated_at": {"type": "string"},
+    "migrated_at": {"type": "string"}
   },
   "additionalProperties": false
 }

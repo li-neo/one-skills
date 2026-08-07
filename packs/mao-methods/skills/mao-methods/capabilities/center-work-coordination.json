@@ -1,0 +1,56 @@
+{
+  "name": "中心任务与并行底线协调",
+  "problem": "组织需要聚焦，但多个底线和必要协同不能停止",
+  "trigger": "季度目标过多",
+  "inputs": [
+    "阶段中心任务",
+    "必要协同",
+    "安全合规现金流健康底线",
+    "复核日期"
+  ],
+  "procedure": [
+    "定义中心任务和时间范围",
+    "列出不可取消的并行底线",
+    "明确资源比例和协同节奏",
+    "监测底线和外溢成本",
+    "到期复核并允许改判"
+  ],
+  "output": "中心任务、并行底线、资源节奏和复核表",
+  "done": "主要资源形成聚焦且任一底线未失守",
+  "boundaries": [
+    "中心任务不能成为绕过法律和权利的理由"
+  ],
+  "failures": [
+    "只做中心工作导致系统性风险",
+    "把忙碌当成协同"
+  ],
+  "fallback": "降低目标密度或增加必要资源，不取消底线",
+  "evidence_ids": [
+    "ev-20260807074344778067-2c334f4a",
+    "ev-20260807074344778076-2b3036a9"
+  ],
+  "confidence": 0.65,
+  "id": "center-work-coordination",
+  "relations": [
+    {
+      "relation": "depends_on",
+      "target": "contradiction-reclassification"
+    },
+    {
+      "relation": "composes_with",
+      "target": "stage-experimentation"
+    }
+  ],
+  "anti_triggers": [
+    "多个同级安全风险",
+    "探索阶段需要并行发现"
+  ],
+  "assumptions": [
+    "中心任务有时间边界",
+    "底线约束可以单独监测"
+  ],
+  "branches": [],
+  "examples": [],
+  "module_type": "internal",
+  "status": "supporting"
+}

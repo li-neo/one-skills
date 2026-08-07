@@ -55,16 +55,19 @@ def _source_nodes(pack: Path) -> list[dict[str, Any]]:
 
 def _capability_nodes(pack: Path) -> list[dict[str, Any]]:
     capabilities = []
-    for path in sorted((pack / "skills").glob("*/capability.json")):
+    module_paths = sorted((pack / "skills").glob("*/capabilities/*.json"))
+    paths = module_paths or sorted((pack / "skills").glob("*/capability.json"))
+    for path in paths:
         capabilities.append((path.parent.name, load_json(path)))
     if not capabilities:
         return []
     by_capability_id = {
-        capability.get("id", skill_name): skill_name
+        capability.get("id", skill_name): capability.get("id", skill_name)
         for skill_name, capability in capabilities
     }
     nodes: list[dict[str, Any]] = []
     for order, (skill_name, capability) in enumerate(capabilities):
+        node_id = capability.get("id", skill_name)
         prerequisites: list[str] = []
         for relation in capability.get("relations", []):
             if relation.get("relation") not in {"depends_on", "depends-on"}:
@@ -76,9 +79,13 @@ def _capability_nodes(pack: Path) -> list[dict[str, Any]]:
                 prerequisites.append(target)
         nodes.append(
             {
-                "id": skill_name,
+                "id": node_id,
                 "title": capability["name"],
-                "kind": "executable-capability",
+                "kind": (
+                    "executable-capability"
+                    if capability.get("status") in {"released", "verified"}
+                    else "candidate-capability"
+                ),
                 "order": order,
                 "prerequisites": list(dict.fromkeys(prerequisites)),
                 "source_locators": capability.get("evidence_ids", []),
@@ -93,7 +100,28 @@ def _capability_nodes(pack: Path) -> list[dict[str, Any]]:
                 ],
             }
         )
-    return nodes
+    by_id = {node["id"]: node for node in nodes}
+    ordered: list[dict[str, Any]] = []
+    remaining = set(by_id)
+    while remaining:
+        ready = sorted(
+            node_id
+            for node_id in remaining
+            if all(
+                prerequisite not in by_id
+                or prerequisite not in remaining
+                for prerequisite in by_id[node_id]["prerequisites"]
+            )
+        )
+        if not ready:
+            # validate_learning_path reports the cycle with the exact node.
+            ready = sorted(remaining)
+        for node_id in ready:
+            node = by_id[node_id]
+            node["order"] = len(ordered)
+            ordered.append(node)
+            remaining.remove(node_id)
+    return ordered
 
 
 def validate_learning_path(value: dict[str, Any]) -> list[str]:

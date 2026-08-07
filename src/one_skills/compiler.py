@@ -2,13 +2,21 @@
 
 from __future__ import annotations
 
+from dataclasses import asdict
 import json
 from pathlib import Path
 from typing import Any
 
 from .models import Candidate, Capability, TestCase
-from .utils import atomic_write, dump_json, load_json, slugify, stable_json_hash, utc_now
-
+from .profile_specs import PROFILE_SPECS
+from .utils import (
+    atomic_write,
+    dump_json,
+    load_json,
+    slugify,
+    stable_json_hash,
+    utc_now,
+)
 
 PROFILE_CONTRACTS = {
     "person": {
@@ -304,6 +312,7 @@ def export_profile_templates(path: Path) -> Path:
             "profiles": {
                 profile: {
                     **contract,
+                    "semantic_spec": asdict(PROFILE_SPECS[profile]),
                     "specialized_test": {
                         "prompt": PROFILE_TEST_PROMPTS[profile][0],
                         "expected": PROFILE_TEST_PROMPTS[profile][1],
@@ -314,3 +323,26 @@ def export_profile_templates(path: Path) -> Path:
         },
     )
     return path
+
+
+def compile_verified_portfolio(pack: Path) -> tuple[Path, list[Capability]]:
+    """Dispatch a confirmed v0.3 portfolio to its Profile compiler."""
+    metadata = load_json(pack / "pack.json")
+    profile = metadata["profile"]
+    if profile == "person":
+        from .compilers.person import compile_pack
+    elif profile == "content":
+        from .compilers.content import compile_pack
+    elif profile == "methodology":
+        from .compilers.methodology import compile_pack
+    elif profile == "sop":
+        from .compilers.sop import compile_pack
+    elif profile == "tool":
+        from .compilers.tool import compile_pack
+    elif profile == "skill":
+        from .compilers.skill import compile_pack
+    elif profile == "hybrid":
+        from .compilers.hybrid import compile_pack
+    else:
+        raise ValueError(f"no v0.3 compiler for Profile: {profile}")
+    return compile_pack(pack)

@@ -1,0 +1,67 @@
+{
+  "title": "Evidence: 群众并非同质整体，现代反馈必须保护少数意见，并提供知情参与、退出...",
+  "candidate_type": "principle",
+  "summary": "Evidence: “群众”并非同质整体，现代反馈必须保护少数意见，并提供知情参与、退出、申诉和独立复核。",
+  "evidence_ids": [
+    "ev-20260807074344780947-3a6c75fb"
+  ],
+  "source_contexts": [
+    "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::结构化主张：现代迁移边界"
+  ],
+  "tags": [
+    "methodology",
+    "principle"
+  ],
+  "source_ids": [
+    "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods"
+  ],
+  "independence_groups": [
+    "mao-authorized-works"
+  ],
+  "id": "candidate-20260807074344780956-a9f147b5",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": true,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts",
+  "problem": "在相关场景中判断何时以及如何应用“Evidence: 群众并非同质整体，现代反馈必须保护少数意见，并提供知情参与、退出...”",
+  "assumptions": [
+    "来源语境与当前问题具有可解释的结构对应"
+  ],
+  "mechanism": [
+    "Evidence: “群众”并非同质整体，现代反馈必须保护少数意见，并提供知情参与、退出、申诉和独立复核。"
+  ],
+  "triggers": [
+    "用户明确需要处理与“Evidence: 群众并非同质整体，现代反馈必须保护少数意见，并提供知情参与、退出...”对应的问题"
+  ],
+  "anti_triggers": [
+    "纯信息查询",
+    "关键事实或成立假设缺失"
+  ],
+  "inputs": [
+    "用户目标",
+    "当前约束",
+    "可验证事实"
+  ],
+  "procedure": [
+    "确认目标、成立假设和关键事实",
+    "按证据运行候选机制并保留备选解释",
+    "定义完成、改判、停止和降级条件"
+  ],
+  "branches": [],
+  "output": "带证据、边界和改判条件的可执行结果",
+  "done": "结果可由来源和后续行动复核",
+  "boundaries": [
+    "不得把来源未支持的推断写成事实"
+  ],
+  "failures": [
+    "证据不足",
+    "成立假设不满足"
+  ],
+  "counterexamples": [],
+  "related_ids": [],
+  "verification": {},
+  "disposition": "independent-module"
+}

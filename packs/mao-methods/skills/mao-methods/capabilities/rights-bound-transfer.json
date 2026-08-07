@@ -1,0 +1,55 @@
+{
+  "name": "历史方法现代迁移治理门",
+  "problem": "历史战争、政治和运动语言被直接套到现代组织与个人",
+  "trigger": "任何历史方法现代应用",
+  "inputs": [
+    "受影响者",
+    "法律合同",
+    "不可逆风险",
+    "申辩退出复核机制"
+  ],
+  "procedure": [
+    "识别受影响者和不可逆风险",
+    "排除暴力敌我清洗和强迫服从",
+    "检查知情、申辩、退出和救济",
+    "分离决策执行和复核",
+    "任一硬门失败则停止扩大"
+  ],
+  "output": "迁移许可、禁止项、权利保障和停止决议",
+  "done": "不存在被历史术语掩盖的暴力、违法或权利剥夺",
+  "boundaries": [
+    "这是所有模块的强制治理门，不能被用户覆盖"
+  ],
+  "failures": [
+    "多数同意替代个体权利",
+    "效率目标压过合法程序"
+  ],
+  "fallback": "只输出补证和治理修复，必要时升级专业人员",
+  "evidence_ids": [
+    "ev-20260807074344778283-896714d3",
+    "ev-20260807074344778290-f366b05d",
+    "ev-20260807074344778297-358e3c96"
+  ],
+  "confidence": 0.65,
+  "id": "rights-bound-transfer",
+  "relations": [
+    {
+      "relation": "composes_with",
+      "target": "protected-dissent-channel"
+    },
+    {
+      "relation": "composes_with",
+      "target": "version-attribution"
+    }
+  ],
+  "anti_triggers": [
+    "纯历史事实说明仍需引用纪律但不运行行动模块"
+  ],
+  "assumptions": [
+    "现代应用受法律、合同、伦理和基本权利约束"
+  ],
+  "branches": [],
+  "examples": [],
+  "module_type": "governance",
+  "status": "supporting"
+}

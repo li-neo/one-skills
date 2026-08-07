@@ -1,0 +1,118 @@
+{
+  "name": "证据化方法工具",
+  "problem": "路由并运行 mao-methods 的证据化能力模块",
+  "trigger": "用户明确调用 mao-methods",
+  "inputs": [
+    "用户目标",
+    "当前约束",
+    "可验证事实"
+  ],
+  "procedure": [
+    "建立事实契约",
+    "选择一个主模块",
+    "执行模块并检查全局治理门"
+  ],
+  "output": "包含问题、假设、机制、步骤、分支、完成、停止和回滚的执行结果。",
+  "done": "输出包含证据、边界、停止和复核条件",
+  "boundaries": [
+    "成立假设不满足时停止",
+    "保留反证和改判条件",
+    "行动必须守法、可逆并可复核"
+  ],
+  "failures": [
+    "事实不足",
+    "来源冲突",
+    "高风险不可逆任务"
+  ],
+  "fallback": "停止扩大行动并补证或升级",
+  "evidence_ids": [
+    "ev-20260807074344778009-3494d9f2",
+    "ev-20260807074344778030-78f124b5",
+    "ev-20260807074344778043-2b1625d0",
+    "ev-20260807074344778067-2c334f4a",
+    "ev-20260807074344778076-2b3036a9",
+    "ev-20260807074344778094-b5dc328e",
+    "ev-20260807074344778101-39371ae4",
+    "ev-20260807074344778122-9f367d4a",
+    "ev-20260807074344778130-37784376",
+    "ev-20260807074344778145-fde1eae4",
+    "ev-20260807074344778152-1651d763",
+    "ev-20260807074344778159-ef36a626",
+    "ev-20260807074344778167-4e30fe24",
+    "ev-20260807074344778174-9bf8a104",
+    "ev-20260807074344778189-a07f6c8d",
+    "ev-20260807074344778195-aa17d49c",
+    "ev-20260807074344778209-9d9f6592",
+    "ev-20260807074344778216-0a7f7cef",
+    "ev-20260807074344778232-95cbaab2",
+    "ev-20260807074344778239-072a7e52",
+    "ev-20260807074344778246-355277b4",
+    "ev-20260807074344778262-ea442209",
+    "ev-20260807074344778269-469ea6c2",
+    "ev-20260807074344778283-896714d3",
+    "ev-20260807074344778290-f366b05d",
+    "ev-20260807074344778297-358e3c96",
+    "ev-20260807074344778354-518e182b",
+    "ev-20260807074344778362-55b202a3",
+    "ev-20260807074344778376-3f396dbb",
+    "ev-20260807074344778383-9602587b"
+  ],
+  "confidence": 0.65,
+  "id": "capability-20260807090949277612-2c395f29",
+  "relations": [
+    {
+      "relation": "routes_to",
+      "target": "anti-dogmatism-correction"
+    },
+    {
+      "relation": "routes_to",
+      "target": "center-work-coordination"
+    },
+    {
+      "relation": "routes_to",
+      "target": "contradiction-reclassification"
+    },
+    {
+      "relation": "routes_to",
+      "target": "distribution-before-aggregate"
+    },
+    {
+      "relation": "routes_to",
+      "target": "feedback-integrity"
+    },
+    {
+      "relation": "routes_to",
+      "target": "investigation-before-judgment"
+    },
+    {
+      "relation": "routes_to",
+      "target": "practice-test-loop"
+    },
+    {
+      "relation": "routes_to",
+      "target": "protected-dissent-channel"
+    },
+    {
+      "relation": "routes_to",
+      "target": "relational-problem-map"
+    },
+    {
+      "relation": "routes_to",
+      "target": "rights-bound-transfer"
+    },
+    {
+      "relation": "routes_to",
+      "target": "stage-experimentation"
+    },
+    {
+      "relation": "routes_to",
+      "target": "version-attribution"
+    }
+  ],
+  "anti_triggers": [],
+  "assumptions": [],
+  "branches": [],
+  "examples": [],
+  "module_type": "entry",
+  "status": "verified"
+}

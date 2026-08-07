@@ -112,6 +112,20 @@ CREATE TABLE IF NOT EXISTS lineage_edges (
   PRIMARY KEY (from_type, from_id, relation, to_type, to_id)
 );
 
+CREATE TABLE IF NOT EXISTS graph_edges (
+  pack_id TEXT NOT NULL,
+  from_type TEXT NOT NULL,
+  from_id TEXT NOT NULL,
+  relation TEXT NOT NULL,
+  to_type TEXT NOT NULL,
+  to_id TEXT NOT NULL,
+  evidence_ids_json TEXT NOT NULL,
+  confidence REAL NOT NULL,
+  status TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  PRIMARY KEY (pack_id, from_type, from_id, relation, to_type, to_id)
+);
+
 CREATE TABLE IF NOT EXISTS skill_versions (
   skill_id TEXT NOT NULL,
   version TEXT NOT NULL,
@@ -231,6 +245,7 @@ CREATE INDEX IF NOT EXISTS idx_chunks_access ON chunks(access_level);
 CREATE INDEX IF NOT EXISTS idx_person_facts_subject ON person_facts(subject_id, status);
 CREATE INDEX IF NOT EXISTS idx_edges_from ON lineage_edges(from_type, from_id);
 CREATE INDEX IF NOT EXISTS idx_edges_to ON lineage_edges(to_type, to_id);
+CREATE INDEX IF NOT EXISTS idx_graph_edges_pack ON graph_edges(pack_id, from_type, from_id);
 CREATE INDEX IF NOT EXISTS idx_acl_asset ON asset_acl(tenant_id, asset_type, asset_id);
 CREATE INDEX IF NOT EXISTS idx_jobs_status ON jobs(status, created_at);
 CREATE INDEX IF NOT EXISTS idx_audit_asset ON audit_events(asset_type, asset_id, created_at);
@@ -384,7 +399,7 @@ class KnowledgeDB:
                     version,
                     source_id,
                     source.content_hash,
-                    "one-skills@0.2",
+                    "one-skills@0.3",
                     normalized_uri,
                     "active",
                     now,
@@ -500,6 +515,42 @@ class KnowledgeDB:
         self.connection.execute(
             "INSERT OR IGNORE INTO lineage_edges VALUES (?, ?, ?, ?, ?, ?)",
             (from_type, from_id, relation, to_type, to_id, utc_now()),
+        )
+        self.connection.commit()
+
+    def add_graph_edge(
+        self,
+        pack_id: str,
+        from_type: str,
+        from_id: str,
+        relation: str,
+        to_type: str,
+        to_id: str,
+        evidence_ids: list[str],
+        confidence: float,
+        status: str,
+    ) -> None:
+        self.connection.execute(
+            "INSERT OR REPLACE INTO graph_edges VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (
+                pack_id,
+                from_type,
+                from_id,
+                relation,
+                to_type,
+                to_id,
+                json.dumps(evidence_ids, ensure_ascii=False),
+                confidence,
+                status,
+                utc_now(),
+            ),
+        )
+        self.connection.commit()
+
+    def clear_pack_graph(self, pack_id: str) -> None:
+        self.connection.execute(
+            "DELETE FROM graph_edges WHERE pack_id = ?",
+            (pack_id,),
         )
         self.connection.commit()
 

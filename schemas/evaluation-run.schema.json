@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/li-neo/one-skills/schemas/evaluation-run.schema.json",
+  "title": "One Skills Evaluation Run",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "run_id",
+    "condition",
+    "suite_hash",
+    "source_set_hash",
+    "skill_hash",
+    "roles",
+    "isolation_level",
+    "records",
+    "summary"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "run_id": {"type": "string"},
+    "condition": {"enum": ["no-skill", "cangjie", "one-skills"]},
+    "blind_label": {"enum": ["A", "B", "C"]},
+    "suite_hash": {"type": "string"},
+    "source_set_hash": {"type": "string"},
+    "skill_hash": {"type": "string"},
+    "roles": {
+      "type": "object",
+      "required": ["answer", "judge"],
+      "properties": {
+        "builder": {"type": "string"},
+        "answer": {"type": "string"},
+        "judge": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "isolation_level": {
+      "enum": ["provider-separated", "model-separated", "model-shared/session-separated"]
+    },
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "case_id",
+          "prompt",
+          "answer",
+          "passed",
+          "scores",
+          "judge_reason",
+          "hashes"
+        ]
+      }
+    },
+    "summary": {"type": "object"},
+    "generated_at": {"type": "string"},
+    "artifact_source": {"type": "string"}
+  },
+  "additionalProperties": false
+}

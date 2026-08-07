@@ -44,6 +44,41 @@ Claim-Statement: 矛盾排序必须是可改判的阶段假设，并禁止把普
 Claim-Type: framework
 Evidence: 决议明确记录文化大革命中是非与敌我的混淆，以及错误分类给干部、知识分子和社会组织造成的严重后果。
 
+## 结构化主张：关系化问题地图
+
+Claim-Key: relational-problem-map
+Claim-Statement: 复杂问题应先改写为目标、资源、事实、流程或权利关系，再比较候选解释，不能先把责任固定到个人身份。
+Claim-Type: framework
+Evidence: 决议记录把普通分歧和复杂制度问题改写为敌我身份所造成的严重后果，构成反对人身归因的历史硬边界。
+
+## 结构化主张：异议与坏消息保护
+
+Claim-Key: protected-dissent-channel
+Claim-Statement: 可用的组织反馈必须让异议和坏消息安全上行，并把收集、解释、执行和复核至少在角色上分开。
+Claim-Type: principle
+Evidence: 决议把个人专断、集体领导受损以及民主法制制度化不足列为持续失效原因，说明反馈和复核不能集中在同一权力链。
+
+## 结构化主张：阶段化试点
+
+Claim-Key: stage-experimentation
+Claim-Statement: 弱势或高不确定条件下应先识别探索、验证、扩展或收缩阶段，再用窄目标和可逆试点积累证据与能力。
+Claim-Type: framework
+Evidence: 决议记录大规模运动替代制度化纠错造成全局性长期后果，反向说明高不确定变更必须可撤回、可复核而非一次全面发动。
+
+## 结构化主张：中心任务与底线协调
+
+Claim-Key: center-work-coordination
+Claim-Statement: 组织可以设置阶段性中心任务，但安全、合规、现金流、人员健康和必要协同必须作为不可被排序取消的并行底线。
+Claim-Type: framework
+Evidence: 决议把民主法制、集体领导和组织制度受损列为重要原因，表明任何中心任务都不能取消制度与权利底线。
+
+## 结构化主张：反教条纠错
+
+Claim-Key: anti-dogmatism-correction
+Claim-Statement: 当抽象理论、上级转述或既有文本与现场事实冲突时，必须让可核验证据触发纠错而不是维护原结论。
+Claim-Type: principle
+Evidence: 决议明确判定当时阶级形势和党政状况估计完全错误，说明理论化判断不能在反事实结果出现后继续免于纠正。
+
 ## 结构化主张：现代迁移边界
 
 Claim-Key: rights-bound-transfer

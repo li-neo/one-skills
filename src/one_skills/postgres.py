@@ -24,6 +24,7 @@ MIGRATION_TABLES = (
     "evidence_links",
     "capabilities",
     "lineage_edges",
+    "graph_edges",
     "skill_versions",
     "eval_runs",
     "person_subjects",
@@ -149,6 +150,7 @@ class PostgresBackend:
             "result_json",
             "details_json",
             "quality_json",
+            "evidence_ids_json",
         }:
             parsed = json.loads(value) if isinstance(value, str) else value
             return self.Jsonb(parsed)

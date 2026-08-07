@@ -1,0 +1,3 @@
+interface:
+  display_name: "证据化方法工具"
+  short_description: "路由并运行 mao-methods 的证据化能力模块"

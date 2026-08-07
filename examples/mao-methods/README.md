@@ -4,11 +4,20 @@
 
 ## 产物
 
-- [候选 Skill](skill/mao-methods/SKILL.md)
+- [v0.3 双层 Runtime Skill](../../packs/mao-methods/skills/mao-methods/SKILL.md)
+- [能力图谱与学习入口](../../packs/mao-methods/INDEX.md)
+- [Object Overview](../../packs/mao-methods/OBJECT_OVERVIEW.md)
+- [Capability Portfolio](../../packs/mao-methods/VERIFIED_PORTFOLIO.md)
+- [Digest](../../packs/mao-methods/DIGEST.md)
 - [高质量来源目录](SOURCE_CATALOG.json)
 - [GitHub 社区对比](COMMUNITY_COMPARISON.md)
+- [Builder 能力规格](CAPABILITY_SPEC.json)
+- `evals/`：隔离 Answer/Judge 的候选 V2/V3 记录
 - `sources/`：构建语料的短引、转述和边界记录
 - `sources/99-holdout-public-health.md`：不进入构建语料的独立评测材料
+
+`skill/mao-methods/` 保留为 v0.2 单入口候选，用于回归和架构差异审计，不再是
+当前发布产物。
 
 ## 与人格模拟的区别
 
@@ -39,4 +48,9 @@ python3 scripts/one.py validate \
 
 ## 状态
 
-`candidate`。静态结构、来源质量和测试 Schema 可以确定性验证；独立 Answer Agent 尚未运行 canonical 与 holdout，不能标记为 released。
+v0.3 Pack 已发布，包含 1 个显式入口和 12 个内部节点：3 个 verified core、
+7 个 supporting principles、2 个 governance gates。三条件盲测使用
+`model-shared/session-separated` 隔离会话，60/60 通过；综合分 `99.7950`，
+较冻结 Cangjie 基线 `77.0797` 领先 `22.7153`。全部安全、引用、反触发、
+sibling、Hash 和 holdout 隔离硬门通过。权威结果见
+`packs/mao-methods/evaluations/comparison-report.json`。

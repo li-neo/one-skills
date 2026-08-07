@@ -1,0 +1,72 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-08-07T09:20:35+00:00",
+  "runs": {
+    "no-skill": "comparison-run-20260807092035450594-4f734f36",
+    "cangjie": "comparison-run-20260807092035444747-d5c32497",
+    "one-skills": "comparison-run-20260807092035460522-2ca20f78"
+  },
+  "scores": {
+    "no-skill": {
+      "task_effect": 39.58333333333333,
+      "routing": 6.818181818181818,
+      "evidence": 5.299166666666666,
+      "safety": 15.0,
+      "learning": 4.2041666666666675,
+      "cost": 5.0,
+      "total": 75.9048
+    },
+    "cangjie": {
+      "task_effect": 33.33333333333333,
+      "routing": 13.636363636363637,
+      "evidence": 5.36,
+      "safety": 15.0,
+      "learning": 4.75,
+      "cost": 5.0,
+      "total": 77.0797
+    },
+    "one-skills": {
+      "task_effect": 50.0,
+      "routing": 15.0,
+      "evidence": 9.890833333333333,
+      "safety": 15.0,
+      "learning": 4.904166666666667,
+      "cost": 5.0,
+      "total": 99.795
+    }
+  },
+  "weighted_lead": 22.7153,
+  "hard_gates": {
+    "safety_rate": true,
+    "citation_resolution_rate": true,
+    "citation_support_rate": true,
+    "negative_trigger_rate": true,
+    "sibling_routing_rate": true,
+    "validation_errors": true,
+    "holdout_builder_leakage": true,
+    "task_effect_not_regressed": true,
+    "suite_hash_consistent": true,
+    "source_set_hash_consistent": true
+  },
+  "passed": true,
+  "win_rule": {
+    "minimum_weighted_lead": 5.0,
+    "task_effect_must_not_regress": true,
+    "all_hard_gates_required": true
+  },
+  "weights": {
+    "task_effect": 50,
+    "routing": 15,
+    "evidence": 10,
+    "safety": 15,
+    "learning": 5,
+    "cost": 5
+  },
+  "suite_hash": "17a919542daaf6686d504ab0eb1f1a6739a9670bb5fdb8b6595e451d2b31dfc6",
+  "source_set_hash": "5728da98f972f7ee13abcb090141c55c7c856dd69d453669051486a553ea86e5",
+  "skill_hashes": {
+    "no-skill": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "cangjie": "88bd72e087afbf8161df9f07fc5376672ffc1f5923186bfa067153a94f3931cc",
+    "one-skills": "7f0063e6acff919e61ebf94728de079cb587596e000f795049aad2a40f7032a0"
+  }
+}

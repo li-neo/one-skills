@@ -1,0 +1,57 @@
+{
+  "name": "异议与坏消息保护",
+  "problem": "坏消息会使报告者受罚，决策系统只能收到支持性信息",
+  "trigger": "周报永远绿色",
+  "inputs": [
+    "报告渠道",
+    "惩罚激励",
+    "角色权限",
+    "升级和申诉路径"
+  ],
+  "procedure": [
+    "识别坏消息在哪一环被过滤",
+    "建立安全记录和反报复规则",
+    "指定独立复核者",
+    "把异常与总体指标同时展示",
+    "跟踪处理结果和责任"
+  ],
+  "output": "坏消息通道、角色分离、升级与保护机制",
+  "done": "报告者可安全上行，执行者不能单独关闭复核",
+  "boundaries": [
+    "保护异议不等于免除事实责任",
+    "遵守隐私和合法程序"
+  ],
+  "failures": [
+    "匿名但可被轻易追踪",
+    "复核者受同一绩效目标控制"
+  ],
+  "fallback": "停止大范围行动并引入外部独立审查",
+  "evidence_ids": [
+    "ev-20260807074344778232-95cbaab2",
+    "ev-20260807074344778239-072a7e52",
+    "ev-20260807074344778246-355277b4"
+  ],
+  "confidence": 0.85,
+  "id": "protected-dissent-channel",
+  "relations": [
+    {
+      "relation": "depends_on",
+      "target": "rights-bound-transfer"
+    },
+    {
+      "relation": "composes_with",
+      "target": "distribution-before-aggregate"
+    }
+  ],
+  "anti_triggers": [
+    "匿名渠道用于无证据攻击",
+    "紧急威胁需要立即依法处置"
+  ],
+  "assumptions": [
+    "能够建立独立于执行链的反馈或复核角色"
+  ],
+  "branches": [],
+  "examples": [],
+  "module_type": "internal",
+  "status": "verified"
+}

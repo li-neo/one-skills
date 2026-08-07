@@ -20,6 +20,8 @@ description: "Distills people, content, methodologies, SOPs, or existing skills 
 9. 深度蒸馏先建立 Source Catalog；搜索摘要只能发现来源，不能充当证据。
 10. 不把同一来源的多个章节、镜像或转述计为独立来源。
 11. 构建材料与 `evaluation_only` holdout 必须隔离。
+12. 内容/方法论默认使用一个公开入口加内部原子模块，不把相近模块全部暴露到全局召回。
+13. 静态结构分不能证明效果；发布必须比较 no-skill、冻结 baseline 和 candidate。
 
 ## 入口路由
 
@@ -85,6 +87,9 @@ Workspace。
 可以用 `Claim-Key` 显式声明跨来源同一主张；系统必须验证声明一致和独立来源组，
 不得靠降低语义阈值强行合并。
 
+本地、GitHub、Hugging Face 或外部搜索结果先通过 `one source discover` 进入
+`SOURCE_CANDIDATES.json`。发现结果不能自动摄取，必须 shortlist 后再进入 Catalog。
+
 ## Phase 2：建立对象地图
 
 先整体理解，再提取局部能力。
@@ -97,7 +102,8 @@ Workspace。
 | `sop` | 角色、前置条件、系统、状态、异常、交接 |
 | `skill` | 承诺能力、触发、工作流、资源、测试、问题 |
 
-输出 `OBJECT_MAP.md`，并列出信息缺口。
+输出 `OBJECT_OVERVIEW.json/md` 和 `OBJECT_MAP.md`，包含对象主旨、骨架、术语、
+机制链、张力、局限、来源覆盖和研究缺口。确认 Overview Hash 后再进入语义验证。
 
 ## Phase 3：提取候选能力
 
@@ -112,11 +118,13 @@ Workspace。
 - 术语和概念关系
 - 可定位证据
 
-支持 sub-agent 时按互不重叠的视角并行提取；不支持时串行执行，并保持相同产物结构。
+按 ProfileSpec 的互不重叠视角并行提取；不支持并行时串行执行，并保持相同产物结构。
+长语料按自然章节 map，每块都携带 Object Overview，再层级 reduce。输出
+`CANDIDATE_PORTFOLIO.json/md`，同义候选合并，冲突候选并列，案例/反例/术语降级为支持节点。
 
 ## Phase 4：验证候选
 
-每个候选依次检查：
+每个候选依次检查 V1/V2/V3：
 
 1. **证据**：有可定位来源吗？
 2. **语境复现**：是否跨场景或时间重复出现？
@@ -134,6 +142,10 @@ Workspace。
 - `needs_evidence`
 
 保留淘汰原因，不静默删除。
+
+Builder、Answer Agent、Judge 使用隔离角色。只有一个模型时也必须分开会话和上下文，
+并标记 `model-shared/session-separated`。验证结果写入
+`VERIFIED_PORTFOLIO.json/md`；确认 Portfolio Hash 后才能编译。
 
 ## Phase 5：构建能力单元
 
@@ -157,7 +169,16 @@ Problem → Trigger → Input → Procedure → Output → Done
 
 ## Phase 6：生成 Skill Pack
 
-按职责决定生成单 Skill 或 Skill Pack。
+按 ProfileSpec 编译。内容和方法论默认生成双层网络：
+
+```text
+one public SKILL.md
+  -> capabilities/*.json
+  -> references/modules/*.md
+  -> evals/modules/*.json
+```
+
+只有总入口参与全局 Skill Retrieval；内部模块在 Skill 已加载后进行二阶段路由。
 
 文件分工：
 
@@ -217,7 +238,9 @@ Problem → Trigger → Input → Procedure → Output → Done
 
 安全、授权、反触发和相邻 Skill 冲突默认要求 100% 通过。
 
-优先使用独立答题 Agent 和独立评分 Agent。独立 Agent 不可用时，明确标记验证等级降低，不声称完成双盲验证。
+优先使用独立答题 Agent 和独立评分 Agent。至少同题比较 `no-skill / frozen baseline /
+candidate`，保存完整回答、Judge 理由、模型角色、Suite/Source/Skill/Answer Hash、
+token 和延迟。独立 Provider 不可用时允许同模型隔离会话，但必须降低验证等级。
 
 ## Phase 8：交付
 
@@ -238,6 +261,8 @@ Problem → Trigger → Input → Procedure → Output → Done
 2. 生成当前 Darwin 版本兼容的 `test-prompts.json`。
 3. 将授权、安全、来源和反触发条件设为受保护约束。
 4. 直接调用 Darwin 执行基线、实验、paired 评审和 keep/revert。
+5. 重复失败才生成 `CREATE/UPDATE/MERGE/PRUNE/NOOP` whole-folder patch。
+6. 每个 patch 必须绑定训练轨迹、before/after Hash、protected gates、快照和用户 keep/revert。
 5. Darwin 完成后重新运行 one-skills 回归门禁。
 
 不得为了通过测试而降低测试难度或删除失败案例。

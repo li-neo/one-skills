@@ -1,11 +1,230 @@
 [
   {
+    "title": "anti-dogmatism-correction",
+    "candidate_type": "principle",
+    "summary": "当抽象理论、上级转述或既有文本与现场事实冲突时，必须让可核验证据触发纠错而不是维护原结论。",
+    "evidence_ids": [
+      "ev-20260807074344778009-3494d9f2",
+      "ev-20260807074344778030-78f124b5",
+      "ev-20260807074344778043-2b1625d0"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：反教条纠错",
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::结构化主张：反教条纠错",
+      "https://www.nber.org/papers/w16361::结构化主张：反教条纠错"
+    ],
+    "tags": [
+      "methodology",
+      "structured-claim",
+      "anti-dogmatism-correction"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice",
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm",
+      "https://www.nber.org/papers/w16361"
+    ],
+    "independence_groups": [
+      "mao-authorized-works",
+      "1981-central-resolution",
+      "nber-meng-qian-yared"
+    ],
+    "id": "anti-dogmatism-correction",
+    "cross_domain": true,
+    "source_independent": true,
+    "predictive": true,
+    "distinctive": false,
+    "actionable": true,
+    "status": "needs_evidence",
+    "rejection_reason": "V3 distinctiveness failed; retained as an internal supporting principle",
+    "problem": "理论、上级转述或既有文本与可核验事实冲突",
+    "assumptions": [
+      "冲突事实可以被独立记录",
+      "结论允许修改"
+    ],
+    "mechanism": [
+      "证据优先于权威转述",
+      "异常事实触发重新解释"
+    ],
+    "triggers": [
+      "现场与报告不一致",
+      "反复失败但理论不变",
+      "用历史金句替代当前证据"
+    ],
+    "anti_triggers": [
+      "只需要说明理论原意",
+      "事实尚未核验"
+    ],
+    "inputs": [
+      "原结论",
+      "冲突事实",
+      "来源等级",
+      "替代解释"
+    ],
+    "procedure": [
+      "分开记录理论陈述和事实结果",
+      "核验冲突事实的来源与版本",
+      "提出至少一个替代解释",
+      "定义支持或推翻各解释的新证据",
+      "修改结论并保留变更理由"
+    ],
+    "branches": [],
+    "output": "理论—事实冲突表和纠错决议",
+    "done": "新结论解释异常且明确保留未知",
+    "boundaries": [
+      "不因反权威而忽略证据质量",
+      "不把怀疑变成任意否定"
+    ],
+    "failures": [
+      "只更换措辞不改变结论",
+      "选择更方便立场的版本"
+    ],
+    "counterexamples": [],
+    "related_ids": [
+      {
+        "relation": "depends_on",
+        "target": "version-attribution"
+      },
+      {
+        "relation": "composes_with",
+        "target": "practice-test-loop"
+      }
+    ],
+    "verification": {
+      "claim_key": "anti-dogmatism-correction",
+      "cross_domain": true,
+      "predictive": true,
+      "distinctive": false,
+      "actionable": true,
+      "boundary": true,
+      "reason": "工厂设备场景实现了从历史与制度材料到工程诊断的跨域迁移；多源、校准后的现场证据一致时改判，传感器共因故障时不改判，构成可检验的条件预测和明确操作边界。校准、独立复测、暂停运行也可执行。但其核心机制仍是“可核事实应纠正既有模型”，属于通用证据推理常识；现有 evidence 又只是 low 层级的构建者转述，不能据其流畅表述认定更独特的机制。",
+      "novel_question": "一家工厂按设备供应商的理论模型认定冷却系统没有问题，但夜班维修记录、红外测温和停机时间都显示同一机组持续过热。项目负责人应继续维护模型结论，还是改变判断？",
+      "derived_answer": "应把“设备正常”降为待检验假设，先校验测温仪器和记录口径，再由不受供应商结论约束的人员复测；若多源现场证据一致，就修正模型、暂停高风险运行并记录改判依据。这个处置是对所给结构化主张的现代场景推导，不是任何来源人物的原话。",
+      "assumptions": [
+        "过热会带来显著安全或停产风险。",
+        "维修记录、测温数据和停机数据可独立核验。",
+        "负责人有权暂停设备并要求重新诊断。"
+      ],
+      "falsifier": "若经校准后的独立复测证明异常来自同一个故障传感器，且设备的其他物理指标和拆检结果均正常，则不应以原异常记录推翻模型结论。",
+      "generated_name": "事实触发反教条纠错",
+      "fallback": "并列冲突来源，停在未决状态",
+      "isolation_level": "model-shared/session-separated"
+    },
+    "disposition": "shared-principle"
+  },
+  {
+    "title": "center-work-coordination",
+    "candidate_type": "framework",
+    "summary": "组织可以设置阶段性中心任务，但安全、合规、现金流、人员健康和必要协同必须作为不可被排序取消的并行底线。",
+    "evidence_ids": [
+      "ev-20260807074344778067-2c334f4a",
+      "ev-20260807074344778076-2b3036a9"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/d4j/#committee-methods::结构化主张：中心任务与底线协调",
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::结构化主张：中心任务与底线协调"
+    ],
+    "tags": [
+      "methodology",
+      "structured-claim",
+      "center-work-coordination"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/d4j/#committee-methods",
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm"
+    ],
+    "independence_groups": [
+      "mao-authorized-works",
+      "1981-central-resolution"
+    ],
+    "id": "center-work-coordination",
+    "cross_domain": true,
+    "source_independent": true,
+    "predictive": true,
+    "distinctive": false,
+    "actionable": true,
+    "status": "needs_evidence",
+    "rejection_reason": "V3 distinctiveness failed; retained as an internal supporting principle",
+    "problem": "组织需要聚焦，但多个底线和必要协同不能停止",
+    "assumptions": [
+      "中心任务有时间边界",
+      "底线约束可以单独监测"
+    ],
+    "mechanism": [
+      "中心任务集中主要资源",
+      "其他必要工作按节奏协同而非被取消"
+    ],
+    "triggers": [
+      "季度目标过多",
+      "所有工作平均分配资源",
+      "聚焦开始损害安全合规"
+    ],
+    "anti_triggers": [
+      "多个同级安全风险",
+      "探索阶段需要并行发现"
+    ],
+    "inputs": [
+      "阶段中心任务",
+      "必要协同",
+      "安全合规现金流健康底线",
+      "复核日期"
+    ],
+    "procedure": [
+      "定义中心任务和时间范围",
+      "列出不可取消的并行底线",
+      "明确资源比例和协同节奏",
+      "监测底线和外溢成本",
+      "到期复核并允许改判"
+    ],
+    "branches": [],
+    "output": "中心任务、并行底线、资源节奏和复核表",
+    "done": "主要资源形成聚焦且任一底线未失守",
+    "boundaries": [
+      "中心任务不能成为绕过法律和权利的理由"
+    ],
+    "failures": [
+      "只做中心工作导致系统性风险",
+      "把忙碌当成协同"
+    ],
+    "counterexamples": [],
+    "related_ids": [
+      {
+        "relation": "depends_on",
+        "target": "contradiction-reclassification"
+      },
+      {
+        "relation": "composes_with",
+        "target": "stage-experimentation"
+      }
+    ],
+    "verification": {
+      "claim_key": "center-work-coordination",
+      "cross_domain": true,
+      "predictive": true,
+      "distinctive": false,
+      "actionable": true,
+      "boundary": true,
+      "reason": "创业公司排序问题是有效跨域案例，并给出了“中心任务受安全、法律、现金流和健康底线约束”的条件性决策及信号不成立时维持优先级的边界，操作上也能落实为封堵、最低资源和缩减范围。不过，优先事项不得覆盖安全与法定义务，本质上是常见的约束式优先级管理；转述证据未建立一个超越该常识的独特协调机制。",
+      "novel_question": "一家现金只够支撑三个月的创业公司把新版按时上线定为本季度唯一中心任务，此时安全团队发现高危漏洞，客服积压退款，核心工程师连续超时工作。管理层该如何排序？",
+      "derived_answer": "上线仍可作为阶段性中心任务，但不能取消安全、现金流、法定义务和人员健康底线。管理层应先封堵高危漏洞和违法风险，给退款与值班设置最低资源保障，再缩减上线范围或调整日期；其他工作围绕中心任务协同，而不是被宣布为不存在。这是基于结构化主张的管理推导，不是历史原话。",
+      "assumptions": [
+        "高危漏洞具有现实可利用性。",
+        "退款积压可能触发合同、监管或现金流后果。",
+        "缩减发布范围比忽略底线的损失更小。"
+      ],
+      "falsifier": "若漏洞经独立验证不可达，退款没有到期义务，人员工时也处于健康范围，则无需因这些信号改变上线优先级。",
+      "generated_name": "中心任务与并行底线协调",
+      "fallback": "降低目标密度或增加必要资源，不取消底线",
+      "isolation_level": "model-shared/session-separated"
+    },
+    "disposition": "shared-principle"
+  },
+  {
     "title": "contradiction-reclassification",
     "candidate_type": "framework",
     "summary": "矛盾排序必须是可改判的阶段假设，并禁止把普通分歧转化为敌我身份。",
     "evidence_ids": [
-      "ev-20260806175133382918-ac087ad7",
-      "ev-20260806175133382950-9b608ed4"
+      "ev-20260807074344778094-b5dc328e",
+      "ev-20260807074344778101-39371ae4"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction::结构化主张：阶段性分类",
@@ -24,28 +243,215 @@
       "mao-authorized-works",
       "1981-central-resolution"
     ],
-    "id": "candidate-20260806175133382965-b399b31b",
+    "id": "contradiction-reclassification",
     "cross_domain": true,
     "source_independent": true,
-    "predictive": false,
+    "predictive": true,
+    "distinctive": false,
+    "actionable": true,
+    "status": "needs_evidence",
+    "rejection_reason": "V3 distinctiveness failed; retained as an internal supporting principle",
+    "problem": "多个问题争夺注意力，当前优先项不清楚",
+    "assumptions": [
+      "安全、法律和基本权利底线已单独保留",
+      "候选问题可被证据比较"
+    ],
+    "mechanism": [
+      "用牵引和外溢比较候选关系",
+      "把优先级作为阶段假设"
+    ],
+    "triggers": [
+      "所有部门都说自己最重要",
+      "症状很多但资源有限",
+      "旧优先级不再解释结果",
+      "主要问题已经改善但出现新证据"
+    ],
+    "anti_triggers": [
+      "多个安全风险必须并行处理",
+      "事实不足以比较候选"
+    ],
+    "inputs": [
+      "候选关系",
+      "支持和反证",
+      "牵引影响",
+      "外溢成本"
+    ],
+    "procedure": [
+      "提出至少两个主要问题候选",
+      "若旧优先项已改善或出现新证据，返回调查与实践循环核验后再排序",
+      "检查改善后哪些问题会缓解",
+      "检查恶化后哪些问题会放大",
+      "评估是否向弱势方转移成本",
+      "选择阶段优先项并冻结改判信号"
+    ],
+    "branches": [],
+    "output": "候选排序、备选解释、改判条件和复核日期",
+    "done": "优先项可被新事实推翻，底线约束未被取消",
+    "boundaries": [
+      "主要问题不是永久真理",
+      "不得把普通分歧转成敌我身份"
+    ],
+    "failures": [
+      "为了聚焦忽略并行底线",
+      "把容易做当成最关键"
+    ],
+    "counterexamples": [],
+    "related_ids": [
+      {
+        "relation": "depends_on",
+        "target": "relational-problem-map"
+      },
+      {
+        "relation": "composes_with",
+        "target": "practice-test-loop"
+      }
+    ],
+    "verification": {
+      "claim_key": "contradiction-reclassification",
+      "cross_domain": true,
+      "predictive": true,
+      "distinctive": false,
+      "actionable": true,
+      "boundary": true,
+      "reason": "研发延期场景跨出了原材料语境；需求与环境记录变化会触发重新分类，而稳定条件和持续拒绝交付会维持个人或团队责任解释，因此具有可检验性、行动指向和边界。但“新证据出现后重做根因分类、不要把工作分歧人格化”仍是通用复盘常识，阶段性假设的表述没有单独形成超越常识的新机制。",
+      "novel_question": "两个研发团队因接口延期发生冲突，管理层最初认定主要问题是下游团队不配合；后来发现上游需求每周变化且双方共同依赖的测试环境长期不稳定。应如何重新分类？",
+      "derived_answer": "应把原来的“下游不配合”视为可改判假设，依据新证据把主要问题重分类为需求治理和共享环境约束，并分别处理责任、资源与流程。团队成员的异议不能被升级成忠诚或敌对身份判断，复盘还应约定下一次改判所需的指标。这是现代组织情境中的推导，不是来源中的逐字表述。",
+      "assumptions": [
+        "需求变更记录和环境故障记录真实完整。",
+        "延期由多个相互作用的条件造成。",
+        "双方仍在共同组织目标下工作。"
+      ],
+      "falsifier": "若时间线证明需求和环境始终稳定，而下游团队在资源充分且承诺明确的情况下反复无故拒绝交付，则流程约束不再是主要解释。",
+      "generated_name": "阶段性主要问题与改判",
+      "fallback": "无法排序时并行维护底线并继续补证",
+      "isolation_level": "model-shared/session-separated"
+    },
+    "disposition": "shared-principle"
+  },
+  {
+    "title": "distribution-before-aggregate",
+    "candidate_type": "principle",
+    "summary": "组织不能把高频声音、参与总量或总体指标直接当作代表性，必须检查沉默者、分布和承担成本的群体。",
+    "evidence_ids": [
+      "ev-20260807074344778122-9f367d4a",
+      "ev-20260807074344778130-37784376"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::结构化主张：分布优先于总量",
+      "https://www.nber.org/papers/w16361::结构化主张：分布优先于总量"
+    ],
+    "tags": [
+      "methodology",
+      "structured-claim",
+      "distribution-before-aggregate"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods",
+      "https://www.nber.org/papers/w16361"
+    ],
+    "independence_groups": [
+      "mao-authorized-works",
+      "nber-meng-qian-yared"
+    ],
+    "id": "distribution-before-aggregate",
+    "cross_domain": true,
+    "source_independent": true,
+    "predictive": true,
     "distinctive": true,
     "actionable": true,
-    "status": "needs_model_verification",
-    "rejection_reason": "V2 predictive-power test requires independent model or human review"
+    "status": "accepted",
+    "rejection_reason": "",
+    "problem": "总体数据、高频声音或资源聚焦掩盖无发言权群体承担的局部损害",
+    "assumptions": [
+      "能够按群体、地区、角色或时间拆分结果"
+    ],
+    "mechanism": [
+      "比较分布而非只看平均和总量",
+      "主动寻找沉默者和承担成本者"
+    ],
+    "triggers": [
+      "总体指标很好但局部投诉严重",
+      "资源聚焦或阶段扩展把成本转移给没有发言权的群体",
+      "活跃用户代表全部用户",
+      "高参与被当成同意"
+    ],
+    "anti_triggers": [
+      "数据无法合法细分",
+      "样本小到无法支持群体结论"
+    ],
+    "inputs": [
+      "总体指标",
+      "分组结果",
+      "沉默样本",
+      "成本承担者"
+    ],
+    "procedure": [
+      "列出总体指标掩盖的维度",
+      "按直接受影响程度分组",
+      "比较收益和损害分布",
+      "寻找反常组、沉默样本和无发言权的成本承担者",
+      "若成本集中于无发言权群体，暂停阶段扩展并组合 feedback-integrity",
+      "把方案与采纳理由返回受影响群体复核，将结果写入停止、补偿或重设计条件"
+    ],
+    "branches": [],
+    "output": "总体—分布对照、异常群体、反馈复核和扩展治理条件",
+    "done": "结论不再依赖单一平均值，且受影响群体复核前保持暂停扩展",
+    "boundaries": [
+      "不从小样本推断敏感属性",
+      "不公开可识别的弱势个体"
+    ],
+    "failures": [
+      "只分组不检查样本偏差",
+      "用总体改善合理化严重局部损害"
+    ],
+    "counterexamples": [],
+    "related_ids": [
+      {
+        "relation": "depends_on",
+        "target": "investigation-before-judgment"
+      },
+      {
+        "relation": "composes_with",
+        "target": "feedback-integrity"
+      }
+    ],
+    "verification": {
+      "claim_key": "distribution-before-aggregate",
+      "cross_domain": true,
+      "predictive": true,
+      "distinctive": true,
+      "actionable": true,
+      "boundary": true,
+      "reason": "在线教育案例完成了跨域迁移，并作出可检验预测：总体改善和高频支持声可能与特定群体受损并存，分层抽样与可访问性测试可确认或推翻该判断。其差异化机制不只是“多听意见”，而是把发言机会视为有选择偏差的样本，同时检查指标分布和成本承担者；这超出了单看平均值的通用直觉，并能直接落实为分层、主动触达和保留替代入口。",
+      "novel_question": "一所大学的在线课程总观看时长和满意度都上升，论坛里支持新平台的帖子也占多数，但低带宽地区学生和使用读屏软件的学生很少发言。学校能否据此全面停用旧平台？",
+      "derived_answer": "不能只凭总量和高频发言决定全面迁移。学校应按地区、带宽、残障辅助需求和退课情况拆分结果，主动联系沉默且承担迁移成本的群体，并在无障碍和低带宽指标达标前保留替代入口。该建议是由结构化主张推导出的新场景答案，不是来源原话。",
+      "assumptions": [
+        "沉默群体可能因接入障碍而无法参与现有调查。",
+        "旧平台仍可在过渡期内维持。",
+        "教育可及性属于不能被平均满意度抵消的基本要求。"
+      ],
+      "falsifier": "若分层抽样和可访问性测试证明各群体的完成率、故障率与满意度均无实质差异，且新平台符合无障碍标准，则保留旧平台不再是必要条件。",
+      "generated_name": "分布检查优先于总体指标",
+      "fallback": "暂停扩大，收缩结论并补充匿名且合法的分布与反馈数据",
+      "isolation_level": "model-shared/session-separated"
+    },
+    "disposition": "independent-module"
   },
   {
     "title": "feedback-integrity",
     "candidate_type": "framework",
     "summary": "可用的反馈方法必须把一线证据、暂时判断、可逆试验和独立坏消息通道组成闭环。",
     "evidence_ids": [
-      "ev-20260806175133382979-ba5b5b95",
-      "ev-20260806175133382989-33cf22cf",
-      "ev-20260806175133382997-b6604d2f",
-      "ev-20260806175133383005-042bef4c"
+      "ev-20260807074344778145-fde1eae4",
+      "ev-20260807074344778152-1651d763",
+      "ev-20260807074344778159-ef36a626",
+      "ev-20260807074344778167-4e30fe24",
+      "ev-20260807074344778174-9bf8a104"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：反馈完整性",
       "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::结构化主张：反馈完整性",
+      "https://www.12371.cn/special/mzdxj/d4j/#committee-methods::结构化主张：反馈完整性",
       "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::结构化主张：反馈完整性",
       "https://www.nber.org/papers/w16361::结构化主张：反馈完整性"
     ],
@@ -57,6 +463,7 @@
     "source_ids": [
       "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice",
       "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods",
+      "https://www.12371.cn/special/mzdxj/d4j/#committee-methods",
       "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm",
       "https://www.nber.org/papers/w16361"
     ],
@@ -65,23 +472,533 @@
       "1981-central-resolution",
       "nber-meng-qian-yared"
     ],
-    "id": "candidate-20260806175133383016-818e71f5",
+    "id": "feedback-integrity",
     "cross_domain": true,
     "source_independent": true,
-    "predictive": false,
+    "predictive": true,
     "distinctive": true,
     "actionable": true,
-    "status": "needs_model_verification",
-    "rejection_reason": "V2 predictive-power test requires independent model or human review"
+    "status": "accepted",
+    "rejection_reason": "",
+    "problem": "组织收集了意见，但没有形成可修正的方案与结果返回",
+    "assumptions": [
+      "参与者可以安全提供具体经历",
+      "试点结果允许改变方案"
+    ],
+    "mechanism": [
+      "分散经验经研究形成方案",
+      "方案返回一线并在行动中修订"
+    ],
+    "triggers": [
+      "用户意见很多但无法执行",
+      "方案自上而下推出",
+      "意见采纳结果不透明"
+    ],
+    "anti_triggers": [
+      "只需一次性信息通知",
+      "组织预先规定唯一正确答案"
+    ],
+    "inputs": [
+      "直接受影响者",
+      "具体经历",
+      "样本范围",
+      "试行方案"
+    ],
+    "procedure": [
+      "收集事实、诉求、解释、建议、反对和未知",
+      "公开样本与代表性限制",
+      "提炼有限问题和试行方案",
+      "返回采纳与未采纳理由",
+      "收集异常、退出和负面影响",
+      "决定扩大、保持、修改或停止"
+    ],
+    "branches": [],
+    "output": "反馈分类、方案、返回说明和试点决议",
+    "done": "参与者知道意见如何处理，试点结果能够改变原方案",
+    "boundaries": [
+      "多数声量不等于真实同意",
+      "不得取消退出申诉和复核"
+    ],
+    "failures": [
+      "只听支持者",
+      "动员人数被当成授权"
+    ],
+    "counterexamples": [],
+    "related_ids": [
+      {
+        "relation": "depends_on",
+        "target": "protected-dissent-channel"
+      },
+      {
+        "relation": "composes_with",
+        "target": "practice-test-loop"
+      }
+    ],
+    "verification": {
+      "claim_key": "feedback-integrity",
+      "cross_domain": true,
+      "predictive": true,
+      "distinctive": true,
+      "actionable": true,
+      "boundary": true,
+      "reason": "医院算法试点是实质跨域应用；该机制预测单一平均指标可能被跨日转移所改善，患者级独立审计可验证这一点。差异化在于把一线证据、暂定判断、可逆试验、坏消息保护和角色分离组成闭环，而非泛泛要求“收集反馈”；这些环节均有具体动作和扩张边界。需保留限定：独立通道与可逆试验主要是对数条 low 层级转述的制度综合，不能归作任一来源的直接表述。",
+      "novel_question": "医院试行新的门诊预约算法后，管理看板显示候诊时间下降，但护士私下反映系统把复杂患者推迟到了次日，而项目经理同时负责收集反馈、解释数据和决定是否扩张。医院应如何评估试点？",
+      "derived_answer": "医院应建立完整闭环：独立抽取患者级样本和次日转移数据，保护护士与患者提交坏消息，暂时保留算法有效这一判断，以有限科室继续可逆试验，并由不同角色负责收集、解释、扩张决定和事后复核。不能用单一平均候诊指标直接扩张。这是对结构化主张的应用推导，并非历史引语。",
+      "assumptions": [
+        "复杂患者被推迟可能损害诊疗质量。",
+        "当前看板没有完整呈现跨日转移和患者复杂度。",
+        "试点可以暂停或缩小而不危及持续医疗。"
+      ],
+      "falsifier": "若独立审计确认病例复杂度已正确调整、跨日转移没有增加、临床结局未恶化，且匿名反馈未发现系统性遗漏，则没有理由仅因角色重叠否定试点效果。",
+      "generated_name": "一线反馈完整闭环",
+      "fallback": "暂停扩大，先修复反馈制度",
+      "isolation_level": "model-shared/session-separated"
+    },
+    "disposition": "independent-module"
+  },
+  {
+    "title": "investigation-before-judgment",
+    "candidate_type": "framework",
+    "summary": "高影响判断必须先取得不同处境的一手事实，并预先写明什么证据会改变当前结论。",
+    "evidence_ids": [
+      "ev-20260807074344778189-a07f6c8d",
+      "ev-20260807074344778195-aa17d49c"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：先调查再判断",
+      "https://www.nber.org/papers/w16361::结构化主张：先调查再判断"
+    ],
+    "tags": [
+      "methodology",
+      "structured-claim",
+      "investigation-before-judgment"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice",
+      "https://www.nber.org/papers/w16361"
+    ],
+    "independence_groups": [
+      "mao-authorized-works",
+      "nber-meng-qian-yared"
+    ],
+    "id": "investigation-before-judgment",
+    "cross_domain": true,
+    "source_independent": true,
+    "predictive": true,
+    "distinctive": false,
+    "actionable": true,
+    "status": "needs_evidence",
+    "rejection_reason": "V3 distinctiveness failed; retained as an internal supporting principle",
+    "problem": "重要结论主要来自转述、单一样本或管理层想象",
+    "assumptions": [
+      "可以接触不同处境的直接受影响者",
+      "调查不会造成报复或不可逆伤害"
+    ],
+    "mechanism": [
+      "现场事实校正先验",
+      "反预期材料暴露错误解释"
+    ],
+    "triggers": [
+      "只有二手报告",
+      "行业报告与一线反馈冲突",
+      "进入缺少一手经验的新领域"
+    ],
+    "anti_triggers": [
+      "普通事实查询",
+      "证据充分且可快速撤销的低风险选择"
+    ],
+    "inputs": [
+      "唯一核心问题",
+      "当前判断",
+      "不同处境的对象",
+      "改判证据"
+    ],
+    "procedure": [
+      "写下当前判断和能推翻它的证据",
+      "覆盖直接受影响者、一线执行者和失败者",
+      "追问具体事件、行为、时间和结果",
+      "记录反证、未知和样本限制"
+    ],
+    "branches": [],
+    "output": "调查前假设、证据清单、调查后判断和剩余缺口",
+    "done": "至少两类角色提供可定位材料，并出现一个反证或明确未知项",
+    "boundaries": [
+      "不得用职位压力强迫表态",
+      "调查数量不等于代表性"
+    ],
+    "failures": [
+      "上级或同伴在场污染回答",
+      "只访问支持原方案的人"
+    ],
+    "counterexamples": [],
+    "related_ids": [
+      {
+        "relation": "depends_on",
+        "target": "rights-bound-transfer"
+      },
+      {
+        "relation": "composes_with",
+        "target": "practice-test-loop"
+      }
+    ],
+    "verification": {
+      "claim_key": "investigation-before-judgment",
+      "cross_domain": true,
+      "predictive": true,
+      "distinctive": false,
+      "actionable": true,
+      "boundary": true,
+      "reason": "物流人事判断是跨域应用，调查不同班次和多个角色可区分行为解释与流程解释，且答案列出了可执行的资料和证伪边界。真正可能超越“先调查再判断”常识的是预先登记改判证据，但给定 evidence 转述并未建立这一机制；因此不能借助答案中新增的流畅细节把整个主张判为差异化。",
+      "novel_question": "物流公司总部看到某仓库人均拣货量下降，准备以“员工消极怠工”为由更换主管。在作出高影响人事决定前，应调查什么？",
+      "derived_answer": "应先进入不同班次现场，访谈拣货员、维护员和主管，核对订单结构、货架布局、扫描器故障、缺员与安全停顿，并预先写明哪些证据会支持或推翻“管理失职”假设。只有一手材料与可比数据形成一致证据后，才能作出人事判断。该答案是结构化主张在物流场景中的推导，不是来源直接回答。",
+      "assumptions": [
+        "现有总部指标无法区分人员行为与流程条件。",
+        "更换主管属于影响显著且不易完全撤回的决定。",
+        "公司能够取得班次级和订单级资料。"
+      ],
+      "falsifier": "若现场调查、设备日志和订单难度调整后的数据都排除流程与资源变化，并显示主管持续违反明确管理要求，则进一步延迟人事处理没有依据。",
+      "generated_name": "调查先于判断",
+      "fallback": "缩小结论范围，只输出补证问题",
+      "isolation_level": "model-shared/session-separated"
+    },
+    "disposition": "shared-principle"
+  },
+  {
+    "title": "practice-test-loop",
+    "candidate_type": "framework",
+    "summary": "方法结论只能作为暂时假设，必须通过范围有限、结果可观察的实践再次检验和修正。",
+    "evidence_ids": [
+      "ev-20260807074344778209-9d9f6592",
+      "ev-20260807074344778216-0a7f7cef"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：实践检验循环",
+      "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::结构化主张：实践检验循环"
+    ],
+    "tags": [
+      "methodology",
+      "structured-claim",
+      "practice-test-loop"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice",
+      "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "practice-test-loop",
+    "cross_domain": true,
+    "source_independent": false,
+    "predictive": true,
+    "distinctive": false,
+    "actionable": true,
+    "status": "needs_evidence",
+    "rejection_reason": "V3 distinctiveness failed; retained as an internal supporting principle",
+    "problem": "方法结论停留在解释层，无法被现实结果推翻",
+    "assumptions": [
+      "可以设计范围有限且可撤回的行动",
+      "存在可观察结果"
+    ],
+    "mechanism": [
+      "把解释改写为暂时假设",
+      "用实践结果更新假设而非维护原结论"
+    ],
+    "triggers": [
+      "结论未经行动检验",
+      "已有调查但不知道下一步",
+      "试点结果与预期冲突"
+    ],
+    "anti_triggers": [
+      "不可逆高风险决策",
+      "无法观察结果的空泛主张",
+      "需要把方案返回参与者并说明采纳或未采纳理由",
+      "多个竞争解释尚未完成关系、反证和外溢比较"
+    ],
+    "inputs": [
+      "暂时假设",
+      "支持与反证",
+      "可逆行动",
+      "成功失败停止条件"
+    ],
+    "procedure": [
+      "把结论写成可证伪假设",
+      "设计短周期可逆试验",
+      "预先冻结成功失败和停止条件",
+      "优先检查异常与负面结果",
+      "根据结果保持、修改或放弃假设"
+    ],
+    "branches": [],
+    "output": "假设、试验、结果和改判记录",
+    "done": "结果能够改变原判断，且失败可安全回滚",
+    "boundaries": [
+      "不能用行动规模代替证据",
+      "不能在基本权利上试错"
+    ],
+    "failures": [
+      "指标只允许证明成功",
+      "试点无法退出"
+    ],
+    "counterexamples": [],
+    "related_ids": [
+      {
+        "relation": "depends_on",
+        "target": "investigation-before-judgment"
+      },
+      {
+        "relation": "composes_with",
+        "target": "stage-experimentation"
+      }
+    ],
+    "verification": {
+      "claim_key": "practice-test-loop",
+      "cross_domain": true,
+      "predictive": true,
+      "distinctive": false,
+      "actionable": true,
+      "boundary": true,
+      "reason": "AI 代码审查场景属于跨域迁移，试点指标能够预测是否应扩展、修改或停止，既可执行也有本地验证和可比外部证据所限定的边界。但“先小范围试验、观察结果、再迭代”就是常见的实验、PDCA 或试点逻辑；给定转述没有提供超越该通用机制的识别规则。",
+      "novel_question": "软件公司认为 AI 代码审查能缩短交付周期，是否应立即要求所有仓库强制启用并据此削减人工审查？",
+      "derived_answer": "不应把方法判断直接变成永久制度。先在风险较低、可回滚的少量仓库试行，预先观察缺陷逃逸率、审查时长、误报、敏感信息处理和开发者申诉，再根据结果修正提示、适用范围或停止试验；人工审查应在证据充分前保留。这是现代工程场景中的推导，不是任何来源的原句。",
+      "assumptions": [
+        "不同仓库的风险和代码类型存在差异。",
+        "试点结果可以被可靠测量并与基线比较。",
+        "强制全面启用具有可避免的质量或合规风险。"
+      ],
+      "falsifier": "若已有与本公司仓库高度可比的重复对照结果，并且本地小规模验证也显示各关键指标稳定改善、回滚成本极低，则可以缩短试验阶段并扩大部署。",
+      "generated_name": "实践检验与改判",
+      "fallback": "先寻找代理指标或更小的低风险试验",
+      "isolation_level": "model-shared/session-separated"
+    },
+    "disposition": "shared-principle"
+  },
+  {
+    "title": "protected-dissent-channel",
+    "candidate_type": "principle",
+    "summary": "可用的组织反馈必须让异议和坏消息安全上行，并把收集、解释、执行和复核至少在角色上分开。",
+    "evidence_ids": [
+      "ev-20260807074344778232-95cbaab2",
+      "ev-20260807074344778239-072a7e52",
+      "ev-20260807074344778246-355277b4"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::结构化主张：异议与坏消息保护",
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::结构化主张：异议与坏消息保护",
+      "https://www.nber.org/papers/w16361::结构化主张：异议与坏消息保护"
+    ],
+    "tags": [
+      "methodology",
+      "structured-claim",
+      "protected-dissent-channel"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods",
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm",
+      "https://www.nber.org/papers/w16361"
+    ],
+    "independence_groups": [
+      "mao-authorized-works",
+      "1981-central-resolution",
+      "nber-meng-qian-yared"
+    ],
+    "id": "protected-dissent-channel",
+    "cross_domain": true,
+    "source_independent": true,
+    "predictive": true,
+    "distinctive": true,
+    "actionable": true,
+    "status": "accepted",
+    "rejection_reason": "",
+    "problem": "坏消息会使报告者受罚，决策系统只能收到支持性信息",
+    "assumptions": [
+      "能够建立独立于执行链的反馈或复核角色"
+    ],
+    "mechanism": [
+      "降低报告坏消息的个人成本",
+      "分离收集、解释、执行和复核"
+    ],
+    "triggers": [
+      "周报永远绿色",
+      "批评者沉默",
+      "失败只能向直接负责人报告"
+    ],
+    "anti_triggers": [
+      "匿名渠道用于无证据攻击",
+      "紧急威胁需要立即依法处置"
+    ],
+    "inputs": [
+      "报告渠道",
+      "惩罚激励",
+      "角色权限",
+      "升级和申诉路径"
+    ],
+    "procedure": [
+      "识别坏消息在哪一环被过滤",
+      "建立安全记录和反报复规则",
+      "指定独立复核者",
+      "把异常与总体指标同时展示",
+      "跟踪处理结果和责任"
+    ],
+    "branches": [],
+    "output": "坏消息通道、角色分离、升级与保护机制",
+    "done": "报告者可安全上行，执行者不能单独关闭复核",
+    "boundaries": [
+      "保护异议不等于免除事实责任",
+      "遵守隐私和合法程序"
+    ],
+    "failures": [
+      "匿名但可被轻易追踪",
+      "复核者受同一绩效目标控制"
+    ],
+    "counterexamples": [],
+    "related_ids": [
+      {
+        "relation": "depends_on",
+        "target": "rights-bound-transfer"
+      },
+      {
+        "relation": "composes_with",
+        "target": "distribution-before-aggregate"
+      }
+    ],
+    "verification": {
+      "claim_key": "protected-dissent-channel",
+      "cross_domain": true,
+      "predictive": true,
+      "distinctive": true,
+      "actionable": true,
+      "boundary": true,
+      "reason": "药品质量案例把历史和制度转述迁移到受监管的放行流程；它预测同一经理控制绩效、调查与放行会抑制坏消息，而独立审计轨迹和复算可以检验实质争议。差异化机制是按角色拆分上报、证据保全、解释、决定和复核，并加入绕过利益冲突链的反报复通道，不只是要求管理者听取异议。暂停、保全、独立调查与放行分离均可操作，预登记排除规则和独立复算给出了边界。",
+      "novel_question": "药品上市前，质量工程师怀疑一批稳定性数据被选择性排除，但其直属经理同时控制绩效、调查结论和放行决定。公司怎样处理才不让坏消息被压制？",
+      "derived_answer": "应提供绕过直属经理的保密上报渠道和明确的反报复保护，暂停相关批次放行，由独立质量或合规人员保全原始数据并调查，再让未参与收集和解释的人作放行决定，事后复核调查完整性。异议应按证据处理，不能按员工是否“支持项目”处理。这是对结构化主张的制度推导，不是来源原话。",
+      "assumptions": [
+        "被排除的数据可能改变药品安全性或有效性判断。",
+        "直属经理存在现实利益冲突。",
+        "公司具备独立质量、合规或外部复核渠道。"
+      ],
+      "falsifier": "若原始审计轨迹证明数据排除完全符合预先登记且获监管认可的规则，独立复算不改变结论，并且工程师不存在报复风险，则无需继续暂停放行。",
+      "generated_name": "异议与坏消息保护",
+      "fallback": "停止大范围行动并引入外部独立审查",
+      "isolation_level": "model-shared/session-separated"
+    },
+    "disposition": "independent-module"
+  },
+  {
+    "title": "relational-problem-map",
+    "candidate_type": "framework",
+    "summary": "复杂问题应先改写为目标、资源、事实、流程或权利关系，再比较候选解释，不能先把责任固定到个人身份。",
+    "evidence_ids": [
+      "ev-20260807074344778262-ea442209",
+      "ev-20260807074344778269-469ea6c2"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction::结构化主张：关系化问题地图",
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::结构化主张：关系化问题地图"
+    ],
+    "tags": [
+      "methodology",
+      "structured-claim",
+      "relational-problem-map"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction",
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm"
+    ],
+    "independence_groups": [
+      "mao-authorized-works",
+      "1981-central-resolution"
+    ],
+    "id": "relational-problem-map",
+    "cross_domain": true,
+    "source_independent": true,
+    "predictive": true,
+    "distinctive": false,
+    "actionable": true,
+    "status": "needs_evidence",
+    "rejection_reason": "V3 distinctiveness failed; retained as an internal supporting principle",
+    "problem": "复杂问题被简化为某个人或群体有问题",
+    "assumptions": [
+      "可以区分目标、资源、事实、流程和权利关系"
+    ],
+    "mechanism": [
+      "把身份归因改写为可观察关系",
+      "比较多个结构解释"
+    ],
+    "triggers": [
+      "团队冲突",
+      "多方目标不一致",
+      "问题互相纠缠"
+    ],
+    "anti_triggers": [
+      "单一明确技术故障",
+      "需要立即保护人身安全的紧急事件"
+    ],
+    "inputs": [
+      "参与者目标",
+      "资源约束",
+      "事实争议",
+      "流程断点",
+      "权利影响"
+    ],
+    "procedure": [
+      "把谁有问题改写成关系问题",
+      "为每个关系记录双方目标和证据",
+      "提出两个以上候选解释",
+      "检查成本是否被转移给弱势方",
+      "选择可验证的阶段性关系"
+    ],
+    "branches": [],
+    "output": "关系、证据、替代解释和外溢影响地图",
+    "done": "问题不依赖永久身份标签，且至少两个解释可比较",
+    "boundaries": [
+      "禁止敌我化和人格化",
+      "权利冲突不能只按效率排序"
+    ],
+    "failures": [
+      "把相关性写成责任",
+      "只保留管理层视角"
+    ],
+    "counterexamples": [],
+    "related_ids": [
+      {
+        "relation": "depends_on",
+        "target": "investigation-before-judgment"
+      },
+      {
+        "relation": "composes_with",
+        "target": "contradiction-reclassification"
+      }
+    ],
+    "verification": {
+      "claim_key": "relational-problem-map",
+      "cross_domain": true,
+      "predictive": true,
+      "distinctive": false,
+      "actionable": true,
+      "boundary": true,
+      "reason": "云事故复盘实现跨域迁移，关系图和候选解释可以产生可核查的根因判断，绕过控制的明知行为也构成清楚边界，步骤具有可操作性。不过，“先查系统、流程和依赖，再归个人责任”是成熟事故复盘与根因分析的通用做法；目标、资源、事实、流程和权利这些分类在给定 low 层级转述中也没有被建立为独特机制。",
+      "novel_question": "云服务发生两小时中断，管理者立刻把事故归咎于最后一次提交代码的工程师。复盘应如何改写问题，才能避免把复杂故障固定为个人责任？",
+      "derived_answer": "先把事故画成关系图：发布目标、变更审批、测试覆盖、告警阈值、回滚权限、值班负荷、依赖服务和时间线，再比较“代码缺陷”“防护失效”“权限设计”与“资源不足”等候选解释。个人行为可以是证据的一部分，但不能在关系和条件查清前成为唯一原因。该回答是结构化主张在事故管理中的推导，不是历史原话。",
+      "assumptions": [
+        "中断通常由技术和组织条件共同作用。",
+        "日志、审批记录和告警时间线可取得。",
+        "复盘目标包括防止复发，而不只是分配责任。"
+      ],
+      "falsifier": "若证据证明该工程师绕过完备且实际有效的控制，明知会导致中断仍实施未经授权的变更，而其他系统条件均未参与故障，则个人行为可以成为主要责任解释。",
+      "generated_name": "关系化问题地图",
+      "fallback": "返回调查模块补充缺失事实",
+      "isolation_level": "model-shared/session-separated"
+    },
+    "disposition": "shared-principle"
   },
   {
     "title": "rights-bound-transfer",
     "candidate_type": "principle",
     "summary": "历史方法的现代迁移必须以非暴力、守法、可逆、保留申辩和复核为硬边界。",
     "evidence_ids": [
-      "ev-20260806175133383023-57bb97ec",
-      "ev-20260806175133383032-ca24e71b",
-      "ev-20260806175133383040-c9ffa765"
+      "ev-20260807074344778283-896714d3",
+      "ev-20260807074344778290-f366b05d",
+      "ev-20260807074344778297-358e3c96"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction::结构化主张：现代迁移边界",
@@ -102,22 +1019,202 @@
       "mao-authorized-works",
       "1981-central-resolution"
     ],
-    "id": "candidate-20260806175133383048-3ba6acd8",
+    "id": "rights-bound-transfer",
     "cross_domain": true,
     "source_independent": true,
     "predictive": false,
-    "distinctive": true,
+    "distinctive": false,
     "actionable": true,
-    "status": "needs_model_verification",
-    "rejection_reason": "V2 predictive-power test requires independent model or human review"
+    "status": "needs_evidence",
+    "rejection_reason": "retained as a governance gate; predictive power is not its contract",
+    "problem": "历史战争、政治和运动语言被直接套到现代组织与个人",
+    "assumptions": [
+      "现代应用受法律、合同、伦理和基本权利约束"
+    ],
+    "mechanism": [
+      "把不可迁移动作列为硬禁区",
+      "用非暴力、守法、可逆和可复核条件约束其他模块"
+    ],
+    "triggers": [
+      "任何历史方法现代应用",
+      "影响人员权利的组织决策",
+      "敌我斗争清洗等语言出现"
+    ],
+    "anti_triggers": [
+      "纯历史事实说明仍需引用纪律但不运行行动模块"
+    ],
+    "inputs": [
+      "受影响者",
+      "法律合同",
+      "不可逆风险",
+      "申辩退出复核机制"
+    ],
+    "procedure": [
+      "识别受影响者和不可逆风险",
+      "排除暴力敌我清洗和强迫服从",
+      "检查知情、申辩、退出和救济",
+      "分离决策执行和复核",
+      "任一硬门失败则停止扩大"
+    ],
+    "branches": [],
+    "output": "迁移许可、禁止项、权利保障和停止决议",
+    "done": "不存在被历史术语掩盖的暴力、违法或权利剥夺",
+    "boundaries": [
+      "这是所有模块的强制治理门，不能被用户覆盖"
+    ],
+    "failures": [
+      "多数同意替代个体权利",
+      "效率目标压过合法程序"
+    ],
+    "counterexamples": [],
+    "related_ids": [
+      {
+        "relation": "composes_with",
+        "target": "protected-dissent-channel"
+      },
+      {
+        "relation": "composes_with",
+        "target": "version-attribution"
+      }
+    ],
+    "verification": {
+      "claim_key": "rights-bound-transfer",
+      "cross_domain": true,
+      "predictive": false,
+      "distinctive": false,
+      "actionable": true,
+      "boundary": true,
+      "reason": "社区治理案例确实把历史方法迁移到现代组织，并给出拒绝围堵、改用合法协商的明确动作和权利边界。但该主张主要是规范性约束，没有提出可区分的经验结果预测；非暴力、守法、隐私、申辩和复核也属于现代公共行动的基本常识与法律底线，不因完整列举而形成差异化机制。",
+      "novel_question": "社区组织为推进垃圾分类，提议公开张贴反对者姓名、发动成员围堵其住所，并把这种做法称为借鉴历史上的群众动员方法。组织负责人应否批准？",
+      "derived_answer": "不应批准。现代迁移必须受非暴力、法律、隐私、退出权、申辩和独立复核约束；可改用公开说明会、自愿参与的试点、匿名意见渠道和依法制定的规则。把普通政策分歧转成对个人的敌对行动越过了不可接受的权利边界。这个结论是规范性推导，不是把来源转述当作人物原话。",
+      "assumptions": [
+        "反对者没有实施需要紧急制止的暴力或违法行为。",
+        "公开姓名和围堵会造成现实的人身、隐私或表达权损害。",
+        "社区存在合法的协商和规则制定程序。"
+      ],
+      "falsifier": "若所谓行动实际是经本人同意、无骚扰风险的公开辩论，且具有明确退出机制和中立主持，则本题所述的围堵与权利侵害判断不成立；但真实暴力或违法行为仍应交由法定程序处理。",
+      "generated_name": "历史方法现代迁移治理门",
+      "fallback": "只输出补证和治理修复，必要时升级专业人员",
+      "isolation_level": "model-shared/session-separated"
+    },
+    "disposition": "governance"
+  },
+  {
+    "title": "stage-experimentation",
+    "candidate_type": "framework",
+    "summary": "弱势或高不确定条件下应先识别探索、验证、扩展或收缩阶段，再用窄目标和可逆试点积累证据与能力。",
+    "evidence_ids": [
+      "ev-20260807074344778354-518e182b",
+      "ev-20260807074344778362-55b202a3"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/d4j/#committee-methods::结构化主张：阶段化试点",
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::结构化主张：阶段化试点"
+    ],
+    "tags": [
+      "methodology",
+      "structured-claim",
+      "stage-experimentation"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/d4j/#committee-methods",
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm"
+    ],
+    "independence_groups": [
+      "mao-authorized-works",
+      "1981-central-resolution"
+    ],
+    "id": "stage-experimentation",
+    "cross_domain": true,
+    "source_independent": true,
+    "predictive": true,
+    "distinctive": false,
+    "actionable": true,
+    "status": "needs_evidence",
+    "rejection_reason": "V3 distinctiveness failed; retained as an internal supporting principle",
+    "problem": "资源弱或不确定性高，却试图一次全面推进",
+    "assumptions": [
+      "当前能力和资源可测量",
+      "阶段切换可以由结果触发"
+    ],
+    "mechanism": [
+      "先识别探索、验证、扩展或收缩",
+      "用窄目标积累证据、能力和选择权"
+    ],
+    "triggers": [
+      "初创团队多线作战",
+      "关键假设未验证",
+      "不知道何时扩展或收缩"
+    ],
+    "anti_triggers": [
+      "必须并行处理的安全事件",
+      "目标和结果均不可观察"
+    ],
+    "inputs": [
+      "关键假设",
+      "资源能力",
+      "窄目标",
+      "底线约束",
+      "阶段指标"
+    ],
+    "procedure": [
+      "标记当前阶段",
+      "选择最有学习价值的窄目标",
+      "冻结安全合规和健康底线",
+      "运行短周期试点",
+      "按切换条件扩展、保持、收缩或停止"
+    ],
+    "branches": [],
+    "output": "阶段判断、窄目标、里程碑和切换决议",
+    "done": "局部结果可重复且阶段切换有明确证据",
+    "boundaries": [
+      "不迁移歼灭包围等战争语言",
+      "聚焦不能取消并行底线"
+    ],
+    "failures": [
+      "延长周期只是为失败找借口",
+      "局部成功不可复用"
+    ],
+    "counterexamples": [],
+    "related_ids": [
+      {
+        "relation": "depends_on",
+        "target": "practice-test-loop"
+      },
+      {
+        "relation": "composes_with",
+        "target": "center-work-coordination"
+      }
+    ],
+    "verification": {
+      "claim_key": "stage-experimentation",
+      "cross_domain": true,
+      "predictive": true,
+      "distinctive": false,
+      "actionable": true,
+      "boundary": true,
+      "reason": "无人机配送是跨域案例，许可、天气、准确率、备援和成本门槛能条件性地决定扩展或收缩，因而可预测、可执行且可证伪。但在高不确定和资源受限时分阶段试点、达标扩张、恶化回撤，是通用项目与风险管理机制；探索、验证、扩展、收缩的命名及门槛设计也不是给定转述直接建立的来源特有机制。",
+      "novel_question": "一个预算紧张的公益机构想用无人机向偏远地区配送药品，但天气、许可和维护能力都不确定。它应直接覆盖全部服务区，还是分阶段推进？",
+      "derived_answer": "应先判定处于探索阶段，选择少量低风险路线验证许可、天气阈值、交付准确率、人工备援和单位成本；达到预设门槛后进入验证与有限扩展，指标恶化时收缩或撤回。窄目标和可逆试点用于积累证据与能力，不能以愿景代替全面推广条件。这是新场景下的推导，不是来源直接陈述。",
+      "assumptions": [
+        "无人机方案尚无足够的本地运行证据。",
+        "现有人工配送可在试点期间作为备援。",
+        "失败可能影响患者用药和机构有限资金。"
+      ],
+      "falsifier": "若同地形、同监管和同气候条件下已有长期可靠运营数据，机构也具备成熟维护与人工备援能力，则可把项目直接归为验证或扩展阶段，而不必从探索阶段开始。",
+      "generated_name": "阶段识别与窄目标试点",
+      "fallback": "回到探索阶段，缩小目标或收缩资源",
+      "isolation_level": "model-shared/session-separated"
+    },
+    "disposition": "shared-principle"
   },
   {
     "title": "version-attribution",
     "candidate_type": "principle",
     "summary": "历史文本的方法蒸馏必须区分最终公开版本、现场记录和现代推断，不能伪造人物立场。",
     "evidence_ids": [
-      "ev-20260806175133383055-b0abe1be",
-      "ev-20260806175133383062-a70cee0c"
+      "ev-20260807074344778376-3f396dbb",
+      "ev-20260807074344778383-9602587b"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：版本与归属",
@@ -136,21 +1233,94 @@
       "mao-authorized-works",
       "party-history-institute-version-study"
     ],
-    "id": "candidate-20260806175133383070-868d9a97",
-    "cross_domain": true,
+    "id": "version-attribution",
+    "cross_domain": false,
     "source_independent": true,
     "predictive": false,
     "distinctive": true,
     "actionable": true,
-    "status": "needs_model_verification",
-    "rejection_reason": "V2 predictive-power test requires independent model or human review"
+    "status": "needs_evidence",
+    "rejection_reason": "retained as a governance gate; predictive power is not its contract",
+    "problem": "公开定稿、现场记录、编辑文本和现代推断被混成作者原话",
+    "assumptions": [
+      "来源版本和文本性质可定位"
+    ],
+    "mechanism": [
+      "按版本与直接性分层",
+      "把原文陈述和构建者迁移分开"
+    ],
+    "triggers": [
+      "引用历史文本",
+      "不同版本影响含义",
+      "回答现代未讨论问题"
+    ],
+    "anti_triggers": [
+      "不涉及作者归属的普通方法执行"
+    ],
+    "inputs": [
+      "篇名",
+      "版本入口",
+      "文本性质",
+      "直接引语",
+      "现代推断"
+    ],
+    "procedure": [
+      "确认篇名和版本",
+      "区分定稿、记录、集体文件和研究",
+      "逐字核对短引",
+      "把现代建议标为迁移",
+      "冲突版本并列而不择便使用"
+    ],
+    "branches": [],
+    "output": "版本化引用、归属等级和推断声明",
+    "done": "读者能够区分本人原文、后续版本和现代迁移",
+    "boundaries": [
+      "不伪造语录",
+      "不把公开定稿称为现场逐字记录"
+    ],
+    "failures": [
+      "根据文风猜作者",
+      "选择支持当前观点的方便版本"
+    ],
+    "counterexamples": [],
+    "related_ids": [
+      {
+        "relation": "composes_with",
+        "target": "anti-dogmatism-correction"
+      },
+      {
+        "relation": "depends_on",
+        "target": "rights-bound-transfer"
+      }
+    ],
+    "verification": {
+      "claim_key": "version-attribution",
+      "cross_domain": false,
+      "predictive": false,
+      "distinctive": true,
+      "actionable": true,
+      "boundary": true,
+      "reason": "来源与新问题都处于历史文本版本、引语归属和展示标注领域，因此不构成实质跨域；它给出的是证据状态到标注方式的分类规则，而非经验结果预测。其差异化机制在于明确分离最终公开版本、现场记录和现代概括，并据证据层级决定能否使用逐字引号，这比笼统的“不要误引”更具体。标注模板可直接执行，同期录音或逐字速记则提供清楚边界；所有 evidence 仍只能作为构建者转述，不能自行充当版本原文。",
+      "novel_question": "研究者只看到一篇后来整理出版的演讲文本，便在展览中写道“讲者在当年现场逐字说过这句话”。在没有录音或同期速记可核对时，应怎样标注？",
+      "derived_answer": "应区分可确认的公开版本、可能存在的现场讲述和研究者的现代概括，例如标注“见后来整理并公开的版本”，并说明尚不能证明该句是当年现场逐字表述。若内容是研究者提炼，应明确写成“据该版本可概括为”，不得加引号伪装成原话。这是归属规则的推导应用，不是对某一历史句子的认证。",
+      "assumptions": [
+        "现有材料只能确认后来公开的整理版本。",
+        "整理过程可能包含结构或文字修改。",
+        "展览标签会让读者把引号内容理解为逐字引语。"
+      ],
+      "falsifier": "若发现来源清晰、真伪可核的同期录音或逐字速记，且目标句与其完全一致，则可以在注明载体和版本后标为现场原话。",
+      "generated_name": "版本、归属与推断纪律",
+      "fallback": "取消直接归属，只保留有来源的条件式说明",
+      "isolation_level": "model-shared/session-separated"
+    },
+    "disposition": "governance"
   },
   {
     "title": "优先收集异常、失败和坏消息，再修正解释。",
     "candidate_type": "framework",
     "summary": "优先收集异常、失败和坏消息，再修正解释。",
     "evidence_ids": [
-      "ev-20260806175133383837-5ef6e23a"
+      "ev-20260807074344779129-8dc39dcc"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::可迁移机制"
@@ -165,21 +1335,59 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384005-86aa38d1",
+    "id": "candidate-20260807074344779287-663d86dc",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": true,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate may be generic or underspecified"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate may be generic or underspecified",
+    "problem": "在相关场景中判断何时以及如何应用“优先收集异常、失败和坏消息，再修正解释。”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "优先收集异常、失败和坏消息，再修正解释。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“优先收集异常、失败和坏消息，再修正解释。”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "中共中央党史和文献研究院的版本研究说明，《实践论》源自1937年讲课提纲，新中国成立...",
     "candidate_type": "counterexample",
     "summary": "中共中央党史和文献研究院的版本研究说明，《实践论》源自1937年讲课提纲，新中国成立后经过较大内容修改和多次文字处理。现行选集文本适合代表最终公开版本，但不能无说明地当作1937年现场逐字稿。",
     "evidence_ids": [
-      "ev-20260806175133384041-7849349c"
+      "ev-20260807074344779324-43190daf"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::证据边界"
@@ -194,21 +1402,59 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384051-3c2e5af1",
+    "id": "candidate-20260807074344779334-5145db33",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": false,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable",
+    "problem": "在相关场景中判断何时以及如何应用“中共中央党史和文献研究院的版本研究说明，《实践论》源自1937年讲课提纲，新中国成立...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "中共中央党史和文献研究院的版本研究说明，《实践论》源自1937年讲课提纲，新中国成立后经过较大内容修改和多次文字处理。现行选集文本适合代表最终公开版本，但不能无说明地当作1937年现场逐字稿。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“中共中央党史和文献研究院的版本研究说明，《实践论》源自1937年讲课提纲，新中国成立...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "counterexample"
   },
   {
     "title": "调查本身也不会自动产生正确判断。样本选择、提问方式、权力在场和既有立场都可能污染材料...",
     "candidate_type": "principle",
     "summary": "调查本身也不会自动产生正确判断。样本选择、提问方式、权力在场和既有立场都可能污染材料；因此现代迁移必须增加反证样本、独立记录和可撤回试点。",
     "evidence_ids": [
-      "ev-20260806175133384069-6fc0137e"
+      "ev-20260807074344779354-b00a0425"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::证据边界"
@@ -223,21 +1469,59 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384077-8f51bd26",
+    "id": "candidate-20260807074344779363-2346b81d",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": true,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts",
+    "problem": "在相关场景中判断何时以及如何应用“调查本身也不会自动产生正确判断。样本选择、提问方式、权力在场和既有立场都可能污染材料...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "调查本身也不会自动产生正确判断。样本选择、提问方式、权力在场和既有立场都可能污染材料；因此现代迁移必须增加反证样本、独立记录和可撤回试点。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“调查本身也不会自动产生正确判断。样本选择、提问方式、权力在场和既有立场都可能污染材料...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "Claim-Statement: 可用的反馈方法必须把一线证据、暂时判断、可逆试验和...",
     "candidate_type": "framework",
     "summary": "Claim-Statement: 可用的反馈方法必须把一线证据、暂时判断、可逆试验和独立坏消息通道组成闭环。",
     "evidence_ids": [
-      "ev-20260806175133384117-43686885"
+      "ev-20260807074344779402-1923940a"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：反馈完整性"
@@ -252,21 +1536,59 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384126-02f8e7a9",
+    "id": "candidate-20260807074344779410-1fda6fc0",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": true,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts",
+    "problem": "在相关场景中判断何时以及如何应用“Claim-Statement: 可用的反馈方法必须把一线证据、暂时判断、可逆试验和...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Claim-Statement: 可用的反馈方法必须把一线证据、暂时判断、可逆试验和独立坏消息通道组成闭环。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Claim-Statement: 可用的反馈方法必须把一线证据、暂时判断、可逆试验和...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "Claim-Type: framework",
     "candidate_type": "framework",
     "summary": "Claim-Type: framework",
     "evidence_ids": [
-      "ev-20260806175133384137-c6b8ed6b"
+      "ev-20260807074344779420-2e58c895"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：反馈完整性"
@@ -281,53 +1603,62 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384144-1ef3e83d",
+    "id": "candidate-20260807074344779427-6125d226",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable; candidate may be generic or underspecified",
+    "problem": "在相关场景中判断何时以及如何应用“Claim-Type: framework”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Claim-Type: framework"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Claim-Type: framework”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
-    "title": "Claim-Statement: 历史文本的方法蒸馏必须区分最终公开版本、现场记录和...",
-    "candidate_type": "framework",
-    "summary": "Claim-Statement: 历史文本的方法蒸馏必须区分最终公开版本、现场记录和现代推断，不能伪造人物立场。",
-    "evidence_ids": [
-      "ev-20260806175133384228-dad13b0a"
-    ],
-    "source_contexts": [
-      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：版本与归属"
-    ],
-    "tags": [
-      "methodology",
-      "framework"
-    ],
-    "source_ids": [
-      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice"
-    ],
-    "independence_groups": [
-      "mao-authorized-works"
-    ],
-    "id": "candidate-20260806175133384236-88bc2269",
-    "cross_domain": false,
-    "source_independent": false,
-    "predictive": false,
-    "distinctive": true,
-    "actionable": true,
-    "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts"
-  },
-  {
-    "title": "Claim-Type: principle",
+    "title": "Claim-Statement: 高影响判断必须先取得不同处境的一手事实，并预先写明...",
     "candidate_type": "principle",
-    "summary": "Claim-Type: principle",
+    "summary": "Claim-Statement: 高影响判断必须先取得不同处境的一手事实，并预先写明什么证据会改变当前结论。",
     "evidence_ids": [
-      "ev-20260806175133384245-5a7b3934"
+      "ev-20260807074344779525-5e06b20f"
     ],
     "source_contexts": [
-      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：版本与归属"
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：先调查再判断"
     ],
     "tags": [
       "methodology",
@@ -339,21 +1670,461 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384252-85f57fcb",
+    "id": "candidate-20260807074344779533-5aa06d70",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": true,
+    "actionable": true,
+    "status": "rejected",
+    "rejection_reason": "V1 requires recurrence in at least two source contexts",
+    "problem": "在相关场景中判断何时以及如何应用“Claim-Statement: 高影响判断必须先取得不同处境的一手事实，并预先写明...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Claim-Statement: 高影响判断必须先取得不同处境的一手事实，并预先写明什么证据会改变当前结论。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Claim-Statement: 高影响判断必须先取得不同处境的一手事实，并预先写明...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Evidence: 五县三十二天实地考察所得与城市转述完全相反，说明判断必须允许现场...",
+    "candidate_type": "principle",
+    "summary": "Evidence: 五县三十二天实地考察所得与城市转述完全相反，说明判断必须允许现场材料推翻先验。",
+    "evidence_ids": [
+      "ev-20260807074344779548-403ec5b6"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：先调查再判断"
+    ],
+    "tags": [
+      "methodology",
+      "principle"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "candidate-20260807074344779555-798f7f15",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": true,
+    "actionable": true,
+    "status": "rejected",
+    "rejection_reason": "V1 requires recurrence in at least two source contexts",
+    "problem": "在相关场景中判断何时以及如何应用“Evidence: 五县三十二天实地考察所得与城市转述完全相反，说明判断必须允许现场...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Evidence: 五县三十二天实地考察所得与城市转述完全相反，说明判断必须允许现场材料推翻先验。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Evidence: 五县三十二天实地考察所得与城市转述完全相反，说明判断必须允许现场...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Claim-Statement: 方法结论只能作为暂时假设，必须通过范围有限、结果可...",
+    "candidate_type": "framework",
+    "summary": "Claim-Statement: 方法结论只能作为暂时假设，必须通过范围有限、结果可观察的实践再次检验和修正。",
+    "evidence_ids": [
+      "ev-20260807074344779589-352a8aa9"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：实践检验循环"
+    ],
+    "tags": [
+      "methodology",
+      "framework"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "candidate-20260807074344779598-96ab5418",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": true,
+    "actionable": true,
+    "status": "rejected",
+    "rejection_reason": "V1 requires recurrence in at least two source contexts",
+    "problem": "在相关场景中判断何时以及如何应用“Claim-Statement: 方法结论只能作为暂时假设，必须通过范围有限、结果可...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Claim-Statement: 方法结论只能作为暂时假设，必须通过范围有限、结果可观察的实践再次检验和修正。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Claim-Statement: 方法结论只能作为暂时假设，必须通过范围有限、结果可...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Claim-Statement: 当抽象理论、上级转述或既有文本与现场事实冲突时，必...",
+    "candidate_type": "principle",
+    "summary": "Claim-Statement: 当抽象理论、上级转述或既有文本与现场事实冲突时，必须让可核验证据触发纠错而不是维护原结论。",
+    "evidence_ids": [
+      "ev-20260807074344779685-94193b28"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：反教条纠错"
+    ],
+    "tags": [
+      "methodology",
+      "principle"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "candidate-20260807074344779693-1a0696e1",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": true,
+    "actionable": true,
+    "status": "rejected",
+    "rejection_reason": "V1 requires recurrence in at least two source contexts",
+    "problem": "在相关场景中判断何时以及如何应用“Claim-Statement: 当抽象理论、上级转述或既有文本与现场事实冲突时，必...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Claim-Statement: 当抽象理论、上级转述或既有文本与现场事实冲突时，必须让可核验证据触发纠错而不是维护原结论。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Claim-Statement: 当抽象理论、上级转述或既有文本与现场事实冲突时，必...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Claim-Type: principle",
+    "candidate_type": "principle",
+    "summary": "Claim-Type: principle",
+    "evidence_ids": [
+      "ev-20260807074344779703-23c65009"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：反教条纠错"
+    ],
+    "tags": [
+      "methodology",
+      "principle"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "candidate-20260807074344779709-bef708f1",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable; candidate may be generic or underspecified",
+    "problem": "在相关场景中判断何时以及如何应用“Claim-Type: principle”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Claim-Type: principle"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Claim-Type: principle”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Evidence: 调查结果与城市听闻相反，证明既有说法和抽象文本不能替代现场事实与...",
+    "candidate_type": "case",
+    "summary": "Evidence: 调查结果与城市听闻相反，证明既有说法和抽象文本不能替代现场事实与后续检验。",
+    "evidence_ids": [
+      "ev-20260807074344779723-277798da"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：反教条纠错"
+    ],
+    "tags": [
+      "methodology",
+      "case"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "candidate-20260807074344779730-a105b9c6",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": true,
+    "actionable": false,
+    "status": "rejected",
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable",
+    "problem": "在相关场景中判断何时以及如何应用“Evidence: 调查结果与城市听闻相反，证明既有说法和抽象文本不能替代现场事实与...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Evidence: 调查结果与城市听闻相反，证明既有说法和抽象文本不能替代现场事实与后续检验。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Evidence: 调查结果与城市听闻相反，证明既有说法和抽象文本不能替代现场事实与...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "case"
+  },
+  {
+    "title": "Claim-Statement: 历史文本的方法蒸馏必须区分最终公开版本、现场记录和...",
+    "candidate_type": "framework",
+    "summary": "Claim-Statement: 历史文本的方法蒸馏必须区分最终公开版本、现场记录和现代推断，不能伪造人物立场。",
+    "evidence_ids": [
+      "ev-20260807074344779766-e0005a3f"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：版本与归属"
+    ],
+    "tags": [
+      "methodology",
+      "framework"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "candidate-20260807074344779773-ab7c6730",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": true,
+    "actionable": true,
+    "status": "rejected",
+    "rejection_reason": "V1 requires recurrence in at least two source contexts",
+    "problem": "在相关场景中判断何时以及如何应用“Claim-Statement: 历史文本的方法蒸馏必须区分最终公开版本、现场记录和...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Claim-Statement: 历史文本的方法蒸馏必须区分最终公开版本、现场记录和现代推断，不能伪造人物立场。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Claim-Statement: 历史文本的方法蒸馏必须区分最终公开版本、现场记录和...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "Evidence: 《实践论》现行公开文本经过作者后续较大修改和多次文字处理，不能无...",
     "candidate_type": "counterexample",
     "summary": "Evidence: 《实践论》现行公开文本经过作者后续较大修改和多次文字处理，不能无说明地当作1937年课堂逐字记录。",
     "evidence_ids": [
-      "ev-20260806175133384270-876c4f82"
+      "ev-20260807074344779795-af9e7ee2"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::结构化主张：版本与归属"
@@ -368,21 +2139,59 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384278-08aaa7eb",
+    "id": "candidate-20260807074344779802-142bbc01",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": false,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable",
+    "problem": "在相关场景中判断何时以及如何应用“Evidence: 《实践论》现行公开文本经过作者后续较大修改和多次文字处理，不能无...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Evidence: 《实践论》现行公开文本经过作者后续较大修改和多次文字处理，不能无说明地当作1937年课堂逐字记录。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Evidence: 《实践论》现行公开文本经过作者后续较大修改和多次文字处理，不能无...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "counterexample"
   },
   {
     "title": "同一篇文本反复强调具体分析矛盾的特殊性，不能把在一种场景有效的处理方式机械套到另一种...",
     "candidate_type": "counterexample",
     "summary": "同一篇文本反复强调具体分析矛盾的特殊性，不能把在一种场景有效的处理方式机械套到另一种场景。",
     "evidence_ids": [
-      "ev-20260806175133384412-3dd1ea90"
+      "ev-20260807074344779933-04350ed1"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction::可核验短引"
@@ -397,21 +2206,59 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384421-f1d8f6a9",
+    "id": "candidate-20260807074344779941-cc270a2e",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": false,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable",
+    "problem": "在相关场景中判断何时以及如何应用“同一篇文本反复强调具体分析矛盾的特殊性，不能把在一种场景有效的处理方式机械套到另一种...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "同一篇文本反复强调具体分析矛盾的特殊性，不能把在一种场景有效的处理方式机械套到另一种场景。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“同一篇文本反复强调具体分析矛盾的特殊性，不能把在一种场景有效的处理方式机械套到另一种...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "counterexample"
   },
   {
     "title": "抓主要矛盾容易制造过度压缩。复杂系统可能同时存在多个不可互相约减的目标，解决一个瓶颈...",
     "candidate_type": "principle",
     "summary": "“抓主要矛盾”容易制造过度压缩。复杂系统可能同时存在多个不可互相约减的目标，解决一个瓶颈也可能把风险转移给弱势群体。现代使用时必须保留备选解释、独立复核、申辩和改判机制。",
     "evidence_ids": [
-      "ev-20260806175133384562-fb640b7e"
+      "ev-20260807074344780077-acb34a28"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction::证据边界"
@@ -426,21 +2273,59 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384570-8832248a",
+    "id": "candidate-20260807074344780085-376d642f",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": true,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts",
+    "problem": "在相关场景中判断何时以及如何应用“抓主要矛盾容易制造过度压缩。复杂系统可能同时存在多个不可互相约减的目标，解决一个瓶颈...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "“抓主要矛盾”容易制造过度压缩。复杂系统可能同时存在多个不可互相约减的目标，解决一个瓶颈也可能把风险转移给弱势群体。现代使用时必须保留备选解释、独立复核、申辩和改判机制。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“抓主要矛盾容易制造过度压缩。复杂系统可能同时存在多个不可互相约减的目标，解决一个瓶颈...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "本方法不能用于把同事、客户、社会群体或异议者敌人化，也不能把普通意见分歧升级为需要斗...",
     "candidate_type": "framework",
     "summary": "本方法不能用于把同事、客户、社会群体或异议者敌人化，也不能把普通意见分歧升级为需要“斗争”的人格判断。",
     "evidence_ids": [
-      "ev-20260806175133384580-c4f184f4"
+      "ev-20260807074344780095-26510978"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction::证据边界"
@@ -455,21 +2340,59 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384587-43b288ff",
+    "id": "candidate-20260807074344780102-26612677",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": true,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts",
+    "problem": "在相关场景中判断何时以及如何应用“本方法不能用于把同事、客户、社会群体或异议者敌人化，也不能把普通意见分歧升级为需要斗...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "本方法不能用于把同事、客户、社会群体或异议者敌人化，也不能把普通意见分歧升级为需要“斗争”的人格判断。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“本方法不能用于把同事、客户、社会群体或异议者敌人化，也不能把普通意见分歧升级为需要斗...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "Claim-Statement: 矛盾排序必须是可改判的阶段假设，并禁止把普通分歧转...",
     "candidate_type": "principle",
     "summary": "Claim-Statement: 矛盾排序必须是可改判的阶段假设，并禁止把普通分歧转化为敌我身份。",
     "evidence_ids": [
-      "ev-20260806175133384635-97ede70e"
+      "ev-20260807074344780150-c2317d76"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction::结构化主张：阶段性分类"
@@ -484,21 +2407,59 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384642-6fb5ca2c",
+    "id": "candidate-20260807074344780157-8d3a1c10",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": true,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts",
+    "problem": "在相关场景中判断何时以及如何应用“Claim-Statement: 矛盾排序必须是可改判的阶段假设，并禁止把普通分歧转...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Claim-Statement: 矛盾排序必须是可改判的阶段假设，并禁止把普通分歧转化为敌我身份。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Claim-Statement: 矛盾排序必须是可改判的阶段假设，并禁止把普通分歧转...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "Evidence: 《矛盾论》要求具体分析矛盾的特殊性、主次和条件转化，因此主要矛盾...",
     "candidate_type": "counterexample",
     "summary": "Evidence: 《矛盾论》要求具体分析矛盾的特殊性、主次和条件转化，因此“主要矛盾”不能成为脱离新证据的永久标签。",
     "evidence_ids": [
-      "ev-20260806175133384662-ca545ebc"
+      "ev-20260807074344780177-49417df7"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction::结构化主张：阶段性分类"
@@ -513,21 +2474,126 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384669-77507368",
+    "id": "candidate-20260807074344780184-3b904788",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": false,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable",
+    "problem": "在相关场景中判断何时以及如何应用“Evidence: 《矛盾论》要求具体分析矛盾的特殊性、主次和条件转化，因此主要矛盾...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Evidence: 《矛盾论》要求具体分析矛盾的特殊性、主次和条件转化，因此“主要矛盾”不能成为脱离新证据的永久标签。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Evidence: 《矛盾论》要求具体分析矛盾的特殊性、主次和条件转化，因此主要矛盾...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "counterexample"
+  },
+  {
+    "title": "Claim-Statement: 复杂问题应先改写为目标、资源、事实、流程或权利关系...",
+    "candidate_type": "framework",
+    "summary": "Claim-Statement: 复杂问题应先改写为目标、资源、事实、流程或权利关系，再比较候选解释，不能先把责任固定到个人身份。",
+    "evidence_ids": [
+      "ev-20260807074344780223-60c796b4"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction::结构化主张：关系化问题地图"
+    ],
+    "tags": [
+      "methodology",
+      "framework"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "candidate-20260807074344780230-ca4999ce",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": true,
+    "actionable": true,
+    "status": "rejected",
+    "rejection_reason": "V1 requires recurrence in at least two source contexts",
+    "problem": "在相关场景中判断何时以及如何应用“Claim-Statement: 复杂问题应先改写为目标、资源、事实、流程或权利关系...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Claim-Statement: 复杂问题应先改写为目标、资源、事实、流程或权利关系，再比较候选解释，不能先把责任固定到个人身份。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Claim-Statement: 复杂问题应先改写为目标、资源、事实、流程或权利关系...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "Claim-Statement: 历史方法的现代迁移必须以非暴力、守法、可逆、保留申...",
     "candidate_type": "framework",
     "summary": "Claim-Statement: 历史方法的现代迁移必须以非暴力、守法、可逆、保留申辩和复核为硬边界。",
     "evidence_ids": [
-      "ev-20260806175133384707-5da94f16"
+      "ev-20260807074344780311-bd093d92"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction::结构化主张：现代迁移边界"
@@ -542,21 +2608,59 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384714-43162ed7",
+    "id": "candidate-20260807074344780318-92c8156f",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": true,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts",
+    "problem": "在相关场景中判断何时以及如何应用“Claim-Statement: 历史方法的现代迁移必须以非暴力、守法、可逆、保留申...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Claim-Statement: 历史方法的现代迁移必须以非暴力、守法、可逆、保留申辩和复核为硬边界。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Claim-Statement: 历史方法的现代迁移必须以非暴力、守法、可逆、保留申...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "Evidence: 普通组织中的意见分歧不能沿用战争和敌我分类，排序工具必须服从法律...",
     "candidate_type": "principle",
     "summary": "Evidence: 普通组织中的意见分歧不能沿用战争和敌我分类，排序工具必须服从法律、安全与基本权利。",
     "evidence_ids": [
-      "ev-20260806175133384729-b7744414"
+      "ev-20260807074344780333-ada8089f"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/dyj/#on-contradiction::结构化主张：现代迁移边界"
@@ -571,21 +2675,59 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384736-78e83599",
+    "id": "candidate-20260807074344780339-09b5ff13",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": true,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts",
+    "problem": "在相关场景中判断何时以及如何应用“Evidence: 普通组织中的意见分歧不能沿用战争和敌我分类，排序工具必须服从法律...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Evidence: 普通组织中的意见分歧不能沿用战争和敌我分类，排序工具必须服从法律、安全与基本权利。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Evidence: 普通组织中的意见分歧不能沿用战争和敌我分类，排序工具必须服从法律...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "- 核心篇目：《关于领导方法的若干问题》，1943年。",
     "candidate_type": "framework",
     "summary": "- 核心篇目：《关于领导方法的若干问题》，1943年。",
     "evidence_ids": [
-      "ev-20260806175133384802-0a4eb384"
+      "ev-20260807074344780402-25fae6c4"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::来源定位"
@@ -600,21 +2742,59 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384809-b65a7ac9",
+    "id": "candidate-20260807074344780409-3e73d0db",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": true,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate may be generic or underspecified"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate may be generic or underspecified",
+    "problem": "在相关场景中判断何时以及如何应用“- 核心篇目：《关于领导方法的若干问题》，1943年。”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "- 核心篇目：《关于领导方法的若干问题》，1943年。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“- 核心篇目：《关于领导方法的若干问题》，1943年。”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "原文所描述的完整过程并不止于听取意见：先把群众中分散的、不系统的意见集中起来，经过研...",
     "candidate_type": "framework",
     "summary": "原文所描述的完整过程并不止于“听取意见”：先把群众中分散的、不系统的意见集中起来，经过研究形成集中的、系统的意见，再回到群众中宣传解释、在行动中检验，然后继续循环。",
     "evidence_ids": [
-      "ev-20260806175133384825-70339faa"
+      "ev-20260807074344780427-883d9cd3"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::可核验短引"
@@ -629,21 +2809,59 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384833-73503b1c",
+    "id": "candidate-20260807074344780434-f58614b4",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": true,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts",
+    "problem": "在相关场景中判断何时以及如何应用“原文所描述的完整过程并不止于听取意见：先把群众中分散的、不系统的意见集中起来，经过研...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "原文所描述的完整过程并不止于“听取意见”：先把群众中分散的、不系统的意见集中起来，经过研究形成集中的、系统的意见，再回到群众中宣传解释、在行动中检验，然后继续循环。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“原文所描述的完整过程并不止于听取意见：先把群众中分散的、不系统的意见集中起来，经过研...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "根据执行结果修订，不把一次动员或多数意见当成永久授权。",
     "candidate_type": "case",
     "summary": "根据执行结果修订，不把一次动员或多数意见当成永久授权。",
     "evidence_ids": [
-      "ev-20260806175133384945-f987818d"
+      "ev-20260807074344780540-b5c03194"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::可迁移机制"
@@ -658,21 +2876,59 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384953-75ab7e28",
+    "id": "candidate-20260807074344780547-67b20b26",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": false,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable; candidate may be generic or underspecified"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable; candidate may be generic or underspecified",
+    "problem": "在相关场景中判断何时以及如何应用“根据执行结果修订，不把一次动员或多数意见当成永久授权。”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "根据执行结果修订，不把一次动员或多数意见当成永久授权。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“根据执行结果修订，不把一次动员或多数意见当成永久授权。”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "case"
   },
   {
     "title": "群众不是同质整体。声量最大者不一定最受影响，多数意见也不能取消少数人的基本权利。现代...",
     "candidate_type": "principle",
     "summary": "“群众”不是同质整体。声量最大者不一定最受影响，多数意见也不能取消少数人的基本权利。现代迁移必须提供安全反馈、知情参与、退出、申诉和独立复核机制。",
     "evidence_ids": [
-      "ev-20260806175133384977-1ff5e205"
+      "ev-20260807074344780567-9257bf42"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::证据边界"
@@ -687,21 +2943,59 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133384985-42a25d83",
+    "id": "candidate-20260807074344780574-d9dc8b1f",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": true,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts",
+    "problem": "在相关场景中判断何时以及如何应用“群众不是同质整体。声量最大者不一定最受影响，多数意见也不能取消少数人的基本权利。现代...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "“群众”不是同质整体。声量最大者不一定最受影响，多数意见也不能取消少数人的基本权利。现代迁移必须提供安全反馈、知情参与、退出、申诉和独立复核机制。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“群众不是同质整体。声量最大者不一定最受影响，多数意见也不能取消少数人的基本权利。现代...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "Evidence: 《关于领导方法的若干问题》描述从分散经验到系统意见、返回行动检验...",
     "candidate_type": "framework",
     "summary": "Evidence: 《关于领导方法的若干问题》描述从分散经验到系统意见、返回行动检验并继续循环的过程，不能只保留“集中意见”一步。",
     "evidence_ids": [
-      "ev-20260806175133385074-e604eeed"
+      "ev-20260807074344780662-6bb58f92"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::结构化主张：反馈完整性"
@@ -716,21 +3010,327 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133385082-8d6de6c1",
+    "id": "candidate-20260807074344780669-dd7d185d",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": true,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts",
+    "problem": "在相关场景中判断何时以及如何应用“Evidence: 《关于领导方法的若干问题》描述从分散经验到系统意见、返回行动检验...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Evidence: 《关于领导方法的若干问题》描述从分散经验到系统意见、返回行动检验并继续循环的过程，不能只保留“集中意见”一步。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Evidence: 《关于领导方法的若干问题》描述从分散经验到系统意见、返回行动检验...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Evidence: 分散意见经研究形成方案后仍要返回行动中检验并继续循环，方案不能因...",
+    "candidate_type": "counterexample",
+    "summary": "Evidence: 分散意见经研究形成方案后仍要返回行动中检验并继续循环，方案不能因“已经集中”而免于修正。",
+    "evidence_ids": [
+      "ev-20260807074344780714-2a3bf3c6"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::结构化主张：实践检验循环"
+    ],
+    "tags": [
+      "methodology",
+      "counterexample"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "candidate-20260807074344780721-f26c10cb",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": true,
+    "actionable": false,
+    "status": "rejected",
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable",
+    "problem": "在相关场景中判断何时以及如何应用“Evidence: 分散意见经研究形成方案后仍要返回行动中检验并继续循环，方案不能因...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Evidence: 分散意见经研究形成方案后仍要返回行动中检验并继续循环，方案不能因“已经集中”而免于修正。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Evidence: 分散意见经研究形成方案后仍要返回行动中检验并继续循环，方案不能因...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "counterexample"
+  },
+  {
+    "title": "Claim-Statement: 可用的组织反馈必须让异议和坏消息安全上行，并把收集...",
+    "candidate_type": "principle",
+    "summary": "Claim-Statement: 可用的组织反馈必须让异议和坏消息安全上行，并把收集、解释、执行和复核至少在角色上分开。",
+    "evidence_ids": [
+      "ev-20260807074344780765-9cc9e837"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::结构化主张：异议与坏消息保护"
+    ],
+    "tags": [
+      "methodology",
+      "principle"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "candidate-20260807074344780772-776fe090",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": true,
+    "actionable": true,
+    "status": "rejected",
+    "rejection_reason": "V1 requires recurrence in at least two source contexts",
+    "problem": "在相关场景中判断何时以及如何应用“Claim-Statement: 可用的组织反馈必须让异议和坏消息安全上行，并把收集...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Claim-Statement: 可用的组织反馈必须让异议和坏消息安全上行，并把收集、解释、执行和复核至少在角色上分开。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Claim-Statement: 可用的组织反馈必须让异议和坏消息安全上行，并把收集...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Claim-Statement: 组织不能把高频声音、参与总量或总体指标直接当作代表...",
+    "candidate_type": "principle",
+    "summary": "Claim-Statement: 组织不能把高频声音、参与总量或总体指标直接当作代表性，必须检查沉默者、分布和承担成本的群体。",
+    "evidence_ids": [
+      "ev-20260807074344780870-29c37257"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::结构化主张：分布优先于总量"
+    ],
+    "tags": [
+      "methodology",
+      "principle"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "candidate-20260807074344780876-f0c64a94",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": true,
+    "actionable": true,
+    "status": "rejected",
+    "rejection_reason": "V1 requires recurrence in at least two source contexts",
+    "problem": "在相关场景中判断何时以及如何应用“Claim-Statement: 组织不能把高频声音、参与总量或总体指标直接当作代表...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Claim-Statement: 组织不能把高频声音、参与总量或总体指标直接当作代表性，必须检查沉默者、分布和承担成本的群体。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Claim-Statement: 组织不能把高频声音、参与总量或总体指标直接当作代表...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Evidence: 群众并非同质整体，声量最大者不一定最受影响，多数意见也不能取消少...",
+    "candidate_type": "counterexample",
+    "summary": "Evidence: “群众”并非同质整体，声量最大者不一定最受影响，多数意见也不能取消少数人的基本权利。",
+    "evidence_ids": [
+      "ev-20260807074344780895-f21dc1eb"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::结构化主张：分布优先于总量"
+    ],
+    "tags": [
+      "methodology",
+      "counterexample"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "candidate-20260807074344780902-91357a7b",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": true,
+    "actionable": false,
+    "status": "rejected",
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable",
+    "problem": "在相关场景中判断何时以及如何应用“Evidence: 群众并非同质整体，声量最大者不一定最受影响，多数意见也不能取消少...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Evidence: “群众”并非同质整体，声量最大者不一定最受影响，多数意见也不能取消少数人的基本权利。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Evidence: 群众并非同质整体，声量最大者不一定最受影响，多数意见也不能取消少...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "counterexample"
   },
   {
     "title": "Evidence: 群众并非同质整体，现代反馈必须保护少数意见，并提供知情参与、退出...",
     "candidate_type": "principle",
     "summary": "Evidence: “群众”并非同质整体，现代反馈必须保护少数意见，并提供知情参与、退出、申诉和独立复核。",
     "evidence_ids": [
-      "ev-20260806175133385128-14682462"
+      "ev-20260807074344780947-3a6c75fb"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/d3j/#leadership-methods::结构化主张：现代迁移边界"
@@ -745,21 +3345,59 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133385136-5115e468",
+    "id": "candidate-20260807074344780956-a9f147b5",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": true,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts",
+    "problem": "在相关场景中判断何时以及如何应用“Evidence: 群众并非同质整体，现代反馈必须保护少数意见，并提供知情参与、退出...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Evidence: “群众”并非同质整体，现代反馈必须保护少数意见，并提供知情参与、退出、申诉和独立复核。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Evidence: 群众并非同质整体，现代反馈必须保护少数意见，并提供知情参与、退出...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "- 核心篇目：《党委会的工作方法》，1949年；相关阶段方法来自持久战与集中力量的公...",
     "candidate_type": "framework",
     "summary": "- 核心篇目：《党委会的工作方法》，1949年；相关阶段方法来自持久战与集中力量的公开文本。",
     "evidence_ids": [
-      "ev-20260806175133385203-c74e56d4"
+      "ev-20260807074344781020-8b640655"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/d4j/#committee-methods::来源定位"
@@ -774,21 +3412,59 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133385210-cf4caa94",
+    "id": "candidate-20260807074344781027-ff17e703",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": true,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts",
+    "problem": "在相关场景中判断何时以及如何应用“- 核心篇目：《党委会的工作方法》，1949年；相关阶段方法来自持久战与集中力量的公...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "- 核心篇目：《党委会的工作方法》，1949年；相关阶段方法来自持久战与集中力量的公开文本。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“- 核心篇目：《党委会的工作方法》，1949年；相关阶段方法来自持久战与集中力量的公...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "- 文本性质：工作方法转述，不复制军事操作。",
     "candidate_type": "framework",
     "summary": "- 文本性质：工作方法转述，不复制军事操作。",
     "evidence_ids": [
-      "ev-20260806175133385219-c678cf52"
+      "ev-20260807074344781038-07df972f"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/d4j/#committee-methods::来源定位"
@@ -803,21 +3479,59 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133385225-1f739cc9",
+    "id": "candidate-20260807074344781044-ac68f5b9",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": true,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate may be generic or underspecified"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate may be generic or underspecified",
+    "problem": "在相关场景中判断何时以及如何应用“- 文本性质：工作方法转述，不复制军事操作。”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "- 文本性质：工作方法转述，不复制军事操作。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“- 文本性质：工作方法转述，不复制军事操作。”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "《党委会的工作方法》把集体领导写成一组具体工作规则，包括书记善于当班长、把问题摆到桌...",
     "candidate_type": "framework",
     "summary": "《党委会的工作方法》把集体领导写成一组具体工作规则，包括书记善于当“班长”、把问题摆到桌面、互通情报、不懂就问、抓紧中心工作并兼顾其他工作。文中“弹钢琴”的比喻强调十个指头都要动作，但要有节奏和配合。",
     "evidence_ids": [
-      "ev-20260806175133385243-f79f4650"
+      "ev-20260807074344781062-19f1d9b9"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/d4j/#committee-methods::可核验结构"
@@ -832,21 +3546,59 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133385251-f5c1ba48",
+    "id": "candidate-20260807074344781070-351b2a97",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": true,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts",
+    "problem": "在相关场景中判断何时以及如何应用“《党委会的工作方法》把集体领导写成一组具体工作规则，包括书记善于当班长、把问题摆到桌...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "《党委会的工作方法》把集体领导写成一组具体工作规则，包括书记善于当“班长”、把问题摆到桌面、互通情报、不懂就问、抓紧中心工作并兼顾其他工作。文中“弹钢琴”的比喻强调十个指头都要动作，但要有节奏和配合。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“《党委会的工作方法》把集体领导写成一组具体工作规则，包括书记善于当班长、把问题摆到桌...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "选择一个窄目标集中资源，同时写明不能牺牲的安全和权利约束。",
     "candidate_type": "counterexample",
     "summary": "选择一个窄目标集中资源，同时写明不能牺牲的安全和权利约束。",
     "evidence_ids": [
-      "ev-20260806175133385324-70ada191"
+      "ev-20260807074344781137-13bb495e"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/d4j/#committee-methods::可迁移机制"
@@ -861,21 +3613,59 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133385331-304e8153",
+    "id": "candidate-20260807074344781143-8b3b7118",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": false,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable",
+    "problem": "在相关场景中判断何时以及如何应用“选择一个窄目标集中资源，同时写明不能牺牲的安全和权利约束。”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "选择一个窄目标集中资源，同时写明不能牺牲的安全和权利约束。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“选择一个窄目标集中资源，同时写明不能牺牲的安全和权利约束。”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "counterexample"
   },
   {
     "title": "战争中的集中、保密和命令逻辑不能直接迁移到普通公司、家庭、学校、社区或公共治理。现代...",
     "candidate_type": "counterexample",
     "summary": "战争中的集中、保密和命令逻辑不能直接迁移到普通公司、家庭、学校、社区或公共治理。现代组织中的参与者拥有法律、合同和基本权利，不是可被“歼灭”“孤立”或工具化的对象。",
     "evidence_ids": [
-      "ev-20260806175133385390-dde005c2"
+      "ev-20260807074344781201-9f2582d0"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/d4j/#committee-methods::证据边界"
@@ -890,21 +3680,59 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133385398-7afb0c7d",
+    "id": "candidate-20260807074344781208-aae53afa",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": false,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable",
+    "problem": "在相关场景中判断何时以及如何应用“战争中的集中、保密和命令逻辑不能直接迁移到普通公司、家庭、学校、社区或公共治理。现代...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "战争中的集中、保密和命令逻辑不能直接迁移到普通公司、家庭、学校、社区或公共治理。现代组织中的参与者拥有法律、合同和基本权利，不是可被“歼灭”“孤立”或工具化的对象。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“战争中的集中、保密和命令逻辑不能直接迁移到普通公司、家庭、学校、社区或公共治理。现代...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "counterexample"
   },
   {
     "title": "局部集中也不是永远只做一件事。安全、合规、现金流和人员健康等约束可能必须并行维护；中...",
     "candidate_type": "principle",
     "summary": "局部集中也不是永远只做一件事。安全、合规、现金流和人员健康等约束可能必须并行维护；“中心工作”不能成为忽视系统性风险的借口。",
     "evidence_ids": [
-      "ev-20260806175133385412-d314d611"
+      "ev-20260807074344781223-2285f272"
     ],
     "source_contexts": [
       "https://www.12371.cn/special/mzdxj/d4j/#committee-methods::证据边界"
@@ -919,21 +3747,327 @@
     "independence_groups": [
       "mao-authorized-works"
     ],
-    "id": "candidate-20260806175133385419-248215cf",
+    "id": "candidate-20260807074344781229-c8c6ef52",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": true,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts",
+    "problem": "在相关场景中判断何时以及如何应用“局部集中也不是永远只做一件事。安全、合规、现金流和人员健康等约束可能必须并行维护；中...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "局部集中也不是永远只做一件事。安全、合规、现金流和人员健康等约束可能必须并行维护；“中心工作”不能成为忽视系统性风险的借口。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“局部集中也不是永远只做一件事。安全、合规、现金流和人员健康等约束可能必须并行维护；中...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Claim-Statement: 弱势或高不确定条件下应先识别探索、验证、扩展或收缩...",
+    "candidate_type": "framework",
+    "summary": "Claim-Statement: 弱势或高不确定条件下应先识别探索、验证、扩展或收缩阶段，再用窄目标和可逆试点积累证据与能力。",
+    "evidence_ids": [
+      "ev-20260807074344781268-73a169ae"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/d4j/#committee-methods::结构化主张：阶段化试点"
+    ],
+    "tags": [
+      "methodology",
+      "framework"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/d4j/#committee-methods"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "candidate-20260807074344781275-87bad603",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": true,
+    "actionable": true,
+    "status": "rejected",
+    "rejection_reason": "V1 requires recurrence in at least two source contexts",
+    "problem": "在相关场景中判断何时以及如何应用“Claim-Statement: 弱势或高不确定条件下应先识别探索、验证、扩展或收缩...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Claim-Statement: 弱势或高不确定条件下应先识别探索、验证、扩展或收缩阶段，再用窄目标和可逆试点积累证据与能力。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Claim-Statement: 弱势或高不确定条件下应先识别探索、验证、扩展或收缩...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Evidence: 相关文本区分长期阶段和具体行动，局部行动需要有限目标、准备和反馈...",
+    "candidate_type": "counterexample",
+    "summary": "Evidence: 相关文本区分长期阶段和具体行动，局部行动需要有限目标、准备和反馈，不能用一次全面推广代替阶段检验。",
+    "evidence_ids": [
+      "ev-20260807074344781294-3168c817"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/d4j/#committee-methods::结构化主张：阶段化试点"
+    ],
+    "tags": [
+      "methodology",
+      "counterexample"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/d4j/#committee-methods"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "candidate-20260807074344781301-c1d7ba53",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": true,
+    "actionable": false,
+    "status": "rejected",
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable",
+    "problem": "在相关场景中判断何时以及如何应用“Evidence: 相关文本区分长期阶段和具体行动，局部行动需要有限目标、准备和反馈...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Evidence: 相关文本区分长期阶段和具体行动，局部行动需要有限目标、准备和反馈，不能用一次全面推广代替阶段检验。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Evidence: 相关文本区分长期阶段和具体行动，局部行动需要有限目标、准备和反馈...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "counterexample"
+  },
+  {
+    "title": "Claim-Statement: 组织可以设置阶段性中心任务，但安全、合规、现金流、...",
+    "candidate_type": "principle",
+    "summary": "Claim-Statement: 组织可以设置阶段性中心任务，但安全、合规、现金流、人员健康和必要协同必须作为不可被排序取消的并行底线。",
+    "evidence_ids": [
+      "ev-20260807074344781366-f1f40027"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/d4j/#committee-methods::结构化主张：中心任务与底线协调"
+    ],
+    "tags": [
+      "methodology",
+      "principle"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/d4j/#committee-methods"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "candidate-20260807074344781374-656d2004",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": true,
+    "actionable": true,
+    "status": "rejected",
+    "rejection_reason": "V1 requires recurrence in at least two source contexts",
+    "problem": "在相关场景中判断何时以及如何应用“Claim-Statement: 组织可以设置阶段性中心任务，但安全、合规、现金流、...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Claim-Statement: 组织可以设置阶段性中心任务，但安全、合规、现金流、人员健康和必要协同必须作为不可被排序取消的并行底线。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Claim-Statement: 组织可以设置阶段性中心任务，但安全、合规、现金流、...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Evidence: 《党委会的工作方法》既要求抓紧中心工作，也用弹钢琴强调其他工作仍...",
+    "candidate_type": "framework",
+    "summary": "Evidence: 《党委会的工作方法》既要求抓紧中心工作，也用“弹钢琴”强调其他工作仍需有节奏地配合。",
+    "evidence_ids": [
+      "ev-20260807074344781386-f9b60ea6"
+    ],
+    "source_contexts": [
+      "https://www.12371.cn/special/mzdxj/d4j/#committee-methods::结构化主张：中心任务与底线协调"
+    ],
+    "tags": [
+      "methodology",
+      "framework"
+    ],
+    "source_ids": [
+      "https://www.12371.cn/special/mzdxj/d4j/#committee-methods"
+    ],
+    "independence_groups": [
+      "mao-authorized-works"
+    ],
+    "id": "candidate-20260807074344781393-1d4df5a5",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": true,
+    "actionable": true,
+    "status": "rejected",
+    "rejection_reason": "V1 requires recurrence in at least two source contexts",
+    "problem": "在相关场景中判断何时以及如何应用“Evidence: 《党委会的工作方法》既要求抓紧中心工作，也用弹钢琴强调其他工作仍...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Evidence: 《党委会的工作方法》既要求抓紧中心工作，也用“弹钢琴”强调其他工作仍需有节奏地配合。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Evidence: 《党委会的工作方法》既要求抓紧中心工作，也用弹钢琴强调其他工作仍...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "决议第20段指出，文化大革命对当时阶级形势和党政状况的估计是完全错误的，并具体记录了...",
     "candidate_type": "case",
     "summary": "决议第20段指出，“文化大革命”对当时阶级形势和党政状况的估计“是完全错误的”，并具体记录了是非与敌我的混淆、知识分子和干部受到打击、党政组织受到冲击等后果。",
     "evidence_ids": [
-      "ev-20260806175133385542-f307af8d"
+      "ev-20260807074344781582-c8e09420"
     ],
     "source_contexts": [
       "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::决议明确记录的失效"
@@ -948,21 +4082,59 @@
     "independence_groups": [
       "1981-central-resolution"
     ],
-    "id": "candidate-20260806175133385551-918d8f61",
+    "id": "candidate-20260807074344781591-ad9aeea1",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": false,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable",
+    "problem": "在相关场景中判断何时以及如何应用“决议第20段指出，文化大革命对当时阶级形势和党政状况的估计是完全错误的，并具体记录了...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "决议第20段指出，“文化大革命”对当时阶级形势和党政状况的估计“是完全错误的”，并具体记录了是非与敌我的混淆、知识分子和干部受到打击、党政组织受到冲击等后果。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“决议第20段指出，文化大革命对当时阶级形势和党政状况的估计是完全错误的，并具体记录了...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "case"
   },
   {
     "title": "第22段明确认为毛泽东对这场全局性、长时间的严重错误负有主要责任。第24段又把持续失...",
     "candidate_type": "counterexample",
     "summary": "第22段明确认为毛泽东对这场全局性、长时间的严重错误负有主要责任。第24段又把持续失效与个人专断、集体领导和民主集中制受损、法律和制度化不足联系起来。",
     "evidence_ids": [
-      "ev-20260806175133385596-b9a59c31"
+      "ev-20260807074344781636-036dc3b6"
     ],
     "source_contexts": [
       "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::决议明确记录的失效"
@@ -977,21 +4149,59 @@
     "independence_groups": [
       "1981-central-resolution"
     ],
-    "id": "candidate-20260806175133385603-3b2fbfde",
+    "id": "candidate-20260807074344781643-dbfc4f90",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": false,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable",
+    "problem": "在相关场景中判断何时以及如何应用“第22段明确认为毛泽东对这场全局性、长时间的严重错误负有主要责任。第24段又把持续失...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "第22段明确认为毛泽东对这场全局性、长时间的严重错误负有主要责任。第24段又把持续失效与个人专断、集体领导和民主集中制受损、法律和制度化不足联系起来。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“第22段明确认为毛泽东对这场全局性、长时间的严重错误负有主要责任。第24段又把持续失...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "counterexample"
   },
   {
     "title": "这些材料表明，方法论文本中的调查、群众、矛盾、纠错不会自动约束实际权力。只要出现以下...",
     "candidate_type": "framework",
     "summary": "这些材料表明，方法论文本中的“调查、群众、矛盾、纠错”不会自动约束实际权力。只要出现以下条件，就应停止套用历史框架：",
     "evidence_ids": [
-      "ev-20260806175133385621-275cfca0"
+      "ev-20260807074344781662-a2204f8b"
     ],
     "source_contexts": [
       "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::对方法迁移的硬约束"
@@ -1006,21 +4216,59 @@
     "independence_groups": [
       "1981-central-resolution"
     ],
-    "id": "candidate-20260806175133385628-4ee0495e",
+    "id": "candidate-20260807074344781669-447148a1",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": true,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts",
+    "problem": "在相关场景中判断何时以及如何应用“这些材料表明，方法论文本中的调查、群众、矛盾、纠错不会自动约束实际权力。只要出现以下...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "这些材料表明，方法论文本中的“调查、群众、矛盾、纠错”不会自动约束实际权力。只要出现以下条件，就应停止套用历史框架："
+    ],
+    "triggers": [
+      "用户明确需要处理与“这些材料表明，方法论文本中的调查、群众、矛盾、纠错不会自动约束实际权力。只要出现以下...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "该决议是中共中央的正式历史结论，既有高文本权威，也承担特定政治和组织功能。它能证明官...",
     "candidate_type": "counterexample",
     "summary": "该决议是中共中央的正式历史结论，既有高文本权威，也承担特定政治和组织功能。它能证明官方结论与制度反思，不能单独穷尽所有历史因果；具体事实仍需档案和独立研究交叉验证。",
     "evidence_ids": [
-      "ev-20260806175133385700-1b630e47"
+      "ev-20260807074344781739-a6e18059"
     ],
     "source_contexts": [
       "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::证据边界"
@@ -1035,21 +4283,59 @@
     "independence_groups": [
       "1981-central-resolution"
     ],
-    "id": "candidate-20260806175133385708-d96a7fd5",
+    "id": "candidate-20260807074344781746-eae6a9bc",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": false,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable",
+    "problem": "在相关场景中判断何时以及如何应用“该决议是中共中央的正式历史结论，既有高文本权威，也承担特定政治和组织功能。它能证明官...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "该决议是中共中央的正式历史结论，既有高文本权威，也承担特定政治和组织功能。它能证明官方结论与制度反思，不能单独穷尽所有历史因果；具体事实仍需档案和独立研究交叉验证。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“该决议是中共中央的正式历史结论，既有高文本权威，也承担特定政治和组织功能。它能证明官...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "counterexample"
   },
   {
     "title": "Evidence: 决议把个人专断、集体领导受损和民主法制制度化不足列入持续失效原因...",
     "candidate_type": "counterexample",
     "summary": "Evidence: 决议把个人专断、集体领导受损和民主法制制度化不足列入持续失效原因，表明理念上的调查不能替代独立反馈制度。",
     "evidence_ids": [
-      "ev-20260806175133385756-450b29f0"
+      "ev-20260807074344781794-b2a08bd3"
     ],
     "source_contexts": [
       "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::结构化主张：反馈完整性"
@@ -1064,21 +4350,59 @@
     "independence_groups": [
       "1981-central-resolution"
     ],
-    "id": "candidate-20260806175133385764-f92f5e31",
+    "id": "candidate-20260807074344781801-ebad90e2",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": false,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable",
+    "problem": "在相关场景中判断何时以及如何应用“Evidence: 决议把个人专断、集体领导受损和民主法制制度化不足列入持续失效原因...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Evidence: 决议把个人专断、集体领导受损和民主法制制度化不足列入持续失效原因，表明理念上的调查不能替代独立反馈制度。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Evidence: 决议把个人专断、集体领导受损和民主法制制度化不足列入持续失效原因...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "counterexample"
   },
   {
     "title": "Evidence: 决议明确记录文化大革命中是非与敌我的混淆，以及错误分类给干部、知...",
     "candidate_type": "counterexample",
     "summary": "Evidence: 决议明确记录文化大革命中是非与敌我的混淆，以及错误分类给干部、知识分子和社会组织造成的严重后果。",
     "evidence_ids": [
-      "ev-20260806175133385822-afc384e9"
+      "ev-20260807074344781859-136e538b"
     ],
     "source_contexts": [
       "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::结构化主张：阶段性分类"
@@ -1093,21 +4417,327 @@
     "independence_groups": [
       "1981-central-resolution"
     ],
-    "id": "candidate-20260806175133385829-8b700c84",
+    "id": "candidate-20260807074344781865-a6b00f33",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": false,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable",
+    "problem": "在相关场景中判断何时以及如何应用“Evidence: 决议明确记录文化大革命中是非与敌我的混淆，以及错误分类给干部、知...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Evidence: 决议明确记录文化大革命中是非与敌我的混淆，以及错误分类给干部、知识分子和社会组织造成的严重后果。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Evidence: 决议明确记录文化大革命中是非与敌我的混淆，以及错误分类给干部、知...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "counterexample"
+  },
+  {
+    "title": "Evidence: 决议把个人专断、集体领导受损以及民主法制制度化不足列为持续失效原...",
+    "candidate_type": "counterexample",
+    "summary": "Evidence: 决议把个人专断、集体领导受损以及民主法制制度化不足列为持续失效原因，说明反馈和复核不能集中在同一权力链。",
+    "evidence_ids": [
+      "ev-20260807074344781996-5de6b2c4"
+    ],
+    "source_contexts": [
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::结构化主张：异议与坏消息保护"
+    ],
+    "tags": [
+      "methodology",
+      "counterexample"
+    ],
+    "source_ids": [
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm"
+    ],
+    "independence_groups": [
+      "1981-central-resolution"
+    ],
+    "id": "candidate-20260807074344782004-daa6a67b",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": true,
+    "actionable": false,
+    "status": "rejected",
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable",
+    "problem": "在相关场景中判断何时以及如何应用“Evidence: 决议把个人专断、集体领导受损以及民主法制制度化不足列为持续失效原...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Evidence: 决议把个人专断、集体领导受损以及民主法制制度化不足列为持续失效原因，说明反馈和复核不能集中在同一权力链。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Evidence: 决议把个人专断、集体领导受损以及民主法制制度化不足列为持续失效原...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "counterexample"
+  },
+  {
+    "title": "Evidence: 决议记录大规模运动替代制度化纠错造成全局性长期后果，反向说明高不...",
+    "candidate_type": "principle",
+    "summary": "Evidence: 决议记录大规模运动替代制度化纠错造成全局性长期后果，反向说明高不确定变更必须可撤回、可复核而非一次全面发动。",
+    "evidence_ids": [
+      "ev-20260807074344782050-6d003879"
+    ],
+    "source_contexts": [
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::结构化主张：阶段化试点"
+    ],
+    "tags": [
+      "methodology",
+      "principle"
+    ],
+    "source_ids": [
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm"
+    ],
+    "independence_groups": [
+      "1981-central-resolution"
+    ],
+    "id": "candidate-20260807074344782058-518a8e4f",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": true,
+    "actionable": true,
+    "status": "rejected",
+    "rejection_reason": "V1 requires recurrence in at least two source contexts",
+    "problem": "在相关场景中判断何时以及如何应用“Evidence: 决议记录大规模运动替代制度化纠错造成全局性长期后果，反向说明高不...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Evidence: 决议记录大规模运动替代制度化纠错造成全局性长期后果，反向说明高不确定变更必须可撤回、可复核而非一次全面发动。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Evidence: 决议记录大规模运动替代制度化纠错造成全局性长期后果，反向说明高不...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Evidence: 决议把民主法制、集体领导和组织制度受损列为重要原因，表明任何中心...",
+    "candidate_type": "counterexample",
+    "summary": "Evidence: 决议把民主法制、集体领导和组织制度受损列为重要原因，表明任何中心任务都不能取消制度与权利底线。",
+    "evidence_ids": [
+      "ev-20260807074344782111-348cddc7"
+    ],
+    "source_contexts": [
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::结构化主张：中心任务与底线协调"
+    ],
+    "tags": [
+      "methodology",
+      "counterexample"
+    ],
+    "source_ids": [
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm"
+    ],
+    "independence_groups": [
+      "1981-central-resolution"
+    ],
+    "id": "candidate-20260807074344782120-cb565f17",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": true,
+    "actionable": false,
+    "status": "rejected",
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable",
+    "problem": "在相关场景中判断何时以及如何应用“Evidence: 决议把民主法制、集体领导和组织制度受损列为重要原因，表明任何中心...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Evidence: 决议把民主法制、集体领导和组织制度受损列为重要原因，表明任何中心任务都不能取消制度与权利底线。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Evidence: 决议把民主法制、集体领导和组织制度受损列为重要原因，表明任何中心...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "counterexample"
+  },
+  {
+    "title": "Evidence: 决议明确判定当时阶级形势和党政状况估计完全错误，说明理论化判断不...",
+    "candidate_type": "case",
+    "summary": "Evidence: 决议明确判定当时阶级形势和党政状况估计完全错误，说明理论化判断不能在反事实结果出现后继续免于纠正。",
+    "evidence_ids": [
+      "ev-20260807074344782171-b6177e60"
+    ],
+    "source_contexts": [
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::结构化主张：反教条纠错"
+    ],
+    "tags": [
+      "methodology",
+      "case"
+    ],
+    "source_ids": [
+      "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm"
+    ],
+    "independence_groups": [
+      "1981-central-resolution"
+    ],
+    "id": "candidate-20260807074344782178-4979fff6",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": true,
+    "actionable": false,
+    "status": "rejected",
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable",
+    "problem": "在相关场景中判断何时以及如何应用“Evidence: 决议明确判定当时阶级形势和党政状况估计完全错误，说明理论化判断不...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Evidence: 决议明确判定当时阶级形势和党政状况估计完全错误，说明理论化判断不能在反事实结果出现后继续免于纠正。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Evidence: 决议明确判定当时阶级形势和党政状况估计完全错误，说明理论化判断不...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "case"
   },
   {
     "title": "Evidence: 决议指出问题应以符合宪法、法律和党章的措施解决，不能采用文化大革...",
     "candidate_type": "framework",
     "summary": "Evidence: 决议指出问题应以符合宪法、法律和党章的措施解决，不能采用文化大革命的理论和方法。",
     "evidence_ids": [
-      "ev-20260806175133385872-849b520a"
+      "ev-20260807074344782220-49488e11"
     ],
     "source_contexts": [
       "https://www.gov.cn/test/2008-06/23/content_1024934_3.htm::结构化主张：现代迁移边界"
@@ -1122,21 +4752,59 @@
     "independence_groups": [
       "1981-central-resolution"
     ],
-    "id": "candidate-20260806175133385879-88dff73e",
+    "id": "candidate-20260807074344782227-4d87c6cf",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": true,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts",
+    "problem": "在相关场景中判断何时以及如何应用“Evidence: 决议指出问题应以符合宪法、法律和党章的措施解决，不能采用文化大革...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Evidence: 决议指出问题应以符合宪法、法律和党章的措施解决，不能采用文化大革命的理论和方法。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Evidence: 决议指出问题应以符合宪法、法律和党章的措施解决，不能采用文化大革...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "论文摘要报告两个经验发现：饥荒开始的1959年，总体粮食产量仍显著高于人口生存需要...",
     "candidate_type": "framework",
     "summary": "论文摘要报告两个经验发现：饥荒开始的1959年，总体粮食产量仍显著高于人口生存需要；当年人均粮食产量较高的地区反而经历更高的饥荒死亡率。作者提出的制度模型认为，这些模式与中央计划体制在总产量冲击下无法容易收集并响应新信息的情形一致。",
     "evidence_ids": [
-      "ev-20260806175133386080-eee5ae17"
+      "ev-20260807074344782424-1a4b4928"
     ],
     "source_contexts": [
       "https://www.nber.org/papers/w16361::摘要层面的可核验结论"
@@ -1151,21 +4819,59 @@
     "independence_groups": [
       "nber-meng-qian-yared"
     ],
-    "id": "candidate-20260806175133386088-5d88c70b",
+    "id": "candidate-20260807074344782432-6254cbea",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": false,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable",
+    "problem": "在相关场景中判断何时以及如何应用“论文摘要报告两个经验发现：饥荒开始的1959年，总体粮食产量仍显著高于人口生存需要...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "论文摘要报告两个经验发现：饥荒开始的1959年，总体粮食产量仍显著高于人口生存需要；当年人均粮食产量较高的地区反而经历更高的饥荒死亡率。作者提出的制度模型认为，这些模式与中央计划体制在总产量冲击下无法容易收集并响应新信息的情形一致。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“论文摘要报告两个经验发现：饥荒开始的1959年，总体粮食产量仍显著高于人口生存需要...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "这项研究不直接评价某一句方法论文本，而是提供一个独立的系统反例：",
     "candidate_type": "framework",
     "summary": "这项研究不直接评价某一句方法论文本，而是提供一个独立的系统反例：",
     "evidence_ids": [
-      "ev-20260806175133386106-9f83d1dc"
+      "ev-20260807074344782451-d01eda0a"
     ],
     "source_contexts": [
       "https://www.nber.org/papers/w16361::对 Skill 的意义"
@@ -1180,21 +4886,59 @@
     "independence_groups": [
       "nber-meng-qian-yared"
     ],
-    "id": "candidate-20260806175133386112-410da436",
+    "id": "candidate-20260807074344782457-d3329e0a",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": true,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts",
+    "problem": "在相关场景中判断何时以及如何应用“这项研究不直接评价某一句方法论文本，而是提供一个独立的系统反例：”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "这项研究不直接评价某一句方法论文本，而是提供一个独立的系统反例："
+    ],
+    "triggers": [
+      "用户明确需要处理与“这项研究不直接评价某一句方法论文本，而是提供一个独立的系统反例：”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "- 纠错不能只依赖领导者愿意调查，还需要信息可安全上行、地方异常可被看见、政策可及时...",
     "candidate_type": "counterexample",
     "summary": "- 纠错不能只依赖领导者愿意调查，还需要信息可安全上行、地方异常可被看见、政策可及时调整。",
     "evidence_ids": [
-      "ev-20260806175133386158-3e54ff68"
+      "ev-20260807074344782502-0d8a1fdc"
     ],
     "source_contexts": [
       "https://www.nber.org/papers/w16361::对 Skill 的意义"
@@ -1209,21 +4953,59 @@
     "independence_groups": [
       "nber-meng-qian-yared"
     ],
-    "id": "candidate-20260806175133386164-722d0f68",
+    "id": "candidate-20260807074344782508-e0079221",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": false,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable",
+    "problem": "在相关场景中判断何时以及如何应用“- 纠错不能只依赖领导者愿意调查，还需要信息可安全上行、地方异常可被看见、政策可及时...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "- 纠错不能只依赖领导者愿意调查，还需要信息可安全上行、地方异常可被看见、政策可及时调整。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“- 纠错不能只依赖领导者愿意调查，还需要信息可安全上行、地方异常可被看见、政策可及时...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "counterexample"
   },
   {
     "title": "因此，任何调查—集中—执行的现代流程都必须加入：",
     "candidate_type": "principle",
     "summary": "因此，任何“调查—集中—执行”的现代流程都必须加入：",
     "evidence_ids": [
-      "ev-20260806175133386175-1104a5b7"
+      "ev-20260807074344782521-ba8ec12c"
     ],
     "source_contexts": [
       "https://www.nber.org/papers/w16361::对 Skill 的意义"
@@ -1238,21 +5020,59 @@
     "independence_groups": [
       "nber-meng-qian-yared"
     ],
-    "id": "candidate-20260806175133386182-9e1840b0",
+    "id": "candidate-20260807074344782528-96a9a274",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": true,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate may be generic or underspecified"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate may be generic or underspecified",
+    "problem": "在相关场景中判断何时以及如何应用“因此，任何调查—集中—执行的现代流程都必须加入：”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "因此，任何“调查—集中—执行”的现代流程都必须加入："
+    ],
+    "triggers": [
+      "用户明确需要处理与“因此，任何调查—集中—执行的现代流程都必须加入：”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "工作论文使用模型和历史数据解释制度机制，不应被简化为单因果结论。它与官方历史决议的证...",
     "candidate_type": "framework",
     "summary": "工作论文使用模型和历史数据解释制度机制，不应被简化为单因果结论。它与官方历史决议的证据类型、作者群和制度位置不同，二者共同使用能够降低单一叙事偏差。",
     "evidence_ids": [
-      "ev-20260806175133386196-f7a196a3"
+      "ev-20260807074344782541-e1ec1592"
     ],
     "source_contexts": [
       "https://www.nber.org/papers/w16361::证据边界"
@@ -1267,21 +5087,59 @@
     "independence_groups": [
       "nber-meng-qian-yared"
     ],
-    "id": "candidate-20260806175133386202-8e3c5c29",
+    "id": "candidate-20260807074344782548-10a9ea49",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": false,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable",
+    "problem": "在相关场景中判断何时以及如何应用“工作论文使用模型和历史数据解释制度机制，不应被简化为单因果结论。它与官方历史决议的证...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "工作论文使用模型和历史数据解释制度机制，不应被简化为单因果结论。它与官方历史决议的证据类型、作者群和制度位置不同，二者共同使用能够降低单一叙事偏差。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“工作论文使用模型和历史数据解释制度机制，不应被简化为单因果结论。它与官方历史决议的证...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "Evidence: 论文的制度模型把异常结果与中央计划体制难以及时收集并响应新信息联...",
     "candidate_type": "framework",
     "summary": "Evidence: 论文的制度模型把异常结果与中央计划体制难以及时收集并响应新信息联系起来，说明总量信息和领导意愿不能替代分布监测与独立上行通道。",
     "evidence_ids": [
-      "ev-20260806175133386244-484b79aa"
+      "ev-20260807074344782587-3ca2db46"
     ],
     "source_contexts": [
       "https://www.nber.org/papers/w16361::结构化主张：反馈完整性"
@@ -1296,21 +5154,260 @@
     "independence_groups": [
       "nber-meng-qian-yared"
     ],
-    "id": "candidate-20260806175133386251-43ea9cc6",
+    "id": "candidate-20260807074344782594-9062030c",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": false,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable",
+    "problem": "在相关场景中判断何时以及如何应用“Evidence: 论文的制度模型把异常结果与中央计划体制难以及时收集并响应新信息联...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Evidence: 论文的制度模型把异常结果与中央计划体制难以及时收集并响应新信息联系起来，说明总量信息和领导意愿不能替代分布监测与独立上行通道。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Evidence: 论文的制度模型把异常结果与中央计划体制难以及时收集并响应新信息联...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Evidence: 制度模型把严重结果与新信息难以及时收集和响应联系起来，支持独立异...",
+    "candidate_type": "framework",
+    "summary": "Evidence: 制度模型把严重结果与新信息难以及时收集和响应联系起来，支持独立异常监测、坏消息保护和复核角色分离。",
+    "evidence_ids": [
+      "ev-20260807074344782721-b95e5582"
+    ],
+    "source_contexts": [
+      "https://www.nber.org/papers/w16361::结构化主张：异议与坏消息保护"
+    ],
+    "tags": [
+      "methodology",
+      "framework"
+    ],
+    "source_ids": [
+      "https://www.nber.org/papers/w16361"
+    ],
+    "independence_groups": [
+      "nber-meng-qian-yared"
+    ],
+    "id": "candidate-20260807074344782728-a651e69a",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": true,
+    "actionable": false,
+    "status": "rejected",
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable",
+    "problem": "在相关场景中判断何时以及如何应用“Evidence: 制度模型把严重结果与新信息难以及时收集和响应联系起来，支持独立异...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Evidence: 制度模型把严重结果与新信息难以及时收集和响应联系起来，支持独立异常监测、坏消息保护和复核角色分离。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Evidence: 制度模型把严重结果与新信息难以及时收集和响应联系起来，支持独立异...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
+  },
+  {
+    "title": "Evidence: 论文报告总产量仍高于生存需要时，高产地区反而出现更高死亡率，证明...",
+    "candidate_type": "case",
+    "summary": "Evidence: 论文报告总产量仍高于生存需要时，高产地区反而出现更高死亡率，证明总体充足不能代表局部分配与结果。",
+    "evidence_ids": [
+      "ev-20260807074344782784-e283415b"
+    ],
+    "source_contexts": [
+      "https://www.nber.org/papers/w16361::结构化主张：分布优先于总量"
+    ],
+    "tags": [
+      "methodology",
+      "case"
+    ],
+    "source_ids": [
+      "https://www.nber.org/papers/w16361"
+    ],
+    "independence_groups": [
+      "nber-meng-qian-yared"
+    ],
+    "id": "candidate-20260807074344782791-896c1d80",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": true,
+    "actionable": false,
+    "status": "rejected",
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable",
+    "problem": "在相关场景中判断何时以及如何应用“Evidence: 论文报告总产量仍高于生存需要时，高产地区反而出现更高死亡率，证明...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Evidence: 论文报告总产量仍高于生存需要时，高产地区反而出现更高死亡率，证明总体充足不能代表局部分配与结果。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Evidence: 论文报告总产量仍高于生存需要时，高产地区反而出现更高死亡率，证明...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "case"
+  },
+  {
+    "title": "Evidence: 反直觉的地区数据要求制度解释响应事实，而不能用既定总量判断覆盖异...",
+    "candidate_type": "case",
+    "summary": "Evidence: 反直觉的地区数据要求制度解释响应事实，而不能用既定总量判断覆盖异常结果。",
+    "evidence_ids": [
+      "ev-20260807074344782842-a381c208"
+    ],
+    "source_contexts": [
+      "https://www.nber.org/papers/w16361::结构化主张：反教条纠错"
+    ],
+    "tags": [
+      "methodology",
+      "case"
+    ],
+    "source_ids": [
+      "https://www.nber.org/papers/w16361"
+    ],
+    "independence_groups": [
+      "nber-meng-qian-yared"
+    ],
+    "id": "candidate-20260807074344782850-abde1902",
+    "cross_domain": false,
+    "source_independent": false,
+    "predictive": false,
+    "distinctive": true,
+    "actionable": false,
+    "status": "rejected",
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable",
+    "problem": "在相关场景中判断何时以及如何应用“Evidence: 反直觉的地区数据要求制度解释响应事实，而不能用既定总量判断覆盖异...”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "Evidence: 反直觉的地区数据要求制度解释响应事实，而不能用既定总量判断覆盖异常结果。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“Evidence: 反直觉的地区数据要求制度解释响应事实，而不能用既定总量判断覆盖异...”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "case"
   },
   {
     "title": "每条直接引语必须附篇名、版本入口和文本性质。",
     "candidate_type": "principle",
     "summary": "每条直接引语必须附篇名、版本入口和文本性质。",
     "evidence_ids": [
-      "ev-20260806175133386517-95ae581a"
+      "ev-20260807074344783110-9d76f02b"
     ],
     "source_contexts": [
       "https://www.dswxyjy.org.cn/n1/2021/0118/c219000-32003108.html::对蒸馏的约束"
@@ -1325,21 +5422,59 @@
     "independence_groups": [
       "party-history-institute-version-study"
     ],
-    "id": "candidate-20260806175133386524-af79b6c2",
+    "id": "candidate-20260807074344783117-4967a45b",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": true,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate may be generic or underspecified"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate may be generic or underspecified",
+    "problem": "在相关场景中判断何时以及如何应用“每条直接引语必须附篇名、版本入口和文本性质。”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "每条直接引语必须附篇名、版本入口和文本性质。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“每条直接引语必须附篇名、版本入口和文本性质。”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "作者说过与后人从作者文本推导必须分开。",
     "candidate_type": "principle",
     "summary": "“作者说过”与“后人从作者文本推导”必须分开。",
     "evidence_ids": [
-      "ev-20260806175133386538-8b3660fd"
+      "ev-20260807074344783130-407c1618"
     ],
     "source_contexts": [
       "https://www.dswxyjy.org.cn/n1/2021/0118/c219000-32003108.html::对蒸馏的约束"
@@ -1354,21 +5489,59 @@
     "independence_groups": [
       "party-history-institute-version-study"
     ],
-    "id": "candidate-20260806175133386548-249aa441",
+    "id": "candidate-20260807074344783137-6fc4eeb2",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": false,
     "actionable": true,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate may be generic or underspecified"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate may be generic or underspecified",
+    "problem": "在相关场景中判断何时以及如何应用“作者说过与后人从作者文本推导必须分开。”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "“作者说过”与“后人从作者文本推导”必须分开。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“作者说过与后人从作者文本推导必须分开。”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   },
   {
     "title": "公开定稿可以支持最终观点，不能自动证明某年当场的原始措辞。",
     "candidate_type": "counterexample",
     "summary": "公开定稿可以支持最终观点，不能自动证明某年当场的原始措辞。",
     "evidence_ids": [
-      "ev-20260806175133386559-1592c7a0"
+      "ev-20260807074344783149-5e0b04e3"
     ],
     "source_contexts": [
       "https://www.dswxyjy.org.cn/n1/2021/0118/c219000-32003108.html::对蒸馏的约束"
@@ -1383,21 +5556,59 @@
     "independence_groups": [
       "party-history-institute-version-study"
     ],
-    "id": "candidate-20260806175133386566-9f59cbe0",
+    "id": "candidate-20260807074344783155-92a19e95",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": false,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable",
+    "problem": "在相关场景中判断何时以及如何应用“公开定稿可以支持最终观点，不能自动证明某年当场的原始措辞。”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "公开定稿可以支持最终观点，不能自动证明某年当场的原始措辞。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“公开定稿可以支持最终观点，不能自动证明某年当场的原始措辞。”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "counterexample"
   },
   {
     "title": "讲话整理稿、集体文件、编辑题注和个人手稿不能给予相同证据等级。",
     "candidate_type": "counterexample",
     "summary": "讲话整理稿、集体文件、编辑题注和个人手稿不能给予相同证据等级。",
     "evidence_ids": [
-      "ev-20260806175133386580-41e5eaee"
+      "ev-20260807074344783168-d46266a7"
     ],
     "source_contexts": [
       "https://www.dswxyjy.org.cn/n1/2021/0118/c219000-32003108.html::对蒸馏的约束"
@@ -1412,21 +5623,59 @@
     "independence_groups": [
       "party-history-institute-version-study"
     ],
-    "id": "candidate-20260806175133386586-fb1a003c",
+    "id": "candidate-20260807074344783175-0c6a604d",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": false,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable",
+    "problem": "在相关场景中判断何时以及如何应用“讲话整理稿、集体文件、编辑题注和个人手稿不能给予相同证据等级。”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
+    ],
+    "mechanism": [
+      "讲话整理稿、集体文件、编辑题注和个人手稿不能给予相同证据等级。"
+    ],
+    "triggers": [
+      "用户明确需要处理与“讲话整理稿、集体文件、编辑题注和个人手稿不能给予相同证据等级。”对应的问题"
+    ],
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
+    ],
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
+    ],
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "counterexample"
   },
   {
     "title": "当不同版本影响方法含义时，应并列版本，不选择更方便当前论证的一版。",
     "candidate_type": "framework",
     "summary": "当不同版本影响方法含义时，应并列版本，不选择更方便当前论证的一版。",
     "evidence_ids": [
-      "ev-20260806175133386595-2f2ddeea"
+      "ev-20260807074344783184-2fa96734"
     ],
     "source_contexts": [
       "https://www.dswxyjy.org.cn/n1/2021/0118/c219000-32003108.html::对蒸馏的约束"
@@ -1441,42 +5690,51 @@
     "independence_groups": [
       "party-history-institute-version-study"
     ],
-    "id": "candidate-20260806175133386669-4a8634e5",
+    "id": "candidate-20260807074344783190-0b8d451f",
     "cross_domain": false,
     "source_independent": false,
     "predictive": false,
     "distinctive": true,
     "actionable": true,
     "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts"
-  },
-  {
-    "title": "最终 Skill 不使用第一人称冒充历史人物，也不生成伪造语录。面对毛泽东没有讨论过...",
-    "candidate_type": "framework",
-    "summary": "最终 Skill 不使用第一人称冒充历史人物，也不生成伪造语录。面对毛泽东没有讨论过的现代问题，只能说“这是基于公开方法的现代迁移”，并给出迁移在哪些条件下会失效。",
-    "evidence_ids": [
-      "ev-20260806175133386686-1cac8124"
+    "rejection_reason": "V1 requires recurrence in at least two source contexts",
+    "problem": "在相关场景中判断何时以及如何应用“当不同版本影响方法含义时，应并列版本，不选择更方便当前论证的一版。”",
+    "assumptions": [
+      "来源语境与当前问题具有可解释的结构对应"
     ],
-    "source_contexts": [
-      "https://www.dswxyjy.org.cn/n1/2021/0118/c219000-32003108.html::现代输出纪律"
+    "mechanism": [
+      "当不同版本影响方法含义时，应并列版本，不选择更方便当前论证的一版。"
     ],
-    "tags": [
-      "methodology",
-      "framework"
+    "triggers": [
+      "用户明确需要处理与“当不同版本影响方法含义时，应并列版本，不选择更方便当前论证的一版。”对应的问题"
     ],
-    "source_ids": [
-      "https://www.dswxyjy.org.cn/n1/2021/0118/c219000-32003108.html"
+    "anti_triggers": [
+      "纯信息查询",
+      "关键事实或成立假设缺失"
     ],
-    "independence_groups": [
-      "party-history-institute-version-study"
+    "inputs": [
+      "用户目标",
+      "当前约束",
+      "可验证事实"
     ],
-    "id": "candidate-20260806175133386693-86bbe9b2",
-    "cross_domain": false,
-    "source_independent": false,
-    "predictive": false,
-    "distinctive": true,
-    "actionable": true,
-    "status": "rejected",
-    "rejection_reason": "V1 requires recurrence in at least two source contexts"
+    "procedure": [
+      "确认目标、成立假设和关键事实",
+      "按证据运行候选机制并保留备选解释",
+      "定义完成、改判、停止和降级条件"
+    ],
+    "branches": [],
+    "output": "带证据、边界和改判条件的可执行结果",
+    "done": "结果可由来源和后续行动复核",
+    "boundaries": [
+      "不得把来源未支持的推断写成事实"
+    ],
+    "failures": [
+      "证据不足",
+      "成立假设不满足"
+    ],
+    "counterexamples": [],
+    "related_ids": [],
+    "verification": {},
+    "disposition": "independent-module"
   }
 ]

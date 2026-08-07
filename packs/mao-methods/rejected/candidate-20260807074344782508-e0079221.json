@@ -1,0 +1,67 @@
+{
+  "title": "- 纠错不能只依赖领导者愿意调查，还需要信息可安全上行、地方异常可被看见、政策可及时...",
+  "candidate_type": "counterexample",
+  "summary": "- 纠错不能只依赖领导者愿意调查，还需要信息可安全上行、地方异常可被看见、政策可及时调整。",
+  "evidence_ids": [
+    "ev-20260807074344782502-0d8a1fdc"
+  ],
+  "source_contexts": [
+    "https://www.nber.org/papers/w16361::对 Skill 的意义"
+  ],
+  "tags": [
+    "methodology",
+    "counterexample"
+  ],
+  "source_ids": [
+    "https://www.nber.org/papers/w16361"
+  ],
+  "independence_groups": [
+    "nber-meng-qian-yared"
+  ],
+  "id": "candidate-20260807074344782508-e0079221",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": true,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable",
+  "problem": "在相关场景中判断何时以及如何应用“- 纠错不能只依赖领导者愿意调查，还需要信息可安全上行、地方异常可被看见、政策可及时...”",
+  "assumptions": [
+    "来源语境与当前问题具有可解释的结构对应"
+  ],
+  "mechanism": [
+    "- 纠错不能只依赖领导者愿意调查，还需要信息可安全上行、地方异常可被看见、政策可及时调整。"
+  ],
+  "triggers": [
+    "用户明确需要处理与“- 纠错不能只依赖领导者愿意调查，还需要信息可安全上行、地方异常可被看见、政策可及时...”对应的问题"
+  ],
+  "anti_triggers": [
+    "纯信息查询",
+    "关键事实或成立假设缺失"
+  ],
+  "inputs": [
+    "用户目标",
+    "当前约束",
+    "可验证事实"
+  ],
+  "procedure": [
+    "确认目标、成立假设和关键事实",
+    "按证据运行候选机制并保留备选解释",
+    "定义完成、改判、停止和降级条件"
+  ],
+  "branches": [],
+  "output": "带证据、边界和改判条件的可执行结果",
+  "done": "结果可由来源和后续行动复核",
+  "boundaries": [
+    "不得把来源未支持的推断写成事实"
+  ],
+  "failures": [
+    "证据不足",
+    "成立假设不满足"
+  ],
+  "counterexamples": [],
+  "related_ids": [],
+  "verification": {},
+  "disposition": "counterexample"
+}

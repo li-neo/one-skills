@@ -1,0 +1,67 @@
+{
+  "title": "Evidence: 论文报告总产量仍高于生存需要时，高产地区反而出现更高死亡率，证明...",
+  "candidate_type": "case",
+  "summary": "Evidence: 论文报告总产量仍高于生存需要时，高产地区反而出现更高死亡率，证明总体充足不能代表局部分配与结果。",
+  "evidence_ids": [
+    "ev-20260807074344782784-e283415b"
+  ],
+  "source_contexts": [
+    "https://www.nber.org/papers/w16361::结构化主张：分布优先于总量"
+  ],
+  "tags": [
+    "methodology",
+    "case"
+  ],
+  "source_ids": [
+    "https://www.nber.org/papers/w16361"
+  ],
+  "independence_groups": [
+    "nber-meng-qian-yared"
+  ],
+  "id": "candidate-20260807074344782791-896c1d80",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": true,
+  "actionable": false,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts; candidate is not yet executable",
+  "problem": "在相关场景中判断何时以及如何应用“Evidence: 论文报告总产量仍高于生存需要时，高产地区反而出现更高死亡率，证明...”",
+  "assumptions": [
+    "来源语境与当前问题具有可解释的结构对应"
+  ],
+  "mechanism": [
+    "Evidence: 论文报告总产量仍高于生存需要时，高产地区反而出现更高死亡率，证明总体充足不能代表局部分配与结果。"
+  ],
+  "triggers": [
+    "用户明确需要处理与“Evidence: 论文报告总产量仍高于生存需要时，高产地区反而出现更高死亡率，证明...”对应的问题"
+  ],
+  "anti_triggers": [
+    "纯信息查询",
+    "关键事实或成立假设缺失"
+  ],
+  "inputs": [
+    "用户目标",
+    "当前约束",
+    "可验证事实"
+  ],
+  "procedure": [
+    "确认目标、成立假设和关键事实",
+    "按证据运行候选机制并保留备选解释",
+    "定义完成、改判、停止和降级条件"
+  ],
+  "branches": [],
+  "output": "带证据、边界和改判条件的可执行结果",
+  "done": "结果可由来源和后续行动复核",
+  "boundaries": [
+    "不得把来源未支持的推断写成事实"
+  ],
+  "failures": [
+    "证据不足",
+    "成立假设不满足"
+  ],
+  "counterexamples": [],
+  "related_ids": [],
+  "verification": {},
+  "disposition": "case"
+}

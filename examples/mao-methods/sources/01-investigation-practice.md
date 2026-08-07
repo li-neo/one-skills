@@ -37,6 +37,27 @@ Claim-Statement: 可用的反馈方法必须把一线证据、暂时判断、可
 Claim-Type: framework
 Evidence: 《湖南农民运动考察报告》显示现场材料可以推翻城市转述，《实践论》又要求认识返回实践并继续修正。
 
+## 结构化主张：先调查再判断
+
+Claim-Key: investigation-before-judgment
+Claim-Statement: 高影响判断必须先取得不同处境的一手事实，并预先写明什么证据会改变当前结论。
+Claim-Type: framework
+Evidence: 五县三十二天实地考察所得与城市转述完全相反，说明判断必须允许现场材料推翻先验。
+
+## 结构化主张：实践检验循环
+
+Claim-Key: practice-test-loop
+Claim-Statement: 方法结论只能作为暂时假设，必须通过范围有限、结果可观察的实践再次检验和修正。
+Claim-Type: framework
+Evidence: 《实践论》把认识写成实践、认识、再实践、再认识的循环，而不是一次性形成永久结论。
+
+## 结构化主张：反教条纠错
+
+Claim-Key: anti-dogmatism-correction
+Claim-Statement: 当抽象理论、上级转述或既有文本与现场事实冲突时，必须让可核验证据触发纠错而不是维护原结论。
+Claim-Type: principle
+Evidence: 调查结果与城市听闻相反，证明既有说法和抽象文本不能替代现场事实与后续检验。
+
 ## 结构化主张：版本与归属
 
 Claim-Key: version-attribution

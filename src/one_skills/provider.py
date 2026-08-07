@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 import json
 import os
+from dataclasses import dataclass
 from typing import Any, Protocol
 from urllib.request import Request, urlopen
 
@@ -106,6 +106,76 @@ def verify_candidate(
             raise ProviderError(f"candidate verification requires non-empty {field}")
     result["accepted"] = all(result[field] for field in boolean_fields)
     return result
+
+
+def verify_candidate_with_roles(
+    answer_provider: ModelProvider,
+    judge_provider: ModelProvider,
+    candidate: dict[str, Any],
+    evidence: list[dict[str, Any]],
+    profile_contract: str,
+) -> dict[str, Any]:
+    """Run V2 generation and V1/V3 judgment in isolated model calls."""
+    answer = answer_provider.complete_json(
+        (
+            "You are an Answer Agent testing whether a candidate method transfers. "
+            "Create one novel question not directly answered by the evidence, then derive an "
+            "answer using only the candidate mechanism. Return JSON with strings "
+            "novel_question, derived_answer, assumptions, and falsifier."
+        ),
+        json.dumps(
+            {
+                "profile_contract": profile_contract,
+                "candidate": candidate,
+                "evidence": evidence,
+            },
+            ensure_ascii=False,
+        ),
+        "candidate-transfer-answer",
+    )
+    for field in ("novel_question", "derived_answer", "assumptions", "falsifier"):
+        if not isinstance(answer.get(field), str) or not answer[field].strip():
+            raise ProviderError(f"candidate transfer answer requires non-empty {field}")
+
+    result = judge_provider.complete_json(
+        (
+            "You are an independent Judge. Do not reward eloquence. Judge the candidate and "
+            "Answer Agent output only from supplied evidence. Return booleans cross_domain, "
+            "predictive, distinctive, actionable, boundary; string reason. Predictive requires "
+            "a useful non-trivial derived answer with explicit assumptions and a falsifier. "
+            "Distinctive fails when the candidate is generic advice a capable base model already knows."
+        ),
+        json.dumps(
+            {
+                "profile_contract": profile_contract,
+                "candidate": candidate,
+                "evidence": evidence,
+                "answer_agent": answer,
+            },
+            ensure_ascii=False,
+        ),
+        "candidate-transfer-judge",
+    )
+    boolean_fields = (
+        "cross_domain",
+        "predictive",
+        "distinctive",
+        "actionable",
+        "boundary",
+    )
+    if any(not isinstance(result.get(field), bool) for field in boolean_fields):
+        raise ProviderError("candidate transfer judge requires all boolean gates")
+    if not isinstance(result.get("reason"), str) or not result["reason"].strip():
+        raise ProviderError("candidate transfer judge requires reason")
+    return {
+        **result,
+        "novel_question": answer["novel_question"],
+        "derived_answer": answer["derived_answer"],
+        "assumptions": answer["assumptions"],
+        "falsifier": answer["falsifier"],
+        "accepted": all(result[field] for field in boolean_fields),
+        "answer_agent": answer,
+    }
 
 
 def model_capability(

@@ -1,0 +1,61 @@
+{
+  "name": "一线反馈完整闭环",
+  "problem": "组织收集了意见，但没有形成可修正的方案与结果返回",
+  "trigger": "用户意见很多但无法执行",
+  "inputs": [
+    "直接受影响者",
+    "具体经历",
+    "样本范围",
+    "试行方案"
+  ],
+  "procedure": [
+    "收集事实、诉求、解释、建议、反对和未知",
+    "公开样本与代表性限制",
+    "提炼有限问题和试行方案",
+    "返回采纳与未采纳理由",
+    "收集异常、退出和负面影响",
+    "决定扩大、保持、修改或停止"
+  ],
+  "output": "反馈分类、方案、返回说明和试点决议",
+  "done": "参与者知道意见如何处理，试点结果能够改变原方案",
+  "boundaries": [
+    "多数声量不等于真实同意",
+    "不得取消退出申诉和复核"
+  ],
+  "failures": [
+    "只听支持者",
+    "动员人数被当成授权"
+  ],
+  "fallback": "暂停扩大，先修复反馈制度",
+  "evidence_ids": [
+    "ev-20260807074344778145-fde1eae4",
+    "ev-20260807074344778152-1651d763",
+    "ev-20260807074344778159-ef36a626",
+    "ev-20260807074344778167-4e30fe24",
+    "ev-20260807074344778174-9bf8a104"
+  ],
+  "confidence": 0.85,
+  "id": "feedback-integrity",
+  "relations": [
+    {
+      "relation": "depends_on",
+      "target": "protected-dissent-channel"
+    },
+    {
+      "relation": "composes_with",
+      "target": "practice-test-loop"
+    }
+  ],
+  "anti_triggers": [
+    "只需一次性信息通知",
+    "组织预先规定唯一正确答案"
+  ],
+  "assumptions": [
+    "参与者可以安全提供具体经历",
+    "试点结果允许改变方案"
+  ],
+  "branches": [],
+  "examples": [],
+  "module_type": "internal",
+  "status": "verified"
+}

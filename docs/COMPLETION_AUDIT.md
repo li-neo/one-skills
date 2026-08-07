@@ -1,6 +1,6 @@
 # 工程完成审计
 
-审计时间：2026-08-06
+审计时间：2026-08-07
 
 本文件按项目公开承诺逐项列出权威证据。只有代码、可复跑测试、运行产物或外部 CI 可以证明完成；设计意图不算证据。
 
@@ -19,6 +19,10 @@
 | 2026 Source-Set 质量门 | `source_quality.py`、Source Catalog Schema | 独立来源、角色覆盖、holdout 和质量哈希测试 |
 | 2026 Skill Retrieval | `skill_retrieval.py` | 字段分离、背景 IDF、margin/abstain 与官方 frontmatter 测试 |
 | 2026 Learning / Experience | `learning.py`、`experience.py` | 先修路径、掌握状态、复现门与 holdout 隔离测试 |
+| v0.3 Object Overview / Portfolio | `overview.py`、`portfolio.py`、ProfileSpec | 来源定位、两次语义确认、长文本分批和候选降级测试 |
+| v0.3 七类编译器 | `compilers/`、`capability_graph.py`、`artifacts.py` | 七 Profile 双层网络、图谱、Glossary、Digest 与学习投影测试 |
+| v0.3 真实比较 | `comparison.py`、60 题 Mao suite | 完整 Answer/Judge 记录、匿名条件、综合分和不可补偿硬门 |
+| v0.3 结构化进化 | `evolution.py` | 重复事件门、whole-folder patch、before/after、快照回滚测试 |
 
 ## 2. 蒸馏与 Profile
 
@@ -81,7 +85,7 @@
 
 | 要求 | 实现证据 |
 |---|---|
-| CLI | `one --help` 的 32 个主入口/命令组 |
+| CLI | `one --help` 包含 source discover、semantic、compile、evaluate、compare、evolution 等 v0.3 入口 |
 | HTTP API | Bearer 鉴权、限长 JSON、search、job submit/status |
 | 持久 Worker | SQLite lease、超时重领、最大重试、错误隔离 |
 | 批量并发 | 有界 ThreadPool，独立 Pack 和独立错误结果 |
@@ -101,16 +105,21 @@
 ## 7. 最终验证
 
 ```text
-Local unit/integration tests: 27/27
+Local unit/integration tests: 37/37
 Root Skill validation: 0 errors, 0 warnings
 Profile benchmark: 7/7
-Python CI: 3.10 / 3.11 / 3.12 passed
-PostgreSQL + pgvector CI: passed
+Mao v0.3 Pack validation: 0 errors, 0 warnings
+Mao blind comparison: 60/60, 99.7950 vs Cangjie 77.0797, lead 22.7153
+Mao release: passed all hard gates, current phase evolve
+Python CI: pending current commit
+PostgreSQL + pgvector CI: pending current commit
 Git diff check / compileall: passed
 ```
 
 已知运行依赖不是未实现功能：
 
-- 真实语义蒸馏需要用户配置 OpenAI-compatible 模型端点；没有端点时流水线诚实停在 `verify: blocked`。
+- 三角色模型优先读取 Builder/Answer/Judge 独立配置；只有一套配置时标记
+  `model-shared/session-separated`。没有任何端点时，外部 Runtime 可导入完整隔离
+  Answer/Judge artifacts，但不得伪装成 provider-separated。
 - Darwin 是外部进化引擎；未安装时只生成 `status: prepared` 的交接请求。
 - S3 与 PostgreSQL 使用 `one-skills[production]` 可选依赖，本地模式不强制安装。

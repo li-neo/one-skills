@@ -424,15 +424,33 @@ def validate_reproducibility(pack: Path) -> list[Finding]:
             )
         ]
     findings: list[Finding] = []
-    if metadata.get("schema_version") != "0.2":
+    pack_version = metadata.get("schema_version")
+    if pack_version not in {"0.2", "0.3"}:
         findings.append(
             Finding(
                 "error",
                 "pack.schema_version",
-                "reproducible Packs require schema_version 0.2",
+                "reproducible Packs require schema_version 0.2 or 0.3",
                 str(paths["pack"]),
             )
         )
+    if pack_version == "0.3":
+        semantic = metadata.get("semantic_contract")
+        if (
+            not isinstance(semantic, dict)
+            or semantic.get("overview_confirmation")
+            not in {"pending", "confirmed", "stale"}
+            or semantic.get("capability_confirmation")
+            not in {"pending", "confirmed", "stale"}
+        ):
+            findings.append(
+                Finding(
+                    "error",
+                    "pack.semantic_contract",
+                    "v0.3 Pack requires overview and capability confirmation states",
+                    str(paths["pack"]),
+                )
+            )
     recipe_value = recipe_lock.get("recipe", {})
     recipe = recipe_value if isinstance(recipe_value, dict) else {}
     recipe_fields = {
@@ -541,12 +559,92 @@ def validate_reproducibility(pack: Path) -> list[Finding]:
                         str(quality_path),
                     )
                 )
+    if pack_version == "0.3":
+        overview_path = pack / "OBJECT_OVERVIEW.json"
+        if overview_path.exists():
+            try:
+                overview_hash = stable_json_hash(load_json(overview_path))
+            except (OSError, json.JSONDecodeError) as exc:
+                findings.append(
+                    Finding(
+                        "error",
+                        "overview.parse",
+                        str(exc),
+                        str(overview_path),
+                    )
+                )
+            else:
+                if (
+                    metadata.get("object_overview_hash") != overview_hash
+                    or constraints.get("object_overview_hash") != overview_hash
+                ):
+                    findings.append(
+                        Finding(
+                            "error",
+                            "overview.hash_drift",
+                            "Object Overview is not frozen by Pack metadata and constraints",
+                            str(overview_path),
+                        )
+                    )
+        portfolio_path = pack / "VERIFIED_PORTFOLIO.json"
+        if portfolio_path.exists():
+            try:
+                portfolio_hash = stable_json_hash(load_json(portfolio_path))
+            except (OSError, json.JSONDecodeError) as exc:
+                findings.append(
+                    Finding(
+                        "error",
+                        "portfolio.parse",
+                        str(exc),
+                        str(portfolio_path),
+                    )
+                )
+            else:
+                if (
+                    metadata.get("capability_portfolio_hash") != portfolio_hash
+                    or constraints.get("capability_portfolio_hash")
+                    != portfolio_hash
+                ):
+                    findings.append(
+                        Finding(
+                            "error",
+                            "portfolio.hash_drift",
+                            "Capability Portfolio is not frozen by Pack metadata and constraints",
+                            str(portfolio_path),
+                        )
+                    )
+        graph_path = pack / "CAPABILITY_GRAPH.json"
+        if graph_path.exists():
+            try:
+                graph_hash = stable_json_hash(load_json(graph_path))
+            except (OSError, json.JSONDecodeError) as exc:
+                findings.append(
+                    Finding(
+                        "error",
+                        "graph.parse",
+                        str(exc),
+                        str(graph_path),
+                    )
+                )
+            else:
+                if (
+                    metadata.get("capability_graph_hash") != graph_hash
+                    or constraints.get("capability_graph_hash") != graph_hash
+                ):
+                    findings.append(
+                        Finding(
+                            "error",
+                            "graph.hash_drift",
+                            "Capability Graph is not frozen by Pack metadata and constraints",
+                            str(graph_path),
+                        )
+                    )
     return findings
 
 
 def validate_pack(pack: Path) -> list[Finding]:
     findings: list[Finding] = []
-    for relative in (
+    required = [
         "pack.json",
         "RECIPE_LOCK.json",
         "PROTECTED_CONSTRAINTS.json",
@@ -558,7 +656,31 @@ def validate_pack(pack: Path) -> list[Finding]:
         "OBJECT_MAP.md",
         "EVIDENCE_LEDGER.jsonl",
         "INDEX.md",
-    ):
+    ]
+    metadata_path = pack / "pack.json"
+    if metadata_path.exists():
+        try:
+            metadata = load_json(metadata_path)
+            if metadata.get("schema_version") == "0.3":
+                required.extend(("OBJECT_OVERVIEW.json", "OBJECT_OVERVIEW.md"))
+                state_path = pack / "PIPELINE_STATE.json"
+                if state_path.exists() and metadata.get("capability_graph_hash"):
+                    phase = load_json(state_path).get("current_phase")
+                    if phase in {"test", "ship", "evolve"}:
+                        required.extend(
+                            (
+                                "CANDIDATE_PORTFOLIO.json",
+                                "CANDIDATE_PORTFOLIO.md",
+                                "VERIFIED_PORTFOLIO.json",
+                                "VERIFIED_PORTFOLIO.md",
+                                "CAPABILITY_GRAPH.json",
+                                "GLOSSARY.md",
+                                "DIGEST.md",
+                            )
+                        )
+        except (OSError, json.JSONDecodeError):
+            pass
+    for relative in required:
         if not (pack / relative).exists():
             findings.append(Finding("error", "pack.missing", f"missing {relative}", str(pack / relative)))
     try:

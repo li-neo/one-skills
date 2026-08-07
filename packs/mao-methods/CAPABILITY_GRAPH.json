@@ -1,0 +1,1473 @@
+{
+  "schema_version": "1.0",
+  "pack_id": "pack-20260807074344701780-f226577d",
+  "nodes": [
+    {
+      "id": "governance-evidence-boundary",
+      "type": "governance",
+      "title": "证据、版本、安全与权利治理门",
+      "status": "verified",
+      "evidence_ids": []
+    },
+    {
+      "id": "anti-dogmatism-correction",
+      "type": "capability",
+      "title": "事实触发反教条纠错",
+      "status": "supporting",
+      "evidence_ids": [
+        "ev-20260807074344778009-3494d9f2",
+        "ev-20260807074344778030-78f124b5",
+        "ev-20260807074344778043-2b1625d0"
+      ]
+    },
+    {
+      "id": "claim-ev-20260807074344778009-3494d9f2",
+      "type": "claim",
+      "title": "ev-20260807074344778009-3494d9f2",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778009-3494d9f2"
+      ]
+    },
+    {
+      "id": "claim-ev-20260807074344778030-78f124b5",
+      "type": "claim",
+      "title": "ev-20260807074344778030-78f124b5",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778030-78f124b5"
+      ]
+    },
+    {
+      "id": "claim-ev-20260807074344778043-2b1625d0",
+      "type": "claim",
+      "title": "ev-20260807074344778043-2b1625d0",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778043-2b1625d0"
+      ]
+    },
+    {
+      "id": "center-work-coordination",
+      "type": "capability",
+      "title": "中心任务与并行底线协调",
+      "status": "supporting",
+      "evidence_ids": [
+        "ev-20260807074344778067-2c334f4a",
+        "ev-20260807074344778076-2b3036a9"
+      ]
+    },
+    {
+      "id": "claim-ev-20260807074344778067-2c334f4a",
+      "type": "claim",
+      "title": "ev-20260807074344778067-2c334f4a",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778067-2c334f4a"
+      ]
+    },
+    {
+      "id": "claim-ev-20260807074344778076-2b3036a9",
+      "type": "claim",
+      "title": "ev-20260807074344778076-2b3036a9",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778076-2b3036a9"
+      ]
+    },
+    {
+      "id": "contradiction-reclassification",
+      "type": "capability",
+      "title": "阶段性主要问题与改判",
+      "status": "supporting",
+      "evidence_ids": [
+        "ev-20260807074344778094-b5dc328e",
+        "ev-20260807074344778101-39371ae4"
+      ]
+    },
+    {
+      "id": "claim-ev-20260807074344778094-b5dc328e",
+      "type": "claim",
+      "title": "ev-20260807074344778094-b5dc328e",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778094-b5dc328e"
+      ]
+    },
+    {
+      "id": "claim-ev-20260807074344778101-39371ae4",
+      "type": "claim",
+      "title": "ev-20260807074344778101-39371ae4",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778101-39371ae4"
+      ]
+    },
+    {
+      "id": "distribution-before-aggregate",
+      "type": "capability",
+      "title": "分布检查优先于总体指标",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778122-9f367d4a",
+        "ev-20260807074344778130-37784376"
+      ]
+    },
+    {
+      "id": "claim-ev-20260807074344778122-9f367d4a",
+      "type": "claim",
+      "title": "ev-20260807074344778122-9f367d4a",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778122-9f367d4a"
+      ]
+    },
+    {
+      "id": "claim-ev-20260807074344778130-37784376",
+      "type": "claim",
+      "title": "ev-20260807074344778130-37784376",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778130-37784376"
+      ]
+    },
+    {
+      "id": "feedback-integrity",
+      "type": "capability",
+      "title": "一线反馈完整闭环",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778145-fde1eae4",
+        "ev-20260807074344778152-1651d763",
+        "ev-20260807074344778159-ef36a626",
+        "ev-20260807074344778167-4e30fe24",
+        "ev-20260807074344778174-9bf8a104"
+      ]
+    },
+    {
+      "id": "claim-ev-20260807074344778145-fde1eae4",
+      "type": "claim",
+      "title": "ev-20260807074344778145-fde1eae4",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778145-fde1eae4"
+      ]
+    },
+    {
+      "id": "claim-ev-20260807074344778152-1651d763",
+      "type": "claim",
+      "title": "ev-20260807074344778152-1651d763",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778152-1651d763"
+      ]
+    },
+    {
+      "id": "claim-ev-20260807074344778159-ef36a626",
+      "type": "claim",
+      "title": "ev-20260807074344778159-ef36a626",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778159-ef36a626"
+      ]
+    },
+    {
+      "id": "claim-ev-20260807074344778167-4e30fe24",
+      "type": "claim",
+      "title": "ev-20260807074344778167-4e30fe24",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778167-4e30fe24"
+      ]
+    },
+    {
+      "id": "claim-ev-20260807074344778174-9bf8a104",
+      "type": "claim",
+      "title": "ev-20260807074344778174-9bf8a104",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778174-9bf8a104"
+      ]
+    },
+    {
+      "id": "investigation-before-judgment",
+      "type": "capability",
+      "title": "调查先于判断",
+      "status": "supporting",
+      "evidence_ids": [
+        "ev-20260807074344778189-a07f6c8d",
+        "ev-20260807074344778195-aa17d49c"
+      ]
+    },
+    {
+      "id": "claim-ev-20260807074344778189-a07f6c8d",
+      "type": "claim",
+      "title": "ev-20260807074344778189-a07f6c8d",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778189-a07f6c8d"
+      ]
+    },
+    {
+      "id": "claim-ev-20260807074344778195-aa17d49c",
+      "type": "claim",
+      "title": "ev-20260807074344778195-aa17d49c",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778195-aa17d49c"
+      ]
+    },
+    {
+      "id": "practice-test-loop",
+      "type": "capability",
+      "title": "实践检验与改判",
+      "status": "supporting",
+      "evidence_ids": [
+        "ev-20260807074344778209-9d9f6592",
+        "ev-20260807074344778216-0a7f7cef"
+      ]
+    },
+    {
+      "id": "claim-ev-20260807074344778209-9d9f6592",
+      "type": "claim",
+      "title": "ev-20260807074344778209-9d9f6592",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778209-9d9f6592"
+      ]
+    },
+    {
+      "id": "claim-ev-20260807074344778216-0a7f7cef",
+      "type": "claim",
+      "title": "ev-20260807074344778216-0a7f7cef",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778216-0a7f7cef"
+      ]
+    },
+    {
+      "id": "protected-dissent-channel",
+      "type": "capability",
+      "title": "异议与坏消息保护",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778232-95cbaab2",
+        "ev-20260807074344778239-072a7e52",
+        "ev-20260807074344778246-355277b4"
+      ]
+    },
+    {
+      "id": "claim-ev-20260807074344778232-95cbaab2",
+      "type": "claim",
+      "title": "ev-20260807074344778232-95cbaab2",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778232-95cbaab2"
+      ]
+    },
+    {
+      "id": "claim-ev-20260807074344778239-072a7e52",
+      "type": "claim",
+      "title": "ev-20260807074344778239-072a7e52",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778239-072a7e52"
+      ]
+    },
+    {
+      "id": "claim-ev-20260807074344778246-355277b4",
+      "type": "claim",
+      "title": "ev-20260807074344778246-355277b4",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778246-355277b4"
+      ]
+    },
+    {
+      "id": "relational-problem-map",
+      "type": "capability",
+      "title": "关系化问题地图",
+      "status": "supporting",
+      "evidence_ids": [
+        "ev-20260807074344778262-ea442209",
+        "ev-20260807074344778269-469ea6c2"
+      ]
+    },
+    {
+      "id": "claim-ev-20260807074344778262-ea442209",
+      "type": "claim",
+      "title": "ev-20260807074344778262-ea442209",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778262-ea442209"
+      ]
+    },
+    {
+      "id": "claim-ev-20260807074344778269-469ea6c2",
+      "type": "claim",
+      "title": "ev-20260807074344778269-469ea6c2",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778269-469ea6c2"
+      ]
+    },
+    {
+      "id": "rights-bound-transfer",
+      "type": "capability",
+      "title": "历史方法现代迁移治理门",
+      "status": "supporting",
+      "evidence_ids": [
+        "ev-20260807074344778283-896714d3",
+        "ev-20260807074344778290-f366b05d",
+        "ev-20260807074344778297-358e3c96"
+      ]
+    },
+    {
+      "id": "claim-ev-20260807074344778283-896714d3",
+      "type": "claim",
+      "title": "ev-20260807074344778283-896714d3",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778283-896714d3"
+      ]
+    },
+    {
+      "id": "claim-ev-20260807074344778290-f366b05d",
+      "type": "claim",
+      "title": "ev-20260807074344778290-f366b05d",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778290-f366b05d"
+      ]
+    },
+    {
+      "id": "claim-ev-20260807074344778297-358e3c96",
+      "type": "claim",
+      "title": "ev-20260807074344778297-358e3c96",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778297-358e3c96"
+      ]
+    },
+    {
+      "id": "stage-experimentation",
+      "type": "capability",
+      "title": "阶段识别与窄目标试点",
+      "status": "supporting",
+      "evidence_ids": [
+        "ev-20260807074344778354-518e182b",
+        "ev-20260807074344778362-55b202a3"
+      ]
+    },
+    {
+      "id": "claim-ev-20260807074344778354-518e182b",
+      "type": "claim",
+      "title": "ev-20260807074344778354-518e182b",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778354-518e182b"
+      ]
+    },
+    {
+      "id": "claim-ev-20260807074344778362-55b202a3",
+      "type": "claim",
+      "title": "ev-20260807074344778362-55b202a3",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778362-55b202a3"
+      ]
+    },
+    {
+      "id": "version-attribution",
+      "type": "capability",
+      "title": "版本、归属与推断纪律",
+      "status": "supporting",
+      "evidence_ids": [
+        "ev-20260807074344778376-3f396dbb",
+        "ev-20260807074344778383-9602587b"
+      ]
+    },
+    {
+      "id": "claim-ev-20260807074344778376-3f396dbb",
+      "type": "claim",
+      "title": "ev-20260807074344778376-3f396dbb",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778376-3f396dbb"
+      ]
+    },
+    {
+      "id": "claim-ev-20260807074344778383-9602587b",
+      "type": "claim",
+      "title": "ev-20260807074344778383-9602587b",
+      "status": "verified",
+      "evidence_ids": [
+        "ev-20260807074344778383-9602587b"
+      ]
+    },
+    {
+      "id": "candidate-20260807074344779334-5145db33",
+      "type": "counterexample",
+      "title": "中共中央党史和文献研究院的版本研究说明，《实践论》源自1937年讲课提纲，新中国成立...",
+      "status": "candidate",
+      "evidence_ids": [
+        "ev-20260807074344779324-43190daf"
+      ]
+    },
+    {
+      "id": "candidate-20260807074344779730-a105b9c6",
+      "type": "case",
+      "title": "Evidence: 调查结果与城市听闻相反，证明既有说法和抽象文本不能替代现场事实与...",
+      "status": "candidate",
+      "evidence_ids": [
+        "ev-20260807074344779723-277798da"
+      ]
+    },
+    {
+      "id": "candidate-20260807074344779802-142bbc01",
+      "type": "counterexample",
+      "title": "Evidence: 《实践论》现行公开文本经过作者后续较大修改和多次文字处理，不能无...",
+      "status": "candidate",
+      "evidence_ids": [
+        "ev-20260807074344779795-af9e7ee2"
+      ]
+    },
+    {
+      "id": "candidate-20260807074344779941-cc270a2e",
+      "type": "counterexample",
+      "title": "同一篇文本反复强调具体分析矛盾的特殊性，不能把在一种场景有效的处理方式机械套到另一种...",
+      "status": "candidate",
+      "evidence_ids": [
+        "ev-20260807074344779933-04350ed1"
+      ]
+    },
+    {
+      "id": "candidate-20260807074344780184-3b904788",
+      "type": "counterexample",
+      "title": "Evidence: 《矛盾论》要求具体分析矛盾的特殊性、主次和条件转化，因此主要矛盾...",
+      "status": "candidate",
+      "evidence_ids": [
+        "ev-20260807074344780177-49417df7"
+      ]
+    },
+    {
+      "id": "candidate-20260807074344780547-67b20b26",
+      "type": "case",
+      "title": "根据执行结果修订，不把一次动员或多数意见当成永久授权。",
+      "status": "candidate",
+      "evidence_ids": [
+        "ev-20260807074344780540-b5c03194"
+      ]
+    },
+    {
+      "id": "candidate-20260807074344780721-f26c10cb",
+      "type": "counterexample",
+      "title": "Evidence: 分散意见经研究形成方案后仍要返回行动中检验并继续循环，方案不能因...",
+      "status": "candidate",
+      "evidence_ids": [
+        "ev-20260807074344780714-2a3bf3c6"
+      ]
+    },
+    {
+      "id": "candidate-20260807074344780902-91357a7b",
+      "type": "counterexample",
+      "title": "Evidence: 群众并非同质整体，声量最大者不一定最受影响，多数意见也不能取消少...",
+      "status": "candidate",
+      "evidence_ids": [
+        "ev-20260807074344780895-f21dc1eb"
+      ]
+    },
+    {
+      "id": "candidate-20260807074344781143-8b3b7118",
+      "type": "counterexample",
+      "title": "选择一个窄目标集中资源，同时写明不能牺牲的安全和权利约束。",
+      "status": "candidate",
+      "evidence_ids": [
+        "ev-20260807074344781137-13bb495e"
+      ]
+    },
+    {
+      "id": "candidate-20260807074344781208-aae53afa",
+      "type": "counterexample",
+      "title": "战争中的集中、保密和命令逻辑不能直接迁移到普通公司、家庭、学校、社区或公共治理。现代...",
+      "status": "candidate",
+      "evidence_ids": [
+        "ev-20260807074344781201-9f2582d0"
+      ]
+    },
+    {
+      "id": "candidate-20260807074344781301-c1d7ba53",
+      "type": "counterexample",
+      "title": "Evidence: 相关文本区分长期阶段和具体行动，局部行动需要有限目标、准备和反馈...",
+      "status": "candidate",
+      "evidence_ids": [
+        "ev-20260807074344781294-3168c817"
+      ]
+    },
+    {
+      "id": "candidate-20260807074344781591-ad9aeea1",
+      "type": "case",
+      "title": "决议第20段指出，文化大革命对当时阶级形势和党政状况的估计是完全错误的，并具体记录了...",
+      "status": "candidate",
+      "evidence_ids": [
+        "ev-20260807074344781582-c8e09420"
+      ]
+    },
+    {
+      "id": "candidate-20260807074344781643-dbfc4f90",
+      "type": "counterexample",
+      "title": "第22段明确认为毛泽东对这场全局性、长时间的严重错误负有主要责任。第24段又把持续失...",
+      "status": "candidate",
+      "evidence_ids": [
+        "ev-20260807074344781636-036dc3b6"
+      ]
+    },
+    {
+      "id": "candidate-20260807074344781746-eae6a9bc",
+      "type": "counterexample",
+      "title": "该决议是中共中央的正式历史结论，既有高文本权威，也承担特定政治和组织功能。它能证明官...",
+      "status": "candidate",
+      "evidence_ids": [
+        "ev-20260807074344781739-a6e18059"
+      ]
+    },
+    {
+      "id": "candidate-20260807074344781801-ebad90e2",
+      "type": "counterexample",
+      "title": "Evidence: 决议把个人专断、集体领导受损和民主法制制度化不足列入持续失效原因...",
+      "status": "candidate",
+      "evidence_ids": [
+        "ev-20260807074344781794-b2a08bd3"
+      ]
+    },
+    {
+      "id": "candidate-20260807074344781865-a6b00f33",
+      "type": "counterexample",
+      "title": "Evidence: 决议明确记录文化大革命中是非与敌我的混淆，以及错误分类给干部、知...",
+      "status": "candidate",
+      "evidence_ids": [
+        "ev-20260807074344781859-136e538b"
+      ]
+    },
+    {
+      "id": "candidate-20260807074344782004-daa6a67b",
+      "type": "counterexample",
+      "title": "Evidence: 决议把个人专断、集体领导受损以及民主法制制度化不足列为持续失效原...",
+      "status": "candidate",
+      "evidence_ids": [
+        "ev-20260807074344781996-5de6b2c4"
+      ]
+    },
+    {
+      "id": "candidate-20260807074344782120-cb565f17",
+      "type": "counterexample",
+      "title": "Evidence: 决议把民主法制、集体领导和组织制度受损列为重要原因，表明任何中心...",
+      "status": "candidate",
+      "evidence_ids": [
+        "ev-20260807074344782111-348cddc7"
+      ]
+    },
+    {
+      "id": "candidate-20260807074344782178-4979fff6",
+      "type": "case",
+      "title": "Evidence: 决议明确判定当时阶级形势和党政状况估计完全错误，说明理论化判断不...",
+      "status": "candidate",
+      "evidence_ids": [
+        "ev-20260807074344782171-b6177e60"
+      ]
+    },
+    {
+      "id": "candidate-20260807074344782508-e0079221",
+      "type": "counterexample",
+      "title": "- 纠错不能只依赖领导者愿意调查，还需要信息可安全上行、地方异常可被看见、政策可及时...",
+      "status": "candidate",
+      "evidence_ids": [
+        "ev-20260807074344782502-0d8a1fdc"
+      ]
+    },
+    {
+      "id": "candidate-20260807074344782791-896c1d80",
+      "type": "case",
+      "title": "Evidence: 论文报告总产量仍高于生存需要时，高产地区反而出现更高死亡率，证明...",
+      "status": "candidate",
+      "evidence_ids": [
+        "ev-20260807074344782784-e283415b"
+      ]
+    },
+    {
+      "id": "candidate-20260807074344782850-abde1902",
+      "type": "case",
+      "title": "Evidence: 反直觉的地区数据要求制度解释响应事实，而不能用既定总量判断覆盖异...",
+      "status": "candidate",
+      "evidence_ids": [
+        "ev-20260807074344782842-a381c208"
+      ]
+    },
+    {
+      "id": "candidate-20260807074344783155-92a19e95",
+      "type": "counterexample",
+      "title": "公开定稿可以支持最终观点，不能自动证明某年当场的原始措辞。",
+      "status": "candidate",
+      "evidence_ids": [
+        "ev-20260807074344783149-5e0b04e3"
+      ]
+    },
+    {
+      "id": "candidate-20260807074344783175-0c6a604d",
+      "type": "counterexample",
+      "title": "讲话整理稿、集体文件、编辑题注和个人手稿不能给予相同证据等级。",
+      "status": "candidate",
+      "evidence_ids": [
+        "ev-20260807074344783168-d46266a7"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from_type": "capability",
+      "from_id": "anti-dogmatism-correction",
+      "relation": "depends_on",
+      "to_type": "governance",
+      "to_id": "governance-evidence-boundary",
+      "evidence_ids": [
+        "ev-20260807074344778009-3494d9f2",
+        "ev-20260807074344778030-78f124b5",
+        "ev-20260807074344778043-2b1625d0"
+      ],
+      "confidence": 1.0,
+      "status": "verified"
+    },
+    {
+      "from_type": "claim",
+      "from_id": "claim-ev-20260807074344778009-3494d9f2",
+      "relation": "supports",
+      "to_type": "capability",
+      "to_id": "anti-dogmatism-correction",
+      "evidence_ids": [
+        "ev-20260807074344778009-3494d9f2"
+      ],
+      "confidence": 0.65,
+      "status": "verified"
+    },
+    {
+      "from_type": "claim",
+      "from_id": "claim-ev-20260807074344778030-78f124b5",
+      "relation": "supports",
+      "to_type": "capability",
+      "to_id": "anti-dogmatism-correction",
+      "evidence_ids": [
+        "ev-20260807074344778030-78f124b5"
+      ],
+      "confidence": 0.65,
+      "status": "verified"
+    },
+    {
+      "from_type": "claim",
+      "from_id": "claim-ev-20260807074344778043-2b1625d0",
+      "relation": "supports",
+      "to_type": "capability",
+      "to_id": "anti-dogmatism-correction",
+      "evidence_ids": [
+        "ev-20260807074344778043-2b1625d0"
+      ],
+      "confidence": 0.65,
+      "status": "verified"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "anti-dogmatism-correction",
+      "relation": "depends_on",
+      "to_type": "capability",
+      "to_id": "version-attribution",
+      "evidence_ids": [
+        "ev-20260807074344778009-3494d9f2",
+        "ev-20260807074344778030-78f124b5",
+        "ev-20260807074344778043-2b1625d0"
+      ],
+      "confidence": 0.75,
+      "status": "candidate"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "anti-dogmatism-correction",
+      "relation": "composes_with",
+      "to_type": "capability",
+      "to_id": "practice-test-loop",
+      "evidence_ids": [
+        "ev-20260807074344778009-3494d9f2",
+        "ev-20260807074344778030-78f124b5",
+        "ev-20260807074344778043-2b1625d0"
+      ],
+      "confidence": 0.75,
+      "status": "candidate"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "center-work-coordination",
+      "relation": "depends_on",
+      "to_type": "governance",
+      "to_id": "governance-evidence-boundary",
+      "evidence_ids": [
+        "ev-20260807074344778067-2c334f4a",
+        "ev-20260807074344778076-2b3036a9"
+      ],
+      "confidence": 1.0,
+      "status": "verified"
+    },
+    {
+      "from_type": "claim",
+      "from_id": "claim-ev-20260807074344778067-2c334f4a",
+      "relation": "supports",
+      "to_type": "capability",
+      "to_id": "center-work-coordination",
+      "evidence_ids": [
+        "ev-20260807074344778067-2c334f4a"
+      ],
+      "confidence": 0.65,
+      "status": "verified"
+    },
+    {
+      "from_type": "claim",
+      "from_id": "claim-ev-20260807074344778076-2b3036a9",
+      "relation": "supports",
+      "to_type": "capability",
+      "to_id": "center-work-coordination",
+      "evidence_ids": [
+        "ev-20260807074344778076-2b3036a9"
+      ],
+      "confidence": 0.65,
+      "status": "verified"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "center-work-coordination",
+      "relation": "depends_on",
+      "to_type": "capability",
+      "to_id": "contradiction-reclassification",
+      "evidence_ids": [
+        "ev-20260807074344778067-2c334f4a",
+        "ev-20260807074344778076-2b3036a9"
+      ],
+      "confidence": 0.75,
+      "status": "candidate"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "center-work-coordination",
+      "relation": "composes_with",
+      "to_type": "capability",
+      "to_id": "stage-experimentation",
+      "evidence_ids": [
+        "ev-20260807074344778067-2c334f4a",
+        "ev-20260807074344778076-2b3036a9"
+      ],
+      "confidence": 0.75,
+      "status": "candidate"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "contradiction-reclassification",
+      "relation": "depends_on",
+      "to_type": "governance",
+      "to_id": "governance-evidence-boundary",
+      "evidence_ids": [
+        "ev-20260807074344778094-b5dc328e",
+        "ev-20260807074344778101-39371ae4"
+      ],
+      "confidence": 1.0,
+      "status": "verified"
+    },
+    {
+      "from_type": "claim",
+      "from_id": "claim-ev-20260807074344778094-b5dc328e",
+      "relation": "supports",
+      "to_type": "capability",
+      "to_id": "contradiction-reclassification",
+      "evidence_ids": [
+        "ev-20260807074344778094-b5dc328e"
+      ],
+      "confidence": 0.65,
+      "status": "verified"
+    },
+    {
+      "from_type": "claim",
+      "from_id": "claim-ev-20260807074344778101-39371ae4",
+      "relation": "supports",
+      "to_type": "capability",
+      "to_id": "contradiction-reclassification",
+      "evidence_ids": [
+        "ev-20260807074344778101-39371ae4"
+      ],
+      "confidence": 0.65,
+      "status": "verified"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "contradiction-reclassification",
+      "relation": "depends_on",
+      "to_type": "capability",
+      "to_id": "relational-problem-map",
+      "evidence_ids": [
+        "ev-20260807074344778094-b5dc328e",
+        "ev-20260807074344778101-39371ae4"
+      ],
+      "confidence": 0.75,
+      "status": "candidate"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "contradiction-reclassification",
+      "relation": "composes_with",
+      "to_type": "capability",
+      "to_id": "practice-test-loop",
+      "evidence_ids": [
+        "ev-20260807074344778094-b5dc328e",
+        "ev-20260807074344778101-39371ae4"
+      ],
+      "confidence": 0.75,
+      "status": "candidate"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "distribution-before-aggregate",
+      "relation": "depends_on",
+      "to_type": "governance",
+      "to_id": "governance-evidence-boundary",
+      "evidence_ids": [
+        "ev-20260807074344778122-9f367d4a",
+        "ev-20260807074344778130-37784376"
+      ],
+      "confidence": 1.0,
+      "status": "verified"
+    },
+    {
+      "from_type": "claim",
+      "from_id": "claim-ev-20260807074344778122-9f367d4a",
+      "relation": "supports",
+      "to_type": "capability",
+      "to_id": "distribution-before-aggregate",
+      "evidence_ids": [
+        "ev-20260807074344778122-9f367d4a"
+      ],
+      "confidence": 0.85,
+      "status": "verified"
+    },
+    {
+      "from_type": "claim",
+      "from_id": "claim-ev-20260807074344778130-37784376",
+      "relation": "supports",
+      "to_type": "capability",
+      "to_id": "distribution-before-aggregate",
+      "evidence_ids": [
+        "ev-20260807074344778130-37784376"
+      ],
+      "confidence": 0.85,
+      "status": "verified"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "distribution-before-aggregate",
+      "relation": "depends_on",
+      "to_type": "capability",
+      "to_id": "investigation-before-judgment",
+      "evidence_ids": [
+        "ev-20260807074344778122-9f367d4a",
+        "ev-20260807074344778130-37784376"
+      ],
+      "confidence": 0.75,
+      "status": "candidate"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "distribution-before-aggregate",
+      "relation": "composes_with",
+      "to_type": "capability",
+      "to_id": "feedback-integrity",
+      "evidence_ids": [
+        "ev-20260807074344778122-9f367d4a",
+        "ev-20260807074344778130-37784376"
+      ],
+      "confidence": 0.75,
+      "status": "candidate"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "feedback-integrity",
+      "relation": "depends_on",
+      "to_type": "governance",
+      "to_id": "governance-evidence-boundary",
+      "evidence_ids": [
+        "ev-20260807074344778145-fde1eae4",
+        "ev-20260807074344778152-1651d763",
+        "ev-20260807074344778159-ef36a626",
+        "ev-20260807074344778167-4e30fe24",
+        "ev-20260807074344778174-9bf8a104"
+      ],
+      "confidence": 1.0,
+      "status": "verified"
+    },
+    {
+      "from_type": "claim",
+      "from_id": "claim-ev-20260807074344778145-fde1eae4",
+      "relation": "supports",
+      "to_type": "capability",
+      "to_id": "feedback-integrity",
+      "evidence_ids": [
+        "ev-20260807074344778145-fde1eae4"
+      ],
+      "confidence": 0.85,
+      "status": "verified"
+    },
+    {
+      "from_type": "claim",
+      "from_id": "claim-ev-20260807074344778152-1651d763",
+      "relation": "supports",
+      "to_type": "capability",
+      "to_id": "feedback-integrity",
+      "evidence_ids": [
+        "ev-20260807074344778152-1651d763"
+      ],
+      "confidence": 0.85,
+      "status": "verified"
+    },
+    {
+      "from_type": "claim",
+      "from_id": "claim-ev-20260807074344778159-ef36a626",
+      "relation": "supports",
+      "to_type": "capability",
+      "to_id": "feedback-integrity",
+      "evidence_ids": [
+        "ev-20260807074344778159-ef36a626"
+      ],
+      "confidence": 0.85,
+      "status": "verified"
+    },
+    {
+      "from_type": "claim",
+      "from_id": "claim-ev-20260807074344778167-4e30fe24",
+      "relation": "supports",
+      "to_type": "capability",
+      "to_id": "feedback-integrity",
+      "evidence_ids": [
+        "ev-20260807074344778167-4e30fe24"
+      ],
+      "confidence": 0.85,
+      "status": "verified"
+    },
+    {
+      "from_type": "claim",
+      "from_id": "claim-ev-20260807074344778174-9bf8a104",
+      "relation": "supports",
+      "to_type": "capability",
+      "to_id": "feedback-integrity",
+      "evidence_ids": [
+        "ev-20260807074344778174-9bf8a104"
+      ],
+      "confidence": 0.85,
+      "status": "verified"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "feedback-integrity",
+      "relation": "depends_on",
+      "to_type": "capability",
+      "to_id": "protected-dissent-channel",
+      "evidence_ids": [
+        "ev-20260807074344778145-fde1eae4",
+        "ev-20260807074344778152-1651d763",
+        "ev-20260807074344778159-ef36a626",
+        "ev-20260807074344778167-4e30fe24",
+        "ev-20260807074344778174-9bf8a104"
+      ],
+      "confidence": 0.75,
+      "status": "candidate"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "feedback-integrity",
+      "relation": "composes_with",
+      "to_type": "capability",
+      "to_id": "practice-test-loop",
+      "evidence_ids": [
+        "ev-20260807074344778145-fde1eae4",
+        "ev-20260807074344778152-1651d763",
+        "ev-20260807074344778159-ef36a626",
+        "ev-20260807074344778167-4e30fe24",
+        "ev-20260807074344778174-9bf8a104"
+      ],
+      "confidence": 0.75,
+      "status": "candidate"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "investigation-before-judgment",
+      "relation": "depends_on",
+      "to_type": "governance",
+      "to_id": "governance-evidence-boundary",
+      "evidence_ids": [
+        "ev-20260807074344778189-a07f6c8d",
+        "ev-20260807074344778195-aa17d49c"
+      ],
+      "confidence": 1.0,
+      "status": "verified"
+    },
+    {
+      "from_type": "claim",
+      "from_id": "claim-ev-20260807074344778189-a07f6c8d",
+      "relation": "supports",
+      "to_type": "capability",
+      "to_id": "investigation-before-judgment",
+      "evidence_ids": [
+        "ev-20260807074344778189-a07f6c8d"
+      ],
+      "confidence": 0.65,
+      "status": "verified"
+    },
+    {
+      "from_type": "claim",
+      "from_id": "claim-ev-20260807074344778195-aa17d49c",
+      "relation": "supports",
+      "to_type": "capability",
+      "to_id": "investigation-before-judgment",
+      "evidence_ids": [
+        "ev-20260807074344778195-aa17d49c"
+      ],
+      "confidence": 0.65,
+      "status": "verified"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "investigation-before-judgment",
+      "relation": "depends_on",
+      "to_type": "capability",
+      "to_id": "rights-bound-transfer",
+      "evidence_ids": [
+        "ev-20260807074344778189-a07f6c8d",
+        "ev-20260807074344778195-aa17d49c"
+      ],
+      "confidence": 0.75,
+      "status": "candidate"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "investigation-before-judgment",
+      "relation": "composes_with",
+      "to_type": "capability",
+      "to_id": "practice-test-loop",
+      "evidence_ids": [
+        "ev-20260807074344778189-a07f6c8d",
+        "ev-20260807074344778195-aa17d49c"
+      ],
+      "confidence": 0.75,
+      "status": "candidate"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "practice-test-loop",
+      "relation": "depends_on",
+      "to_type": "governance",
+      "to_id": "governance-evidence-boundary",
+      "evidence_ids": [
+        "ev-20260807074344778209-9d9f6592",
+        "ev-20260807074344778216-0a7f7cef"
+      ],
+      "confidence": 1.0,
+      "status": "verified"
+    },
+    {
+      "from_type": "claim",
+      "from_id": "claim-ev-20260807074344778209-9d9f6592",
+      "relation": "supports",
+      "to_type": "capability",
+      "to_id": "practice-test-loop",
+      "evidence_ids": [
+        "ev-20260807074344778209-9d9f6592"
+      ],
+      "confidence": 0.65,
+      "status": "verified"
+    },
+    {
+      "from_type": "claim",
+      "from_id": "claim-ev-20260807074344778216-0a7f7cef",
+      "relation": "supports",
+      "to_type": "capability",
+      "to_id": "practice-test-loop",
+      "evidence_ids": [
+        "ev-20260807074344778216-0a7f7cef"
+      ],
+      "confidence": 0.65,
+      "status": "verified"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "practice-test-loop",
+      "relation": "depends_on",
+      "to_type": "capability",
+      "to_id": "investigation-before-judgment",
+      "evidence_ids": [
+        "ev-20260807074344778209-9d9f6592",
+        "ev-20260807074344778216-0a7f7cef"
+      ],
+      "confidence": 0.75,
+      "status": "candidate"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "practice-test-loop",
+      "relation": "composes_with",
+      "to_type": "capability",
+      "to_id": "stage-experimentation",
+      "evidence_ids": [
+        "ev-20260807074344778209-9d9f6592",
+        "ev-20260807074344778216-0a7f7cef"
+      ],
+      "confidence": 0.75,
+      "status": "candidate"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "protected-dissent-channel",
+      "relation": "depends_on",
+      "to_type": "governance",
+      "to_id": "governance-evidence-boundary",
+      "evidence_ids": [
+        "ev-20260807074344778232-95cbaab2",
+        "ev-20260807074344778239-072a7e52",
+        "ev-20260807074344778246-355277b4"
+      ],
+      "confidence": 1.0,
+      "status": "verified"
+    },
+    {
+      "from_type": "claim",
+      "from_id": "claim-ev-20260807074344778232-95cbaab2",
+      "relation": "supports",
+      "to_type": "capability",
+      "to_id": "protected-dissent-channel",
+      "evidence_ids": [
+        "ev-20260807074344778232-95cbaab2"
+      ],
+      "confidence": 0.85,
+      "status": "verified"
+    },
+    {
+      "from_type": "claim",
+      "from_id": "claim-ev-20260807074344778239-072a7e52",
+      "relation": "supports",
+      "to_type": "capability",
+      "to_id": "protected-dissent-channel",
+      "evidence_ids": [
+        "ev-20260807074344778239-072a7e52"
+      ],
+      "confidence": 0.85,
+      "status": "verified"
+    },
+    {
+      "from_type": "claim",
+      "from_id": "claim-ev-20260807074344778246-355277b4",
+      "relation": "supports",
+      "to_type": "capability",
+      "to_id": "protected-dissent-channel",
+      "evidence_ids": [
+        "ev-20260807074344778246-355277b4"
+      ],
+      "confidence": 0.85,
+      "status": "verified"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "protected-dissent-channel",
+      "relation": "depends_on",
+      "to_type": "capability",
+      "to_id": "rights-bound-transfer",
+      "evidence_ids": [
+        "ev-20260807074344778232-95cbaab2",
+        "ev-20260807074344778239-072a7e52",
+        "ev-20260807074344778246-355277b4"
+      ],
+      "confidence": 0.75,
+      "status": "candidate"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "protected-dissent-channel",
+      "relation": "composes_with",
+      "to_type": "capability",
+      "to_id": "distribution-before-aggregate",
+      "evidence_ids": [
+        "ev-20260807074344778232-95cbaab2",
+        "ev-20260807074344778239-072a7e52",
+        "ev-20260807074344778246-355277b4"
+      ],
+      "confidence": 0.75,
+      "status": "candidate"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "relational-problem-map",
+      "relation": "depends_on",
+      "to_type": "governance",
+      "to_id": "governance-evidence-boundary",
+      "evidence_ids": [
+        "ev-20260807074344778262-ea442209",
+        "ev-20260807074344778269-469ea6c2"
+      ],
+      "confidence": 1.0,
+      "status": "verified"
+    },
+    {
+      "from_type": "claim",
+      "from_id": "claim-ev-20260807074344778262-ea442209",
+      "relation": "supports",
+      "to_type": "capability",
+      "to_id": "relational-problem-map",
+      "evidence_ids": [
+        "ev-20260807074344778262-ea442209"
+      ],
+      "confidence": 0.65,
+      "status": "verified"
+    },
+    {
+      "from_type": "claim",
+      "from_id": "claim-ev-20260807074344778269-469ea6c2",
+      "relation": "supports",
+      "to_type": "capability",
+      "to_id": "relational-problem-map",
+      "evidence_ids": [
+        "ev-20260807074344778269-469ea6c2"
+      ],
+      "confidence": 0.65,
+      "status": "verified"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "relational-problem-map",
+      "relation": "depends_on",
+      "to_type": "capability",
+      "to_id": "investigation-before-judgment",
+      "evidence_ids": [
+        "ev-20260807074344778262-ea442209",
+        "ev-20260807074344778269-469ea6c2"
+      ],
+      "confidence": 0.75,
+      "status": "candidate"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "relational-problem-map",
+      "relation": "composes_with",
+      "to_type": "capability",
+      "to_id": "contradiction-reclassification",
+      "evidence_ids": [
+        "ev-20260807074344778262-ea442209",
+        "ev-20260807074344778269-469ea6c2"
+      ],
+      "confidence": 0.75,
+      "status": "candidate"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "rights-bound-transfer",
+      "relation": "depends_on",
+      "to_type": "governance",
+      "to_id": "governance-evidence-boundary",
+      "evidence_ids": [
+        "ev-20260807074344778283-896714d3",
+        "ev-20260807074344778290-f366b05d",
+        "ev-20260807074344778297-358e3c96"
+      ],
+      "confidence": 1.0,
+      "status": "verified"
+    },
+    {
+      "from_type": "claim",
+      "from_id": "claim-ev-20260807074344778283-896714d3",
+      "relation": "supports",
+      "to_type": "capability",
+      "to_id": "rights-bound-transfer",
+      "evidence_ids": [
+        "ev-20260807074344778283-896714d3"
+      ],
+      "confidence": 0.65,
+      "status": "verified"
+    },
+    {
+      "from_type": "claim",
+      "from_id": "claim-ev-20260807074344778290-f366b05d",
+      "relation": "supports",
+      "to_type": "capability",
+      "to_id": "rights-bound-transfer",
+      "evidence_ids": [
+        "ev-20260807074344778290-f366b05d"
+      ],
+      "confidence": 0.65,
+      "status": "verified"
+    },
+    {
+      "from_type": "claim",
+      "from_id": "claim-ev-20260807074344778297-358e3c96",
+      "relation": "supports",
+      "to_type": "capability",
+      "to_id": "rights-bound-transfer",
+      "evidence_ids": [
+        "ev-20260807074344778297-358e3c96"
+      ],
+      "confidence": 0.65,
+      "status": "verified"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "rights-bound-transfer",
+      "relation": "composes_with",
+      "to_type": "capability",
+      "to_id": "protected-dissent-channel",
+      "evidence_ids": [
+        "ev-20260807074344778283-896714d3",
+        "ev-20260807074344778290-f366b05d",
+        "ev-20260807074344778297-358e3c96"
+      ],
+      "confidence": 0.75,
+      "status": "candidate"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "rights-bound-transfer",
+      "relation": "composes_with",
+      "to_type": "capability",
+      "to_id": "version-attribution",
+      "evidence_ids": [
+        "ev-20260807074344778283-896714d3",
+        "ev-20260807074344778290-f366b05d",
+        "ev-20260807074344778297-358e3c96"
+      ],
+      "confidence": 0.75,
+      "status": "candidate"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "stage-experimentation",
+      "relation": "depends_on",
+      "to_type": "governance",
+      "to_id": "governance-evidence-boundary",
+      "evidence_ids": [
+        "ev-20260807074344778354-518e182b",
+        "ev-20260807074344778362-55b202a3"
+      ],
+      "confidence": 1.0,
+      "status": "verified"
+    },
+    {
+      "from_type": "claim",
+      "from_id": "claim-ev-20260807074344778354-518e182b",
+      "relation": "supports",
+      "to_type": "capability",
+      "to_id": "stage-experimentation",
+      "evidence_ids": [
+        "ev-20260807074344778354-518e182b"
+      ],
+      "confidence": 0.65,
+      "status": "verified"
+    },
+    {
+      "from_type": "claim",
+      "from_id": "claim-ev-20260807074344778362-55b202a3",
+      "relation": "supports",
+      "to_type": "capability",
+      "to_id": "stage-experimentation",
+      "evidence_ids": [
+        "ev-20260807074344778362-55b202a3"
+      ],
+      "confidence": 0.65,
+      "status": "verified"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "stage-experimentation",
+      "relation": "depends_on",
+      "to_type": "capability",
+      "to_id": "practice-test-loop",
+      "evidence_ids": [
+        "ev-20260807074344778354-518e182b",
+        "ev-20260807074344778362-55b202a3"
+      ],
+      "confidence": 0.75,
+      "status": "candidate"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "stage-experimentation",
+      "relation": "composes_with",
+      "to_type": "capability",
+      "to_id": "center-work-coordination",
+      "evidence_ids": [
+        "ev-20260807074344778354-518e182b",
+        "ev-20260807074344778362-55b202a3"
+      ],
+      "confidence": 0.75,
+      "status": "candidate"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "version-attribution",
+      "relation": "depends_on",
+      "to_type": "governance",
+      "to_id": "governance-evidence-boundary",
+      "evidence_ids": [
+        "ev-20260807074344778376-3f396dbb",
+        "ev-20260807074344778383-9602587b"
+      ],
+      "confidence": 1.0,
+      "status": "verified"
+    },
+    {
+      "from_type": "claim",
+      "from_id": "claim-ev-20260807074344778376-3f396dbb",
+      "relation": "supports",
+      "to_type": "capability",
+      "to_id": "version-attribution",
+      "evidence_ids": [
+        "ev-20260807074344778376-3f396dbb"
+      ],
+      "confidence": 0.65,
+      "status": "verified"
+    },
+    {
+      "from_type": "claim",
+      "from_id": "claim-ev-20260807074344778383-9602587b",
+      "relation": "supports",
+      "to_type": "capability",
+      "to_id": "version-attribution",
+      "evidence_ids": [
+        "ev-20260807074344778383-9602587b"
+      ],
+      "confidence": 0.65,
+      "status": "verified"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "version-attribution",
+      "relation": "composes_with",
+      "to_type": "capability",
+      "to_id": "anti-dogmatism-correction",
+      "evidence_ids": [
+        "ev-20260807074344778376-3f396dbb",
+        "ev-20260807074344778383-9602587b"
+      ],
+      "confidence": 0.75,
+      "status": "candidate"
+    },
+    {
+      "from_type": "capability",
+      "from_id": "version-attribution",
+      "relation": "depends_on",
+      "to_type": "capability",
+      "to_id": "rights-bound-transfer",
+      "evidence_ids": [
+        "ev-20260807074344778376-3f396dbb",
+        "ev-20260807074344778383-9602587b"
+      ],
+      "confidence": 0.75,
+      "status": "candidate"
+    }
+  ]
+}

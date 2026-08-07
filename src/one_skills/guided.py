@@ -29,7 +29,6 @@ SESSION_STAGES = (
     "evidence_inventory",
     "interview",
     "map_confirm",
-    "claim_review",
     "capability_confirm",
     "build",
     "evaluate",
@@ -40,10 +39,7 @@ CHECKPOINTS = (
     "scope",
     "evidence_inventory",
     "map",
-    "claims",
     "capabilities",
-    "build",
-    "evaluation",
     "ship",
 )
 CHECKPOINT_STATUSES = ("pending", "confirmed", "rejected")
@@ -81,10 +77,7 @@ _STAGE_BY_CHECKPOINT = {
     "scope": "scope",
     "evidence_inventory": "evidence_inventory",
     "map": "map_confirm",
-    "claims": "claim_review",
     "capabilities": "capability_confirm",
-    "build": "build",
-    "evaluation": "evaluate",
     "ship": "ship",
 }
 _CHECKPOINT_BY_STAGE = {
@@ -146,8 +139,9 @@ def questions_for(state: dict[str, Any]) -> list[str]:
             "如果想不起成功或失败案例，最近一次相关任务是什么？",
         ],
         "map_confirm": ["对象地图中哪些准确、哪些仅适用于特定时期、哪些应删除？"],
-        "claim_review": ["哪些 Claim 是事实或明确自述，哪些只是推断？有反例吗？"],
-        "capability_confirm": ["候选能力能否处理新任务？何时必须停止或升级？"],
+        "capability_confirm": [
+            "Portfolio 中哪些 Claim 是事实、哪些是推断？候选能力能否处理新任务，何时必须停止或升级？"
+        ],
         "build": ["最终应生成一个原子 Skill，还是 Router 加多个原子 Skill？"],
         "evaluate": ["选择哪个低风险真实任务与无 Skill baseline 做盲比？"],
         "ship": ["谁可以安装使用？知识截止点、删除方法和回滚点是否确认？"],

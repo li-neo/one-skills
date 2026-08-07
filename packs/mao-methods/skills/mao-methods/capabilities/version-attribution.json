@@ -1,0 +1,56 @@
+{
+  "name": "版本、归属与推断纪律",
+  "problem": "公开定稿、现场记录、编辑文本和现代推断被混成作者原话",
+  "trigger": "引用历史文本",
+  "inputs": [
+    "篇名",
+    "版本入口",
+    "文本性质",
+    "直接引语",
+    "现代推断"
+  ],
+  "procedure": [
+    "确认篇名和版本",
+    "区分定稿、记录、集体文件和研究",
+    "逐字核对短引",
+    "把现代建议标为迁移",
+    "冲突版本并列而不择便使用"
+  ],
+  "output": "版本化引用、归属等级和推断声明",
+  "done": "读者能够区分本人原文、后续版本和现代迁移",
+  "boundaries": [
+    "不伪造语录",
+    "不把公开定稿称为现场逐字记录"
+  ],
+  "failures": [
+    "根据文风猜作者",
+    "选择支持当前观点的方便版本"
+  ],
+  "fallback": "取消直接归属，只保留有来源的条件式说明",
+  "evidence_ids": [
+    "ev-20260807074344778376-3f396dbb",
+    "ev-20260807074344778383-9602587b"
+  ],
+  "confidence": 0.65,
+  "id": "version-attribution",
+  "relations": [
+    {
+      "relation": "composes_with",
+      "target": "anti-dogmatism-correction"
+    },
+    {
+      "relation": "depends_on",
+      "target": "rights-bound-transfer"
+    }
+  ],
+  "anti_triggers": [
+    "不涉及作者归属的普通方法执行"
+  ],
+  "assumptions": [
+    "来源版本和文本性质可定位"
+  ],
+  "branches": [],
+  "examples": [],
+  "module_type": "governance",
+  "status": "supporting"
+}

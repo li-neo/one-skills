@@ -91,6 +91,36 @@ class Evidence:
 
 
 @dataclass
+class ObjectOverview:
+    profile: str
+    subject: str
+    thesis: str
+    structure: list[dict[str, Any]]
+    key_terms: list[dict[str, str]]
+    mechanism_chain: list[str]
+    timeline_or_state_model: list[str]
+    tensions: list[str]
+    limitations: list[str]
+    research_gaps: list[str]
+    source_coverage: dict[str, list[str]]
+    id: str = field(default_factory=lambda: new_id("overview"))
+    status: str = "candidate"
+    generated_at: str = field(default_factory=utc_now)
+
+    def validate(self) -> None:
+        if not self.profile or not self.subject or not self.thesis:
+            raise ValueError("Object Overview requires profile, subject, and thesis")
+        if not self.structure:
+            raise ValueError("Object Overview requires a non-empty structure")
+        if self.status not in {"candidate", "confirmed", "stale"}:
+            raise ValueError(f"invalid Object Overview status: {self.status}")
+
+    def to_dict(self) -> dict[str, Any]:
+        self.validate()
+        return asdict(self)
+
+
+@dataclass
 class Candidate:
     title: str
     candidate_type: str
@@ -108,6 +138,22 @@ class Candidate:
     actionable: bool = False
     status: str = "pending"
     rejection_reason: str = ""
+    problem: str = ""
+    assumptions: list[str] = field(default_factory=list)
+    mechanism: list[str] = field(default_factory=list)
+    triggers: list[str] = field(default_factory=list)
+    anti_triggers: list[str] = field(default_factory=list)
+    inputs: list[str] = field(default_factory=list)
+    procedure: list[str] = field(default_factory=list)
+    branches: list[dict[str, str]] = field(default_factory=list)
+    output: str = ""
+    done: str = ""
+    boundaries: list[str] = field(default_factory=list)
+    failures: list[str] = field(default_factory=list)
+    counterexamples: list[str] = field(default_factory=list)
+    related_ids: list[dict[str, str]] = field(default_factory=list)
+    verification: dict[str, Any] = field(default_factory=dict)
+    disposition: str = "independent-module"
 
     @property
     def accepted(self) -> bool:
@@ -130,6 +176,12 @@ class Capability:
     confidence: float
     id: str = field(default_factory=lambda: new_id("capability"))
     relations: list[dict[str, str]] = field(default_factory=list)
+    anti_triggers: list[str] = field(default_factory=list)
+    assumptions: list[str] = field(default_factory=list)
+    branches: list[dict[str, str]] = field(default_factory=list)
+    examples: list[str] = field(default_factory=list)
+    module_type: str = "internal"
+    status: str = "candidate"
 
     def validate(self) -> None:
         required = {
@@ -149,9 +201,59 @@ class Capability:
             raise ValueError("capability must link to evidence")
         if not 0 <= self.confidence <= 1:
             raise ValueError("capability confidence must be between 0 and 1")
+        if self.module_type not in {"entry", "internal", "governance", "standalone"}:
+            raise ValueError(f"invalid capability module_type: {self.module_type}")
+        if self.status not in {
+            "candidate",
+            "supporting",
+            "verified",
+            "released",
+            "stale",
+        }:
+            raise ValueError(f"invalid capability status: {self.status}")
 
     def to_dict(self) -> dict[str, Any]:
         self.validate()
+        return asdict(self)
+
+
+@dataclass(frozen=True)
+class GraphEdge:
+    from_type: str
+    from_id: str
+    relation: str
+    to_type: str
+    to_id: str
+    evidence_ids: tuple[str, ...] = ()
+    confidence: float = 1.0
+    status: str = "candidate"
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            **asdict(self),
+            "evidence_ids": list(self.evidence_ids),
+        }
+
+
+@dataclass(frozen=True)
+class EvaluationRecord:
+    id: str
+    case_id: str
+    condition: str
+    prompt: str
+    answer: str
+    passed: bool
+    scores: dict[str, float]
+    judge_reason: str
+    answer_model: str
+    judge_model: str
+    isolation_level: str
+    hashes: dict[str, str]
+    latency_ms: int = 0
+    input_tokens: int = 0
+    output_tokens: int = 0
+
+    def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
 

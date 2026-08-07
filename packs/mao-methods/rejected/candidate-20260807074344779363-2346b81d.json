@@ -1,0 +1,67 @@
+{
+  "title": "调查本身也不会自动产生正确判断。样本选择、提问方式、权力在场和既有立场都可能污染材料...",
+  "candidate_type": "principle",
+  "summary": "调查本身也不会自动产生正确判断。样本选择、提问方式、权力在场和既有立场都可能污染材料；因此现代迁移必须增加反证样本、独立记录和可撤回试点。",
+  "evidence_ids": [
+    "ev-20260807074344779354-b00a0425"
+  ],
+  "source_contexts": [
+    "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice::证据边界"
+  ],
+  "tags": [
+    "methodology",
+    "principle"
+  ],
+  "source_ids": [
+    "https://www.12371.cn/special/mzdxj/dyj/#investigation-practice"
+  ],
+  "independence_groups": [
+    "mao-authorized-works"
+  ],
+  "id": "candidate-20260807074344779363-2346b81d",
+  "cross_domain": false,
+  "source_independent": false,
+  "predictive": false,
+  "distinctive": true,
+  "actionable": true,
+  "status": "rejected",
+  "rejection_reason": "V1 requires recurrence in at least two source contexts",
+  "problem": "在相关场景中判断何时以及如何应用“调查本身也不会自动产生正确判断。样本选择、提问方式、权力在场和既有立场都可能污染材料...”",
+  "assumptions": [
+    "来源语境与当前问题具有可解释的结构对应"
+  ],
+  "mechanism": [
+    "调查本身也不会自动产生正确判断。样本选择、提问方式、权力在场和既有立场都可能污染材料；因此现代迁移必须增加反证样本、独立记录和可撤回试点。"
+  ],
+  "triggers": [
+    "用户明确需要处理与“调查本身也不会自动产生正确判断。样本选择、提问方式、权力在场和既有立场都可能污染材料...”对应的问题"
+  ],
+  "anti_triggers": [
+    "纯信息查询",
+    "关键事实或成立假设缺失"
+  ],
+  "inputs": [
+    "用户目标",
+    "当前约束",
+    "可验证事实"
+  ],
+  "procedure": [
+    "确认目标、成立假设和关键事实",
+    "按证据运行候选机制并保留备选解释",
+    "定义完成、改判、停止和降级条件"
+  ],
+  "branches": [],
+  "output": "带证据、边界和改判条件的可执行结果",
+  "done": "结果可由来源和后续行动复核",
+  "boundaries": [
+    "不得把来源未支持的推断写成事实"
+  ],
+  "failures": [
+    "证据不足",
+    "成立假设不满足"
+  ],
+  "counterexamples": [],
+  "related_ids": [],
+  "verification": {},
+  "disposition": "independent-module"
+}

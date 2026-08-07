@@ -305,3 +305,62 @@ Intent Router
 - 来源发现 Provider 插件和 citation AST；
 - learner misconception 与长期学习增益 benchmark；
 - 经验候选的语义聚类、冲突合并和跨模型迁移。
+
+## 12. v0.3 重新审计：基础设施不等于蒸馏质量
+
+审计基线：
+
+- one-skills：`bd8cb39559c2d6a963ef19d99a7cbb962ebb41ca`
+- Cangjie 方法论：`kangarooking/cangjie-skill@149cb39f559cafcb82910f8662b3f4e3b9ee5574`
+- Cangjie 毛泽东产物：`chinapathbreaker/mao-skill@0c127bd235018e1e8b243dd0a72c6f288a560e2e`
+
+v0.2 已证明来源、版本、权限和发布门可以工程化，但毛泽东案例证明
+“门禁完整”不能替代“能力理解和编译完整”。以下缺口均可从冻结产物复现：
+
+1. `OBJECT_MAP.md` 的地图维度仍全部是“待提取”，没有 Object Overview；
+2. `atomic-network` 只是 Profile 元数据，实际编译器仍为每个候选套同一模板；
+3. `INDEX.md` 必须人工补写，流水线自身不能生成候选知识图、原子关系和学习路线；
+4. 默认测试是通用占位句，无法证明真实触发、模块区分或任务增益。
+
+因此 v0.3 的主问题从“是否有知识库”改为：
+
+> 系统能否从完整对象中形成有证据的整体理解，把案例、反例、术语和方法合并为
+> 不碎片化的能力网络，并通过 no-skill 与开源基线的真实任务对照证明增益？
+
+### 12.1 新研究结论
+
+- [SkillLens](https://arxiv.org/abs/2605.23899) 把 Skill 生命周期拆为
+  experience generation、skill extraction 和 skill consumption，并用
+  `with-skill - baseline` 衡量真实增益。v0.3 不再用静态结构分冒充效果。
+- [Trace2Skill](https://arxiv.org/abs/2603.25158) 对一批成功/失败轨迹并行分析，
+  再层级合并为无冲突 Skill。v0.3 将相同思想用于多来源候选整合。
+- [SKILL-KD](https://arxiv.org/abs/2607.28048) 从 student failure 与 teacher
+  trajectory 的差异生成 trace-linked patch，并用 drift-aware consolidation
+  防止局部修补造成膨胀和破坏性更新。
+- [Skill-Alpha](https://arxiv.org/abs/2608.01678) 使用
+  `CREATE/UPDATE/MERGE/PRUNE/NOOP` 和 downstream rollback reward。
+  v0.3 采用编辑协议和 before/after 门，不在本项目训练 GRPO。
+- [ContinualSkillBench](https://arxiv.org/abs/2608.03874) 显示长期积累中的
+  Skill 碎片化会损害弱模型。v0.3 使用顶层入口加内部模块，不把全部原子模块
+  暴露到全局 Skill 库。
+- [Field Aware Agent Skill Retrieval](https://arxiv.org/abs/2608.02880) 和
+  [More Skills, Worse Agents?](https://arxiv.org/abs/2605.24050) 共同支持：
+  大型 Skill 库的主要风险是选择错误而非单纯上下文长度。
+
+### 12.2 v0.3 决策
+
+```text
+Source candidates
+  -> source-set gate
+  -> evidence-linked Object Overview
+  -> Profile-specific multi-view extraction
+  -> hierarchical candidate consolidation
+  -> V1/V2/V3 + human portfolio confirmation
+  -> one public router + internal atomic modules
+  -> capability graph / glossary / digest / learning path
+  -> no-skill / Cangjie / one-skills blind comparison
+  -> structured patch + rollback + user keep/revert
+```
+
+七类 Profile 必须有不同的 extractor、compiler 和 evaluation contract；
+“统一 IR”只统一证据和生命周期，不再统一最终内容模板。

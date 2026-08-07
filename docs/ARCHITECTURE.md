@@ -1405,3 +1405,70 @@ SQLite 中仅由非活动 Chunk 支持的 Claim 标为 `superseded`。这修复�
 5. 用户确认 Token 驱动的 Git candidate keep/revert 与中断恢复。
 
 现有 API、Job Queue、ACL 与 Runtime Export 已覆盖部分 Harness 职责，但不应据此声称已实现上述精确控制契约。
+
+## 21. v0.3 Semantic Compilation Plane
+
+v0.3 保留十阶段控制平面，但把语义产物从通用模板中拆出：
+
+```text
+Source Candidates
+  -> Source Catalog Gate
+  -> Object Overview
+  -> Profile-specific Extractor Views
+  -> Candidate / Verified Portfolio
+  -> Profile Compiler
+  -> Public Router + Internal Modules
+  -> Capability Graph
+  -> INDEX / GLOSSARY / DIGEST / Learning Path
+  -> Blind Baseline Evaluation
+```
+
+### 21.1 ProfileSpec
+
+七类 Profile 分别声明 Object Overview sections、extractor views、compiler、
+relation types、learning policy、evaluation types 和 module strategy。
+
+统一 IR 只统一来源、证据、生命周期和评测，不再让人物、内容、方法、SOP、
+工具、既有 Skill 和 Hybrid 共用一套最终 procedure。
+
+### 21.2 双层能力网络
+
+内容和方法论默认编译为：
+
+```text
+one public SKILL.md
+  -> internal capability JSON
+  -> references/modules/*.md
+  -> module evals
+```
+
+只有总入口进入全局 Skill Retrieval；内部模块只在 Pack 已加载后进行二阶段路由。
+这同时保留原子能力和可学习结构，并降低大型 Skill 库中的 shadowing。
+
+### 21.3 语义确认
+
+除范围、授权和来源质量等确定性门外，语义内容只有两个确认点：
+
+1. Object Overview；
+2. Verified Capability Portfolio。
+
+确认绑定内容 Hash。Source 更新后对应产物必须标记 stale，不能复用旧确认。
+
+### 21.4 真实效果
+
+v0.3 测试记录保存完整 Answer Agent 输出、匿名 Judge 理由、角色模型、隔离等级、
+Suite/Source Set/Skill/Answer Hash、token 和延迟。no-skill、开源 baseline 和
+candidate 使用同题、同 Answer Agent、同预算。
+
+综合分用于比较，不替代 safety、引用、反触发、sibling、Hash 和泄漏硬门。
+
+### 21.5 结构化进化
+
+重复失败或纠正才能生成：
+
+```text
+CREATE / UPDATE / MERGE / PRUNE / NOOP
+```
+
+Patch 以整个 Skill 目录为作用域，记录轨迹、before/after Hash、训练比较、快照和
+用户 keep/revert。Canonical 与 holdout 不允许被 Patch 修改。

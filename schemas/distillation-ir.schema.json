@@ -32,7 +32,11 @@
     },
     "style": {"type": "object"},
     "evals": {"type": "array", "items": {"type": "object"}},
-    "learning_path": {"type": "object"}
+    "learning_path": {"type": "object"},
+    "object_overview": {"type": "object"},
+    "capability_portfolio": {"type": "object"},
+    "capability_graph": {"type": "object"},
+    "evaluation_runs": {"type": "array", "items": {"type": "object"}}
   },
   "additionalProperties": false
 }

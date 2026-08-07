@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from importlib.metadata import entry_points
 from pathlib import Path
-import re
 
 from .models import SourceDocument
+from .profile_specs import PROFILE_SPECS, ProfileSpec
 
 
 @dataclass(frozen=True)
@@ -17,6 +18,7 @@ class Profile:
     candidate_kinds: tuple[str, ...]
     required_boundaries: tuple[str, ...]
     compiler: str
+    spec: ProfileSpec | None = None
 
 
 PROFILES = {
@@ -26,6 +28,7 @@ PROFILES = {
         ("mental_model", "heuristic", "value", "anti_pattern", "expression_pattern"),
         ("consent", "sensitive_inference", "identity_impersonation"),
         "perspective-router",
+        PROFILE_SPECS["person"],
     ),
     "content": Profile(
         "content",
@@ -33,6 +36,7 @@ PROFILES = {
         ("framework", "principle", "case", "counterexample", "term"),
         ("source_limit", "author_bias", "copyright"),
         "atomic-network",
+        PROFILE_SPECS["content"],
     ),
     "methodology": Profile(
         "methodology",
@@ -40,6 +44,7 @@ PROFILES = {
         ("framework", "principle", "case", "counterexample", "term"),
         ("preconditions", "misuse", "invalid_context"),
         "atomic-network",
+        PROFILE_SPECS["methodology"],
     ),
     "sop": Profile(
         "sop",
@@ -47,6 +52,7 @@ PROFILES = {
         ("procedure", "decision", "failure", "verification", "term"),
         ("authorization", "destructive_action", "incomplete_cleanup"),
         "workflow",
+        PROFILE_SPECS["sop"],
     ),
     "tool": Profile(
         "tool",
@@ -54,6 +60,7 @@ PROFILES = {
         ("operation", "contract", "failure", "verification", "term"),
         ("credential", "side_effect", "version"),
         "operation-router",
+        PROFILE_SPECS["tool"],
     ),
     "skill": Profile(
         "skill",
@@ -61,6 +68,7 @@ PROFILES = {
         ("capability", "trigger", "failure", "test", "term"),
         ("purpose_drift", "trigger_conflict", "test_deletion"),
         "skill-repair",
+        PROFILE_SPECS["skill"],
     ),
     "hybrid": Profile(
         "hybrid",
@@ -68,6 +76,7 @@ PROFILES = {
         ("capability", "procedure", "case", "counterexample", "term"),
         ("cross_object_permission", "conflicting_source", "orchestration"),
         "router",
+        PROFILE_SPECS["hybrid"],
     ),
 }
 _LOADED_PLUGIN_ENTRIES: set[str] = set()
@@ -141,13 +150,18 @@ def detect_profile(documents: list[SourceDocument], source_values: list[str]) ->
 
 def profile_prompt(profile_name: str) -> str:
     profile = PROFILES[profile_name]
-    dimensions = ", ".join(profile.map_dimensions)
-    kinds = ", ".join(profile.candidate_kinds)
+    spec = profile.spec
+    dimensions = ", ".join(
+        spec.overview_sections if spec else profile.map_dimensions
+    )
+    kinds = ", ".join(spec.extractor_views if spec else profile.candidate_kinds)
     boundaries = ", ".join(profile.required_boundaries)
     return (
         f"Profile: {profile.name}\n"
-        f"Map dimensions: {dimensions}\n"
-        f"Extract candidates: {kinds}\n"
+        f"Object Overview sections: {dimensions}\n"
+        f"Independent extractor views: {kinds}\n"
+        f"Compiler: {spec.compiler if spec else profile.compiler}\n"
+        f"Module strategy: {spec.module_strategy if spec else 'single'}\n"
         f"Required boundaries: {boundaries}\n"
         "Every claim must cite an exact source locator. Separate quotation, interpretation, "
         "and model inference. Preserve contradictions and rejected candidates."

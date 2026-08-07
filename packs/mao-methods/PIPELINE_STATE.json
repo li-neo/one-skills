@@ -1,58 +1,58 @@
 {
   "schema_version": "0.1",
-  "pack_id": "pack-20260806175133311964-d6800ddc",
-  "current_phase": "verify",
-  "created_at": "2026-08-06T17:51:33+00:00",
-  "updated_at": "2026-08-06T17:51:33+00:00",
+  "pack_id": "pack-20260807074344701780-f226577d",
+  "current_phase": "evolve",
+  "created_at": "2026-08-07T07:43:44+00:00",
+  "updated_at": "2026-08-07T09:20:50+00:00",
   "phases": {
     "contract": {
       "status": "completed",
-      "updated_at": "2026-08-06T17:51:33+00:00",
+      "updated_at": "2026-08-07T07:43:44+00:00",
       "notes": "contract generated from explicit CLI inputs"
     },
     "ingest": {
       "status": "completed",
-      "updated_at": "2026-08-06T17:51:33+00:00",
+      "updated_at": "2026-08-07T07:43:44+00:00",
       "notes": "indexed 7 sources"
     },
     "map": {
       "status": "completed",
-      "updated_at": "2026-08-06T17:51:33+00:00",
+      "updated_at": "2026-08-07T07:43:44+00:00",
       "notes": "profile map initialized"
     },
     "extract": {
       "status": "completed",
-      "updated_at": "2026-08-06T17:51:33+00:00",
-      "notes": "extracted 50 candidates"
+      "updated_at": "2026-08-07T07:43:45+00:00",
+      "notes": "extracted 78 candidates"
     },
     "verify": {
-      "status": "blocked",
-      "updated_at": "2026-08-06T17:51:33+00:00",
-      "notes": "V2 predictive-power judgments require model or human approval"
+      "status": "completed",
+      "updated_at": "2026-08-07T09:09:49+00:00",
+      "notes": "role-separated V1/V2/V3 and human portfolio confirmation passed"
     },
     "compile": {
-      "status": "pending",
-      "updated_at": null,
-      "notes": ""
+      "status": "completed",
+      "updated_at": "2026-08-07T09:09:49+00:00",
+      "notes": "compiled 12 internal modules behind mao-methods"
     },
     "link": {
-      "status": "pending",
-      "updated_at": null,
-      "notes": ""
+      "status": "completed",
+      "updated_at": "2026-08-07T09:09:49+00:00",
+      "notes": "capability graph, index, glossary, digest, and learning path projected"
     },
     "test": {
-      "status": "pending",
-      "updated_at": null,
-      "notes": ""
+      "status": "completed",
+      "updated_at": "2026-08-07T09:20:50+00:00",
+      "notes": "independent tests and hard gates passed"
     },
     "ship": {
-      "status": "pending",
-      "updated_at": null,
-      "notes": ""
+      "status": "completed",
+      "updated_at": "2026-08-07T09:20:50+00:00",
+      "notes": "reports generated and release gate passed"
     },
     "evolve": {
-      "status": "pending",
-      "updated_at": null,
+      "status": "in_progress",
+      "updated_at": "2026-08-07T09:20:50+00:00",
       "notes": ""
     }
   }

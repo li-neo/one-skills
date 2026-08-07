@@ -22,26 +22,26 @@
 
 ## 项目状态
 
-当前版本 **0.2.0**，处于 **Alpha 工程验证阶段**。核心协议、知识底座、模型验证、专项编译和完整交付链已落地，多 Profile 示例库与规模化适配仍在补齐。
+当前版本 **0.3.0**，处于 **Alpha 工程验证阶段**。v0.3 把“证据基础设施”补成完整语义编译链：Object Overview、多视角 Candidate Portfolio、七类 Profile 编译器、双层能力网络、Capability Graph、学习投影、三角色盲测和结构化回滚。
 
 | 能力 | 状态 |
 |---|---|
 | 总体架构 | 已实现核心分层 |
 | 统一蒸馏协议 | 已实现十阶段状态机与统一 IR |
-| 对象 Profile | 已实现路由与专项抽取契约 |
-| 质量与评测体系 | 已实现静态门禁、独立结果聚合与 paired 决策 |
+| 对象 Profile | 七类均有专属 Overview、extractor views、compiler 和 evaluation contract |
+| 质量与评测体系 | 已实现 no-skill / baseline / candidate 完整回答盲测、综合分与不可补偿硬门 |
 | Darwin 兼容层 | 已实现 `prepared` 交接与降级契约 |
 | 工程架构与知识库索引 | [已实现本地 MVP](docs/ARCHITECTURE.md) |
 | 根目录 `SKILL.md` | 已完成运行协议 |
 | CLI、脚本与 Schema | 已实现 Alpha 版本 |
 | 端到端工程链 | 已由集成测试覆盖 |
 | 示例库 | 已实现单任务、批量并发与七类 Profile 基准 |
-| Guided 蒸馏 | 已实现可恢复会话、证据分级、人工检查点与无损入 Pack |
-| 高质量来源 | 已实现 Source Catalog、集合质量门、独立来源组、反证和 holdout |
+| Guided 蒸馏 | 已实现可恢复会话、证据分级、Overview/Portfolio 两次语义确认与无损入 Pack |
+| 高质量来源 | 已实现 Local/GitHub/Hugging Face/Manifest 候选发现、Source Catalog、集合质量门、反证和 holdout |
 | Skill 召回 | 已实现字段感知 sparse/dense 召回、margin 与拒答 |
 | 学习模式 | 已实现先修路径、掌握证据和间隔复习状态 |
-| 经验进化 | 已实现 append-only 反馈、复现门和 holdout 隔离 |
-| 自动化测试 | 27 项，持续扩充 |
+| 经验进化 | 已实现 append-only 反馈、复现门、结构化 whole-folder patch、before/after 和 keep/revert |
+| 自动化测试 | 37 项，持续扩充 |
 
 当前可运行命令以 `python3 scripts/one.py --help` 或安装后的 `one --help` 为准。README 中尚未出现在 CLI 帮助里的命令仍属于规划接口。
 
@@ -994,6 +994,13 @@ one route --intent "把这个人的著作和决策方法做成可运行能力"
 ### 高质量来源目录
 
 ```bash
+one source discover \
+  --adapter github \
+  --target owner/repository \
+  --subject example \
+  --question "这个对象解决什么问题" \
+  --output SOURCE_CANDIDATES.json
+
 one source template --output SOURCE_CATALOG.json
 one source audit \
   --catalog SOURCE_CATALOG.json \
@@ -1101,21 +1108,32 @@ one distill \
 one evolve ./packs/example --skill example-skill
 ```
 
-### 独立模型验证与受控发布
+### 三角色验证、编译与受控发布
 
 ```bash
-export ONE_SKILLS_MODEL_BASE_URL="https://model.example/v1"
-export ONE_SKILLS_MODEL_API_KEY="..."
-export ONE_SKILLS_MODEL="model-name"
+export ONE_SKILLS_BUILDER_BASE_URL="https://model.example/v1"
+export ONE_SKILLS_BUILDER_API_KEY="..."
+export ONE_SKILLS_BUILDER_MODEL="builder-model"
+# 同样配置 ONE_SKILLS_ANSWER_* 与 ONE_SKILLS_JUDGE_*；
+# 只有一套模型时可回退到 ONE_SKILLS_MODEL_*。
 
+one model status
+one semantic confirm ./packs/example \
+  --artifact overview --notes "对象骨架和来源已核对"
 one verify-model ./packs/example
-one test ./packs/example --results ./agent-results.json
+one semantic confirm ./packs/example \
+  --artifact portfolio --notes "能力组合和降级理由已核对"
+one compile ./packs/example
+
+one compare run ./packs/example \
+  --suite benchmarks/mao-methods/suite.json \
+  --baseline benchmarks/mao-methods/baselines.json
 one release ./packs/example
 one install ./packs/example --target ~/.codex/skills
 one export ./packs/example --runtime claude
 ```
 
-非公开 Pack 默认禁止发送到模型端点。只有在确认端点、数据协议和授权范围后，才能显式增加 `--allow-sensitive-data`。
+非公开 Pack 默认禁止发送到模型端点。只有在确认端点、数据协议和授权范围后，才能显式增加 `--allow-sensitive-data`。三角色未配置时可以从隔离 Runtime 导入完整 Answer/Judge artifacts，但报告必须保留实际隔离等级。
 
 ### 检索与用户画像记忆
 
