@@ -111,10 +111,13 @@ Profile benchmark: 7/7
 Mao v0.3 Pack validation: 0 errors, 0 warnings
 Mao blind comparison: 60/60, 99.7950 vs Cangjie 77.0797, lead 22.7153
 Mao release: passed all hard gates, current phase evolve
-Python CI: pending current commit
-PostgreSQL + pgvector CI: pending current commit
+Python CI 3.10 / 3.11 / 3.12: passed, run 31165723006
+PostgreSQL + pgvector CI: passed, run 31165723006
 Git diff check / compileall: passed
 ```
+
+v0.3 实现 Commit `8d14ca5` 的权威外部证据：
+[GitHub Actions run 31165723006](https://github.com/li-neo/one-skills/actions/runs/31165723006)。
 
 已知运行依赖不是未实现功能：
 
