@@ -102,7 +102,7 @@ Workspace。
 | `sop` | 角色、前置条件、系统、状态、异常、交接 |
 | `skill` | 承诺能力、触发、工作流、资源、测试、问题 |
 
-输出 `OBJECT_OVERVIEW.json/md` 和 `OBJECT_MAP.md`，包含对象主旨、骨架、术语、
+输出 `OBJECT_OVERVIEW.json/md`，包含对象主旨、骨架、术语、
 机制链、张力、局限、来源覆盖和研究缺口。确认 Overview Hash 后再进入语义验证。
 
 ## Phase 3：提取候选能力
@@ -298,7 +298,7 @@ Skill；至少两次独立 evidence locator 复现后，才用 `one experience m
 
 ## 进度与恢复
 
-长任务每完成一个 Phase，更新 `PIPELINE_STATE.md`：
+长任务每完成一个 Phase，更新 `pack.json.lifecycle`：
 
 - 当前 Phase
 - 已完成产物
@@ -314,13 +314,14 @@ Skill；至少两次独立 evidence locator 复现后，才用 `one experience m
 以下硬约束吸收自姊妹项目与 2026 年检索、来源和学习研究，任何 Skill 交付都必须满足。完整规范见 `docs/ARCHITECTURE.md` 第 19、20 章。
 
 1. **Frontmatter**：必需 `name` 与 `description`；允许官方规范的 `license / compatibility / metadata / allowed-tools`；name 与父目录一致。
-2. **Pipeline 状态机**：十阶段 `contract→ingest→map→extract→verify→compile→link→test→ship→evolve` 由 `PIPELINE_STATE.json` 持久化，不能跳阶。
+2. **Pipeline 状态机**：十阶段 `contract→ingest→map→extract→verify→compile→link→test→ship→evolve` 由 `pack.json.lifecycle` 持久化，不能跳阶。
 3. **证据 Schema**：`EVIDENCE_LEDGER.jsonl` 每条必须含 `id / claim / evidence_type / source / locator / confidence[0,1] / inference_level / permission`；`evidence_type` 使用 `schemas/evidence.schema.json` 的封闭枚举，自述和情景回答不得冒充观察行为或已记录结果。
 4. **测试覆盖**：`test-prompts.json` 必须至少含 `should_trigger / should_not_trigger / edge_case`；静态检查永远不填 `actual_effect` 分，只有独立 Agent 结果才折算。
 5. **交付读回**：安装、导出、切换 `active_version` 后必须读回校验；覆盖已存在目标须先 `.backup-<timestamp>`。
 6. **URL 安全**：默认拒绝私有/环回/链路本地 IP，重定向后再校验；URL ≤20 MiB，本地文件 ≤100 MiB。
 7. **Darwin 降级**：无 Darwin 时只写 `DARWIN_REQUEST.md` 并保持 `status: prepared`，不得声称"已进化"。
-8. **来源质量**：Catalog-backed Pack 必须通过来源集合门，`SOURCE_QUALITY.json` 哈希冻结。
+8. **来源质量**：Catalog-backed Pack 必须通过来源集合门，质量报告写入 `SOURCE_MANIFEST.json.quality`，哈希冻结在 `pack.json.reproducibility`。
 9. **学习结构**：Pack 必须包含无环 `LEARNING_PATH.json`。
 10. **Skill 召回**：大型 Skill Bank 使用字段感知召回；低分或低 margin 必须确认或拒答。
 11. **经验进化**：部署反馈只生成候选；holdout 不参与挖掘，用户确认前不修改 Skill。
+12. **核心质量**：v0.4 双层网络发布前，可靠性、完整性和准确率硬门必须分别通过，不允许总分补偿失败维度。

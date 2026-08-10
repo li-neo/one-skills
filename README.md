@@ -22,7 +22,7 @@
 
 ## 项目状态
 
-当前版本 **0.3.0**，处于 **Alpha 工程验证阶段**。v0.3 把“证据基础设施”补成完整语义编译链：Object Overview、多视角 Candidate Portfolio、七类 Profile 编译器、双层能力网络、Capability Graph、学习投影、三角色盲测和结构化回滚。
+当前版本 **0.4.0**，处于 **Alpha 工程验证阶段**。v0.4 不增加新领域概念，集中优化蒸馏可靠性、完整性和准确率：合并重复事实源、明确权威资产与可重建投影、拆分来源与生命周期编排，并把三项核心质量变成发布硬门。
 
 | 能力 | 状态 |
 |---|---|
@@ -41,7 +41,7 @@
 | Skill 召回 | 已实现字段感知 sparse/dense 召回、margin 与拒答 |
 | 学习模式 | 已实现先修路径、掌握证据和间隔复习状态 |
 | 经验进化 | 已实现 append-only 反馈、复现门、结构化 whole-folder patch、before/after 和 keep/revert |
-| 自动化测试 | 37 项，持续扩充 |
+| 自动化测试 | 40 项，持续扩充 |
 
 当前可运行命令以 `python3 scripts/one.py --help` 或安装后的 `one --help` 为准。README 中尚未出现在 CLI 帮助里的命令仍属于规划接口。
 
@@ -457,7 +457,7 @@ Phase 9  Evolve       Darwin 优化与新证据增量更新
 - SOP：角色、前置条件、系统、状态、异常和交接点
 - Skill：承诺能力、触发器、工作流、资源、测试和已知问题
 
-输出：`OBJECT_MAP.md`
+输出：`OBJECT_OVERVIEW.json`；`OBJECT_OVERVIEW.md` 只是人类可读投影。
 
 ### Phase 3：多视角提取
 
@@ -894,21 +894,21 @@ one-skills/
 
 ```text
 packs/<object-slug>/
-├── pack.json
-├── RECIPE_LOCK.json
-├── PROTECTED_CONSTRAINTS.json
+├── pack.json                 # 契约、生命周期、Recipe 与重现约束真源
+├── SOURCE_MANIFEST.json      # 来源版本与 Source Quality 真源
+├── OBJECT_OVERVIEW.json      # 对象整体理解真源
+├── EVIDENCE_LEDGER.jsonl     # 不可变证据真源
+├── VERIFIED_PORTFOLIO.json   # 能力组合真源
+├── evaluations/              # 冻结评测真源
+│
+├── candidates/               # 中间候选，可重建
+├── verified/                 # 中间决策，可重建
+├── rejected/                 # 拒绝审计，可重建
+│
 ├── DISTILLATION_CONTRACT.md
-├── PIPELINE_STATE.json
-├── PIPELINE_STATE.md
-├── OBJECT_MAP.md
-├── SOURCE_MANIFEST.json
-├── EVIDENCE_LEDGER.jsonl
 ├── INDEX.md
 ├── sources/
 │   └── chunks.json
-├── candidates/
-├── verified/
-├── rejected/
 ├── ir/
 │   └── distillation.json
 ├── skills/
@@ -933,25 +933,19 @@ packs/<object-slug>/
 
 ## 断点续跑
 
-长任务必须把状态落盘到 `PIPELINE_STATE.md`：
+长任务状态写入 `pack.json.lifecycle`，不再维护独立状态文件：
 
-```yaml
-object: example
-profile: hybrid
-phase: validate
-completed:
-  - contract
-  - ingest
-  - map
-  - extract
-  - verify
-pending:
-  - behavior-evals
-  - delivery
-artifacts:
-  ir: ir/distillation.yaml
-  skills: skills/
-last_updated: "2026-08-04T12:00:00+08:00"
+```json
+{
+  "schema_version": "0.4",
+  "lifecycle": {
+    "current_phase": "verify",
+    "phases": {
+      "extract": {"status": "completed"},
+      "verify": {"status": "blocked"}
+    }
+  }
+}
 ```
 
 恢复时先读取状态和产物，不重新消耗已经完成的采集与提取成本。
@@ -1404,6 +1398,15 @@ one-skills 不做以下事情：
 - [x] 批量蒸馏、错误隔离和有界并发执行
 - [x] 生成证据索引、质量报告与 Provenance 报告
 - [x] 发布时生成 Mermaid 可视化证据图
+
+### Milestone 5：v0.4 核心收敛
+
+- [x] 生命周期、Recipe Lock 与重现约束合入 `pack.json`
+- [x] Source Quality 合入 `SOURCE_MANIFEST.json`
+- [x] 删除 `OBJECT_MAP` 与独立状态 Markdown 等重复投影
+- [x] 来源工作流、生命周期和语义蒸馏编排分离
+- [x] 可靠性、完整性、准确率进入确定性质量硬门
+- [x] v0.3 Pack 可无损迁移到 v0.4，不改写 Skill 和评测内容
 
 ---
 

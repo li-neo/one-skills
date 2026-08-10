@@ -17,7 +17,7 @@
     "created_at"
   ],
   "properties": {
-    "schema_version": {"enum": ["0.2", "0.3"]},
+    "schema_version": {"enum": ["0.2", "0.3", "0.4"]},
     "id": {"type": "string", "minLength": 1},
     "name": {"type": "string", "minLength": 1},
     "slug": {"type": "string", "pattern": "^[a-z0-9\\u4e00-\\u9fff]+(?:-[a-z0-9\\u4e00-\\u9fff]+)*$"},
@@ -54,9 +54,37 @@
       },
       "additionalProperties": false
     },
+    "recipe_lock": {
+      "type": "object",
+      "required": ["schema_version", "locked_at", "recipe"]
+    },
+    "reproducibility": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "source_hashes",
+        "protected",
+        "canonical_eval_hashes",
+        "runtime_eval_hashes"
+      ]
+    },
+    "lifecycle": {
+      "type": "object",
+      "required": ["schema_version", "pack_id", "current_phase", "phases"]
+    },
     "created_at": {"type": "string"},
     "updated_at": {"type": "string"},
     "migrated_at": {"type": "string"}
   },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"schema_version": {"const": "0.4"}}
+      },
+      "then": {
+        "required": ["recipe_lock", "reproducibility", "lifecycle"]
+      }
+    }
+  ],
   "additionalProperties": false
 }

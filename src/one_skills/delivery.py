@@ -11,8 +11,9 @@ from pathlib import Path
 
 from .comparison import local_skill_context
 from .database import KnowledgeDB
+from .distillation_quality import assess_distillation_quality
 from .evaluation import paired_decision
-from .pipeline import advance_phase, load_state, workspace_for
+from .lifecycle import advance_phase, load_state, workspace_for
 from .reporting import write_evidence_graph
 from .runtime import export_runtime
 from .utils import atomic_write, dump_json, load_json, utc_now
@@ -33,7 +34,7 @@ def _assert_tested(pack: Path) -> None:
         raise DeliveryError(f"evaluation freeze check failed: {drift[0].code}")
     metadata = load_json(pack / "pack.json") if (pack / "pack.json").exists() else {}
     if (
-        metadata.get("schema_version") == "0.3"
+        metadata.get("schema_version") in {"0.3", "0.4"}
         and (pack / "CAPABILITY_GRAPH.json").exists()
     ):
         comparison_path = pack / "evaluations" / "comparison-report.json"
@@ -49,6 +50,20 @@ def _assert_tested(pack: Path) -> None:
         if expected_skill_hash != current_skill_hash:
             raise DeliveryError(
                 "v0.3 blind comparison report does not match the current Skill context"
+            )
+    if (
+        metadata.get("schema_version") == "0.4"
+        and (pack / "CAPABILITY_GRAPH.json").exists()
+    ):
+        quality = assess_distillation_quality(pack)
+        if not quality["passed"]:
+            failed = [
+                gate
+                for gate, passed in quality["hard_gates"].items()
+                if not passed
+            ]
+            raise DeliveryError(
+                "core distillation quality gates failed: " + ", ".join(failed)
             )
     path = pack / "test-results.json"
     if not path.exists():
@@ -98,12 +113,23 @@ def release_pack(pack: Path) -> dict:
             f"\n- Weighted lead over baseline: {comparison.get('weighted_lead', 0):.2f}\n"
             f"- Comparison passed: `{comparison.get('passed', False)}`\n"
         )
+    core_quality_text = ""
+    if metadata.get("schema_version") == "0.4":
+        core_quality = assess_distillation_quality(pack)
+        dimensions = core_quality["dimensions"]
+        core_quality_text = (
+            "\n- Distillation reliability: "
+            f"{dimensions['reliability']:.4f}\n"
+            f"- Distillation completeness: {dimensions['completeness']:.4f}\n"
+            f"- Distillation accuracy: {dimensions['accuracy']:.4f}\n"
+        )
     atomic_write(
         reports / "QUALITY.md",
         f"# Quality Report\n\n{quality_rows}\n\n"
         "Hard gates: safety, should-not-trigger, sibling confusion, citations, "
         "hash consistency, and holdout isolation passed.\n"
-        + comparison_text,
+        + comparison_text
+        + core_quality_text,
     )
     atomic_write(
         reports / "PROVENANCE.md",

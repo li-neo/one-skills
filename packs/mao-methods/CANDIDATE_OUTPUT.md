@@ -1,6 +1,6 @@
 # Candidate Output
 
-v0.3 的正式产物位于：
+v0.4 核心布局中的正式产物位于：
 
 - [Runtime Skill](skills/mao-methods/SKILL.md)
 - [能力图谱与学习入口](INDEX.md)
@@ -17,5 +17,6 @@ v0.3 的正式产物位于：
 - 加权领先：`22.7153`
 - 不可补偿硬门：全部通过
 - Skill Hash：`7f0063e6acff919e61ebf94728de079cb587596e000f795049aad2a40f7032a0`
+- 核心质量：可靠性 `1.0`、完整性 `1.0`、准确率 `1.0`
 
-旧 v0.2 候选仅用于回归审计，不再代表当前发布产物。
+v0.4 迁移只收敛 Pack 真源和投影，没有改写 Runtime Skill 或评测答案。

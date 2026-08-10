@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import json
 import tempfile
 import unittest
 from pathlib import Path
 
 from one_skills.compilers import capability_from_verified_candidate
+from one_skills.lifecycle import load_state
 from one_skills.models import Candidate
 from one_skills.overview import confirm_object_overview
 from one_skills.pipeline import compile_confirmed_portfolio, create_pack
@@ -98,9 +98,7 @@ class ProfileCompilerTests(unittest.TestCase):
                 self.assertFalse(
                     [item for item in validate_skill(skill) if item.severity == "error"]
                 )
-                state = json.loads(
-                    (pack / "PIPELINE_STATE.json").read_text(encoding="utf-8")
-                )
+                state = load_state(pack)
                 self.assertEqual(state["current_phase"], "test")
 
     def test_governance_disposition_compiles_as_governance_module(self) -> None:

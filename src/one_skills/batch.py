@@ -7,7 +7,8 @@ from pathlib import Path
 import sqlite3
 from typing import Any
 
-from .pipeline import create_pack, init_workspace, load_state
+from .lifecycle import init_workspace, load_state
+from .pipeline import create_pack
 from .utils import load_json
 
 

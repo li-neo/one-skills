@@ -1,6 +1,6 @@
 # mao-methods — Capability Index
 
-> Profile: `methodology` · Pack schema: `0.3`
+> Profile: `methodology` · Pack schema: `0.4`
 
 ## 阅读入口
 

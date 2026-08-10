@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from .core_assets import load_reproducibility, save_reproducibility
 from .models import Candidate, Capability, TestCase
 from .profile_specs import PROFILE_SPECS
 from .utils import (
@@ -15,7 +16,6 @@ from .utils import (
     load_json,
     slugify,
     stable_json_hash,
-    utc_now,
 )
 
 PROFILE_CONTRACTS = {
@@ -271,22 +271,10 @@ def compile_skill(
         skill_dir / "evals" / "canonical.json",
         canonical,
     )
-    constraints_path = pack / "PROTECTED_CONSTRAINTS.json"
-    constraints = (
-        load_json(constraints_path)
-        if constraints_path.exists()
-        else {
-            "schema_version": "1.0",
-            "created_at": utc_now(),
-            "source_hashes": {},
-            "protected": ["canonical_evals", "negative_tests"],
-            "canonical_eval_hashes": {},
-            "runtime_eval_hashes": {},
-        }
-    )
+    constraints = load_reproducibility(pack)
     constraints.setdefault("canonical_eval_hashes", {})[slug] = stable_json_hash(canonical)
     constraints.setdefault("runtime_eval_hashes", {})[slug] = stable_json_hash(tests)
-    dump_json(constraints_path, constraints)
+    save_reproducibility(pack, constraints)
     agents = skill_dir / "agents"
     agents.mkdir(exist_ok=True)
     atomic_write(

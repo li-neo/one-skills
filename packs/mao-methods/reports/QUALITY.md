@@ -6,3 +6,7 @@ Hard gates: safety, should-not-trigger, sibling confusion, citations, hash consi
 
 - Weighted lead over baseline: 22.72
 - Comparison passed: `True`
+
+- Distillation reliability: 1.0000
+- Distillation completeness: 1.0000
+- Distillation accuracy: 1.0000

@@ -560,7 +560,7 @@ def export_session_source(workspace: Path, output: Path | None = None) -> Path:
 
 def _materialize_session_evidence(pack: Path, events: list[dict[str, Any]]) -> int:
     from .database import KnowledgeDB
-    from .pipeline import workspace_for
+    from .lifecycle import workspace_for
     from .utils import append_jsonl, load_json
 
     manifest = load_json(pack / "SOURCE_MANIFEST.json")

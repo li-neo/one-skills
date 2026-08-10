@@ -17,6 +17,12 @@ from one_skills.compiler import (
     export_profile_templates,
 )
 from one_skills.constants import MAX_LOCAL_BYTES
+from one_skills.core_assets import (
+    load_pack_metadata,
+    load_reproducibility,
+    save_pack_metadata,
+    save_reproducibility,
+)
 from one_skills.database import KnowledgeDB
 from one_skills.delivery import (
     DeliveryError,
@@ -825,17 +831,14 @@ class PipelineTests(unittest.TestCase):
             state = load_state(pack)
             self.assertEqual(state["current_phase"], "verify")
             self.assertEqual(state["phases"]["verify"]["status"], "blocked")
-            recipe_lock = json.loads(
-                (pack / "RECIPE_LOCK.json").read_text(encoding="utf-8")
-            )
+            metadata = load_pack_metadata(pack)
+            recipe_lock = metadata["recipe_lock"]
             self.assertEqual(recipe_lock["recipe"]["profile"], "methodology")
-            constraints = json.loads(
-                (pack / "PROTECTED_CONSTRAINTS.json").read_text(encoding="utf-8")
-            )
+            constraints = load_reproducibility(pack)
             self.assertEqual(len(constraints["source_hashes"]), 1)
-            recipe_path = pack / "RECIPE_LOCK.json"
             recipe_lock["recipe"]["profile"] = "content"
-            recipe_path.write_text(json.dumps(recipe_lock), encoding="utf-8")
+            metadata["recipe_lock"] = recipe_lock
+            save_pack_metadata(pack, metadata)
             self.assertIn(
                 "recipe.profile_mismatch",
                 {
@@ -845,12 +848,12 @@ class PipelineTests(unittest.TestCase):
                 },
             )
             recipe_lock["recipe"]["profile"] = "methodology"
-            recipe_path.write_text(json.dumps(recipe_lock), encoding="utf-8")
-            constraints_path = pack / "PROTECTED_CONSTRAINTS.json"
+            metadata["recipe_lock"] = recipe_lock
+            save_pack_metadata(pack, metadata)
             source_key = next(iter(constraints["source_hashes"]))
             source_hash = constraints["source_hashes"][source_key]
             constraints["source_hashes"][source_key] = "0" * 64
-            constraints_path.write_text(json.dumps(constraints), encoding="utf-8")
+            save_reproducibility(pack, constraints)
             self.assertIn(
                 "source.hash_drift",
                 {
@@ -860,7 +863,7 @@ class PipelineTests(unittest.TestCase):
                 },
             )
             constraints["source_hashes"][source_key] = source_hash
-            constraints_path.write_text(json.dumps(constraints), encoding="utf-8")
+            save_reproducibility(pack, constraints)
             with self.assertRaises(PipelineError):
                 advance_phase(pack, "ship", "completed")
             self.assertTrue((pack / "candidates" / "candidates.json").exists())
@@ -882,6 +885,7 @@ class PipelineTests(unittest.TestCase):
             )
             impact = update_pack(pack, [str(source)])
             self.assertEqual(impact["new_source_versions"], 1)
+            self.assertEqual(load_pack_metadata(pack)["lifecycle"], load_state(pack))
             manifest = json.loads((pack / "SOURCE_MANIFEST.json").read_text(encoding="utf-8"))
             versions = [
                 item["document_version"]
@@ -889,9 +893,7 @@ class PipelineTests(unittest.TestCase):
                 if item["document_id"] == manifest["sources"][-1]["document_id"]
             ]
             self.assertEqual(versions, [1, 2])
-            constraints = json.loads(
-                (pack / "PROTECTED_CONSTRAINTS.json").read_text(encoding="utf-8")
-            )
+            constraints = load_reproducibility(pack)
             self.assertEqual(len(constraints["source_hashes"]), 2)
             new_quote_ids = {
                 json.loads(line)["id"]

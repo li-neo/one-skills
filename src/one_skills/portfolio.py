@@ -6,6 +6,11 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
+from .core_assets import (
+    load_reproducibility,
+    load_source_quality,
+    save_reproducibility,
+)
 from .models import Candidate
 from .retrieval import tokenize
 from .utils import atomic_write, dump_json, load_json, stable_json_hash, utc_now
@@ -86,12 +91,7 @@ def portfolio_metrics(candidates: list[Candidate]) -> dict[str, Any]:
 
 
 def _coverage(pack: Path, candidates: list[Candidate]) -> dict[str, list[str]]:
-    quality_path = pack / "SOURCE_QUALITY.json"
-    questions = (
-        load_json(quality_path).get("research_questions", [])
-        if quality_path.exists()
-        else []
-    )
+    questions = load_source_quality(pack).get("research_questions", [])
     coverage: dict[str, list[str]] = {question: [] for question in questions}
     for question in questions:
         question_terms = set(tokenize(question))
@@ -232,9 +232,9 @@ def build_portfolio(
         metadata["capability_portfolio_hash"] = portfolio_hash
         metadata.setdefault("semantic_contract", {})["capability_confirmation"] = "pending"
         dump_json(pack / "pack.json", metadata)
-        constraints = load_json(pack / "PROTECTED_CONSTRAINTS.json")
+        constraints = load_reproducibility(pack)
         constraints["capability_portfolio_hash"] = portfolio_hash
-        dump_json(pack / "PROTECTED_CONSTRAINTS.json", constraints)
+        save_reproducibility(pack, constraints)
     return value
 
 
@@ -258,9 +258,9 @@ def confirm_portfolio(pack: Path, notes: str) -> dict[str, Any]:
     metadata["capability_portfolio_hash"] = portfolio_hash
     metadata.setdefault("semantic_contract", {})["capability_confirmation"] = "confirmed"
     dump_json(pack / "pack.json", metadata)
-    constraints = load_json(pack / "PROTECTED_CONSTRAINTS.json")
+    constraints = load_reproducibility(pack)
     constraints["capability_portfolio_hash"] = portfolio_hash
-    dump_json(pack / "PROTECTED_CONSTRAINTS.json", constraints)
+    save_reproducibility(pack, constraints)
     return value
 
 
@@ -285,7 +285,7 @@ def apply_reviewed_capability_spec(
     review_artifact = load_json(verification_path)
     if isinstance(review_artifact, dict):
         expected_source_hash = stable_json_hash(
-            load_json(pack / "PROTECTED_CONSTRAINTS.json").get(
+            load_reproducibility(pack).get(
                 "source_hashes",
                 {},
             )

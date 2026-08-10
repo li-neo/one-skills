@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
+from .core_assets import load_reproducibility, save_reproducibility
 from .database import KnowledgeDB
 from .models import Candidate, Capability, GraphEdge
 from .utils import dump_json, load_json, stable_json_hash
@@ -174,10 +175,10 @@ def build_capability_graph(
     graph_hash = stable_json_hash(value)
     metadata["capability_graph_hash"] = graph_hash
     dump_json(pack / "pack.json", metadata)
-    constraints = load_json(pack / "PROTECTED_CONSTRAINTS.json")
+    constraints = load_reproducibility(pack)
     constraints["capability_graph_hash"] = graph_hash
-    dump_json(pack / "PROTECTED_CONSTRAINTS.json", constraints)
-    from .pipeline import workspace_for
+    save_reproducibility(pack, constraints)
+    from .lifecycle import workspace_for
 
     workspace = workspace_for(pack)
     with KnowledgeDB(workspace / ".one" / "knowledge.db") as database:

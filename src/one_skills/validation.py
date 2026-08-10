@@ -9,8 +9,17 @@ from pathlib import Path
 from typing import Any
 
 from .constants import EVIDENCE_TYPES, INFERENCE_LEVELS, PERMISSIONS, TEST_TYPES
+from .core_assets import (
+    CONSOLIDATED_PACK_VERSION,
+    load_recipe_lock,
+    load_reproducibility,
+    load_source_manifest,
+    load_source_quality,
+)
+from .distillation_quality import assess_distillation_quality
+from .errors import PipelineError
 from .learning import validate_learning_path
-from .pipeline import PipelineError, load_state
+from .lifecycle import load_state
 from .source_quality import source_quality_fingerprint
 from .utils import load_json, stable_json_hash
 
@@ -240,19 +249,10 @@ def validate_evidence(path: Path) -> list[Finding]:
 
 
 def validate_frozen_evals(pack: Path) -> list[Finding]:
-    constraints_path = pack / "PROTECTED_CONSTRAINTS.json"
-    if not constraints_path.exists():
-        return [
-            Finding(
-                "error",
-                "eval.constraints_missing",
-                "missing PROTECTED_CONSTRAINTS.json",
-                str(constraints_path),
-            )
-        ]
+    constraints_path = pack / "pack.json"
     try:
-        constraints = load_json(constraints_path)
-    except (OSError, json.JSONDecodeError) as exc:
+        constraints = load_reproducibility(pack)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
         return [
             Finding("error", "eval.constraints_parse", str(exc), str(constraints_path))
         ]
@@ -261,7 +261,7 @@ def validate_frozen_evals(pack: Path) -> list[Finding]:
             Finding(
                 "error",
                 "eval.constraints_shape",
-                "PROTECTED_CONSTRAINTS.json must be an object",
+                "Pack reproducibility contract must be an object",
                 str(constraints_path),
             )
         ]
@@ -396,18 +396,18 @@ def validate_frozen_evals(pack: Path) -> list[Finding]:
 def validate_reproducibility(pack: Path) -> list[Finding]:
     paths = {
         "pack": pack / "pack.json",
-        "recipe": pack / "RECIPE_LOCK.json",
-        "constraints": pack / "PROTECTED_CONSTRAINTS.json",
+        "recipe": pack / "pack.json",
+        "constraints": pack / "pack.json",
         "manifest": pack / "SOURCE_MANIFEST.json",
     }
-    if any(not path.exists() for path in paths.values()):
+    if not paths["pack"].exists() or not paths["manifest"].exists():
         return []
     try:
         metadata = load_json(paths["pack"])
-        recipe_lock = load_json(paths["recipe"])
-        constraints = load_json(paths["constraints"])
-        manifest = load_json(paths["manifest"])
-    except (OSError, json.JSONDecodeError) as exc:
+        recipe_lock = load_recipe_lock(pack)
+        constraints = load_reproducibility(pack)
+        manifest = load_source_manifest(pack)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
         return [
             Finding("error", "reproducibility.parse", str(exc), str(pack))
         ]
@@ -425,16 +425,16 @@ def validate_reproducibility(pack: Path) -> list[Finding]:
         ]
     findings: list[Finding] = []
     pack_version = metadata.get("schema_version")
-    if pack_version not in {"0.2", "0.3"}:
+    if pack_version not in {"0.2", "0.3", CONSOLIDATED_PACK_VERSION}:
         findings.append(
             Finding(
                 "error",
                 "pack.schema_version",
-                "reproducible Packs require schema_version 0.2 or 0.3",
+                "reproducible Packs require schema_version 0.2, 0.3, or 0.4",
                 str(paths["pack"]),
             )
         )
-    if pack_version == "0.3":
+    if pack_version in {"0.3", CONSOLIDATED_PACK_VERSION}:
         semantic = metadata.get("semantic_contract")
         if (
             not isinstance(semantic, dict)
@@ -447,7 +447,7 @@ def validate_reproducibility(pack: Path) -> list[Finding]:
                 Finding(
                     "error",
                     "pack.semantic_contract",
-                    "v0.3 Pack requires overview and capability confirmation states",
+                    "semantic Pack requires overview and capability confirmation states",
                     str(paths["pack"]),
                 )
             )
@@ -472,7 +472,7 @@ def validate_reproducibility(pack: Path) -> list[Finding]:
             Finding(
                 "error",
                 "recipe.lock_shape",
-                "RECIPE_LOCK.json is incomplete",
+                "Pack recipe_lock is incomplete",
                 str(paths["recipe"]),
             )
         )
@@ -484,7 +484,7 @@ def validate_reproducibility(pack: Path) -> list[Finding]:
             Finding(
                 "error",
                 "recipe.lock_mismatch",
-                "pack recipe identity does not match RECIPE_LOCK.json",
+                "pack recipe identity does not match recipe_lock",
                 str(paths["recipe"]),
             )
         )
@@ -525,41 +525,40 @@ def validate_reproducibility(pack: Path) -> list[Finding]:
                 str(paths["constraints"]),
             )
         )
-    quality_path = pack / "SOURCE_QUALITY.json"
-    if quality_path.exists():
-        try:
-            quality = load_json(quality_path)
-        except (OSError, json.JSONDecodeError) as exc:
+    try:
+        quality = load_source_quality(pack)
+    except (OSError, json.JSONDecodeError) as exc:
+        findings.append(
+            Finding(
+                "error",
+                "source.quality_parse",
+                str(exc),
+                str(paths["manifest"]),
+            )
+        )
+        quality = {}
+    if quality:
+        if constraints.get("source_quality_hash") != source_quality_fingerprint(
+            quality
+        ):
             findings.append(
                 Finding(
                     "error",
-                    "source.quality_parse",
-                    str(exc),
-                    str(quality_path),
+                    "source.quality_drift",
+                    "source quality is not frozen or has drifted",
+                    str(paths["manifest"]),
                 )
             )
-        else:
-            if constraints.get("source_quality_hash") != source_quality_fingerprint(
-                quality
-            ):
-                findings.append(
-                    Finding(
-                        "error",
-                        "source.quality_drift",
-                        "SOURCE_QUALITY.json is not frozen or has drifted",
-                        str(quality_path),
-                    )
+        if metadata.get("source_catalog") and quality.get("status") != "passed":
+            findings.append(
+                Finding(
+                    "error",
+                    "source.quality_gate",
+                    "catalog-backed Pack did not pass its source quality gate",
+                    str(paths["manifest"]),
                 )
-            if metadata.get("source_catalog") and quality.get("status") != "passed":
-                findings.append(
-                    Finding(
-                        "error",
-                        "source.quality_gate",
-                        "catalog-backed Pack did not pass its source quality gate",
-                        str(quality_path),
-                    )
-                )
-    if pack_version == "0.3":
+            )
+    if pack_version in {"0.3", CONSOLIDATED_PACK_VERSION}:
         overview_path = pack / "OBJECT_OVERVIEW.json"
         if overview_path.exists():
             try:
@@ -646,26 +645,32 @@ def validate_pack(pack: Path) -> list[Finding]:
     findings: list[Finding] = []
     required = [
         "pack.json",
-        "RECIPE_LOCK.json",
-        "PROTECTED_CONSTRAINTS.json",
         "DISTILLATION_CONTRACT.md",
-        "PIPELINE_STATE.json",
         "SOURCE_MANIFEST.json",
-        "SOURCE_QUALITY.json",
         "LEARNING_PATH.json",
-        "OBJECT_MAP.md",
         "EVIDENCE_LEDGER.jsonl",
         "INDEX.md",
     ]
+    metadata: dict[str, Any] = {}
     metadata_path = pack / "pack.json"
     if metadata_path.exists():
         try:
             metadata = load_json(metadata_path)
-            if metadata.get("schema_version") == "0.3":
+            version = metadata.get("schema_version")
+            if version != CONSOLIDATED_PACK_VERSION:
+                required.extend(
+                    (
+                        "RECIPE_LOCK.json",
+                        "PROTECTED_CONSTRAINTS.json",
+                        "PIPELINE_STATE.json",
+                        "SOURCE_QUALITY.json",
+                        "OBJECT_MAP.md",
+                    )
+                )
+            if version in {"0.3", CONSOLIDATED_PACK_VERSION}:
                 required.extend(("OBJECT_OVERVIEW.json", "OBJECT_OVERVIEW.md"))
-                state_path = pack / "PIPELINE_STATE.json"
-                if state_path.exists() and metadata.get("capability_graph_hash"):
-                    phase = load_json(state_path).get("current_phase")
+                if metadata.get("capability_graph_hash"):
+                    phase = load_state(pack).get("current_phase")
                     if phase in {"test", "ship", "evolve"}:
                         required.extend(
                             (
@@ -678,7 +683,7 @@ def validate_pack(pack: Path) -> list[Finding]:
                                 "DIGEST.md",
                             )
                         )
-        except (OSError, json.JSONDecodeError):
+        except (OSError, PipelineError, json.JSONDecodeError):
             pass
     for relative in required:
         if not (pack / relative).exists():
@@ -709,7 +714,7 @@ def validate_pack(pack: Path) -> list[Finding]:
                         Finding("error", "release.missing", f"missing {relative}", str(pack / relative))
                     )
     except (PipelineError, OSError, json.JSONDecodeError) as exc:
-        findings.append(Finding("error", "state.invalid", str(exc), str(pack / "PIPELINE_STATE.json")))
+        findings.append(Finding("error", "state.invalid", str(exc), str(pack / "pack.json")))
     findings.extend(validate_evidence(pack / "EVIDENCE_LEDGER.jsonl"))
     learning_path = pack / "LEARNING_PATH.json"
     if learning_path.exists():
@@ -729,6 +734,40 @@ def validate_pack(pack: Path) -> list[Finding]:
             )
     findings.extend(validate_reproducibility(pack))
     findings.extend(validate_frozen_evals(pack))
+    if (
+        metadata.get("schema_version") == CONSOLIDATED_PACK_VERSION
+        and (pack / "CAPABILITY_GRAPH.json").exists()
+    ):
+        try:
+            quality = assess_distillation_quality(pack)
+            if quality["status"] == "failed":
+                severity = (
+                    "error"
+                    if load_state(pack)["current_phase"] in {"ship", "evolve"}
+                    else "warning"
+                )
+                failed = [
+                    gate
+                    for gate, passed in quality["hard_gates"].items()
+                    if not passed
+                ]
+                findings.append(
+                    Finding(
+                        severity,
+                        "distillation.quality_gate",
+                        "failed core quality gates: " + ", ".join(failed),
+                        str(pack / "pack.json"),
+                    )
+                )
+        except (OSError, ValueError, json.JSONDecodeError, PipelineError) as exc:
+            findings.append(
+                Finding(
+                    "error",
+                    "distillation.quality_parse",
+                    str(exc),
+                    str(pack),
+                )
+            )
     for skill_file in sorted((pack / "skills").glob("*/SKILL.md")):
         findings.extend(validate_skill(skill_file.parent))
         tests = skill_file.parent / "test-prompts.json"

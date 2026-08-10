@@ -60,7 +60,7 @@ one source audit \
   --catalog SOURCE_CATALOG.json \
   --type person \
   --mode deep \
-  --output SOURCE_QUALITY.json
+  --output source-quality-report.json
 ```
 
 `quick/standard/deep` 有不同默认门，Catalog 中的 `requirements` 可以提高但不应为了通过而降低高风险对象标准。
@@ -82,7 +82,8 @@ one distill \
 - `evaluation_only` 不进入构建语料；
 - 选中来源进入 `SOURCE_MANIFEST.json`；
 - 来源质量进入 SQLite `source_assessments`；
-- `SOURCE_QUALITY.json` 哈希进入 `PROTECTED_CONSTRAINTS.json`；
+- v0.4 将质量报告合入 `SOURCE_MANIFEST.json.quality`，哈希进入
+  `pack.json.reproducibility`；
 - 篡改质量报告会触发 `source.quality_drift`。
 
 ## 显式 Claim-Key

@@ -10,7 +10,7 @@
 |---|---|---|
 | neo-skills 十阶段状态机不可跳阶 | `pipeline.py` | `test_pipeline_blocks_at_independent_verification_and_cannot_skip` |
 | neo-skills v0.2.8 路由与 Guided Controller | `routing.py`、`guided.py`、Session Schema | 拒答路由、检查点、授权、证据等级无损入 Pack 测试 |
-| neo-skills v0.2.0 可复现 Pack | `RECIPE_LOCK.json`、`PROTECTED_CONSTRAINTS.json` | Recipe/Profile 一致性、Source/Eval hash 漂移门测试 |
+| neo-skills v0.2.0 可复现 Pack | `pack.json.recipe_lock/reproducibility` | Recipe/Profile 一致性、Source/Eval hash 漂移门测试 |
 | Evidence 强 Schema | `models.py`、`schemas/evidence.schema.json` | Evidence 校验贯穿 Pack 测试 |
 | SSRF、读回、Darwin 降级 | `ingest.py`、`delivery.py` | 私网拒绝、安装/导出、`status: prepared` 测试 |
 | cangjie 多视角提取 | `extraction.extract_candidates_with_model` | 并行 Profile views；非原文 quote 拒绝测试 |
@@ -23,6 +23,7 @@
 | v0.3 七类编译器 | `compilers/`、`capability_graph.py`、`artifacts.py` | 七 Profile 双层网络、图谱、Glossary、Digest 与学习投影测试 |
 | v0.3 真实比较 | `comparison.py`、60 题 Mao suite | 完整 Answer/Judge 记录、匿名条件、综合分和不可补偿硬门 |
 | v0.3 结构化进化 | `evolution.py` | 重复事件门、whole-folder patch、before/after、快照回滚测试 |
+| v0.4 核心收敛 | `core_assets.py`、`lifecycle.py`、`source_workflow.py` | 单一资产所有权、v0.3 迁移、三维质量硬门测试 |
 
 ## 2. 蒸馏与 Profile
 
@@ -85,7 +86,7 @@
 
 | 要求 | 实现证据 |
 |---|---|
-| CLI | `one --help` 包含 source discover、semantic、compile、evaluate、compare、evolution 等 v0.3 入口 |
+| CLI | `one --help` 包含 source discover、semantic、compile、evaluate、compare、evolution 等核心入口 |
 | HTTP API | Bearer 鉴权、限长 JSON、search、job submit/status |
 | 持久 Worker | SQLite lease、超时重领、最大重试、错误隔离 |
 | 批量并发 | 有界 ThreadPool，独立 Pack 和独立错误结果 |
@@ -105,10 +106,11 @@
 ## 7. 最终验证
 
 ```text
-Local unit/integration tests: 37/37
+Local unit/integration tests: 40/40
 Root Skill validation: 0 errors, 0 warnings
 Profile benchmark: 7/7
-Mao v0.3 Pack validation: 0 errors, 0 warnings
+Mao v0.4 Pack validation: 0 errors, 0 warnings
+Mao core quality: reliability 1.0, completeness 1.0, accuracy 1.0
 Mao blind comparison: 60/60, 99.7950 vs Cangjie 77.0797, lead 22.7153
 Mao release: passed all hard gates, current phase evolve
 Python CI 3.10 / 3.11 / 3.12: passed, run 31165723006

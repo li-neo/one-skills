@@ -45,7 +45,7 @@ class SourceDiscoveryAndOverviewTests(unittest.TestCase):
             with self.assertRaises(SourceDiscoveryError):
                 shortlist_sources(path, ["missing"])
 
-    def test_v03_pack_has_evidence_linked_overview_and_confirmation(self) -> None:
+    def test_v04_pack_has_consolidated_core_and_confirmed_overview(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             source = root / "method.md"
@@ -66,7 +66,22 @@ class SourceDiscoveryAndOverviewTests(unittest.TestCase):
             overview = json.loads(
                 (pack / "OBJECT_OVERVIEW.json").read_text(encoding="utf-8")
             )
-            self.assertEqual(metadata["schema_version"], "0.3")
+            self.assertEqual(metadata["schema_version"], "0.4")
+            self.assertIn("lifecycle", metadata)
+            self.assertIn("recipe_lock", metadata)
+            self.assertIn("reproducibility", metadata)
+            self.assertIn("quality", json.loads(
+                (pack / "SOURCE_MANIFEST.json").read_text(encoding="utf-8")
+            ))
+            for legacy in (
+                "PIPELINE_STATE.json",
+                "PIPELINE_STATE.md",
+                "RECIPE_LOCK.json",
+                "PROTECTED_CONSTRAINTS.json",
+                "SOURCE_QUALITY.json",
+                "OBJECT_MAP.md",
+            ):
+                self.assertFalse((pack / legacy).exists())
             self.assertEqual(overview["status"], "candidate")
             self.assertTrue(overview["structure"][0]["source_locators"])
             confirmed = confirm_object_overview(pack, "骨架与来源定位已人工核对")

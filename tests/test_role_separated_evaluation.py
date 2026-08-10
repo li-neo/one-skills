@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -79,12 +80,35 @@ class RoleSeparatedEvaluationTests(unittest.TestCase):
             "public",
         )
         confirm_object_overview(pack, "对象骨架已确认")
+        ledger = pack / "EVIDENCE_LEDGER.jsonl"
+        lines = [line for line in ledger.read_text(encoding="utf-8").splitlines() if line.strip()]
+        if lines:
+            evidence_id = json.loads(lines[0])["id"]
+        else:
+            evidence_id = "ev-1"
+            ledger.write_text(
+                json.dumps(
+                    {
+                        "id": evidence_id,
+                        "claim": "必须先确认事实和边界，再执行可逆试验。",
+                        "evidence_type": "quote",
+                        "source": "source",
+                        "locator": "source.md#L1",
+                        "confidence": 0.9,
+                        "inference_level": "none",
+                        "permission": "public",
+                    },
+                    ensure_ascii=False,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
         candidate = Candidate(
             id="module",
             title="module",
             candidate_type="framework",
             summary="必须先确认事实和边界，再执行可逆试验并验证结果。",
-            evidence_ids=["ev-1"],
+            evidence_ids=[evidence_id],
             source_contexts=["A", "B"],
             source_ids=["source"],
             independence_groups=["g1", "g2"],

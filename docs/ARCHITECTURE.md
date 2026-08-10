@@ -1194,9 +1194,9 @@ CLI 与 HTTP API 复用相同知识库、ACL 和持久 Job Queue。HTTP 写请�
 
 ### 19.2 十阶段状态机不可跳阶
 
-**规则**：Pipeline 十个阶段 `contract → ingest → map → extract → verify → compile → link → test → ship → evolve` 由 `PIPELINE_STATE.json` 持久化，`advance_phase(phase, status)` 只有在前置所有阶段状态为 `completed` 时才允许把当前阶段推进为 `completed`；否则拒绝并列出未完成前置。
+**规则**：Pipeline 十个阶段 `contract → ingest → map → extract → verify → compile → link → test → ship → evolve` 由 `pack.json.lifecycle` 持久化，`advance_phase(phase, status)` 只有在前置所有阶段状态为 `completed` 时才允许把当前阶段推进为 `completed`；否则拒绝并列出未完成前置。
 
-**状态字段**：每个阶段记录 `status ∈ {pending, in_progress, completed, blocked}` 和 `updated_at`、`notes`。同时生成 `PIPELINE_STATE.md` 供人读，机器状态以 JSON 为准。
+**状态字段**：每个阶段记录 `status ∈ {pending, in_progress, completed, blocked}` 和 `updated_at`、`notes`。v0.4 不再生成独立状态文件，避免同一生命周期出现多个事实源。
 
 **为什么**：状态机是"断点续跑 + 追责 + 拒绝跳步"的唯一基础。文档里写"Phase 0-9"没有意义，只有落到不可跳过的执行契约才有意义。
 
@@ -1313,8 +1313,8 @@ one-skills 不直接复制参考实现的文件孤岛方式，而是增加四项
 
 neo-skills v0.2.0 将 Recipe 和 canonical eval 从约定提升为 Pack 内的可验证资产。one-skills 采用并扩展该机制：
 
-- 创建 Pack 时从 Registry 复制当前活动 Recipe 到 `RECIPE_LOCK.json`，并把 Recipe ID/version 写入 `pack.json`；
-- `PROTECTED_CONSTRAINTS.json` 冻结每个 Source Version 的内容哈希；
+- 创建 Pack 时从 Registry 复制当前活动 Recipe 到 `pack.json.recipe_lock`；
+- `pack.json.reproducibility` 冻结每个 Source Version、评测和 Skill 的内容哈希；
 - Skill 编译时冻结 canonical suite 与 runtime `test-prompts.json` 的规范 JSON 哈希；
 - Pack 校验、发布、安装、导出和 Darwin handoff 均拒绝 hash drift；
 - canonical cases 必须与 runtime tests 一致，Adapter 漂移不能静默通过。
@@ -1339,7 +1339,8 @@ Research Questions
 
 来源角色分为 `evidence / context / counterevidence / verification_anchor / evaluation_only`。最后一种不进入构建语料，用作 OpenSkill 式泄漏屏障。`independence_group` 显式记录共同作者、机构、镜像或依赖链，防止把同一内容的多个 URL 当作独立证据。
 
-Pack 新增 `SOURCE_QUALITY.json`，其哈希进入 `PROTECTED_CONSTRAINTS.json`；数据库新增 `source_assessments`。
+v0.4 将 Source Quality 合入 `SOURCE_MANIFEST.json.quality`，其哈希进入
+`pack.json.reproducibility`；数据库中的 `source_assessments` 仍只是可重建索引。
 
 ### 20.2 Context Recurrence 与 Source Independence 分离
 
@@ -1472,3 +1473,51 @@ CREATE / UPDATE / MERGE / PRUNE / NOOP
 
 Patch 以整个 Skill 目录为作用域，记录轨迹、before/after Hash、训练比较、快照和
 用户 keep/revert。Canonical 与 holdout 不允许被 Patch 修改。
+
+## 22. v0.4 Core Consolidation
+
+v0.4 不增加 Profile、图谱或记忆概念，只收敛蒸馏核心。
+
+### 22.1 一类数据一个权威所有者
+
+| 数据 | 权威位置 |
+|---|---|
+| 对象、模式、生命周期、Recipe、重现约束 | `pack.json` |
+| 来源版本与 Source Quality | `SOURCE_MANIFEST.json` |
+| 对象整体理解 | `OBJECT_OVERVIEW.json` |
+| Claim 证据 | `EVIDENCE_LEDGER.jsonl` |
+| 能力选择与降级决策 | `VERIFIED_PORTFOLIO.json` |
+| 评测输入与结果 | `evaluations/` |
+| Job、Lease、ACL、Audit | 运行数据库 |
+
+Capability Graph、Learning Path、Glossary、Digest、INDEX、Markdown 和 Skill 都是
+可重建投影。投影可以读取权威资产，不能反向覆盖权威资产。
+
+### 22.2 编排边界
+
+```text
+lifecycle.py          workspace + ten-phase state machine
+source_workflow.py    create + ingest + update + revoke
+pipeline.py           extract + verify + compile + link compatibility API
+core_assets.py        authoritative asset compatibility boundary
+```
+
+`pipeline.py` 从 1299 行缩减到约 600 行。拆分依据是真实用例和状态所有权，不按
+“未来可能有多个实现”预先创建大量 Repository Port。
+
+### 22.3 核心质量门
+
+`assess_distillation_quality()` 只读取已有权威资产，计算：
+
+- 可靠性：来源 Hash、证据解析和 Recipe 身份一致；
+- 完整性：Overview、研究问题覆盖和可执行字段完整；
+- 准确率：Evidence ID 可解析、独立来源支持和 V1/V2/V3 结果。
+
+三类指标分别报告，硬门不可互相补偿。v0.4 双层网络发布时必须全部通过，不生成
+新的质量状态文件。
+
+### 22.4 兼容与迁移
+
+v0.2/v0.3 继续兼容读取。`one migrate <pack>` 将旧状态、Recipe、保护约束和
+Source Quality 合入 v0.4 权威资产，并删除六个重复文件。迁移不修改 `skills/`、
+评测答案或 Skill Hash。

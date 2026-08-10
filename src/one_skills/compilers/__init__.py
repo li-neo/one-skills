@@ -9,6 +9,12 @@ from typing import Any
 
 from ..artifacts import write_semantic_artifacts
 from ..capability_graph import build_capability_graph
+from ..core_assets import (
+    load_reproducibility,
+    load_source_manifest,
+    load_source_quality,
+    save_reproducibility,
+)
 from ..database import KnowledgeDB
 from ..models import Candidate, Capability, TestCase
 from ..utils import (
@@ -425,8 +431,8 @@ def compile_profile_network(
         skill_dir / "references" / "evidence.md",
         _render_evidence_index(linked_evidence),
     )
-    manifest = load_json(pack / "SOURCE_MANIFEST.json")
-    quality = load_json(pack / "SOURCE_QUALITY.json")
+    manifest = load_source_manifest(pack)
+    quality = load_source_quality(pack)
     quality_by_uri = {
         item.get("uri"): item
         for item in quality.get("selected_sources", [])
@@ -529,7 +535,7 @@ def compile_profile_network(
         f'interface:\n  display_name: "{config.title}"\n'
         f'  short_description: "{entry_capability.problem}"\n',
     )
-    constraints = load_json(pack / "PROTECTED_CONSTRAINTS.json")
+    constraints = load_reproducibility(pack)
     constraints.setdefault("canonical_eval_hashes", {})[slug] = stable_json_hash(canonical)
     constraints.setdefault("runtime_eval_hashes", {})[slug] = stable_json_hash(tests)
     constraints.setdefault("skill_hashes", {})[slug] = stable_json_hash(
@@ -538,7 +544,7 @@ def compile_profile_network(
             "modules": [item.to_dict() for item in capabilities],
         }
     )
-    dump_json(pack / "PROTECTED_CONSTRAINTS.json", constraints)
+    save_reproducibility(pack, constraints)
 
     with KnowledgeDB(workspace / ".one" / "knowledge.db") as database:
         database.add_capability(

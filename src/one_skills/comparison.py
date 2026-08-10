@@ -12,6 +12,11 @@ from typing import Any
 from urllib.parse import quote, urlparse
 from urllib.request import Request, urlopen
 
+from .core_assets import (
+    load_reproducibility,
+    load_source_manifest,
+    save_reproducibility,
+)
 from .models import EvaluationRecord
 from .utils import dump_json, load_json, new_id, stable_json_hash, utc_now
 from .validation import validate_pack
@@ -151,7 +156,7 @@ def run_condition(
     providers = roles.providers()
     records: list[dict[str, Any]] = []
     suite_hash = stable_json_hash(suite)
-    constraints = load_json(pack / "PROTECTED_CONSTRAINTS.json")
+    constraints = load_reproducibility(pack)
     source_set_hash = stable_json_hash(constraints.get("source_hashes", {}))
     skill_hash = hashlib.sha256(skill_context.encode("utf-8")).hexdigest()
     for case in suite["cases"]:
@@ -310,7 +315,7 @@ def _summary_from_records(records: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 def holdout_leaked_to_builder(pack: Path, suite: dict[str, Any]) -> bool:
-    manifest = load_json(pack / "SOURCE_MANIFEST.json")
+    manifest = load_source_manifest(pack)
     if any(
         item.get("source_role") == "evaluation_only"
         for item in manifest.get("sources", [])
@@ -498,13 +503,13 @@ def import_blind_artifacts(
         "one-skills",
     }:
         raise ComparisonError("blind condition map must be a permutation of A/B/C")
-    constraints = load_json(pack / "PROTECTED_CONSTRAINTS.json")
+    constraints = load_reproducibility(pack)
     source_set_hash = stable_json_hash(constraints.get("source_hashes", {}))
     suite_hash = stable_json_hash(suite)
     constraints.setdefault("evaluation_suite_hashes", {})[
         suite.get("name", suite_path.stem)
     ] = suite_hash
-    dump_json(pack / "PROTECTED_CONSTRAINTS.json", constraints)
+    save_reproducibility(pack, constraints)
     runs: dict[str, dict[str, Any]] = {}
     for label, condition in mapping.items():
         answers = load_json(blind_directory / f"answers-{label}.json")

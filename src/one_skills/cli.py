@@ -22,6 +22,7 @@ from .comparison import (
 )
 from .compiler import export_profile_templates
 from .constants import CONSENT_LEVELS, MODES, PHASES
+from .core_assets import artifact_contract
 from .database import KnowledgeDB
 from .delivery import (
     DeliveryError,
@@ -30,6 +31,8 @@ from .delivery import (
     prepare_darwin,
     release_pack,
 )
+from .distillation_quality import assess_distillation_quality
+from .errors import PipelineError
 from .evaluation import evaluate_pack
 from .evolution import apply_patch_candidate, propose_patch, resolve_patch
 from .experience import (
@@ -66,23 +69,19 @@ from .learning import (
     next_learning_node,
     record_attempt,
 )
-from .migrations import migrate_pack_to_v03
+from .lifecycle import advance_phase, init_workspace, load_state, workspace_for
+from .migrations import migrate_pack_to_v04
 from .model_roles import load_model_roles, model_status
 from .overview import confirm_object_overview
 from .pipeline import (
-    PipelineError,
-    advance_phase,
     approve_and_compile,
     compile_confirmed_portfolio,
     create_pack,
-    init_workspace,
     lineage,
-    load_state,
     revoke_source,
     select_regression_tests,
     update_pack,
     verify_pack_with_roles,
-    workspace_for,
 )
 from .portfolio import confirm_portfolio
 from .postgres import PostgresBackend
@@ -151,6 +150,8 @@ def cmd_inspect(args: argparse.Namespace) -> int:
             "current_phase": state["current_phase"],
             "phases": {phase: state["phases"][phase]["status"] for phase in PHASES},
             "skills": [path.parent.name for path in (pack / "skills").glob("*/SKILL.md")],
+            "core_quality": assess_distillation_quality(pack),
+            "asset_contract": artifact_contract(pack),
         }
     )
     return 0
@@ -340,7 +341,7 @@ def cmd_source(args: argparse.Namespace) -> int:
 
 
 def cmd_migrate(args: argparse.Namespace) -> int:
-    _print(migrate_pack_to_v03(_path(args.pack)))
+    _print(migrate_pack_to_v04(_path(args.pack)))
     return 0
 
 
@@ -478,7 +479,7 @@ def cmd_validate(args: argparse.Namespace) -> int:
     target = _path(args.target)
     if (target / "SESSION_STATE.json").exists():
         findings = validate_guided_workspace(target)
-    elif (target / "PIPELINE_STATE.json").exists():
+    elif (target / "pack.json").exists() or (target / "PIPELINE_STATE.json").exists():
         findings = validate_pack(target)
     else:
         findings = validate_skill(target)

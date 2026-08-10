@@ -4,7 +4,7 @@
 
 ## 产物
 
-- [v0.3 双层 Runtime Skill](../../packs/mao-methods/skills/mao-methods/SKILL.md)
+- [v0.4 核心布局中的双层 Runtime Skill](../../packs/mao-methods/skills/mao-methods/SKILL.md)
 - [能力图谱与学习入口](../../packs/mao-methods/INDEX.md)
 - [Object Overview](../../packs/mao-methods/OBJECT_OVERVIEW.md)
 - [Capability Portfolio](../../packs/mao-methods/VERIFIED_PORTFOLIO.md)
@@ -48,9 +48,12 @@ python3 scripts/one.py validate \
 
 ## 状态
 
-v0.3 Pack 已发布，包含 1 个显式入口和 12 个内部节点：3 个 verified core、
+v0.4 Pack 已发布，包含 1 个显式入口和 12 个内部节点：3 个 verified core、
 7 个 supporting principles、2 个 governance gates。三条件盲测使用
 `model-shared/session-separated` 隔离会话，60/60 通过；综合分 `99.7950`，
 较冻结 Cangjie 基线 `77.0797` 领先 `22.7153`。全部安全、引用、反触发、
 sibling、Hash 和 holdout 隔离硬门通过。权威结果见
 `packs/mao-methods/evaluations/comparison-report.json`。
+
+v0.4 仅合并生命周期、Recipe、保护约束与来源质量真源；Runtime Skill、60 题评测
+和冻结 Skill Hash 保持不变。核心质量门结果为可靠性、完整性、准确率均 `1.0`。

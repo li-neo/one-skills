@@ -7,6 +7,12 @@ import re
 from pathlib import Path
 from typing import Any
 
+from .core_assets import (
+    load_reproducibility,
+    load_source_manifest,
+    load_source_quality,
+    save_reproducibility,
+)
 from .models import ObjectOverview
 from .profiles import profile_prompt
 from .provider import ModelProvider, ProviderError
@@ -27,7 +33,7 @@ def _compact_text(text: str, limit: int = 280) -> str:
 def _deterministic_overview(pack: Path) -> ObjectOverview:
     metadata = load_json(pack / "pack.json")
     chunks = load_json(pack / "sources" / "chunks.json")
-    manifest = load_json(pack / "SOURCE_MANIFEST.json")
+    manifest = load_source_manifest(pack)
     profile = metadata["profile"]
     structure: list[dict[str, Any]] = []
     claims: dict[str, dict[str, Any]] = {}
@@ -93,11 +99,7 @@ def _deterministic_overview(pack: Path) -> ObjectOverview:
     ]
     if any(chunk.get("source_role") == "counterevidence" for chunk in chunks):
         limitations.append("对象包含独立反证来源，不能只按支持性材料解释。")
-    quality = (
-        load_json(pack / "SOURCE_QUALITY.json")
-        if (pack / "SOURCE_QUALITY.json").exists()
-        else {}
-    )
+    quality = load_source_quality(pack)
     subject = quality.get("subject") or metadata["name"]
     counterevidence = [
         f"{chunk['section_path']}：{_compact_text(chunk['text'], 180)}"
@@ -260,9 +262,9 @@ def build_object_overview(
     metadata.setdefault("semantic_contract", {})["overview_confirmation"] = "pending"
     metadata["semantic_contract"].setdefault("capability_confirmation", "pending")
     dump_json(pack / "pack.json", metadata)
-    constraints = load_json(pack / "PROTECTED_CONSTRAINTS.json")
+    constraints = load_reproducibility(pack)
     constraints["object_overview_hash"] = overview_hash
-    dump_json(pack / "PROTECTED_CONSTRAINTS.json", constraints)
+    save_reproducibility(pack, constraints)
     return value
 
 
@@ -283,7 +285,7 @@ def confirm_object_overview(pack: Path, notes: str) -> dict[str, Any]:
     metadata["object_overview_hash"] = overview_hash
     metadata.setdefault("semantic_contract", {})["overview_confirmation"] = "confirmed"
     dump_json(pack / "pack.json", metadata)
-    constraints = load_json(pack / "PROTECTED_CONSTRAINTS.json")
+    constraints = load_reproducibility(pack)
     constraints["object_overview_hash"] = overview_hash
-    dump_json(pack / "PROTECTED_CONSTRAINTS.json", constraints)
+    save_reproducibility(pack, constraints)
     return value
