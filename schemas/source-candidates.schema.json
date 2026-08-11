@@ -33,7 +33,8 @@
         "additionalProperties": true
       }
     },
-    "generated_at": {"type": "string"}
+    "generated_at": {"type": "string"},
+    "shortlisted_at": {"type": "string"}
   },
   "additionalProperties": false
 }

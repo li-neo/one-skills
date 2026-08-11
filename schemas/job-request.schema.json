@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/li-neo/one-skills/schemas/job-request.schema.json",
+  "title": "One Skills Job Request",
+  "type": "object",
+  "required": ["type", "payload"],
+  "properties": {
+    "type": {"enum": ["distill", "update", "benchmark"]},
+    "payload": {"type": "object"},
+    "max_attempts": {"type": "integer", "minimum": 1}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"type": {"const": "distill"}}},
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["sources"],
+            "properties": {
+              "sources": {
+                "type": "array",
+                "minItems": 1,
+                "items": {"type": "string", "minLength": 1}
+              },
+              "type": {
+                "enum": [
+                  "auto",
+                  "person",
+                  "content",
+                  "methodology",
+                  "sop",
+                  "tool",
+                  "skill",
+                  "hybrid"
+                ]
+              },
+              "mode": {"enum": ["quick", "standard", "deep", "continuous"]},
+              "name": {"type": ["string", "null"], "minLength": 1},
+              "access": {
+                "enum": ["public", "authorized", "private-local", "unknown"]
+              },
+              "consent": {
+                "type": ["string", "null"],
+                "enum": [
+                  "self",
+                  "consented",
+                  "work-authorized",
+                  "public-only",
+                  "prohibited",
+                  null
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"type": {"const": "update"}}},
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["pack", "sources"],
+            "properties": {
+              "pack": {"type": "string", "minLength": 1},
+              "sources": {
+                "type": "array",
+                "items": {"type": "string", "minLength": 1}
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"type": {"const": "benchmark"}}},
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["suite"],
+            "properties": {
+              "suite": {"type": "string", "minLength": 1},
+              "output": {"type": ["string", "null"], "minLength": 1}
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}

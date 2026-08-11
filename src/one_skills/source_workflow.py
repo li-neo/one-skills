@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import shutil
 from dataclasses import asdict
 from pathlib import Path
@@ -17,6 +18,7 @@ from .core_assets import (
     load_source_quality,
     save_reproducibility,
     save_source_manifest,
+    update_pack_metadata,
 )
 from .database import KnowledgeDB
 from .errors import PipelineError
@@ -30,6 +32,7 @@ from .lifecycle import (
     save_state,
     workspace_for,
 )
+from .locking import file_lock, pack_lock, workspace_pack_lock_path
 from .overview import build_object_overview
 from .profiles import PROFILES, detect_profile, load_profile_plugins
 from .recipes import initialize_registry
@@ -44,6 +47,7 @@ from .utils import (
     append_jsonl,
     atomic_write,
     dump_json,
+    iter_jsonl,
     load_json,
     new_id,
     slugify,
@@ -224,19 +228,97 @@ def create_pack(
         if source_quality is not None
         else None
     )
-    pack = root / "packs" / slugify(resolved_name)
-    if pack.exists() and any(pack.iterdir()):
-        raise PipelineError(f"pack already exists and is not empty: {pack}")
-    for relative in (
-        "sources",
-        "candidates",
-        "verified",
-        "rejected",
-        "skills",
-        "evolution/rounds",
-        "audit",
-    ):
-        (pack / relative).mkdir(parents=True, exist_ok=True)
+    final_pack = root / "packs" / slugify(resolved_name)
+    with file_lock(workspace_pack_lock_path(root, final_pack.name)):
+        return _build_staged_pack(
+            root,
+            final_pack,
+            resolved_name,
+            profile,
+            documents,
+            mode,
+            stored_sources,
+            source_catalog,
+            access_level,
+            consent,
+            recipe,
+            stored_quality,
+            activation_aliases,
+        )
+
+
+def _build_staged_pack(
+    root: Path,
+    final_pack: Path,
+    resolved_name: str,
+    profile: str,
+    documents: list,
+    mode: str,
+    stored_sources: list[str],
+    source_catalog: Path | None,
+    access_level: str,
+    consent: str | None,
+    recipe: dict[str, Any],
+    stored_quality: dict[str, Any] | None,
+    activation_aliases: list[str] | None,
+) -> Path:
+    if final_pack.exists() and any(final_pack.iterdir()):
+        raise PipelineError(f"pack already exists and is not empty: {final_pack}")
+    if final_pack.exists():
+        final_pack.rmdir()
+    staging_root = root / ".one" / "staging" / "packs"
+    staging_root.mkdir(parents=True, exist_ok=True)
+    pack = staging_root / f"{final_pack.name}-{new_id('staging')}"
+    try:
+        for relative in (
+            "sources",
+            "candidates",
+            "verified",
+            "rejected",
+            "skills",
+            "evolution/rounds",
+            "audit",
+        ):
+            (pack / relative).mkdir(parents=True, exist_ok=True)
+        _initialize_pack(
+            root,
+            pack,
+            final_pack.name,
+            resolved_name,
+            profile,
+            documents,
+            mode,
+            stored_sources,
+            source_catalog,
+            access_level,
+            consent,
+            recipe,
+            stored_quality,
+            activation_aliases,
+        )
+        os.replace(pack, final_pack)
+        return final_pack
+    except Exception:
+        shutil.rmtree(pack, ignore_errors=True)
+        raise
+
+
+def _initialize_pack(
+    root: Path,
+    pack: Path,
+    slug: str,
+    resolved_name: str,
+    profile: str,
+    documents: list,
+    mode: str,
+    stored_sources: list[str],
+    source_catalog: Path | None,
+    access_level: str,
+    consent: str | None,
+    recipe: dict[str, Any],
+    stored_quality: dict[str, Any] | None,
+    activation_aliases: list[str] | None,
+) -> None:
     pack_id = new_id("pack")
     recipe_lock = {
         "schema_version": "1.0",
@@ -275,9 +357,10 @@ def create_pack(
         pack / "pack.json",
         {
             "schema_version": CONSOLIDATED_PACK_VERSION,
+            "revision": 1,
             "id": pack_id,
             "name": resolved_name,
-            "slug": pack.name,
+            "slug": slug,
             "profile": profile,
             "mode": mode,
             "sources": stored_sources,
@@ -326,7 +409,6 @@ def create_pack(
         "contract generated from explicit CLI inputs",
     )
     _ingest_documents(root, pack, documents, profile, quality=default_quality)
-    return pack
 
 
 def _ingest_documents(
@@ -354,9 +436,40 @@ def _ingest_documents(
     with _DB_WRITE_LOCK, KnowledgeDB(database_path) as database:
         for document in documents:
             raw_uri = blob_store.put_source(document)
-            source_id, document_id, version, created = database.add_document(
-                document,
-                profile,
+
+            def normalized_uri(
+                document_id: str,
+                version: int,
+                source_document=document,
+            ) -> str:
+                normalized_path = (
+                    workspace
+                    / "knowledge"
+                    / "normalized"
+                    / document_id
+                    / f"{version}.md"
+                )
+                atomic_write(normalized_path, source_document.text + "\n")
+                return _portable_workspace_path(
+                    str(normalized_path),
+                    workspace,
+                )
+
+            source_id, document_id, version, created, chunks = (
+                database.ingest_document(
+                    document,
+                    profile,
+                    lambda current_id, current_version, source_document=document: structural_chunks(
+                        source_document,
+                        current_id,
+                        current_version,
+                    ),
+                    lambda values: {
+                        chunk.id: local_embedding(chunk.text)
+                        for chunk in values
+                    },
+                    normalized_uri,
+                )
             )
             if not created and any(
                 item.get("source_id") == source_id
@@ -375,12 +488,6 @@ def _ingest_documents(
                 ]
             normalized_path = (
                 workspace / "knowledge" / "normalized" / document_id / f"{version}.md"
-            )
-            atomic_write(normalized_path, document.text + "\n")
-            chunks = structural_chunks(document, document_id, version)
-            database.add_chunks(
-                chunks,
-                {chunk.id: local_embedding(chunk.text) for chunk in chunks},
             )
             document_metadata = document.metadata()
             if document.source_uri:
@@ -455,7 +562,7 @@ def _reset_extraction_artifacts(pack: Path) -> None:
             if not line.strip():
                 continue
             item = json.loads(line)
-            if item.get("evidence_type") != "quote":
+            if not item.get("chunk_id"):
                 preserved.append(json.dumps(item, ensure_ascii=False))
     atomic_write(ledger, "\n".join(preserved) + ("\n" if preserved else ""))
     for relative in ("candidates", "verified", "rejected"):
@@ -467,6 +574,11 @@ def _reset_extraction_artifacts(pack: Path) -> None:
 
 def update_pack(pack: Path, sources: list[str]) -> dict[str, Any]:
     """Incrementally ingest changed sources and invalidate downstream phases."""
+    with pack_lock(pack):
+        return _update_pack_locked(pack, sources)
+
+
+def _update_pack_locked(pack: Path, sources: list[str]) -> dict[str, Any]:
     metadata = load_json(pack / "pack.json")
     workspace = workspace_for(pack)
     documents = expand_sources(sources, metadata["access_level"])
@@ -504,17 +616,22 @@ def update_pack(pack: Path, sources: list[str]) -> dict[str, Any]:
         }
     state["current_phase"] = "ingest"
     save_state(pack, state)
-    metadata = load_json(pack / "pack.json")
-    metadata["sources"] = list(
-        dict.fromkeys(
-            [
-                *metadata["sources"],
-                *(_portable_workspace_path(source, workspace) for source in sources),
-            ]
+
+    def update_sources(current: dict[str, Any]) -> None:
+        current["sources"] = list(
+            dict.fromkeys(
+                [
+                    *current["sources"],
+                    *(
+                        _portable_workspace_path(source, workspace)
+                        for source in sources
+                    ),
+                ]
+            )
         )
-    )
-    metadata["updated_at"] = utc_now()
-    dump_json(pack / "pack.json", metadata)
+        current["updated_at"] = utc_now()
+
+    metadata = update_pack_metadata(pack, update_sources)
     _reset_extraction_artifacts(pack)
     _ingest_documents(
         workspace,
@@ -555,16 +672,17 @@ def revoke_source(workspace: Path, source_id: str, reason: str) -> dict[str, Any
     if not reason.strip():
         raise PipelineError("source revocation requires a reason")
     root = workspace_for(workspace)
-    with KnowledgeDB(root / ".one" / "knowledge.db") as database:
-        result = database.revoke_source(source_id)
-    affected_skills = sorted(
-        {
-            edge["to_id"]
-            for edge in result["affected"]
-            if edge["to_type"] == "skill"
-        }
-    )
-    affected_packs: list[str] = []
+    intent_directory = root / ".one" / "revocations"
+    intent_directory.mkdir(parents=True, exist_ok=True)
+    pending: list[dict[str, Any]] = []
+    for path in sorted(intent_directory.glob("*.json")):
+        candidate = load_json(path)
+        if (
+            candidate.get("status") == "pending"
+            and candidate.get("source_id") == source_id
+        ):
+            pending.append(candidate)
+    manifests: list[tuple[Path, list[dict[str, Any]]]] = []
     for manifest_path in (root / "packs").glob("*/SOURCE_MANIFEST.json"):
         manifest = load_json(manifest_path)
         matches = [
@@ -572,48 +690,136 @@ def revoke_source(workspace: Path, source_id: str, reason: str) -> dict[str, Any
             for item in manifest["sources"]
             if item["source_id"] == source_id
         ]
-        if not matches:
-            continue
-        pack = manifest_path.parent
-        affected_packs.append(pack.name)
-        for item in matches:
-            item["active"] = False
-            item["revoked_at"] = utc_now()
-            item["revocation_reason"] = reason
-        dump_json(manifest_path, manifest)
-        state = load_state(pack)
-        for phase in PHASES[PHASE_INDEX["ingest"] :]:
-            state["phases"][phase] = {
-                "status": "blocked" if phase == "ingest" else "pending",
-                "updated_at": utc_now() if phase == "ingest" else None,
-                "notes": f"source revoked: {source_id}" if phase == "ingest" else "",
+        if matches:
+            manifests.append((manifest_path, matches))
+    intent = (
+        pending[0]
+        if pending
+        else {
+            "schema_version": "1.0",
+            "id": new_id("revocation"),
+            "source_id": source_id,
+            "reason": reason.strip(),
+            "status": "pending",
+            "affected_packs": [path.parent.name for path, _ in manifests],
+            "created_at": utc_now(),
+            "attempts": 0,
+        }
+    )
+    intent_path = intent_directory / f"{intent['id']}.json"
+    intent["attempts"] = int(intent.get("attempts", 0)) + 1
+    intent["last_attempt_at"] = utc_now()
+    dump_json(intent_path, intent)
+    try:
+        with KnowledgeDB(root / ".one" / "knowledge.db") as database:
+            result = database.revoke_source(source_id)
+        affected_skills = sorted(
+            {
+                edge["to_id"]
+                for edge in result["affected"]
+                if edge["to_type"] == "skill"
             }
-        state["current_phase"] = "ingest"
-        save_state(pack, state)
-        log = pack / "audit" / "DELETION_LOG.md"
-        previous = (
-            log.read_text(encoding="utf-8")
-            if log.exists()
-            else "# Deletion Log\n\n"
         )
-        atomic_write(
-            log,
-            previous
-            + f"- {utc_now()} revoked `{source_id}`; reason: {reason}; "
-            f"affected Skills: {', '.join(affected_skills) or 'none'}\n",
-        )
-        (pack / "reports").mkdir(exist_ok=True)
-        regression = select_regression_tests(pack, affected_skills)
-        dump_json(pack / "reports" / "regression-plan.json", regression)
-    event = {
-        "source_id": source_id,
-        "reason": reason,
-        "revoked_at": utc_now(),
-        "affected_packs": affected_packs,
-        "affected_skills": affected_skills,
-    }
-    append_jsonl(root / ".one" / "revocations.jsonl", event)
-    return event
+        for manifest_path, _ in manifests:
+            pack = manifest_path.parent
+            with pack_lock(pack):
+                manifest = load_json(manifest_path)
+                matches = [
+                    item
+                    for item in manifest["sources"]
+                    if item["source_id"] == source_id
+                ]
+                revoked_chunks = {
+                    chunk_id
+                    for item in matches
+                    for chunk_id in item.get("chunk_ids", [])
+                }
+                for item in matches:
+                    item["active"] = False
+                    item["revoked_at"] = utc_now()
+                    item["revocation_reason"] = reason.strip()
+                    item["revocation_intent_id"] = intent["id"]
+                dump_json(manifest_path, manifest)
+                _invalidate_revoked_evidence(pack, revoked_chunks, intent["id"])
+                state = load_state(pack)
+                for phase in PHASES[PHASE_INDEX["ingest"] :]:
+                    state["phases"][phase] = {
+                        "status": "blocked" if phase == "ingest" else "pending",
+                        "updated_at": utc_now() if phase == "ingest" else None,
+                        "notes": (
+                            f"source revoked: {source_id}"
+                            if phase == "ingest"
+                            else ""
+                        ),
+                    }
+                state["current_phase"] = "ingest"
+                save_state(pack, state)
+                log = pack / "audit" / "DELETION_LOG.md"
+                previous = (
+                    log.read_text(encoding="utf-8")
+                    if log.exists()
+                    else "# Deletion Log\n\n"
+                )
+                if intent["id"] not in previous:
+                    atomic_write(
+                        log,
+                        previous
+                        + f"- {utc_now()} intent `{intent['id']}` revoked "
+                        f"`{source_id}`; reason: {reason.strip()}; affected Skills: "
+                        f"{', '.join(affected_skills) or 'none'}\n",
+                    )
+                (pack / "reports").mkdir(exist_ok=True)
+                regression = select_regression_tests(pack, affected_skills)
+                dump_json(pack / "reports" / "regression-plan.json", regression)
+        event = {
+            "intent_id": intent["id"],
+            "source_id": source_id,
+            "reason": reason.strip(),
+            "revoked_at": utc_now(),
+            "affected_packs": intent["affected_packs"],
+            "affected_skills": affected_skills,
+        }
+        event_log = root / ".one" / "revocations.jsonl"
+        if not any(
+            item.get("intent_id") == intent["id"]
+            for item in iter_jsonl(event_log)
+        ):
+            append_jsonl(event_log, event)
+        intent["status"] = "completed"
+        intent["completed_at"] = utc_now()
+        intent.pop("last_error", None)
+        dump_json(intent_path, intent)
+        return event
+    except Exception as exc:
+        intent["status"] = "pending"
+        intent["last_error"] = f"{type(exc).__name__}: {exc}"
+        dump_json(intent_path, intent)
+        raise
+
+
+def _invalidate_revoked_evidence(
+    pack: Path,
+    revoked_chunk_ids: set[str],
+    intent_id: str,
+) -> None:
+    if not revoked_chunk_ids:
+        return
+    ledger = pack / "EVIDENCE_LEDGER.jsonl"
+    if not ledger.exists():
+        return
+    kept: list[str] = []
+    removed: list[str] = []
+    for line in ledger.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        item = json.loads(line)
+        target = removed if item.get("chunk_id") in revoked_chunk_ids else kept
+        target.append(json.dumps(item, ensure_ascii=False))
+    if removed:
+        history = pack / "audit" / "history" / intent_id
+        history.mkdir(parents=True, exist_ok=True)
+        atomic_write(history / "EVIDENCE_LEDGER.revoked.jsonl", "\n".join(removed) + "\n")
+        atomic_write(ledger, "\n".join(kept) + ("\n" if kept else ""))
 
 
 def select_regression_tests(

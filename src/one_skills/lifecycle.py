@@ -7,14 +7,14 @@ from typing import Any
 
 from .constants import MODES, PHASE_INDEX, PHASES
 from .core_assets import (
-    CONSOLIDATED_PACK_VERSION,
     load_pack_metadata,
-    save_pack_metadata,
+    update_pack_metadata,
 )
 from .database import KnowledgeDB
 from .errors import PipelineError
 from .recipes import initialize_registry
 from .utils import dump_json, load_json, utc_now
+from .versions import uses_consolidated_assets
 
 
 def init_workspace(path: Path, mode: str = "standard") -> Path:
@@ -80,9 +80,11 @@ def save_state(pack: Path, state: dict[str, Any]) -> None:
     metadata_path = pack / "pack.json"
     if metadata_path.exists():
         metadata = load_pack_metadata(pack)
-        if metadata.get("schema_version") == CONSOLIDATED_PACK_VERSION:
-            metadata["lifecycle"] = state
-            save_pack_metadata(pack, metadata)
+        if uses_consolidated_assets(metadata.get("schema_version")):
+            update_pack_metadata(
+                pack,
+                lambda current: current.__setitem__("lifecycle", state),
+            )
             return
     dump_json(pack / "PIPELINE_STATE.json", state)
 
@@ -91,7 +93,7 @@ def load_state(pack: Path) -> dict[str, Any]:
     metadata_path = pack / "pack.json"
     if metadata_path.exists():
         metadata = load_pack_metadata(pack)
-        if metadata.get("schema_version") == CONSOLIDATED_PACK_VERSION:
+        if uses_consolidated_assets(metadata.get("schema_version")):
             state = metadata.get("lifecycle")
             if not isinstance(state, dict):
                 raise PipelineError("consolidated Pack is missing lifecycle")

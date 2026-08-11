@@ -18,6 +18,7 @@ from .core_assets import (
     save_reproducibility,
 )
 from .models import EvaluationRecord
+from .schema_runtime import require_schema
 from .utils import dump_json, load_json, new_id, stable_json_hash, utc_now
 from .validation import validate_pack
 
@@ -283,6 +284,7 @@ def run_condition(
     }
     directory = pack / "evaluations" / "runs"
     directory.mkdir(parents=True, exist_ok=True)
+    require_schema(run, "evaluation-run.schema.json", condition)
     dump_json(directory / f"{condition}.json", run)
     return run
 
@@ -594,6 +596,7 @@ def import_blind_artifacts(
         }
         directory = pack / "evaluations" / "runs"
         directory.mkdir(parents=True, exist_ok=True)
+        require_schema(run, "evaluation-run.schema.json", condition)
         dump_json(directory / f"{condition}.json", run)
         runs[condition] = run
     return compare_runs(

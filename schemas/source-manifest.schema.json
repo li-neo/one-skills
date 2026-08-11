@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/li-neo/one-skills/schemas/source-manifest.schema.json",
+  "title": "One Skills Source Manifest",
+  "type": "object",
+  "required": ["schema_version", "profile", "quality", "sources"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "profile": {"type": "string", "pattern": "^[a-z][a-z0-9-]{1,63}$"},
+    "quality": {"type": "object"},
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "source",
+          "title",
+          "media_type",
+          "content_hash",
+          "byte_count",
+          "access_level",
+          "source_id",
+          "document_id",
+          "document_version",
+          "active",
+          "normalized_uri",
+          "raw_uri",
+          "chunk_ids"
+        ],
+        "properties": {
+          "source": {"type": "string", "minLength": 1},
+          "title": {"type": "string", "minLength": 1},
+          "media_type": {"type": "string", "minLength": 1},
+          "content_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "byte_count": {"type": "integer", "minimum": 0},
+          "access_level": {
+            "enum": ["public", "authorized", "private-local", "unknown"]
+          },
+          "license": {"type": ["string", "null"]},
+          "extractor": {"type": "string"},
+          "warnings": {"type": "array", "items": {"type": "string"}},
+          "authority": {
+            "enum": [
+              "primary",
+              "official",
+              "scholarly",
+              "reputable-secondary",
+              "community",
+              "unknown"
+            ]
+          },
+          "directness": {
+            "enum": ["direct", "derived", "tertiary", "unknown"]
+          },
+          "independence_group": {"type": "string"},
+          "source_role": {"type": "string"},
+          "source_uri": {"type": ["string", "null"]},
+          "creator": {"type": ["string", "null"]},
+          "published_at": {"type": ["string", "null"]},
+          "quality_score": {"type": "number", "minimum": 0, "maximum": 1},
+          "character_count": {"type": "integer", "minimum": 0},
+          "source_id": {"type": "string", "minLength": 1},
+          "document_id": {"type": "string", "minLength": 1},
+          "document_version": {"type": "integer", "minimum": 1},
+          "created": {"type": "boolean"},
+          "active": {"type": "boolean"},
+          "normalized_uri": {"type": "string", "minLength": 1},
+          "raw_uri": {"type": "string", "minLength": 1},
+          "chunk_ids": {
+            "type": "array",
+            "items": {"type": "string", "minLength": 1},
+            "uniqueItems": true
+          },
+          "revoked_at": {"type": "string"},
+          "revocation_reason": {"type": "string", "minLength": 1},
+          "revocation_intent_id": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

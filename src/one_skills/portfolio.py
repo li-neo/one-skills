@@ -9,7 +9,7 @@ from typing import Any
 from .core_assets import (
     load_reproducibility,
     load_source_quality,
-    save_reproducibility,
+    update_pack_metadata,
 )
 from .models import Candidate
 from .retrieval import tokenize
@@ -229,12 +229,17 @@ def build_portfolio(
     atomic_write(pack / f"{stem}.md", render_portfolio(value, enriched))
     if kind == "verified":
         portfolio_hash = stable_json_hash(value)
-        metadata["capability_portfolio_hash"] = portfolio_hash
-        metadata.setdefault("semantic_contract", {})["capability_confirmation"] = "pending"
-        dump_json(pack / "pack.json", metadata)
         constraints = load_reproducibility(pack)
         constraints["capability_portfolio_hash"] = portfolio_hash
-        save_reproducibility(pack, constraints)
+
+        def update_metadata(current: dict[str, Any]) -> None:
+            current["capability_portfolio_hash"] = portfolio_hash
+            current.setdefault("semantic_contract", {})[
+                "capability_confirmation"
+            ] = "pending"
+            current["reproducibility"] = constraints
+
+        update_pack_metadata(pack, update_metadata)
     return value
 
 
@@ -254,13 +259,17 @@ def confirm_portfolio(pack: Path, notes: str) -> dict[str, Any]:
     candidates = [Candidate(**item) for item in value["candidates"]]
     atomic_write(pack / "VERIFIED_PORTFOLIO.md", render_portfolio(value, candidates))
     portfolio_hash = stable_json_hash(value)
-    metadata = load_json(pack / "pack.json")
-    metadata["capability_portfolio_hash"] = portfolio_hash
-    metadata.setdefault("semantic_contract", {})["capability_confirmation"] = "confirmed"
-    dump_json(pack / "pack.json", metadata)
     constraints = load_reproducibility(pack)
     constraints["capability_portfolio_hash"] = portfolio_hash
-    save_reproducibility(pack, constraints)
+
+    def update_metadata(metadata: dict[str, Any]) -> None:
+        metadata["capability_portfolio_hash"] = portfolio_hash
+        metadata.setdefault("semantic_contract", {})[
+            "capability_confirmation"
+        ] = "confirmed"
+        metadata["reproducibility"] = constraints
+
+    update_pack_metadata(pack, update_metadata)
     return value
 
 

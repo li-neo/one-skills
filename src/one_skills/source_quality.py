@@ -10,6 +10,7 @@ from typing import Any
 from urllib.parse import urlparse
 
 from .models import SourceDocument
+from .schema_runtime import require_schema
 from .utils import load_json, stable_json_hash, utc_now
 
 AUTHORITY_LEVELS = {
@@ -193,6 +194,11 @@ def audit_source_catalog(
 ) -> dict[str, Any]:
     catalog_path = path.expanduser().resolve()
     catalog = load_json(catalog_path)
+    require_schema(
+        catalog,
+        "source-catalog.schema.json",
+        str(catalog_path),
+    )
     if catalog.get("schema_version") != "1.0":
         raise SourceQualityError("source catalog requires schema_version 1.0")
     sources = catalog.get("sources")

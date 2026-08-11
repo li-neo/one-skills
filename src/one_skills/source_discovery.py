@@ -13,6 +13,7 @@ from typing import Any
 from urllib.parse import quote
 from urllib.request import Request, urlopen
 
+from .schema_runtime import require_schema
 from .utils import load_json, slugify, utc_now
 
 
@@ -159,7 +160,7 @@ def discover_sources(
         candidates = discover_manifest(Path(target))
     else:
         raise SourceDiscoveryError(f"unsupported discovery adapter: {adapter}")
-    return {
+    result = {
         "schema_version": "1.0",
         "subject": subject.strip(),
         "research_questions": list(dict.fromkeys(research_questions)),
@@ -167,10 +168,21 @@ def discover_sources(
         "candidates": candidates,
         "generated_at": utc_now(),
     }
+    require_schema(
+        result,
+        "source-candidates.schema.json",
+        "source discovery result",
+    )
+    return result
 
 
 def shortlist_sources(path: Path, selected_ids: list[str]) -> dict[str, Any]:
     value = load_json(path)
+    require_schema(
+        value,
+        "source-candidates.schema.json",
+        str(path),
+    )
     selected = set(selected_ids)
     known = {item["id"] for item in value.get("candidates", [])}
     unknown = selected - known
@@ -180,4 +192,10 @@ def shortlist_sources(path: Path, selected_ids: list[str]) -> dict[str, Any]:
     for item in value["candidates"]:
         status = "shortlisted" if item["id"] in selected else "excluded"
         shortlisted.append({**item, "status": status})
-    return {**value, "candidates": shortlisted, "shortlisted_at": utc_now()}
+    result = {**value, "candidates": shortlisted, "shortlisted_at": utc_now()}
+    require_schema(
+        result,
+        "source-candidates.schema.json",
+        "source shortlist",
+    )
+    return result

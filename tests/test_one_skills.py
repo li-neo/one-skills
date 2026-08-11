@@ -59,7 +59,7 @@ from one_skills.ingest import (
 )
 from one_skills.jobs import JobQueue, run_worker_once
 from one_skills.learning import init_learner, next_learning_node, record_attempt
-from one_skills.models import Candidate, Chunk
+from one_skills.models import Candidate, Chunk, SourceDocument
 from one_skills.pipeline import (
     PipelineError,
     advance_phase,
@@ -409,6 +409,14 @@ class DatabaseAndRetrievalTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             init_workspace(root)
+            suite = root / "profile-routing.json"
+            suite.write_bytes(
+                (
+                    Path(__file__).resolve().parents[1]
+                    / "benchmarks"
+                    / "profile-routing.json"
+                ).read_bytes()
+            )
             server = create_api_server(root, "127.0.0.1", 0, "secret-token")
             thread = Thread(target=server.serve_forever, daemon=True)
             thread.start()
@@ -423,11 +431,7 @@ class DatabaseAndRetrievalTests(unittest.TestCase):
                     {
                         "type": "benchmark",
                         "payload": {
-                            "suite": str(
-                                Path(__file__).resolve().parents[1]
-                                / "benchmarks"
-                                / "profile-routing.json"
-                            )
+                            "suite": str(suite)
                         },
                     }
                 ).encode()
@@ -447,6 +451,78 @@ class DatabaseAndRetrievalTests(unittest.TestCase):
                 )
                 status = json.loads(urlopen(status_request).read().decode())
                 self.assertEqual(status["status"], "queued")
+                escaped = Request(
+                    f"{base}/v1/jobs",
+                    data=json.dumps(
+                        {
+                            "type": "benchmark",
+                            "payload": {"suite": "/etc/hosts"},
+                        }
+                    ).encode(),
+                    method="POST",
+                    headers={
+                        "Authorization": "Bearer secret-token",
+                        "Content-Type": "application/json",
+                    },
+                )
+                with self.assertRaises(HTTPError) as rejected:
+                    urlopen(escaped)
+                self.assertEqual(rejected.exception.code, 400)
+            finally:
+                server.shutdown()
+                thread.join(timeout=5)
+                server.server_close()
+
+    def test_http_api_ignores_request_identity_overrides(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            init_workspace(root)
+            document = SourceDocument(
+                source="private.md",
+                title="Private",
+                media_type="text/markdown",
+                text="restricted-secret",
+                content_hash="a" * 64,
+                byte_count=17,
+                access_level="private-local",
+            )
+            with KnowledgeDB(root / ".one" / "knowledge.db") as database:
+                _, document_id, version, _ = database.add_document(
+                    document,
+                    "content",
+                )
+                chunks = structural_chunks(document, document_id, version)
+                database.add_chunks(
+                    chunks,
+                    {chunk.id: local_embedding(chunk.text) for chunk in chunks},
+                )
+                database.create_tenant("team-b", "Team B")
+                database.create_principal("team-b", "bob", "Bob")
+                database.grant_acl(
+                    "team-b",
+                    "bob",
+                    "chunk",
+                    chunks[0].id,
+                    "read",
+                )
+                database.connection.execute(
+                    "DELETE FROM asset_acl WHERE tenant_id = 'local' "
+                    "AND asset_type = 'chunk' AND asset_id = ?",
+                    (chunks[0].id,),
+                )
+                database.connection.commit()
+            server = create_api_server(root, "127.0.0.1", 0, "secret-token")
+            thread = Thread(target=server.serve_forever, daemon=True)
+            thread.start()
+            try:
+                request = Request(
+                    f"http://127.0.0.1:{server.server_port}/v1/search"
+                    "?q=restricted-secret&tenant=team-b&principal=bob"
+                    "&access=private-local",
+                    headers={"Authorization": "Bearer secret-token"},
+                )
+                result = json.loads(urlopen(request).read().decode())
+                self.assertEqual(result["results"], [])
             finally:
                 server.shutdown()
                 thread.join(timeout=5)
@@ -479,15 +555,20 @@ class DatabaseAndRetrievalTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             init_workspace(root)
+            (root / "profile-routing.json").write_bytes(
+                (
+                    Path(__file__).resolve().parents[1]
+                    / "benchmarks"
+                    / "profile-routing.json"
+                ).read_bytes()
+            )
             with KnowledgeDB(root / ".one" / "knowledge.db") as database:
                 queue = JobQueue(database)
                 good_id = queue.enqueue(
                     "benchmark",
                     {
                         "suite": str(
-                            Path(__file__).resolve().parents[1]
-                            / "benchmarks"
-                            / "profile-routing.json"
+                            root / "profile-routing.json"
                         )
                     },
                 )
@@ -496,7 +577,11 @@ class DatabaseAndRetrievalTests(unittest.TestCase):
             with KnowledgeDB(root / ".one" / "knowledge.db") as database:
                 queue = JobQueue(database)
                 self.assertEqual(queue.get(good_id)["status"], "completed")
-                bad_id = queue.enqueue("update", {"pack": "/missing", "sources": []}, max_attempts=2)
+                bad_id = queue.enqueue(
+                    "update",
+                    {"pack": str(root / "missing"), "sources": []},
+                    max_attempts=2,
+                )
             self.assertEqual(run_worker_once(root, "worker-1")["status"], "failed")
             with KnowledgeDB(root / ".one" / "knowledge.db") as database:
                 self.assertEqual(JobQueue(database).get(bad_id)["status"], "queued")
@@ -505,6 +590,30 @@ class DatabaseAndRetrievalTests(unittest.TestCase):
                 self.assertEqual(JobQueue(database).get(bad_id)["status"], "failed")
                 audits = database.rows("SELECT * FROM audit_events")
                 self.assertGreaterEqual(len(audits), 6)
+
+    def test_worker_revalidates_persisted_job_paths(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            init_workspace(root)
+            with KnowledgeDB(root / ".one" / "knowledge.db") as database:
+                database.connection.execute(
+                    "INSERT INTO jobs VALUES "
+                    "('job-tampered', 'benchmark', ?, 'queued', 0, 1, "
+                    "NULL, NULL, NULL, NULL, ?, ?)",
+                    (
+                        json.dumps({"suite": "/etc/hosts"}),
+                        "2026-01-01T00:00:00+00:00",
+                        "2026-01-01T00:00:00+00:00",
+                    ),
+                )
+                database.connection.commit()
+
+            result = run_worker_once(root, "worker-1")
+            self.assertEqual(result["status"], "failed")
+            with KnowledgeDB(root / ".one" / "knowledge.db") as database:
+                job = JobQueue(database).get("job-tampered")
+            self.assertEqual(job["status"], "failed")
+            self.assertIn("must stay inside the workspace", job["error"])
 
     def test_acl_hybrid_search_and_person_fact_history(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -570,6 +679,81 @@ class DatabaseAndRetrievalTests(unittest.TestCase):
                 }
                 self.assertEqual(statuses[first], "superseded")
                 self.assertEqual(statuses[second], "revoked")
+
+    def test_document_ingest_failure_keeps_previous_version_active(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            with KnowledgeDB(root / "knowledge.db") as database:
+                first = SourceDocument(
+                    source=str(root / "source.md"),
+                    title="Source",
+                    media_type="text/markdown",
+                    text="# First\n\nstable searchable evidence",
+                    content_hash="1" * 64,
+                    byte_count=34,
+                    access_level="authorized",
+                )
+                _, document_id, version, _, _ = database.ingest_document(
+                    first,
+                    "methodology",
+                    lambda current_id, current_version: structural_chunks(
+                        first,
+                        current_id,
+                        current_version,
+                    ),
+                    lambda chunks: {
+                        chunk.id: local_embedding(chunk.text) for chunk in chunks
+                    },
+                )
+                self.assertEqual(version, 1)
+                second = SourceDocument(
+                    source=first.source,
+                    title="Source",
+                    media_type="text/markdown",
+                    text="# Second\n\nuncommitted replacement",
+                    content_hash="2" * 64,
+                    byte_count=33,
+                    access_level="authorized",
+                )
+
+                def fail_embeddings(chunks: list[Chunk]) -> dict[str, list[float]]:
+                    del chunks
+                    raise OSError("injected embedding failure")
+
+                with self.assertRaises(OSError):
+                    database.ingest_document(
+                        second,
+                        "methodology",
+                        lambda current_id, current_version: structural_chunks(
+                            second,
+                            current_id,
+                            current_version,
+                        ),
+                        fail_embeddings,
+                    )
+
+                active = database.connection.execute(
+                    "SELECT active_version FROM documents WHERE id = ?",
+                    (document_id,),
+                ).fetchone()
+                versions = database.rows(
+                    "SELECT version, status FROM document_versions "
+                    "WHERE document_id = ? ORDER BY version",
+                    (document_id,),
+                )
+                retriever = HybridRetriever(database)
+                self.assertEqual(active["active_version"], 1)
+                self.assertEqual(
+                    [(row["version"], row["status"]) for row in versions],
+                    [(1, "active")],
+                )
+                self.assertTrue(
+                    retriever.search("stable searchable", {"authorized"})
+                )
+                self.assertEqual(
+                    retriever.search("uncommitted replacement", {"authorized"}),
+                    [],
+                )
 
 
 class PipelineTests(unittest.TestCase):
@@ -879,6 +1063,30 @@ class PipelineTests(unittest.TestCase):
                 (pack / "SOURCE_MANIFEST.json").read_text(encoding="utf-8")
             )
             self.assertTrue(initial_manifest["sources"][0]["raw_uri"].startswith("file:"))
+            old_source = initial_manifest["sources"][0]
+            verified_position_id = "ev-old-verified-position"
+            with (pack / "EVIDENCE_LEDGER.jsonl").open(
+                "a",
+                encoding="utf-8",
+            ) as ledger:
+                ledger.write(
+                    json.dumps(
+                        {
+                            "id": verified_position_id,
+                            "claim": "old curator position",
+                            "evidence_type": "verified_position",
+                            "source": old_source["document_id"],
+                            "locator": old_source["source"],
+                            "confidence": 0.75,
+                            "inference_level": "low",
+                            "permission": "private-local",
+                            "chunk_id": old_source["chunk_ids"][0],
+                            "document_version": old_source["document_version"],
+                        }
+                    )
+                    + "\n"
+                )
+            old_quote_ids.add(verified_position_id)
             source.write_text(
                 "# Context C\n\n新版本要求必须验证完成标准，并记录回滚路径。\n",
                 encoding="utf-8",

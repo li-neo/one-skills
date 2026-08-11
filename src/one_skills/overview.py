@@ -11,7 +11,7 @@ from .core_assets import (
     load_reproducibility,
     load_source_manifest,
     load_source_quality,
-    save_reproducibility,
+    update_pack_metadata,
 )
 from .models import ObjectOverview
 from .profiles import profile_prompt
@@ -257,14 +257,21 @@ def build_object_overview(
     dump_json(pack / "OBJECT_OVERVIEW.json", value)
     atomic_write(pack / "OBJECT_OVERVIEW.md", render_overview(value))
     overview_hash = stable_json_hash(value)
-    metadata = load_json(pack / "pack.json")
-    metadata["object_overview_hash"] = overview_hash
-    metadata.setdefault("semantic_contract", {})["overview_confirmation"] = "pending"
-    metadata["semantic_contract"].setdefault("capability_confirmation", "pending")
-    dump_json(pack / "pack.json", metadata)
     constraints = load_reproducibility(pack)
     constraints["object_overview_hash"] = overview_hash
-    save_reproducibility(pack, constraints)
+
+    def update_metadata(metadata: dict[str, Any]) -> None:
+        metadata["object_overview_hash"] = overview_hash
+        metadata.setdefault("semantic_contract", {})[
+            "overview_confirmation"
+        ] = "pending"
+        metadata["semantic_contract"].setdefault(
+            "capability_confirmation",
+            "pending",
+        )
+        metadata["reproducibility"] = constraints
+
+    update_pack_metadata(pack, update_metadata)
     return value
 
 
@@ -281,11 +288,15 @@ def confirm_object_overview(pack: Path, notes: str) -> dict[str, Any]:
     dump_json(path, value)
     atomic_write(pack / "OBJECT_OVERVIEW.md", render_overview(value))
     overview_hash = stable_json_hash(value)
-    metadata = load_json(pack / "pack.json")
-    metadata["object_overview_hash"] = overview_hash
-    metadata.setdefault("semantic_contract", {})["overview_confirmation"] = "confirmed"
-    dump_json(pack / "pack.json", metadata)
     constraints = load_reproducibility(pack)
     constraints["object_overview_hash"] = overview_hash
-    save_reproducibility(pack, constraints)
+
+    def update_metadata(metadata: dict[str, Any]) -> None:
+        metadata["object_overview_hash"] = overview_hash
+        metadata.setdefault("semantic_contract", {})[
+            "overview_confirmation"
+        ] = "confirmed"
+        metadata["reproducibility"] = constraints
+
+    update_pack_metadata(pack, update_metadata)
     return value

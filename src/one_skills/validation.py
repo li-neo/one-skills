@@ -10,7 +10,6 @@ from typing import Any
 
 from .constants import EVIDENCE_TYPES, INFERENCE_LEVELS, PERMISSIONS, TEST_TYPES
 from .core_assets import (
-    CONSOLIDATED_PACK_VERSION,
     load_recipe_lock,
     load_reproducibility,
     load_source_manifest,
@@ -20,8 +19,14 @@ from .distillation_quality import assess_distillation_quality
 from .errors import PipelineError
 from .learning import validate_learning_path
 from .lifecycle import load_state
+from .schema_runtime import validate_schema
 from .source_quality import source_quality_fingerprint
 from .utils import load_json, stable_json_hash
+from .versions import (
+    READABLE_PACK_VERSIONS,
+    uses_consolidated_assets,
+    uses_semantic_contract,
+)
 
 
 @dataclass(frozen=True)
@@ -33,6 +38,23 @@ class Finding:
 
     def to_dict(self) -> dict[str, str]:
         return asdict(self)
+
+
+def _schema_findings(
+    value: Any,
+    schema_name: str,
+    path: Path | str,
+    code: str,
+) -> list[Finding]:
+    return [
+        Finding(
+            "error",
+            code,
+            f"{issue.path}: {issue.message}",
+            str(path),
+        )
+        for issue in validate_schema(value, schema_name)
+    ]
 
 
 def parse_frontmatter(text: str) -> tuple[dict[str, str], str]:
@@ -184,9 +206,22 @@ def validate_tests(path: Path) -> list[Finding]:
         tests = load_json(path)
     except (OSError, json.JSONDecodeError) as exc:
         return [Finding("error", "tests.parse", str(exc), str(path))]
+    findings = _schema_findings(
+        tests,
+        "test-prompts.schema.json",
+        path,
+        "tests.schema",
+    )
     if not isinstance(tests, list) or not tests:
-        return [Finding("error", "tests.shape", "tests must be a non-empty array", str(path))]
-    findings: list[Finding] = []
+        findings.append(
+            Finding(
+                "error",
+                "tests.shape",
+                "tests must be a non-empty array",
+                str(path),
+            )
+        )
+        return findings
     seen: set[str] = set()
     types: set[str] = set()
     for index, case in enumerate(tests):
@@ -226,6 +261,14 @@ def validate_evidence(path: Path) -> list[Finding]:
         except json.JSONDecodeError as exc:
             findings.append(Finding("error", "evidence.parse", str(exc), f"{path}:{number}"))
             continue
+        findings.extend(
+            _schema_findings(
+                item,
+                "evidence.schema.json",
+                f"{path}:{number}",
+                "evidence.schema",
+            )
+        )
         required = {
             "id", "claim", "evidence_type", "source", "locator", "confidence",
             "inference_level", "permission",
@@ -309,6 +352,14 @@ def validate_frozen_evals(pack: Path) -> list[Finding]:
                 Finding("error", "eval.parse", str(exc), str(skill))
             )
             continue
+        findings.extend(
+            _schema_findings(
+                canonical,
+                "canonical-evals.schema.json",
+                canonical_path,
+                "eval.canonical_schema",
+            )
+        )
         name = skill.name
         required = {
             "schema_version",
@@ -425,16 +476,16 @@ def validate_reproducibility(pack: Path) -> list[Finding]:
         ]
     findings: list[Finding] = []
     pack_version = metadata.get("schema_version")
-    if pack_version not in {"0.2", "0.3", CONSOLIDATED_PACK_VERSION}:
+    if pack_version not in READABLE_PACK_VERSIONS:
         findings.append(
             Finding(
                 "error",
                 "pack.schema_version",
-                "reproducible Packs require schema_version 0.2, 0.3, or 0.4",
+                "reproducible Packs require schema_version 0.2, 0.3, 0.4, or 1.0",
                 str(paths["pack"]),
             )
         )
-    if pack_version in {"0.3", CONSOLIDATED_PACK_VERSION}:
+    if uses_semantic_contract(pack_version):
         semantic = metadata.get("semantic_contract")
         if (
             not isinstance(semantic, dict)
@@ -558,7 +609,7 @@ def validate_reproducibility(pack: Path) -> list[Finding]:
                     str(paths["manifest"]),
                 )
             )
-    if pack_version in {"0.3", CONSOLIDATED_PACK_VERSION}:
+    if uses_semantic_contract(pack_version):
         overview_path = pack / "OBJECT_OVERVIEW.json"
         if overview_path.exists():
             try:
@@ -656,8 +707,16 @@ def validate_pack(pack: Path) -> list[Finding]:
     if metadata_path.exists():
         try:
             metadata = load_json(metadata_path)
+            findings.extend(
+                _schema_findings(
+                    metadata,
+                    "pack.schema.json",
+                    metadata_path,
+                    "pack.schema",
+                )
+            )
             version = metadata.get("schema_version")
-            if version != CONSOLIDATED_PACK_VERSION:
+            if not uses_consolidated_assets(version):
                 required.extend(
                     (
                         "RECIPE_LOCK.json",
@@ -667,8 +726,23 @@ def validate_pack(pack: Path) -> list[Finding]:
                         "OBJECT_MAP.md",
                     )
                 )
-            if version in {"0.3", CONSOLIDATED_PACK_VERSION}:
-                required.extend(("OBJECT_OVERVIEW.json", "OBJECT_OVERVIEW.md"))
+            if uses_semantic_contract(version):
+                overview_status = metadata.get("semantic_contract", {}).get(
+                    "overview_confirmation"
+                )
+                if overview_status == "stale":
+                    findings.append(
+                        Finding(
+                            "warning",
+                            "semantic.rebuild_required",
+                            "Object Overview is stale and must be rebuilt before release",
+                            str(metadata_path),
+                        )
+                    )
+                else:
+                    required.extend(
+                        ("OBJECT_OVERVIEW.json", "OBJECT_OVERVIEW.md")
+                    )
                 if metadata.get("capability_graph_hash"):
                     phase = load_state(pack).get("current_phase")
                     if phase in {"test", "ship", "evolve"}:
@@ -715,6 +789,70 @@ def validate_pack(pack: Path) -> list[Finding]:
                     )
     except (PipelineError, OSError, json.JSONDecodeError) as exc:
         findings.append(Finding("error", "state.invalid", str(exc), str(pack / "pack.json")))
+
+    schema_assets = [
+        ("LEARNING_PATH.json", "learning-path.schema.json"),
+        ("OBJECT_OVERVIEW.json", "object-overview.schema.json"),
+        ("CANDIDATE_PORTFOLIO.json", "capability-portfolio.schema.json"),
+        ("VERIFIED_PORTFOLIO.json", "capability-portfolio.schema.json"),
+        ("CAPABILITY_GRAPH.json", "capability-graph.schema.json"),
+        ("ir/distillation.json", "distillation-ir.schema.json"),
+    ]
+    if uses_consolidated_assets(metadata.get("schema_version")):
+        schema_assets.append(
+            ("SOURCE_MANIFEST.json", "source-manifest.schema.json")
+        )
+    for relative, schema_name in schema_assets:
+        path = pack / relative
+        if not path.exists():
+            continue
+        try:
+            value = load_json(path)
+        except (OSError, json.JSONDecodeError) as exc:
+            findings.append(
+                Finding("error", "schema.parse", str(exc), str(path))
+            )
+            continue
+        findings.extend(
+            _schema_findings(
+                value,
+                schema_name,
+                path,
+                "schema.contract",
+            )
+        )
+    for path in sorted((pack / "evaluations" / "runs").glob("*.json")):
+        try:
+            value = load_json(path)
+        except (OSError, json.JSONDecodeError) as exc:
+            findings.append(
+                Finding("error", "schema.parse", str(exc), str(path))
+            )
+            continue
+        findings.extend(
+            _schema_findings(
+                value,
+                "evaluation-run.schema.json",
+                path,
+                "eval.run_schema",
+            )
+        )
+    for path in sorted((pack / "evolution" / "proposals").glob("*.json")):
+        try:
+            value = load_json(path)
+        except (OSError, json.JSONDecodeError) as exc:
+            findings.append(
+                Finding("error", "schema.parse", str(exc), str(path))
+            )
+            continue
+        findings.extend(
+            _schema_findings(
+                value,
+                "evolution-patch.schema.json",
+                path,
+                "evolution.patch_schema",
+            )
+        )
     findings.extend(validate_evidence(pack / "EVIDENCE_LEDGER.jsonl"))
     learning_path = pack / "LEARNING_PATH.json"
     if learning_path.exists():
@@ -735,7 +873,7 @@ def validate_pack(pack: Path) -> list[Finding]:
     findings.extend(validate_reproducibility(pack))
     findings.extend(validate_frozen_evals(pack))
     if (
-        metadata.get("schema_version") == CONSOLIDATED_PACK_VERSION
+        uses_consolidated_assets(metadata.get("schema_version"))
         and (pack / "CAPABILITY_GRAPH.json").exists()
     ):
         try:

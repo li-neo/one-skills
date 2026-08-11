@@ -159,17 +159,5 @@
         "chunk-cab2f8e5c970d6c44376ffb1"
       ]
     }
-  ],
-  "schema_version": "1.0",
-  "quality": {
-    "schema_version": "1.0",
-    "status": "unassessed",
-    "audited_at": "2026-08-06T04:16:31+00:00",
-    "gaps": [
-      "This Pack predates Source Catalog 1.0; provenance roles and independent source groups were not gated."
-    ],
-    "selected_sources": [],
-    "evaluation_only_sources": [],
-    "excluded_sources": []
-  }
+  ]
 }

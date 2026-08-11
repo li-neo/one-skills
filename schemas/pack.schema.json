@@ -17,7 +17,8 @@
     "created_at"
   ],
   "properties": {
-    "schema_version": {"enum": ["0.2", "0.3", "0.4"]},
+    "schema_version": {"enum": ["0.2", "0.3", "0.4", "1.0"]},
+    "revision": {"type": "integer", "minimum": 1},
     "id": {"type": "string", "minLength": 1},
     "name": {"type": "string", "minLength": 1},
     "slug": {"type": "string", "pattern": "^[a-z0-9\\u4e00-\\u9fff]+(?:-[a-z0-9\\u4e00-\\u9fff]+)*$"},
@@ -74,15 +75,36 @@
     },
     "created_at": {"type": "string"},
     "updated_at": {"type": "string"},
-    "migrated_at": {"type": "string"}
+    "migrated_at": {"type": "string"},
+    "migration_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from", "to", "migrated_at"],
+        "properties": {
+          "from": {"enum": ["0.2", "0.3", "0.4"]},
+          "to": {"const": "1.0"},
+          "migrated_at": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    }
   },
   "allOf": [
     {
       "if": {
-        "properties": {"schema_version": {"const": "0.4"}}
+        "properties": {"schema_version": {"enum": ["0.4", "1.0"]}}
       },
       "then": {
         "required": ["recipe_lock", "reproducibility", "lifecycle"]
+      }
+    },
+    {
+      "if": {
+        "properties": {"schema_version": {"const": "1.0"}}
+      },
+      "then": {
+        "required": ["revision"]
       }
     }
   ],

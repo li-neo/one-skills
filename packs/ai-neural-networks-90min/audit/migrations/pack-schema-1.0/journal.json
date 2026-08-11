@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "id": "pack-schema-1.0",
+  "from": "0.2",
+  "to": "1.0",
+  "status": "completed",
+  "original_files": [
+    "pack.json",
+    "SOURCE_MANIFEST.json",
+    "RECIPE_LOCK.json",
+    "PROTECTED_CONSTRAINTS.json",
+    "PIPELINE_STATE.json",
+    "PIPELINE_STATE.md",
+    "SOURCE_QUALITY.json",
+    "OBJECT_MAP.md"
+  ],
+  "removed_legacy_assets": [
+    "OBJECT_MAP.md",
+    "PIPELINE_STATE.json",
+    "PIPELINE_STATE.md",
+    "PROTECTED_CONSTRAINTS.json",
+    "RECIPE_LOCK.json",
+    "SOURCE_QUALITY.json"
+  ],
+  "started_at": "2026-08-11T03:14:55+00:00",
+  "updated_at": "2026-08-11T03:14:55+00:00",
+  "completed_at": "2026-08-11T03:14:55+00:00",
+  "result_revision": 1
+}

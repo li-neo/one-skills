@@ -16,7 +16,10 @@
   ],
   "properties": {
     "schema_version": {"const": "1.0"},
-    "id": {"type": "string"},
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
     "action": {"enum": ["CREATE", "UPDATE", "MERGE", "PRUNE", "NOOP"]},
     "target": {"type": "string"},
     "content": {"type": "string"},
@@ -32,7 +35,11 @@
     "after_hash": {"type": ["string", "null"]},
     "comparison": {"type": ["object", "null"]},
     "status": {"enum": ["proposed", "applied", "kept", "reverted", "rejected"]},
-    "decision_reason": {"type": "string"}
+    "decision_reason": {"type": "string"},
+    "proposed_at": {"type": "string"},
+    "applied_at": {"type": "string"},
+    "resolved_at": {"type": "string"},
+    "reverted_hash": {"type": "string"}
   },
   "additionalProperties": false
 }

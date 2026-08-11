@@ -250,7 +250,12 @@ def ingest_url(url: str, access_level: str = "public") -> SourceDocument:
     )
 
 
-def expand_sources(values: list[str], access_level: str = "private-local") -> list[SourceDocument]:
+def expand_sources(
+    values: list[str],
+    access_level: str = "private-local",
+    *,
+    allow_partial: bool = False,
+) -> list[SourceDocument]:
     documents: list[SourceDocument] = []
     errors: list[str] = []
     for value in values:
@@ -273,9 +278,14 @@ def expand_sources(values: list[str], access_level: str = "private-local") -> li
                 documents.append(ingest_file(candidate, access_level))
             except IngestionError as exc:
                 errors.append(str(exc))
-    if not documents:
+    if errors and (not allow_partial or not documents):
         details = "\n".join(f"- {error}" for error in errors)
-        raise IngestionError(f"no source was ingested\n{details}".rstrip())
+        prefix = (
+            "one or more sources failed; no sources were accepted"
+            if documents
+            else "no source was ingested"
+        )
+        raise IngestionError(f"{prefix}\n{details}".rstrip())
     return documents
 
 

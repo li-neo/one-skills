@@ -21,7 +21,7 @@ from .comparison import (
     run_condition,
 )
 from .compiler import export_profile_templates
-from .constants import CONSENT_LEVELS, MODES, PHASES
+from .constants import CONSENT_LEVELS, MODES, PERMISSIONS, PHASES
 from .core_assets import artifact_contract
 from .database import KnowledgeDB
 from .delivery import (
@@ -70,7 +70,7 @@ from .learning import (
     record_attempt,
 )
 from .lifecycle import advance_phase, init_workspace, load_state, workspace_for
-from .migrations import migrate_pack_to_v04
+from .migrations import migrate_pack, rollback_pack_migration
 from .model_roles import load_model_roles, model_status
 from .overview import confirm_object_overview
 from .pipeline import (
@@ -341,7 +341,8 @@ def cmd_source(args: argparse.Namespace) -> int:
 
 
 def cmd_migrate(args: argparse.Namespace) -> int:
-    _print(migrate_pack_to_v04(_path(args.pack)))
+    operation = rollback_pack_migration if args.rollback else migrate_pack
+    _print(operation(_path(args.pack)))
     return 0
 
 
@@ -733,6 +734,9 @@ def cmd_serve(args: argparse.Namespace) -> int:
         args.host,
         args.port,
         os.getenv("ONE_SKILLS_API_TOKEN"),
+        args.tenant,
+        args.principal,
+        args.access or ("public",),
     )
     print(f"one-skills API listening on http://{args.host}:{server.server_port}")
     try:
@@ -965,6 +969,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="migrate Pack metadata without inventing semantic artifacts",
     )
     migrate.add_argument("pack")
+    migrate.add_argument(
+        "--rollback",
+        action="store_true",
+        help="restore the pre-1.0 backup if the Pack has not changed",
+    )
     migrate.set_defaults(func=cmd_migrate)
 
     semantic = commands.add_parser(
@@ -1339,6 +1348,9 @@ def build_parser() -> argparse.ArgumentParser:
     serve.add_argument("--workspace", default=".")
     serve.add_argument("--host", default="127.0.0.1")
     serve.add_argument("--port", type=int, default=8765)
+    serve.add_argument("--tenant", default="local")
+    serve.add_argument("--principal", default="local-user")
+    serve.add_argument("--access", action="append", choices=PERMISSIONS)
     serve.set_defaults(func=cmd_serve)
     return parser
 

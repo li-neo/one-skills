@@ -2,17 +2,19 @@
 
 from __future__ import annotations
 
-from http import HTTPStatus
-from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import hmac
 import json
+from collections.abc import Iterable
+from http import HTTPStatus
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
+from .constants import PERMISSIONS
 from .database import KnowledgeDB
 from .jobs import JobQueue
 from .retrieval import HybridRetriever
-
+from .schema_runtime import require_schema
 
 MAX_REQUEST_BYTES = 1024 * 1024
 
@@ -22,10 +24,29 @@ def create_api_server(
     host: str = "127.0.0.1",
     port: int = 8765,
     token: str | None = None,
+    tenant_id: str = "local",
+    principal_id: str = "local-user",
+    allowed_access: Iterable[str] = ("public",),
 ) -> ThreadingHTTPServer:
     if host not in {"127.0.0.1", "::1", "localhost"} and not token:
         raise ValueError("non-loopback API binding requires ONE_SKILLS_API_TOKEN")
-    database_path = workspace / ".one" / "knowledge.db"
+    if not tenant_id or not principal_id:
+        raise ValueError("API tenant and principal must be non-empty")
+    access_scope = frozenset(allowed_access)
+    if not access_scope or not access_scope <= set(PERMISSIONS):
+        raise ValueError("API allowed access levels are invalid")
+    database_path = workspace.resolve() / ".one" / "knowledge.db"
+    with KnowledgeDB(database_path) as database:
+        identity = database.connection.execute(
+            "SELECT p.id FROM principals p "
+            "JOIN tenants t ON t.id = p.tenant_id "
+            "WHERE p.tenant_id = ? AND p.id = ?",
+            (tenant_id, principal_id),
+        ).fetchone()
+        if not identity:
+            raise ValueError(
+                f"API principal does not exist: {tenant_id}/{principal_id}"
+            )
 
     class Handler(BaseHTTPRequestHandler):
         server_version = "one-skills/0.1"
@@ -79,12 +100,15 @@ def create_api_server(
                     text = query.get("q", [""])[0].strip()
                     if not text:
                         raise ValueError("q is required")
-                    access = set(query.get("access", ["public"]))
-                    tenant = query.get("tenant", ["local"])[0]
-                    principal = query.get("principal", ["local-user"])[0]
                     with KnowledgeDB(database_path) as database:
-                        results = HybridRetriever(database, tenant, principal).search(
-                            text, access, 10
+                        results = HybridRetriever(
+                            database,
+                            tenant_id,
+                            principal_id,
+                        ).search(
+                            text,
+                            set(access_scope),
+                            10,
                         )
                     self._json(
                         HTTPStatus.OK,
@@ -119,11 +143,26 @@ def create_api_server(
                     self._json(HTTPStatus.NOT_FOUND, {"error": "not found"})
                     return
                 body = self._body()
+                require_schema(
+                    body,
+                    "job-request.schema.json",
+                    "HTTP job request",
+                )
+                unknown = set(body) - {
+                    "type",
+                    "payload",
+                    "max_attempts",
+                }
+                if unknown:
+                    raise ValueError(
+                        "job request has unsupported fields: "
+                        + ", ".join(sorted(unknown))
+                    )
                 with KnowledgeDB(database_path) as database:
                     job_id = JobQueue(database).enqueue(
                         body["type"],
                         body["payload"],
-                        int(body.get("max_attempts", 3)),
+                        body.get("max_attempts", 3),
                         actor_id="api",
                     )
                 self._json(HTTPStatus.ACCEPTED, {"job_id": job_id, "status": "queued"})

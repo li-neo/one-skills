@@ -18,10 +18,27 @@ from .reporting import write_evidence_graph
 from .runtime import export_runtime
 from .utils import atomic_write, dump_json, load_json, utc_now
 from .validation import validate_frozen_evals, validate_pack
+from .versions import uses_consolidated_assets, uses_semantic_contract
 
 
 class DeliveryError(RuntimeError):
     pass
+
+
+def _assert_no_pending_revocations(pack: Path) -> None:
+    workspace = workspace_for(pack)
+    directory = workspace / ".one" / "revocations"
+    if not directory.exists():
+        return
+    for path in sorted(directory.glob("*.json")):
+        intent = load_json(path)
+        if (
+            intent.get("status") == "pending"
+            and pack.name in intent.get("affected_packs", [])
+        ):
+            raise DeliveryError(
+                f"pending source revocation blocks delivery: {intent.get('id')}"
+            )
 
 
 def _assert_tested(pack: Path) -> None:
@@ -34,7 +51,7 @@ def _assert_tested(pack: Path) -> None:
         raise DeliveryError(f"evaluation freeze check failed: {drift[0].code}")
     metadata = load_json(pack / "pack.json") if (pack / "pack.json").exists() else {}
     if (
-        metadata.get("schema_version") in {"0.3", "0.4"}
+        uses_semantic_contract(metadata.get("schema_version"))
         and (pack / "CAPABILITY_GRAPH.json").exists()
     ):
         comparison_path = pack / "evaluations" / "comparison-report.json"
@@ -52,7 +69,7 @@ def _assert_tested(pack: Path) -> None:
                 "v0.3 blind comparison report does not match the current Skill context"
             )
     if (
-        metadata.get("schema_version") == "0.4"
+        uses_consolidated_assets(metadata.get("schema_version"))
         and (pack / "CAPABILITY_GRAPH.json").exists()
     ):
         quality = assess_distillation_quality(pack)
@@ -86,6 +103,7 @@ def _assert_tested(pack: Path) -> None:
 
 def release_pack(pack: Path) -> dict:
     """Close test and ship phases only after all non-negotiable gates pass."""
+    _assert_no_pending_revocations(pack)
     findings = validate_pack(pack)
     errors = [finding for finding in findings if finding.severity == "error"]
     if errors:
@@ -114,7 +132,7 @@ def release_pack(pack: Path) -> dict:
             f"- Comparison passed: `{comparison.get('passed', False)}`\n"
         )
     core_quality_text = ""
-    if metadata.get("schema_version") == "0.4":
+    if uses_consolidated_assets(metadata.get("schema_version")):
         core_quality = assess_distillation_quality(pack)
         dimensions = core_quality["dimensions"]
         core_quality_text = (
@@ -179,6 +197,7 @@ def install_pack(
     dry_run: bool = False,
     force: bool = False,
 ) -> list[dict[str, str]]:
+    _assert_no_pending_revocations(pack)
     errors = [finding for finding in validate_pack(pack) if finding.severity == "error"]
     if errors:
         raise DeliveryError(f"pack has {len(errors)} validation errors")
@@ -210,6 +229,7 @@ def install_pack(
 
 
 def export_pack(pack: Path, output: Path, runtime: str = "generic") -> Path:
+    _assert_no_pending_revocations(pack)
     if any(finding.severity == "error" for finding in validate_pack(pack)):
         raise DeliveryError("pack validation failed")
     if load_state(pack)["phases"]["ship"]["status"] != "completed":

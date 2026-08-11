@@ -4,11 +4,14 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
+import re
 import shutil
 from pathlib import Path
 from typing import Any
 
 from .experience import load_experiences
+from .schema_runtime import require_schema
 from .utils import dump_json, load_json, new_id, stable_json_hash, utc_now
 
 
@@ -18,6 +21,16 @@ class EvolutionError(ValueError):
 
 VALID_ACTIONS = {"CREATE", "UPDATE", "MERGE", "PRUNE", "NOOP"}
 PROTECTED_PARTS = {"evals", "test-prompts.json"}
+PATCH_ID_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
+
+
+def _save_patch(path: Path, patch: dict[str, Any]) -> None:
+    require_schema(
+        patch,
+        "evolution-patch.schema.json",
+        str(path),
+    )
+    dump_json(path, patch)
 
 
 def skill_folder_hash(pack: Path) -> str:
@@ -106,12 +119,25 @@ def propose_patch(
     }
     directory = pack / "evolution" / "proposals"
     directory.mkdir(parents=True, exist_ok=True)
-    dump_json(directory / f"{patch['id']}.json", patch)
+    _save_patch(directory / f"{patch['id']}.json", patch)
     return patch
 
 
-def _snapshot(pack: Path, patch: dict[str, Any]) -> Path:
-    root = pack / "evolution" / "snapshots" / patch["id"]
+def _validated_patch_id(value: object) -> str:
+    if not isinstance(value, str) or not PATCH_ID_PATTERN.fullmatch(value):
+        raise EvolutionError("evolution patch id is invalid")
+    if value in {".", ".."}:
+        raise EvolutionError("evolution patch id is invalid")
+    return value
+
+
+def _snapshot(pack: Path, patch: dict[str, Any], patch_id: str) -> Path:
+    snapshot_root = (pack / "evolution" / "snapshots").resolve()
+    root = (snapshot_root / _validated_patch_id(patch_id)).resolve()
+    try:
+        root.relative_to(snapshot_root)
+    except ValueError as exc:
+        raise EvolutionError("snapshot path must stay inside the Pack") from exc
     if root.exists():
         shutil.rmtree(root)
     root.mkdir(parents=True)
@@ -164,29 +190,41 @@ def apply_patch_candidate(
 ) -> dict[str, Any]:
     path = pack / "evolution" / "proposals" / f"{patch_id}.json"
     patch = load_json(path)
+    safe_patch_id = _validated_patch_id(patch_id)
+    if patch.get("id") != safe_patch_id:
+        raise EvolutionError("evolution patch id does not match its proposal filename")
     if patch["status"] != "proposed":
         raise EvolutionError("only proposed patches can be applied")
     required = {"before_score", "after_score", "hard_gates"}
     if not required <= set(comparison):
         raise EvolutionError("comparison requires before_score, after_score, and hard_gates")
+    before_score = float(comparison["before_score"])
+    after_score = float(comparison["after_score"])
+    if not math.isfinite(before_score) or not math.isfinite(after_score):
+        raise EvolutionError("comparison scores must be finite")
+    hard_gates = comparison["hard_gates"]
+    expected_gates = set(patch.get("protected_gates", []))
     if (
-        float(comparison["after_score"]) <= float(comparison["before_score"])
-        or not all(comparison["hard_gates"].values())
+        not isinstance(hard_gates, dict)
+        or set(hard_gates) != expected_gates
+        or any(type(value) is not bool for value in hard_gates.values())
     ):
+        raise EvolutionError("comparison hard_gates must exactly match protected_gates")
+    if after_score <= before_score or not all(hard_gates.values()):
         patch["status"] = "rejected"
         patch["comparison"] = comparison
         patch["decision_reason"] = "candidate did not improve or failed a protected gate"
-        dump_json(path, patch)
+        _save_patch(path, patch)
         return patch
     if patch["before_hash"] != skill_folder_hash(pack):
         raise EvolutionError("Skill folder changed after patch proposal")
-    _snapshot(pack, patch)
+    _snapshot(pack, patch, safe_patch_id)
     _apply(pack, patch)
     patch["after_hash"] = skill_folder_hash(pack)
     patch["comparison"] = comparison
     patch["status"] = "applied"
     patch["applied_at"] = utc_now()
-    dump_json(path, patch)
+    _save_patch(path, patch)
     return patch
 
 
@@ -219,6 +257,8 @@ def resolve_patch(
     if patch["status"] != "applied":
         raise EvolutionError("only applied patches can be resolved")
     if decision == "revert":
+        if patch.get("after_hash") != skill_folder_hash(pack):
+            raise EvolutionError("Skill folder changed after patch application")
         _restore(pack, patch)
         patch["status"] = "reverted"
         patch["reverted_hash"] = skill_folder_hash(pack)
@@ -228,7 +268,7 @@ def resolve_patch(
         patch["status"] = "kept"
     patch["decision_reason"] = reason.strip()
     patch["resolved_at"] = utc_now()
-    dump_json(path, patch)
+    _save_patch(path, patch)
     history = pack / "evolution" / "DECISIONS.jsonl"
     with history.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(patch, ensure_ascii=False) + "\n")

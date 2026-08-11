@@ -2,12 +2,16 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
+from .locking import pack_lock
+from .schema_runtime import require_schema
 from .utils import dump_json, load_json
+from .versions import CURRENT_PACK_VERSION, uses_consolidated_assets
 
-CONSOLIDATED_PACK_VERSION = "0.4"
+CONSOLIDATED_PACK_VERSION = CURRENT_PACK_VERSION
 
 AUTHORITATIVE_ASSETS = (
     "pack.json",
@@ -43,6 +47,10 @@ DERIVED_ASSETS = (
 )
 
 
+class ConcurrentPackUpdateError(RuntimeError):
+    pass
+
+
 def _default_reproducibility() -> dict[str, Any]:
     return {
         "schema_version": "1.0",
@@ -60,20 +68,56 @@ def load_pack_metadata(pack: Path) -> dict[str, Any]:
 
 
 def save_pack_metadata(pack: Path, metadata: dict[str, Any]) -> None:
-    dump_json(pack / "pack.json", metadata)
+    with pack_lock(pack):
+        path = pack / "pack.json"
+        current = load_json(path) if path.exists() else {}
+        current_revision = int(current.get("revision", 0))
+        expected_revision = metadata.get("revision")
+        if (
+            expected_revision is not None
+            and int(expected_revision) != current_revision
+        ):
+            raise ConcurrentPackUpdateError(
+                f"Pack revision changed: expected {expected_revision}, "
+                f"found {current_revision}"
+            )
+        metadata["revision"] = current_revision + 1
+        require_schema(metadata, "pack.schema.json", str(path))
+        dump_json(path, metadata)
+
+
+def update_pack_metadata(
+    pack: Path,
+    mutate: Callable[[dict[str, Any]], None],
+) -> dict[str, Any]:
+    """Apply one locked metadata mutation without overwriting sibling fields."""
+    with pack_lock(pack):
+        metadata = load_pack_metadata(pack)
+        revision = int(metadata.get("revision", 0))
+        mutate(metadata)
+        metadata["revision"] = revision + 1
+        require_schema(
+            metadata,
+            "pack.schema.json",
+            str(pack / "pack.json"),
+        )
+        dump_json(pack / "pack.json", metadata)
+        return metadata
 
 
 def is_consolidated_pack(pack: Path) -> bool:
     metadata_path = pack / "pack.json"
     return (
         metadata_path.exists()
-        and load_json(metadata_path).get("schema_version") == CONSOLIDATED_PACK_VERSION
+        and uses_consolidated_assets(
+            load_json(metadata_path).get("schema_version")
+        )
     )
 
 
 def load_recipe_lock(pack: Path) -> dict[str, Any]:
     metadata = load_pack_metadata(pack)
-    if metadata.get("schema_version") == CONSOLIDATED_PACK_VERSION:
+    if uses_consolidated_assets(metadata.get("schema_version")):
         value = metadata.get("recipe_lock")
         if not isinstance(value, dict):
             raise ValueError("consolidated Pack is missing recipe_lock")
@@ -87,7 +131,7 @@ def load_reproducibility(pack: Path) -> dict[str, Any]:
         legacy = pack / "PROTECTED_CONSTRAINTS.json"
         return load_json(legacy) if legacy.exists() else _default_reproducibility()
     metadata = load_json(metadata_path)
-    if metadata.get("schema_version") == CONSOLIDATED_PACK_VERSION:
+    if uses_consolidated_assets(metadata.get("schema_version")):
         value = metadata.get("reproducibility")
         if not isinstance(value, dict):
             raise ValueError("consolidated Pack is missing reproducibility")
@@ -101,9 +145,11 @@ def save_reproducibility(pack: Path, value: dict[str, Any]) -> None:
         dump_json(pack / "PROTECTED_CONSTRAINTS.json", value)
         return
     metadata = load_json(metadata_path)
-    if metadata.get("schema_version") == CONSOLIDATED_PACK_VERSION:
-        metadata["reproducibility"] = value
-        save_pack_metadata(pack, metadata)
+    if uses_consolidated_assets(metadata.get("schema_version")):
+        update_pack_metadata(
+            pack,
+            lambda current: current.__setitem__("reproducibility", value),
+        )
         return
     dump_json(pack / "PROTECTED_CONSTRAINTS.json", value)
 
@@ -128,15 +174,18 @@ def save_source_manifest(
     sources: list[dict[str, Any]],
     quality: dict[str, Any],
 ) -> None:
-    dump_json(
-        pack / "SOURCE_MANIFEST.json",
-        {
-            "schema_version": "1.0",
-            "profile": profile,
-            "quality": quality,
-            "sources": sources,
-        },
+    value = {
+        "schema_version": "1.0",
+        "profile": profile,
+        "quality": quality,
+        "sources": sources,
+    }
+    require_schema(
+        value,
+        "source-manifest.schema.json",
+        str(pack / "SOURCE_MANIFEST.json"),
     )
+    dump_json(pack / "SOURCE_MANIFEST.json", value)
 
 
 def artifact_contract(pack: Path) -> dict[str, Any]:

@@ -45,7 +45,7 @@ class SourceDiscoveryAndOverviewTests(unittest.TestCase):
             with self.assertRaises(SourceDiscoveryError):
                 shortlist_sources(path, ["missing"])
 
-    def test_v04_pack_has_consolidated_core_and_confirmed_overview(self) -> None:
+    def test_v1_pack_has_consolidated_core_and_confirmed_overview(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             source = root / "method.md"
@@ -66,7 +66,7 @@ class SourceDiscoveryAndOverviewTests(unittest.TestCase):
             overview = json.loads(
                 (pack / "OBJECT_OVERVIEW.json").read_text(encoding="utf-8")
             )
-            self.assertEqual(metadata["schema_version"], "0.4")
+            self.assertEqual(metadata["schema_version"], "1.0")
             self.assertIn("lifecycle", metadata)
             self.assertIn("recipe_lock", metadata)
             self.assertIn("reproducibility", metadata)

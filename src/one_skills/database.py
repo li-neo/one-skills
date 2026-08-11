@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import json
 import sqlite3
+from collections.abc import Callable, Iterator
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Iterator
+from typing import Any
 
 from .models import Chunk, SourceDocument
 from .utils import new_id, utc_now
@@ -411,47 +412,245 @@ class KnowledgeDB:
             )
         return source_id, document_id, version, True
 
+    def ingest_document(
+        self,
+        source: SourceDocument,
+        document_type: str,
+        chunk_builder: Callable[[str, int], list[Chunk]],
+        embedding_builder: Callable[[list[Chunk]], dict[str, list[float]]],
+        normalized_uri_builder: Callable[[str, int], str | None] | None = None,
+    ) -> tuple[str, str, int, bool, list[Chunk]]:
+        """Commit a complete searchable document before switching active_version."""
+        connection = self.connection
+        connection.execute("BEGIN IMMEDIATE")
+        try:
+            existing = connection.execute(
+                "SELECT id FROM sources WHERE content_hash = ?",
+                (source.content_hash,),
+            ).fetchone()
+            if existing:
+                linked = connection.execute(
+                    "SELECT document_id, version FROM document_versions "
+                    "WHERE source_id = ? ORDER BY version DESC LIMIT 1",
+                    (existing["id"],),
+                ).fetchone()
+                if linked:
+                    chunks = chunk_builder(
+                        linked["document_id"],
+                        linked["version"],
+                    )
+                    embeddings = embedding_builder(chunks)
+                    normalized_uri = (
+                        normalized_uri_builder(
+                            linked["document_id"],
+                            linked["version"],
+                        )
+                        if normalized_uri_builder
+                        else None
+                    )
+                    connection.execute(
+                        "INSERT OR REPLACE INTO source_assessments VALUES "
+                        "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                        (
+                            existing["id"],
+                            source.authority,
+                            source.directness,
+                            source.independence_group or source.source,
+                            source.source_role,
+                            source.source_uri,
+                            source.creator,
+                            source.published_at,
+                            source.quality_score,
+                            json.dumps(source.metadata(), ensure_ascii=False),
+                        ),
+                    )
+                    if normalized_uri is not None:
+                        connection.execute(
+                            "UPDATE document_versions SET normalized_uri = ? "
+                            "WHERE document_id = ? AND version = ?",
+                            (
+                                normalized_uri,
+                                linked["document_id"],
+                                linked["version"],
+                            ),
+                        )
+                    self._insert_chunks(connection, chunks, embeddings, ignore_existing=True)
+                    connection.commit()
+                    return (
+                        existing["id"],
+                        linked["document_id"],
+                        linked["version"],
+                        False,
+                        chunks,
+                    )
+
+            source_id = new_id("source")
+            now = utc_now()
+            previous = connection.execute(
+                "SELECT dv.document_id, MAX(dv.version) AS version "
+                "FROM sources s JOIN document_versions dv ON dv.source_id = s.id "
+                "WHERE s.uri = ? GROUP BY dv.document_id "
+                "ORDER BY version DESC LIMIT 1",
+                (source.source,),
+            ).fetchone()
+            document_id = previous["document_id"] if previous else new_id("document")
+            version = int(previous["version"]) + 1 if previous else 1
+            chunks = chunk_builder(document_id, version)
+            if not chunks:
+                raise ValueError("document produced no searchable chunks")
+            embeddings = embedding_builder(chunks)
+            normalized_uri = (
+                normalized_uri_builder(document_id, version)
+                if normalized_uri_builder
+                else None
+            )
+            connection.execute(
+                "INSERT INTO sources VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (
+                    source_id,
+                    source.source,
+                    source.content_hash,
+                    source.media_type,
+                    source.access_level,
+                    source.license,
+                    now,
+                ),
+            )
+            connection.execute(
+                "INSERT INTO source_assessments VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    source_id,
+                    source.authority,
+                    source.directness,
+                    source.independence_group or source.source,
+                    source.source_role,
+                    source.source_uri,
+                    source.creator,
+                    source.published_at,
+                    source.quality_score,
+                    json.dumps(source.metadata(), ensure_ascii=False),
+                ),
+            )
+            if previous:
+                connection.execute(
+                    "UPDATE documents SET title = ?, type = ?, access_level = ? "
+                    "WHERE id = ?",
+                    (
+                        source.title,
+                        document_type,
+                        source.access_level,
+                        document_id,
+                    ),
+                )
+            else:
+                connection.execute(
+                    "INSERT INTO documents"
+                    "(id, title, type, access_level, active_version) "
+                    "VALUES (?, ?, ?, ?, 0)",
+                    (
+                        document_id,
+                        source.title,
+                        document_type,
+                        source.access_level,
+                    ),
+                )
+            connection.execute(
+                "INSERT INTO document_versions VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    document_id,
+                    version,
+                    source_id,
+                    source.content_hash,
+                    "one-skills@1.0",
+                    normalized_uri,
+                    "staging",
+                    now,
+                ),
+            )
+            connection.execute(
+                "INSERT OR IGNORE INTO lineage_edges VALUES (?, ?, ?, ?, ?, ?)",
+                ("source", source_id, "produces", "document", document_id, now),
+            )
+            self._insert_chunks(connection, chunks, embeddings)
+            if previous:
+                connection.execute(
+                    "UPDATE document_versions SET status = 'superseded' "
+                    "WHERE document_id = ? AND status = 'active'",
+                    (document_id,),
+                )
+            connection.execute(
+                "UPDATE documents SET active_version = ? WHERE id = ?",
+                (version, document_id),
+            )
+            connection.execute(
+                "UPDATE document_versions SET status = 'active' "
+                "WHERE document_id = ? AND version = ?",
+                (document_id, version),
+            )
+            connection.commit()
+            return source_id, document_id, version, True, chunks
+        except Exception:
+            connection.rollback()
+            raise
+
+    def _insert_chunks(
+        self,
+        connection: sqlite3.Connection,
+        chunks: list[Chunk],
+        embeddings: dict[str, list[float]],
+        *,
+        ignore_existing: bool = False,
+    ) -> None:
+        insert = "INSERT OR IGNORE" if ignore_existing else "INSERT"
+        for chunk in chunks:
+            cursor = connection.execute(
+                f"{insert} INTO chunks VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    chunk.id,
+                    chunk.document_id,
+                    chunk.document_version,
+                    chunk.section_path,
+                    chunk.ordinal,
+                    chunk.text,
+                    chunk.content_hash,
+                    len(chunk.text.split()),
+                    chunk.access_level,
+                    chunk.source_locator,
+                    json.dumps(embeddings.get(chunk.id, [])),
+                ),
+            )
+            if cursor.rowcount == 0:
+                continue
+            if self.fts_enabled:
+                connection.execute(
+                    "DELETE FROM chunks_fts WHERE chunk_id = ?",
+                    (chunk.id,),
+                )
+                connection.execute(
+                    "INSERT INTO chunks_fts(chunk_id, text, section_path) "
+                    "VALUES (?, ?, ?)",
+                    (chunk.id, chunk.text, chunk.section_path),
+                )
+            connection.execute(
+                "INSERT OR IGNORE INTO lineage_edges VALUES (?, ?, ?, ?, ?, ?)",
+                (
+                    "document",
+                    chunk.document_id,
+                    "produces",
+                    "chunk",
+                    chunk.id,
+                    utc_now(),
+                ),
+            )
+            connection.execute(
+                "INSERT OR IGNORE INTO asset_acl VALUES "
+                "('local', 'local-user', 'chunk', ?, 'owner', ?)",
+                (chunk.id, utc_now()),
+            )
+
     def add_chunks(self, chunks: list[Chunk], embeddings: dict[str, list[float]]) -> None:
         with self.transaction() as connection:
-            for chunk in chunks:
-                connection.execute(
-                    "INSERT OR REPLACE INTO chunks VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    (
-                        chunk.id,
-                        chunk.document_id,
-                        chunk.document_version,
-                        chunk.section_path,
-                        chunk.ordinal,
-                        chunk.text,
-                        chunk.content_hash,
-                        len(chunk.text.split()),
-                        chunk.access_level,
-                        chunk.source_locator,
-                        json.dumps(embeddings.get(chunk.id, [])),
-                    ),
-                )
-                if self.fts_enabled:
-                    connection.execute("DELETE FROM chunks_fts WHERE chunk_id = ?", (chunk.id,))
-                    connection.execute(
-                        "INSERT INTO chunks_fts(chunk_id, text, section_path) VALUES (?, ?, ?)",
-                        (chunk.id, chunk.text, chunk.section_path),
-                    )
-                connection.execute(
-                    "INSERT OR IGNORE INTO lineage_edges VALUES (?, ?, ?, ?, ?, ?)",
-                    (
-                        "document",
-                        chunk.document_id,
-                        "produces",
-                        "chunk",
-                        chunk.id,
-                        utc_now(),
-                    ),
-                )
-                connection.execute(
-                    "INSERT OR IGNORE INTO asset_acl VALUES "
-                    "('local', 'local-user', 'chunk', ?, 'owner', ?)",
-                    (chunk.id, utc_now()),
-                )
+            self._insert_chunks(connection, chunks, embeddings, ignore_existing=True)
 
     def invalidate_claims_from_inactive_versions(self) -> int:
         """Supersede claims supported only by inactive document versions."""
