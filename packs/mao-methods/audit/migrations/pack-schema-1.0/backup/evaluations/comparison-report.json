@@ -63,18 +63,10 @@
     "cost": 5
   },
   "suite_hash": "17a919542daaf6686d504ab0eb1f1a6739a9670bb5fdb8b6595e451d2b31dfc6",
-  "source_set_hash": "8a3e6c77d6baf0f242a4481bd59aeacea2ec2b953e98389c723d4fa813622060",
+  "source_set_hash": "5728da98f972f7ee13abcb090141c55c7c856dd69d453669051486a553ea86e5",
   "skill_hashes": {
     "no-skill": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "cangjie": "88bd72e087afbf8161df9f07fc5376672ffc1f5923186bfa067153a94f3931cc",
     "one-skills": "7f0063e6acff919e61ebf94728de079cb587596e000f795049aad2a40f7032a0"
-  },
-  "status": "valid",
-  "isolation_level": "model-shared/session-separated",
-  "candidate_run_hash": "4b31bedbfd43447591233ee733ad2fd70ee0678de9e659b6d9e5379004c12f30",
-  "run_hashes": {
-    "cangjie": "32485e116b0c347f94bc6a689c3290c63f3d57c50209b010bac58b9396240d7c",
-    "no-skill": "b6a17e6d4e6b2f78c4a9ba2269931c40a3727179007b3bc0a7763f23ab817d76",
-    "one-skills": "4b31bedbfd43447591233ee733ad2fd70ee0678de9e659b6d9e5379004c12f30"
   }
 }

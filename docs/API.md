@@ -35,6 +35,7 @@ tenant、principal 和允许的访问等级只由 `one serve` 的启动参数配
 ```json
 {
   "type": "distill",
+  "idempotency_key": "distill:example:v1",
   "payload": {
     "sources": ["./docs/example.md"],
     "type": "content",
@@ -47,6 +48,7 @@ tenant、principal 和允许的访问等级只由 `one serve` 的启动参数配
 
 API 只入队，不同步执行蒸馏。由 `one job worker --owner <id>` 领取 lease 并运行。
 每类 Job 使用固定 payload 字段；所有本地 source、Pack、suite 和 output 路径都必须位于 workspace 内，Worker 执行前会再次校验。远程来源只接受 HTTP(S) URL。
+HTTP Job 必须提供 `idempotency_key`；同一 Key 和相同 payload 返回原 Job，不会重复执行。Worker 使用 heartbeat 续租和单调 fencing token，过期 Worker 不能覆盖新 Worker 的结果。
 
 ### `GET /v1/jobs/<job-id>`
 

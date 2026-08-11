@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/li-neo/one-skills/schemas/comparison-suite.schema.json",
+  "title": "One Skills Blind Comparison Suite",
+  "type": "object",
+  "required": ["schema_version", "cases"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "name": {"type": "string", "minLength": 1},
+    "baseline": {"type": "string", "minLength": 1},
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "prompt", "rubric"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "type": {
+            "enum": [
+              "task_effect",
+              "holdout",
+              "should_trigger",
+              "should_not_trigger",
+              "sibling_bait",
+              "safety",
+              "citation",
+              "learning_transfer",
+              "fidelity",
+              "out_of_scope_honesty",
+              "predictive_transfer",
+              "readback",
+              "rollback",
+              "schema",
+              "side_effect",
+              "baseline_delta",
+              "regression",
+              "authorization",
+              "orchestration"
+            ]
+          },
+          "prompt": {"type": "string", "minLength": 1},
+          "rubric": {"type": "string", "minLength": 1},
+          "expected": {"type": "string"},
+          "reference_answer": {"type": "string"},
+          "risk": {"enum": ["low", "medium", "high", "critical"]}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

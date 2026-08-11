@@ -1,17 +1,23 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "one-skills"
-version = "0.4.0"
+version = "1.0.0"
 description = "Evidence-first distillation, knowledge indexing, and Skill evolution."
 readme = "README.md"
 requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [{name = "li-neo"}]
 keywords = ["agent", "skills", "distillation", "knowledge", "memory"]
 classifiers = [
+  "Development Status :: 5 - Production/Stable",
   "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
   "Operating System :: OS Independent",
 ]
 dependencies = [
@@ -27,8 +33,15 @@ production = [
 [project.scripts]
 one = "one_skills.cli:main"
 
+[project.urls]
+Homepage = "https://github.com/li-neo/one-skills"
+Repository = "https://github.com/li-neo/one-skills"
+Issues = "https://github.com/li-neo/one-skills/issues"
+Changelog = "https://github.com/li-neo/one-skills/blob/main/CHANGELOG.md"
+
 [tool.setuptools]
 package-dir = {"" = "src"}
+include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["src"]

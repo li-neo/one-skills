@@ -10,6 +10,7 @@ from typing import Any
 from .compiler import capability_from_candidate, compile_skill
 from .database import KnowledgeDB
 from .errors import PipelineError
+from .evaluation_state import mark_evaluations_stale
 from .extraction import (
     approve_candidate,
     extract_candidates,
@@ -233,6 +234,7 @@ def approve_and_compile(pack: Path, candidate_id: str, reason: str) -> Path:
     linked = [item for item in evidence if item.get("id") in target.evidence_ids]
     capability = capability_from_candidate(target, profile)
     skill_dir = compile_skill(pack, capability, linked, profile=profile)
+    mark_evaluations_stale(pack, f"Skill compiled: {skill_dir.name}")
     workspace = workspace_for(pack)
     with KnowledgeDB(workspace / ".one" / "knowledge.db") as database:
         database.add_capability(capability.id, capability.name, profile, capability.to_dict())
@@ -414,6 +416,7 @@ def compile_confirmed_portfolio(pack: Path) -> dict[str, Any]:
         "role-separated V1/V2/V3 and human portfolio confirmation passed",
     )
     skill_dir, capabilities = compile_verified_portfolio(pack)
+    mark_evaluations_stale(pack, f"Skill compiled: {skill_dir.name}")
     advance_phase(
         pack,
         "compile",
@@ -511,6 +514,8 @@ def verify_and_compile_with_model(
     dump_json(decisions_path, [_candidate_dict(item) for item in candidates])
     dump_json(pack / "audit" / "model-verification.json", audit)
     build_portfolio(pack, candidates, kind="verified")
+    if compiled:
+        mark_evaluations_stale(pack, "Skills changed after model verification")
     if not compiled:
         advance_phase(pack, "verify", "blocked", "independent model accepted no candidates")
         return []

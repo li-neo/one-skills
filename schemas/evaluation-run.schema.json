@@ -13,7 +13,11 @@
     "roles",
     "isolation_level",
     "records",
-    "summary"
+    "summary",
+    "runtime",
+    "parameters",
+    "input_snapshot_hash",
+    "artifact_hash"
   ],
   "properties": {
     "schema_version": {"const": "1.0"},
@@ -49,12 +53,30 @@
           "scores",
           "judge_reason",
           "hashes"
-        ]
+        ],
+        "properties": {
+          "hashes": {
+            "type": "object",
+            "required": ["suite", "source_set", "skill", "answer", "judge"],
+            "properties": {
+              "suite": {"type": "string", "minLength": 1},
+              "source_set": {"type": "string", "minLength": 1},
+              "skill": {"type": "string", "minLength": 1},
+              "answer": {"type": "string", "minLength": 1},
+              "judge": {"type": "string", "minLength": 1}
+            },
+            "additionalProperties": false
+          }
+        }
       }
     },
     "summary": {"type": "object"},
     "generated_at": {"type": "string"},
-    "artifact_source": {"type": "string"}
+    "artifact_source": {"type": "string"},
+    "runtime": {"type": "string", "minLength": 1},
+    "parameters": {"type": "object"},
+    "input_snapshot_hash": {"type": "string", "minLength": 1},
+    "artifact_hash": {"type": "string", "minLength": 1}
   },
   "additionalProperties": false
 }

@@ -19,7 +19,7 @@ one postgres health
 one postgres migrate --sqlite ./.one/knowledge.db
 ```
 
-迁移是幂等插入，按外键顺序复制全部核心表，包括：
+迁移按外键顺序复制全部核心表。不可变 Source/Event/Edge 使用幂等插入；Document active version、Document Version status、Run、Job 等可变状态使用主键 UPSERT，重复迁移会同步最新状态：
 
 - Source、Document、Chunk、Claim、Capability 和血缘
 - Person Profile 时序记忆

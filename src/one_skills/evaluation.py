@@ -106,7 +106,13 @@ def evaluate_pack(pack: Path, results_path: Path | None = None) -> dict[str, Any
                 "warnings": warnings,
             }
         )
-    report = {"generated_at": utc_now(), "pack": str(pack), "errors": errors, "skills": skills}
+    report = {
+        "status": "valid",
+        "generated_at": utc_now(),
+        "pack": str(pack),
+        "errors": errors,
+        "skills": skills,
+    }
     dump_json(pack / "test-results.json", report)
     lines = ["# Test Results", "", f"Generated: {report['generated_at']}", ""]
     for skill in skills:

@@ -129,6 +129,5 @@
       "warnings": []
     }
   ],
-  "comparison_report": "evaluations/comparison-report.json",
-  "status": "valid"
+  "comparison_report": "evaluations/comparison-report.json"
 }

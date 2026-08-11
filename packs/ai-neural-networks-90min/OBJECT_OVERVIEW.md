@@ -1,0 +1,115 @@
+# Object Overview
+
+- Profile: `content`
+- Status: `confirmed`
+- Subject: ai-neural-networks-90min
+
+## 一句话主旨
+
+从 4 个冻结来源版本提炼“ai-neural-networks-90min”中的24 个候选能力骨架，并用独立反证、版本和权利边界约束迁移。
+
+## 对象骨架
+
+1. **90 分钟一口气搞懂人工智能和神经网络**：> 课程对象：零基础学习者 > 对应视频：漫士沉思录《90分钟深度！一口气看明白人工智能和神经网络》 > 视频基准：作者 B 站同版 `BV1atCRYsE7x`，88:58 > 使用方法：按顺序学习。每章末尾先回答“检查点”，再进入下一章。 --- （关系：source-order；来源：`/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L3`）
+2. **课程目标**：学完后，你应该能够不用堆术语，沿着一条完整因果链解释： 1. 人工智能为什么可以理解成“输入到输出的函数”。 2. 符号主义、机器学习和联结主义分别怎样制造智能。 3. 感知机为什么能分类，又为什么解决不了 XOR。 4. 多层神经网络为什么更强，模型又是如何从数据中学会参数的。 5. 损失函数、梯度下降和反向传播分别负责什么。 6. 泛化为什么让 AI 有用，相关性学习又为什么会带来错误。 7. GPT 如何通过预测下一个 Token 学会生成语言。 8. 扩散模型如何从随机噪声生成图片和视频。 9. AI 更容易替代什么任务，人应怎样与 AI 协作。 （关系：source-order；来源：`/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L12`）
+3. **原片学习地图**：```text 什么是智能 ↓ 输入 → 黑箱函数 → 输出 ↓ 符号规则不够灵活，于是让机器从数据中学习 ↓ 感知机 → XOR 困境 → 多层神经网络 ↓ 损失函数定义“好坏” ↓ 反向传播算梯度，梯度下降改参数 ↓ 模型学到规律并泛化 ↓ GPT：学习语言数据中的规律 ↓ 扩散模型：学习图像数据中的规律 ↓ 能力、局限与工作变化 ``` --- （关系：source-order；来源：`/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L26`）
+4. **第 1 章 从达特茅斯会议开始**：**原片时间：00:50-01:47** 1956 年，约翰·麦卡锡、马文·闵斯基、克劳德·香农、纳撒尼尔·罗切斯特等研究者齐聚达特茅斯。他们提出一个野心很大的问题： > 能否制造一台会学习、会推理、会表现出智能的机器？ 这次会议通常被视为“人工智能”作为研究领域的起点。后来出现的 AlphaGo、GPT、图像生成模型，采用的技术路线各不相同，但都在回答同一个问题：**怎样用人工系统实现原本需要智能才能完成的任务？** ![达特茅斯会议与人工智能起点](assets/01-dartmouth-conference.jpg) *图 1：作者同版视频 00… （关系：source-order；来源：`/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L54`）
+5. **检查点**：人工智能研究的核心目标不是“做一台外形像人的机器”，而是让系统具备什么能力？ > 参考答案：针对不同环境和输入，给出合适的判断、预测、语言或动作。 --- （关系：source-order；来源：`/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L68`）
+6. **第 2 章 智能是输入到输出的函数**：**原片时间：01:47-05:46** 先观察几种反应： - 你让狗坐下，它可能执行指令。 - 草履虫会靠近营养物，避开有害刺激。 - 石头不会根据你的语言改变行为。 这些例子粗糙但抓住了共同点：**智能系统会收集信息，并根据情境做出有针对性的反应。** 把它写成数学形式： $$ y=f(x) $$ - $x$ 是情境或输入，例如人脸像素、棋盘状态、上文。 - $f$ 是系统内部的“黑箱”。 - $y$ 是输出，例如身份、下一步棋、回答。 于是： - 人脸识别：人脸图片 $\rightarrow$ 身份。 - AlphaGo：棋局状态 $\right… （关系：source-order；来源：`/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L76`）
+7. **图灵测试在这条路线中的位置**：图灵测试不要求我们打开机器检查它是否“真的像人一样思考”，而是观察交互输出。如果在对话中无法区分人和机器，至少从外部行为看，这个系统实现了接近人的输入输出关系。 （关系：source-order；来源：`/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L110`）
+8. **本章结论**：> AI 的工程问题，可以先被压缩成：选择什么输入、想要什么输出，以及怎样找到中间的函数。 （关系：source-order；来源：`/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L114`）
+9. **第 3 章 符号主义：把知识写成规则**：**原片时间：05:46-08:01** 第一种直觉是：人会推理，那么把推理规则写进机器就行。 例如： ```text A：阴天 B：湿度大于 70% T：将要下雨 规则：如果 A 且 B，那么 T ``` 系统保存大量符号、事实和“如果……那么……”规则，再通过逻辑推演得到结论。这就是**符号主义**。专家系统是它的典型产物：把医生或金融专家的知识写成规则库，系统据此诊断或给出建议。 ![符号主义与逻辑规则](assets/03-symbolism.jpg) *图 3：作者同版视频 05:59。* （关系：source-order；来源：`/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L128`）
+10. **为什么专家系统遇到瓶颈**：1. **规则难以穷举**：真实世界充满模糊情况。 2. **专家可能冲突**：同一症状，不同专家判断不同。 3. **维护成本高**：新情况出现后，要人工补规则。 4. **能力上限明显**：系统主要复制已有知识，很难自动超过知识提供者。 符号主义并没有消失。数据库规则、形式验证、知识图谱和业务规则引擎仍然重要。问题只在于：**它不适合独自承包所有智能。** （关系：source-order；来源：`/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L150`）
+11. **第 4 章 机器学习：不要把答案写死，让机器自己改**：**原片时间：08:01-10:56** 机器学习换了一个问题： > 能否不给出完整规则，只提供数据和反馈，让系统自己调整？ 视频用“训狗”作类比： - 做对了，奖励。 - 做错了，惩罚。 - 多次反馈后，行为逐渐符合目标。 训练数字识别模型时，我们提供大量图片和正确标签。模型先预测，再根据预测与答案的差距调整自己。反复训练后，它逐渐建立“图片 $\rightarrow$ 数字”的映射。 ![机器学习通过反馈调整](assets/04-machine-learning.jpg) *图 4：作者同版视频 08:58。* 机器学习至少需要三样东西： 1.… （关系：source-order；来源：`/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L167`）
+12. **第 5 章 联结主义与感知机**：**原片时间：10:56-19:56** 联结主义从大脑获得灵感：智能也许来自大量简单单元的连接，而不是一张完整规则表。 （关系：source-order；来源：`/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L207`）
+13. **5.1 用特征识别苹果**：假设输入特征是： $$ x=(\text{大小},\text{红色},\text{甜度},\text{酸度},\ldots) $$ 每个特征乘一个权重： $$ z=w_1x_1+w_2x_2+\cdots+w_nx_n-b $$ 再做阈值判断： $$ \hat y= \begin{cases} 1,&z>0\\ 0,&z\le 0 \end{cases} $$ - 正权重表示这个特征支持“是苹果”。 - 负权重表示它反对“是苹果”。 - $b$ 是阈值。 改变权重和阈值，同一个结构就可以改成西瓜识别器或山楂识别器。权重和阈值是可调的**参数**。 （关系：source-order；来源：`/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L213`）
+14. **5.2 这就是感知机**：感知机把多项输入加权求和，再决定是否激活。它既像一个数值化的逻辑单元，也像简化的生物神经元： - 输入对应传入信号。 - 权重对应连接的促进或抑制强度。 - 激活对应神经元放电。 ![感知机的加权求和与激活](assets/05-perceptron.jpg) *图 5：作者同版视频 14:52。* （关系：source-order；来源：`/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L243`）
+15. **5.3 为什么早期感知机会引发轰动**：计算机擅长精确算术，却很难理解像素。照片在计算机眼中只是数字矩阵。感知机展示了一种可能：不为每张图片手写规则，而是让机器调整参数，从像素中学会分类。 1957 年，弗兰克·罗森布拉特实现了早期感知机系统。媒体随后对“电子大脑”做出过度乐观的预测。视频借这段历史提醒我们：AI 发展经常在“神化”和“唱衰”之间摆动。 （关系：source-order；来源：`/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L255`）
+16. **第 6 章 XOR：单层感知机的天花板**：**原片时间：19:56-23:43** 感知机的决策边界满足： $$ w_1x_1+w_2x_2-b=0 $$ 在二维平面中，这是一条直线。因此，一个感知机只能解决**线性可分**的问题。 XOR 的真值表是： | $x_1$ | $x_2$ | XOR | |---:|---:|---:| | 0 | 0 | 0 | | 0 | 1 | 1 | | 1 | 0 | 1 | | 1 | 1 | 0 | 两类点在平面上交叉分布，无法用一条直线分开。 ![单层感知机无法线性分割 XOR](assets/06-xor-limit.jpg) *图 6：作者同… （关系：source-order；来源：`/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L271`）
+17. **不要从失败案例推出错误结论**：XOR 证明的是“**单层线性分类器**能力有限”，并不等于“多个非线性单元组成的网络没有用”。下一步恰好是把简单单元组合起来。 （关系：source-order；来源：`/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L300`）
+18. **第 7 章 多层感知机：组合带来非线性**：**原片时间：23:43-29:37** 一个感知机不够，就让多个感知机先处理中间条件，再把结果交给下一层。 对于 XOR，可以让两个中间神经元分别识别： - 输入是 $(1,0)$。 - 输入是 $(0,1)$。 输出层再把二者合并。于是，单条直线做不到的分类，可以由多条边界组合完成。 ![多层感知机解决 XOR](assets/07-multilayer-perceptron.jpg) *图 7：作者同版视频 25:56。* 这就是**多层感知机**（MLP）的基本思想： $$ h=\sigma(W_1x+b_1) $$ $$ \hat y=\si… （关系：source-order；来源：`/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L312`）
+19. **7.1 层级特征**：在图像识别中，可以把层级理解为： ```text 像素 → 边缘和方向 → 圆弧、横线、折角 → 数字部件 → 完整数字 ``` 深层网络把简单模式逐层组合成复杂概念。重要的是，这些中间特征通常不是专家逐条写入，而是在训练中形成。 （关系：source-order；来源：`/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L341`）
+20. **7.2 从 MLP 到现代架构**：视频依次提到： - **CNN**：利用局部连接和参数共享处理图像。 - **ResNet**：用残差连接缓解深层网络训练困难。 - **DenseNet**：让不同层之间建立更密集的信息连接。 - **Transformer/Attention**：让模型按内容关系选择和组合信息，是 GPT 的基础。 它们都在设计一个更合适的可学习函数族。 > 严谨补充：万能近似定理在特定激活函数和条件下说明网络能近似广泛的连续函数，但“存在一组参数”不等于“训练一定找得到”“数据一定够”或“模型一定能泛化”。 （关系：source-order；来源：`/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L355`）
+21. **第 8 章 损失函数：把好坏变成一个数**：**原片时间：29:37-35:11** 模型有大量参数。怎样判断一组参数好不好？ 先用五次多项式拟合数据： $$ \hat y=k_0+k_1x+k_2x^2+\cdots+k_5x^5 $$ 拟合函数输入 $x$，输出预测 $\hat y$。均方误差损失可以写成： $$ L(k_0,\ldots,k_5)=\frac{1}{N}\sum_{i=1}^{N}(\hat y_i-y_i)^2 $$ 这里出现两个不同函数： | 函数 | 输入 | 输出 | |---|---|---| | 拟合函数 | 样本 $x$ | 预测 $\hat y$ | | 损… （关系：source-order；来源：`/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L378`）
+22. **第 9 章 梯度下降：在大雾中一步步下山**：**原片时间：35:11-41:30** 如果只有一个参数 $k$，导数表示损失随参数变化的局部速度： $$ \frac{dL}{dk} $$ - 导数为正：增大 $k$ 会让损失上升，应减小 $k$。 - 导数为负：增大 $k$ 会让损失下降，应增大 $k$。 更新规则： $$ k\leftarrow k-\eta\frac{dL}{dk} $$ $\eta$ 是学习率，也就是每次迈多大一步。 多个参数时，把所有偏导数组合成梯度： $$ \nabla_\theta L= \left( \frac{\partial L}{\partial\theta_… （关系：source-order；来源：`/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L419`）
+23. **第 10 章 反向传播：从结果倒查每个旋钮**：**原片时间：41:30-46:05** 梯度下降需要每个参数的梯度。网络有许多层，怎样高效计算？ 关键是链式法则。若： $$ y=f(g(x)) $$ 则： $$ \frac{dy}{dx}= \frac{df}{dg}\cdot\frac{dg}{dx} $$ 神经网络由矩阵乘法、加法和激活函数等简单操作组合而成。反向传播从损失开始，沿计算图反向应用链式法则，把“这个中间量变化一点会让最终损失变化多少”逐层传回去。 ![反向传播沿计算图传递梯度](assets/10-backpropagation.jpg) *图 10：作者同版视频 41:42。*… （关系：source-order；来源：`/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L481`）
+24. **三个概念不要混**：| 概念 | 职责 | |---|---| | 损失函数 | 定义什么叫好、什么叫坏 | | 反向传播 | 高效算出每个参数的梯度 | | 梯度下降 | 根据梯度更新参数 | （关系：source-order；来源：`/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L514`）
+
+## 关键术语
+
+| 术语 | 对象内含义 | 来源 |
+|---|---|---|
+| 90 分钟一口气搞懂人工智能和神经网络 | > 课程对象：零基础学习者 > 对应视频：漫士沉思录《90分钟深度！一口气看明白人工智能和神经网络》 > 视频基准：作者 B 站同版 `BV1atCRYsE7x`，88:58 > 使用方法：按顺序学习。每章末尾先回答“检查点”，再进入下一章。 --- | `/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L3` |
+| 课程目标 | 学完后，你应该能够不用堆术语，沿着一条完整因果链解释： 1. 人工智能为什么可以理解成“输入到输出的函数”。 2. 符号主义、机器学习和联结主义分别怎样制造智能。 3. 感知机为什么能分类，又为什么解决不了 XOR。 4. 多层神经网络为什么更强，模型又是如何从数据中学会参数的。 5. 损失函数、梯度下降和反向传播分别负责什么。 6. 泛化为什么让 AI 有用，相关性学习又为什么会带来错误。 7. GPT 如何通过预测下一个 Token 学会生成语言。 8. 扩散模型如何从随机噪声生成图片和视频。 9. AI 更容易替代什么任务，人应怎样与 AI 协作。 | `/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L12` |
+| 原片学习地图 | ```text 什么是智能 ↓ 输入 → 黑箱函数 → 输出 ↓ 符号规则不够灵活，于是让机器从数据中学习 ↓ 感知机 → XOR 困境 → 多层神经网络 ↓ 损失函数定义“好坏” ↓ 反向传播算梯度，梯度下降改参数 ↓ 模型学到规律并泛化 ↓ GPT：学习语言数据中的规律 ↓ 扩散模型：学习图像数据中的规律 ↓ 能力、局限与工作变化 ``` --- | `/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L26` |
+| 第 1 章 从达特茅斯会议开始 | **原片时间：00:50-01:47** 1956 年，约翰·麦卡锡、马文·闵斯基、克劳德·香农、纳撒尼尔·罗切斯特等研究者齐聚达特茅斯。他们提出一个野心很大的问题： > 能否制造一台会学习、会推理、会表现出智能的机器？ 这次会议通常被视为“人工智能”作为研究领域的起点。后来出现的 AlphaGo、GPT、图像生成模型，采用的技术路线各不相同，但都在回答同一个问题：**怎样用人工系统实现原本需要智能才能完成的任务？** ![达特茅斯会议与人工智能起点](assets/01-dartmouth-conference.jpg) *图 1：作者同版视频 00… | `/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L54` |
+| 检查点 | 人工智能研究的核心目标不是“做一台外形像人的机器”，而是让系统具备什么能力？ > 参考答案：针对不同环境和输入，给出合适的判断、预测、语言或动作。 --- | `/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L68` |
+| 第 2 章 智能是输入到输出的函数 | **原片时间：01:47-05:46** 先观察几种反应： - 你让狗坐下，它可能执行指令。 - 草履虫会靠近营养物，避开有害刺激。 - 石头不会根据你的语言改变行为。 这些例子粗糙但抓住了共同点：**智能系统会收集信息，并根据情境做出有针对性的反应。** 把它写成数学形式： $$ y=f(x) $$ - $x$ 是情境或输入，例如人脸像素、棋盘状态、上文。 - $f$ 是系统内部的“黑箱”。 - $y$ 是输出，例如身份、下一步棋、回答。 于是： - 人脸识别：人脸图片 $\rightarrow$ 身份。 - AlphaGo：棋局状态 $\right… | `/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L76` |
+| 图灵测试在这条路线中的位置 | 图灵测试不要求我们打开机器检查它是否“真的像人一样思考”，而是观察交互输出。如果在对话中无法区分人和机器，至少从外部行为看，这个系统实现了接近人的输入输出关系。 | `/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L110` |
+| 本章结论 | > AI 的工程问题，可以先被压缩成：选择什么输入、想要什么输出，以及怎样找到中间的函数。 | `/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L114` |
+| 第 3 章 符号主义：把知识写成规则 | **原片时间：05:46-08:01** 第一种直觉是：人会推理，那么把推理规则写进机器就行。 例如： ```text A：阴天 B：湿度大于 70% T：将要下雨 规则：如果 A 且 B，那么 T ``` 系统保存大量符号、事实和“如果……那么……”规则，再通过逻辑推演得到结论。这就是**符号主义**。专家系统是它的典型产物：把医生或金融专家的知识写成规则库，系统据此诊断或给出建议。 ![符号主义与逻辑规则](assets/03-symbolism.jpg) *图 3：作者同版视频 05:59。* | `/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L128` |
+| 为什么专家系统遇到瓶颈 | 1. **规则难以穷举**：真实世界充满模糊情况。 2. **专家可能冲突**：同一症状，不同专家判断不同。 3. **维护成本高**：新情况出现后，要人工补规则。 4. **能力上限明显**：系统主要复制已有知识，很难自动超过知识提供者。 符号主义并没有消失。数据库规则、形式验证、知识图谱和业务规则引擎仍然重要。问题只在于：**它不适合独自承包所有智能。** | `/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L150` |
+| 第 4 章 机器学习：不要把答案写死，让机器自己改 | **原片时间：08:01-10:56** 机器学习换了一个问题： > 能否不给出完整规则，只提供数据和反馈，让系统自己调整？ 视频用“训狗”作类比： - 做对了，奖励。 - 做错了，惩罚。 - 多次反馈后，行为逐渐符合目标。 训练数字识别模型时，我们提供大量图片和正确标签。模型先预测，再根据预测与答案的差距调整自己。反复训练后，它逐渐建立“图片 $\rightarrow$ 数字”的映射。 ![机器学习通过反馈调整](assets/04-machine-learning.jpg) *图 4：作者同版视频 08:58。* 机器学习至少需要三样东西： 1.… | `/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L167` |
+| 第 5 章 联结主义与感知机 | **原片时间：10:56-19:56** 联结主义从大脑获得灵感：智能也许来自大量简单单元的连接，而不是一张完整规则表。 | `/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L207` |
+| 5.1 用特征识别苹果 | 假设输入特征是： $$ x=(\text{大小},\text{红色},\text{甜度},\text{酸度},\ldots) $$ 每个特征乘一个权重： $$ z=w_1x_1+w_2x_2+\cdots+w_nx_n-b $$ 再做阈值判断： $$ \hat y= \begin{cases} 1,&z>0\\ 0,&z\le 0 \end{cases} $$ - 正权重表示这个特征支持“是苹果”。 - 负权重表示它反对“是苹果”。 - $b$ 是阈值。 改变权重和阈值，同一个结构就可以改成西瓜识别器或山楂识别器。权重和阈值是可调的**参数**。 | `/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L213` |
+| 5.2 这就是感知机 | 感知机把多项输入加权求和，再决定是否激活。它既像一个数值化的逻辑单元，也像简化的生物神经元： - 输入对应传入信号。 - 权重对应连接的促进或抑制强度。 - 激活对应神经元放电。 ![感知机的加权求和与激活](assets/05-perceptron.jpg) *图 5：作者同版视频 14:52。* | `/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L243` |
+| 5.3 为什么早期感知机会引发轰动 | 计算机擅长精确算术，却很难理解像素。照片在计算机眼中只是数字矩阵。感知机展示了一种可能：不为每张图片手写规则，而是让机器调整参数，从像素中学会分类。 1957 年，弗兰克·罗森布拉特实现了早期感知机系统。媒体随后对“电子大脑”做出过度乐观的预测。视频借这段历史提醒我们：AI 发展经常在“神化”和“唱衰”之间摆动。 | `/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L255` |
+| 第 6 章 XOR：单层感知机的天花板 | **原片时间：19:56-23:43** 感知机的决策边界满足： $$ w_1x_1+w_2x_2-b=0 $$ 在二维平面中，这是一条直线。因此，一个感知机只能解决**线性可分**的问题。 XOR 的真值表是： | $x_1$ | $x_2$ | XOR | |---:|---:|---:| | 0 | 0 | 0 | | 0 | 1 | 1 | | 1 | 0 | 1 | | 1 | 1 | 0 | 两类点在平面上交叉分布，无法用一条直线分开。 ![单层感知机无法线性分割 XOR](assets/06-xor-limit.jpg) *图 6：作者同… | `/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L271` |
+| 不要从失败案例推出错误结论 | XOR 证明的是“**单层线性分类器**能力有限”，并不等于“多个非线性单元组成的网络没有用”。下一步恰好是把简单单元组合起来。 | `/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L300` |
+| 第 7 章 多层感知机：组合带来非线性 | **原片时间：23:43-29:37** 一个感知机不够，就让多个感知机先处理中间条件，再把结果交给下一层。 对于 XOR，可以让两个中间神经元分别识别： - 输入是 $(1,0)$。 - 输入是 $(0,1)$。 输出层再把二者合并。于是，单条直线做不到的分类，可以由多条边界组合完成。 ![多层感知机解决 XOR](assets/07-multilayer-perceptron.jpg) *图 7：作者同版视频 25:56。* 这就是**多层感知机**（MLP）的基本思想： $$ h=\sigma(W_1x+b_1) $$ $$ \hat y=\si… | `/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L312` |
+| 7.1 层级特征 | 在图像识别中，可以把层级理解为： ```text 像素 → 边缘和方向 → 圆弧、横线、折角 → 数字部件 → 完整数字 ``` 深层网络把简单模式逐层组合成复杂概念。重要的是，这些中间特征通常不是专家逐条写入，而是在训练中形成。 | `/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L341` |
+| 7.2 从 MLP 到现代架构 | 视频依次提到： - **CNN**：利用局部连接和参数共享处理图像。 - **ResNet**：用残差连接缓解深层网络训练困难。 - **DenseNet**：让不同层之间建立更密集的信息连接。 - **Transformer/Attention**：让模型按内容关系选择和组合信息，是 GPT 的基础。 它们都在设计一个更合适的可学习函数族。 > 严谨补充：万能近似定理在特定激活函数和条件下说明网络能近似广泛的连续函数，但“存在一组参数”不等于“训练一定找得到”“数据一定够”或“模型一定能泛化”。 | `/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L355` |
+| 第 8 章 损失函数：把好坏变成一个数 | **原片时间：29:37-35:11** 模型有大量参数。怎样判断一组参数好不好？ 先用五次多项式拟合数据： $$ \hat y=k_0+k_1x+k_2x^2+\cdots+k_5x^5 $$ 拟合函数输入 $x$，输出预测 $\hat y$。均方误差损失可以写成： $$ L(k_0,\ldots,k_5)=\frac{1}{N}\sum_{i=1}^{N}(\hat y_i-y_i)^2 $$ 这里出现两个不同函数： | 函数 | 输入 | 输出 | |---|---|---| | 拟合函数 | 样本 $x$ | 预测 $\hat y$ | | 损… | `/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L378` |
+| 第 9 章 梯度下降：在大雾中一步步下山 | **原片时间：35:11-41:30** 如果只有一个参数 $k$，导数表示损失随参数变化的局部速度： $$ \frac{dL}{dk} $$ - 导数为正：增大 $k$ 会让损失上升，应减小 $k$。 - 导数为负：增大 $k$ 会让损失下降，应增大 $k$。 更新规则： $$ k\leftarrow k-\eta\frac{dL}{dk} $$ $\eta$ 是学习率，也就是每次迈多大一步。 多个参数时，把所有偏导数组合成梯度： $$ \nabla_\theta L= \left( \frac{\partial L}{\partial\theta_… | `/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L419` |
+| 第 10 章 反向传播：从结果倒查每个旋钮 | **原片时间：41:30-46:05** 梯度下降需要每个参数的梯度。网络有许多层，怎样高效计算？ 关键是链式法则。若： $$ y=f(g(x)) $$ 则： $$ \frac{dy}{dx}= \frac{df}{dg}\cdot\frac{dg}{dx} $$ 神经网络由矩阵乘法、加法和激活函数等简单操作组合而成。反向传播从损失开始，沿计算图反向应用链式法则，把“这个中间量变化一点会让最终损失变化多少”逐层传回去。 ![反向传播沿计算图传递梯度](assets/10-backpropagation.jpg) *图 10：作者同版视频 41:42。*… | `/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L481` |
+| 三个概念不要混 | | 概念 | 职责 | |---|---| | 损失函数 | 定义什么叫好、什么叫坏 | | 反向传播 | 高效算出每个参数的梯度 | | 梯度下降 | 根据梯度更新参数 | | `/Users/bytedance/Downloads/AI-Projects/one-skills/courses/ai-neural-networks-90min/FEISHU_COURSE.md#L514` |
+
+## 机制或论证链
+
+- 90 分钟一口气搞懂人工智能和神经网络
+- 课程目标
+- 原片学习地图
+- 第 1 章 从达特茅斯会议开始
+- 检查点
+- 第 2 章 智能是输入到输出的函数
+- 图灵测试在这条路线中的位置
+- 本章结论
+- 第 3 章 符号主义：把知识写成规则
+- 为什么专家系统遇到瓶颈
+- 第 4 章 机器学习：不要把答案写死，让机器自己改
+- 第 5 章 联结主义与感知机
+- 5.1 用特征识别苹果
+- 5.2 这就是感知机
+- 5.3 为什么早期感知机会引发轰动
+- 第 6 章 XOR：单层感知机的天花板
+- 不要从失败案例推出错误结论
+- 第 7 章 多层感知机：组合带来非线性
+- 7.1 层级特征
+- 7.2 从 MLP 到现代架构
+- 第 8 章 损失函数：把好坏变成一个数
+- 第 9 章 梯度下降：在大雾中一步步下山
+- 第 10 章 反向传播：从结果倒查每个旋钮
+- 三个概念不要混
+
+## 时间线或状态模型
+
+- 调查与证据
+- 形成阶段性判断
+- 返回实践与一线验证
+- 根据异常改判
+- 决定保持、扩展、收缩或停止
+
+## 内部张力
+
+- 无已确认条目。
+
+## 局限
+
+- 当前 Overview 是由结构和来源元数据确定性生成的候选，需要人工或 Builder 语义确认。
+- 来源中出现的主张不自动证明方法在新场景中有效。
+
+## 研究缺口
+
+- This Pack predates Source Catalog 1.0; provenance roles and independent source groups were not gated.
+
+> 此文件是 `OBJECT_OVERVIEW.json` 的人类可读投影；确认前不能作为发布事实。

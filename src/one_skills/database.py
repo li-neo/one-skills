@@ -198,8 +198,11 @@ CREATE TABLE IF NOT EXISTS jobs (
   status TEXT NOT NULL,
   attempts INTEGER NOT NULL DEFAULT 0,
   max_attempts INTEGER NOT NULL DEFAULT 3,
+  idempotency_key TEXT,
+  lease_token INTEGER NOT NULL DEFAULT 0,
   lease_owner TEXT,
   lease_until TEXT,
+  heartbeat_at TEXT,
   result_json TEXT,
   error TEXT,
   created_at TEXT NOT NULL,
@@ -263,6 +266,7 @@ class KnowledgeDB:
         self.connection.row_factory = sqlite3.Row
         self.connection.execute("PRAGMA foreign_keys = ON")
         self.connection.executescript(SCHEMA)
+        self._migrate_schema()
         now = utc_now()
         self.connection.execute(
             "INSERT OR IGNORE INTO tenants VALUES ('local', 'Local workspace', ?)", (now,)
@@ -273,6 +277,27 @@ class KnowledgeDB:
         )
         self.connection.commit()
         self.fts_enabled = self._create_fts()
+
+    def _migrate_schema(self) -> None:
+        columns = {
+            row["name"]
+            for row in self.connection.execute("PRAGMA table_info(jobs)")
+        }
+        additions = {
+            "idempotency_key": "TEXT",
+            "lease_token": "INTEGER NOT NULL DEFAULT 0",
+            "heartbeat_at": "TEXT",
+        }
+        for name, definition in additions.items():
+            if name not in columns:
+                self.connection.execute(
+                    f"ALTER TABLE jobs ADD COLUMN {name} {definition}"
+                )
+        self.connection.execute(
+            "CREATE UNIQUE INDEX IF NOT EXISTS idx_jobs_idempotency "
+            "ON jobs(idempotency_key) WHERE idempotency_key IS NOT NULL"
+        )
+        self.connection.commit()
 
     def _create_fts(self) -> bool:
         try:

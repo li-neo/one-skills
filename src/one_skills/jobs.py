@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 import json
+import re
+import sqlite3
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from threading import Event, Thread
 from typing import Any
 from urllib.parse import urlparse
 
@@ -29,6 +32,9 @@ JOB_FIELDS = {
         "allowed": {"suite", "output"},
     },
 }
+IDEMPOTENCY_KEY_PATTERN = re.compile(
+    r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+)
 
 
 def _workspace_path(
@@ -169,30 +175,100 @@ class JobQueue:
         payload: dict[str, Any],
         max_attempts: int = 3,
         actor_id: str = "local-user",
+        idempotency_key: str | None = None,
     ) -> str:
         if not isinstance(max_attempts, int) or isinstance(max_attempts, bool):
             raise ValueError("max_attempts must be an integer")
         if max_attempts < 1:
             raise ValueError("max_attempts must be positive")
         normalized = validate_job_payload(self.workspace, job_type, payload)
+        if idempotency_key is not None and not IDEMPOTENCY_KEY_PATTERN.fullmatch(
+            idempotency_key
+        ):
+            raise ValueError("idempotency_key is invalid")
+        payload_json = json.dumps(
+            normalized,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+        if idempotency_key is not None:
+            existing = self.database.connection.execute(
+                "SELECT id, job_type, payload_json, max_attempts FROM jobs "
+                "WHERE idempotency_key = ?",
+                (idempotency_key,),
+            ).fetchone()
+            if existing:
+                if (
+                    existing["job_type"] != job_type
+                    or existing["payload_json"] != payload_json
+                    or existing["max_attempts"] != max_attempts
+                ):
+                    raise ValueError(
+                        "idempotency_key was already used for a different job"
+                    )
+                self.audit(
+                    "job.idempotent_replay",
+                    {"job_type": job_type},
+                    actor_id=actor_id,
+                    asset_type="job",
+                    asset_id=existing["id"],
+                )
+                return existing["id"]
         job_id = new_id("job")
         now = utc_now()
-        self.database.connection.execute(
-            "INSERT INTO jobs VALUES (?, ?, ?, 'queued', 0, ?, NULL, NULL, NULL, NULL, ?, ?)",
-            (
-                job_id,
-                job_type,
-                json.dumps(normalized, ensure_ascii=False),
-                max_attempts,
-                now,
-                now,
-            ),
-        )
+        try:
+            self.database.connection.execute(
+                "INSERT INTO jobs("
+                "id, job_type, payload_json, status, attempts, max_attempts, "
+                "idempotency_key, lease_token, lease_owner, lease_until, "
+                "heartbeat_at, result_json, error, created_at, updated_at"
+                ") VALUES (?, ?, ?, 'queued', 0, ?, ?, 0, NULL, NULL, NULL, "
+                "NULL, NULL, ?, ?)",
+                (
+                    job_id,
+                    job_type,
+                    payload_json,
+                    max_attempts,
+                    idempotency_key,
+                    now,
+                    now,
+                ),
+            )
+        except sqlite3.IntegrityError:
+            if idempotency_key is None:
+                raise
+            self.database.connection.rollback()
+            existing = self.database.connection.execute(
+                "SELECT id, job_type, payload_json, max_attempts FROM jobs "
+                "WHERE idempotency_key = ?",
+                (idempotency_key,),
+            ).fetchone()
+            if not existing:
+                raise
+            if (
+                existing["job_type"] != job_type
+                or existing["payload_json"] != payload_json
+                or existing["max_attempts"] != max_attempts
+            ):
+                raise ValueError(
+                    "idempotency_key was already used for a different job"
+                )
+            self.audit(
+                "job.idempotent_replay",
+                {"job_type": job_type},
+                actor_id=actor_id,
+                asset_type="job",
+                asset_id=existing["id"],
+            )
+            return existing["id"]
         self.database.connection.commit()
         self.audit("job.enqueued", {"job_type": job_type}, actor_id=actor_id, asset_type="job", asset_id=job_id)
         return job_id
 
     def claim(self, owner: str, lease_seconds: int = 300) -> dict[str, Any] | None:
+        if lease_seconds < 1:
+            raise ValueError("lease_seconds must be positive")
         now = datetime.now(timezone.utc).replace(microsecond=0)
         lease_until = (now + timedelta(seconds=lease_seconds)).isoformat()
         connection = self.database.connection
@@ -209,8 +285,15 @@ class JobQueue:
                 return None
             connection.execute(
                 "UPDATE jobs SET status = 'running', attempts = attempts + 1, "
-                "lease_owner = ?, lease_until = ?, updated_at = ? WHERE id = ?",
-                (owner, lease_until, now.isoformat(), row["id"]),
+                "lease_token = lease_token + 1, lease_owner = ?, lease_until = ?, "
+                "heartbeat_at = ?, updated_at = ? WHERE id = ?",
+                (
+                    owner,
+                    lease_until,
+                    now.isoformat(),
+                    now.isoformat(),
+                    row["id"],
+                ),
             )
             connection.commit()
         except Exception:
@@ -220,35 +303,98 @@ class JobQueue:
         claimed["attempts"] += 1
         claimed["lease_owner"] = owner
         claimed["lease_until"] = lease_until
+        claimed["lease_token"] += 1
+        claimed["heartbeat_at"] = now.isoformat()
         claimed["payload"] = json.loads(claimed.pop("payload_json"))
         self.audit("job.claimed", {"owner": owner}, actor_id=owner, asset_type="job", asset_id=claimed["id"])
         return claimed
 
-    def complete(self, job_id: str, owner: str, result: dict[str, Any]) -> None:
+    def heartbeat(
+        self,
+        job_id: str,
+        owner: str,
+        lease_token: int,
+        lease_seconds: int = 300,
+    ) -> str:
+        if lease_seconds < 1:
+            raise ValueError("lease_seconds must be positive")
+        now = datetime.now(timezone.utc).replace(microsecond=0)
+        now_value = now.isoformat()
+        lease_until = (now + timedelta(seconds=lease_seconds)).isoformat()
         cursor = self.database.connection.execute(
-            "UPDATE jobs SET status = 'completed', result_json = ?, lease_owner = NULL, "
-            "lease_until = NULL, updated_at = ? "
-            "WHERE id = ? AND status = 'running' AND lease_owner = ?",
-            (json.dumps(result, ensure_ascii=False), utc_now(), job_id, owner),
+            "UPDATE jobs SET lease_until = ?, heartbeat_at = ?, updated_at = ? "
+            "WHERE id = ? AND status = 'running' AND lease_owner = ? "
+            "AND lease_token = ? AND lease_until >= ?",
+            (
+                lease_until,
+                now_value,
+                now_value,
+                job_id,
+                owner,
+                lease_token,
+                now_value,
+            ),
         )
         if cursor.rowcount != 1:
+            self.database.connection.rollback()
+            raise ValueError("job heartbeat rejected: lease was lost")
+        self.database.connection.commit()
+        return lease_until
+
+    def complete(
+        self,
+        job_id: str,
+        owner: str,
+        lease_token: int,
+        result: dict[str, Any],
+    ) -> None:
+        now = utc_now()
+        cursor = self.database.connection.execute(
+            "UPDATE jobs SET status = 'completed', result_json = ?, lease_owner = NULL, "
+            "lease_until = NULL, heartbeat_at = NULL, updated_at = ? "
+            "WHERE id = ? AND status = 'running' AND lease_owner = ? "
+            "AND lease_token = ? AND lease_until >= ?",
+            (
+                json.dumps(result, ensure_ascii=False),
+                now,
+                job_id,
+                owner,
+                lease_token,
+                now,
+            ),
+        )
+        if cursor.rowcount != 1:
+            self.database.connection.rollback()
             raise ValueError("job completion rejected: lease owner or state mismatch")
         self.database.connection.commit()
         self.audit("job.completed", result, actor_id=owner, asset_type="job", asset_id=job_id)
 
-    def fail(self, job_id: str, owner: str, error: str) -> None:
+    def fail(
+        self,
+        job_id: str,
+        owner: str,
+        lease_token: int,
+        error: str,
+    ) -> None:
+        now = utc_now()
         row = self.database.connection.execute(
-            "SELECT attempts, max_attempts FROM jobs WHERE id = ? AND lease_owner = ?",
-            (job_id, owner),
+            "SELECT attempts, max_attempts FROM jobs "
+            "WHERE id = ? AND lease_owner = ? AND lease_token = ? "
+            "AND lease_until >= ?",
+            (job_id, owner, lease_token, now),
         ).fetchone()
         if not row:
             raise ValueError("job failure rejected: lease owner mismatch")
         status = "failed" if row["attempts"] >= row["max_attempts"] else "queued"
-        self.database.connection.execute(
-            "UPDATE jobs SET status = ?, error = ?, lease_owner = NULL, lease_until = NULL, "
-            "updated_at = ? WHERE id = ?",
-            (status, error, utc_now(), job_id),
+        cursor = self.database.connection.execute(
+            "UPDATE jobs SET status = ?, error = ?, lease_owner = NULL, "
+            "lease_until = NULL, heartbeat_at = NULL, updated_at = ? "
+            "WHERE id = ? AND lease_token = ?",
+            (status, error, now, job_id, lease_token),
         )
+        if cursor.rowcount != 1:
+            self.database.connection.rollback()
+            raise ValueError("job failure rejected: lease was lost")
         self.database.connection.commit()
         self.audit("job.failed", {"error": error, "next_status": status}, actor_id=owner, asset_type="job", asset_id=job_id)
 
@@ -262,13 +408,66 @@ class JobQueue:
         return result
 
 
-def run_worker_once(workspace: Path, owner: str) -> dict[str, Any] | None:
+class _LeaseHeartbeat:
+    def __init__(
+        self,
+        database_path: Path,
+        job_id: str,
+        owner: str,
+        lease_token: int,
+        lease_seconds: int,
+    ):
+        self.database_path = database_path
+        self.job_id = job_id
+        self.owner = owner
+        self.lease_token = lease_token
+        self.lease_seconds = lease_seconds
+        self.stop_event = Event()
+        self.error: Exception | None = None
+        self.thread = Thread(target=self._run, daemon=True)
+
+    def _run(self) -> None:
+        interval = max(0.25, min(10.0, self.lease_seconds / 3))
+        while not self.stop_event.wait(interval):
+            try:
+                with KnowledgeDB(self.database_path) as database:
+                    JobQueue(database).heartbeat(
+                        self.job_id,
+                        self.owner,
+                        self.lease_token,
+                        self.lease_seconds,
+                    )
+            except (sqlite3.Error, OSError, RuntimeError, ValueError) as exc:
+                self.error = exc
+                self.stop_event.set()
+
+    def start(self) -> None:
+        self.thread.start()
+
+    def stop(self) -> None:
+        self.stop_event.set()
+        self.thread.join(timeout=max(1.0, self.lease_seconds))
+
+
+def run_worker_once(
+    workspace: Path,
+    owner: str,
+    lease_seconds: int = 300,
+) -> dict[str, Any] | None:
     database_path = workspace / ".one" / "knowledge.db"
     with KnowledgeDB(database_path) as database:
         queue = JobQueue(database)
-        job = queue.claim(owner)
+        job = queue.claim(owner, lease_seconds)
         if job is None:
             return None
+        heartbeat = _LeaseHeartbeat(
+            database_path,
+            job["id"],
+            owner,
+            job["lease_token"],
+            lease_seconds,
+        )
+        heartbeat.start()
         try:
             payload = validate_job_payload(workspace, job["job_type"], job["payload"])
             if job["job_type"] == "distill":
@@ -289,8 +488,26 @@ def run_worker_once(workspace: Path, owner: str) -> dict[str, Any] | None:
                     Path(payload["suite"]),
                     Path(payload["output"]) if payload.get("output") else None,
                 )
-            queue.complete(job["id"], owner, result)
+            heartbeat.stop()
+            if heartbeat.error is not None:
+                raise RuntimeError(f"job lease heartbeat failed: {heartbeat.error}")
+            queue.complete(job["id"], owner, job["lease_token"], result)
             return {"job_id": job["id"], "status": "completed", "result": result}
         except (OSError, RuntimeError, ValueError) as exc:
-            queue.fail(job["id"], owner, f"{type(exc).__name__}: {exc}")
+            heartbeat.stop()
+            try:
+                queue.fail(
+                    job["id"],
+                    owner,
+                    job["lease_token"],
+                    f"{type(exc).__name__}: {exc}",
+                )
+            except ValueError as lease_error:
+                return {
+                    "job_id": job["id"],
+                    "status": "lease-lost",
+                    "error": str(lease_error),
+                }
             return {"job_id": job["id"], "status": "failed", "error": str(exc)}
+        finally:
+            heartbeat.stop()

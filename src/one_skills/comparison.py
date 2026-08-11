@@ -12,12 +12,14 @@ from typing import Any
 from urllib.parse import quote, urlparse
 from urllib.request import Request, urlopen
 
+from . import __version__
 from .core_assets import (
     load_reproducibility,
     load_source_manifest,
     save_reproducibility,
 )
 from .models import EvaluationRecord
+from .provenance import current_source_set_hash
 from .schema_runtime import require_schema
 from .utils import dump_json, load_json, new_id, stable_json_hash, utc_now
 from .validation import validate_pack
@@ -25,6 +27,81 @@ from .validation import validate_pack
 
 class ComparisonError(ValueError):
     pass
+
+
+COMPARISON_WEIGHTS = {
+    "task_effect": 50,
+    "routing": 15,
+    "evidence": 10,
+    "safety": 15,
+    "learning": 5,
+    "cost": 5,
+}
+COMPARISON_WIN_RULE = {
+    "minimum_weighted_lead": 5.0,
+    "task_effect_must_not_regress": True,
+    "all_hard_gates_required": True,
+}
+
+
+def freeze_evaluation_suite(
+    pack: Path,
+    suite: dict[str, Any],
+) -> dict[str, str]:
+    require_schema(
+        suite,
+        "comparison-suite.schema.json",
+        "comparison suite",
+    )
+    if any((pack / "evaluations" / "runs").glob("*.json")) or (
+        pack / "evaluations" / "comparison-report.json"
+    ).exists():
+        raise ComparisonError(
+            "evaluation suite must be frozen before evaluation runs exist"
+        )
+    suite_hash = stable_json_hash(suite)
+    path = pack / "evaluations" / "suite.json"
+    if path.exists() and stable_json_hash(load_json(path)) != suite_hash:
+        raise ComparisonError("a different evaluation suite is already frozen")
+    dump_json(path, suite)
+    constraints = load_reproducibility(pack)
+    constraints.setdefault("evaluation_suite_hashes", {})[
+        suite.get("name", f"comparison-{suite_hash[:12]}")
+    ] = suite_hash
+    save_reproducibility(pack, constraints)
+    return {"suite_hash": suite_hash, "path": str(path)}
+
+
+def _assert_suite_frozen(pack: Path, suite: dict[str, Any]) -> str:
+    require_schema(
+        suite,
+        "comparison-suite.schema.json",
+        "comparison suite",
+    )
+    suite_hash = stable_json_hash(suite)
+    snapshot = pack / "evaluations" / "suite.json"
+    if not snapshot.exists() or stable_json_hash(load_json(snapshot)) != suite_hash:
+        raise ComparisonError("comparison suite is not the frozen Pack suite")
+    constraints = load_reproducibility(pack)
+    if suite_hash not in set(
+        constraints.get("evaluation_suite_hashes", {}).values()
+    ):
+        raise ComparisonError("comparison suite hash is not frozen")
+    return suite_hash
+
+
+def judge_artifact_hash(
+    passed: bool,
+    scores: dict[str, Any],
+    reason: str,
+) -> str:
+    return stable_json_hash(
+        {
+            "passed": passed,
+            "scores": scores,
+            "reason": reason,
+        }
+    )
 
 
 def _request_json(url: str) -> Any:
@@ -156,9 +233,8 @@ def run_condition(
         raise ComparisonError(f"unsupported condition: {condition}")
     providers = roles.providers()
     records: list[dict[str, Any]] = []
-    suite_hash = stable_json_hash(suite)
-    constraints = load_reproducibility(pack)
-    source_set_hash = stable_json_hash(constraints.get("source_hashes", {}))
+    suite_hash = _assert_suite_frozen(pack, suite)
+    source_set_hash = current_source_set_hash(pack)
     skill_hash = hashlib.sha256(skill_context.encode("utf-8")).hexdigest()
     for case in suite["cases"]:
         started = perf_counter()
@@ -236,6 +312,11 @@ def run_condition(
                 "source_set": source_set_hash,
                 "skill": skill_hash,
                 "answer": hashlib.sha256(answer_text.encode("utf-8")).hexdigest(),
+                "judge": judge_artifact_hash(
+                    judge["passed"],
+                    normalized_scores,
+                    str(judge.get("reason") or ""),
+                ),
             },
             latency_ms=latency_ms,
             input_tokens=token_estimate,
@@ -281,7 +362,17 @@ def run_condition(
         "records": records,
         "summary": summary,
         "generated_at": utc_now(),
+        "runtime": f"one-skills/{__version__}",
+        "parameters": {},
+        "input_snapshot_hash": stable_json_hash(
+            {
+                "suite": suite_hash,
+                "source_set": source_set_hash,
+                "skill": skill_hash,
+            }
+        ),
     }
+    run["artifact_hash"] = stable_json_hash(run)
     directory = pack / "evaluations" / "runs"
     directory.mkdir(parents=True, exist_ok=True)
     require_schema(run, "evaluation-run.schema.json", condition)
@@ -334,10 +425,14 @@ def holdout_leaked_to_builder(pack: Path, suite: dict[str, Any]) -> bool:
         for path in builder_paths
         if path.is_file()
     )
+    protected_fields = ("prompt", "rubric", "expected", "reference_answer")
     return any(
-        case["prompt"] in builder_text
+        isinstance(case.get(field), str)
+        and len(case[field].strip()) >= 12
+        and case[field] in builder_text
         for case in suite["cases"]
         if case["type"] == "holdout"
+        for field in protected_fields
     )
 
 
@@ -358,16 +453,16 @@ def _weighted_score(summary: dict[str, Any], cost_reference: float) -> dict[str,
     return {**components, "total": round(sum(components.values()), 4)}
 
 
-def compare_runs(
+def calculate_comparison(
     pack: Path,
     no_skill: dict[str, Any],
     baseline: dict[str, Any],
     candidate: dict[str, Any],
-    baseline_manifest: dict[str, Any],
-    holdout_builder_leakage: bool = False,
+    holdout_builder_leakage: bool,
 ) -> dict[str, Any]:
     cost_reference = float(
-        baseline["summary"]["input_tokens"] + baseline["summary"]["output_tokens"]
+        baseline["summary"]["input_tokens"]
+        + baseline["summary"]["output_tokens"]
     )
     scores = {
         "no-skill": _weighted_score(no_skill["summary"], cost_reference),
@@ -414,24 +509,60 @@ def compare_runs(
         )
         == 1,
     }
-    lead = scores["one-skills"]["total"] - scores["cangjie"]["total"]
-    passed = all(hard_gates.values()) and lead >= float(
-        baseline_manifest["win_rule"]["minimum_weighted_lead"]
+    lead = round(
+        scores["one-skills"]["total"] - scores["cangjie"]["total"],
+        4,
+    )
+    return {
+        "scores": scores,
+        "weighted_lead": lead,
+        "hard_gates": hard_gates,
+        "passed": (
+            all(hard_gates.values())
+            and lead >= COMPARISON_WIN_RULE["minimum_weighted_lead"]
+        ),
+    }
+
+
+def compare_runs(
+    pack: Path,
+    no_skill: dict[str, Any],
+    baseline: dict[str, Any],
+    candidate: dict[str, Any],
+    baseline_manifest: dict[str, Any],
+    holdout_builder_leakage: bool = False,
+) -> dict[str, Any]:
+    if (
+        baseline_manifest.get("score_weights") != COMPARISON_WEIGHTS
+        or baseline_manifest.get("win_rule") != COMPARISON_WIN_RULE
+    ):
+        raise ComparisonError(
+            "baseline comparison contract does not match Stable Core 1.0"
+        )
+    decision = calculate_comparison(
+        pack,
+        no_skill,
+        baseline,
+        candidate,
+        holdout_builder_leakage,
     )
     report = {
         "schema_version": "1.0",
+        "status": "valid",
         "generated_at": utc_now(),
         "runs": {
             "no-skill": no_skill["run_id"],
             "cangjie": baseline["run_id"],
             "one-skills": candidate["run_id"],
         },
-        "scores": scores,
-        "weighted_lead": round(lead, 4),
-        "hard_gates": hard_gates,
-        "passed": passed,
-        "win_rule": baseline_manifest["win_rule"],
-        "weights": baseline_manifest["score_weights"],
+        "run_hashes": {
+            "no-skill": no_skill["artifact_hash"],
+            "cangjie": baseline["artifact_hash"],
+            "one-skills": candidate["artifact_hash"],
+        },
+        **decision,
+        "win_rule": COMPARISON_WIN_RULE,
+        "weights": COMPARISON_WEIGHTS,
         "suite_hash": candidate["suite_hash"],
         "source_set_hash": candidate["source_set_hash"],
         "skill_hashes": {
@@ -439,9 +570,16 @@ def compare_runs(
             "cangjie": baseline["skill_hash"],
             "one-skills": candidate["skill_hash"],
         },
+        "isolation_level": candidate["isolation_level"],
+        "candidate_run_hash": candidate["artifact_hash"],
     }
     directory = pack / "evaluations"
     directory.mkdir(exist_ok=True)
+    require_schema(
+        report,
+        "comparison-report.schema.json",
+        str(directory / "comparison-report.json"),
+    )
     dump_json(directory / "comparison-report.json", report)
     by_type: dict[str, dict[str, int]] = {}
     for record in candidate["records"]:
@@ -453,16 +591,17 @@ def compare_runs(
         group["passed"] += int(record["passed"])
     metadata = load_json(pack / "pack.json")
     compatibility_report = {
+        "status": "valid",
         "generated_at": utc_now(),
         "pack": metadata["id"],
         "errors": 0,
         "skills": [
             {
                 "name": metadata["slug"],
-                "score": scores["one-skills"]["total"],
+                "score": decision["scores"]["one-skills"]["total"],
                 "dimensions": [
                     {"dimension": key, "score": value}
-                    for key, value in scores["one-skills"].items()
+                    for key, value in decision["scores"]["one-skills"].items()
                     if key != "total"
                 ],
                 "agent_results": {
@@ -505,13 +644,8 @@ def import_blind_artifacts(
         "one-skills",
     }:
         raise ComparisonError("blind condition map must be a permutation of A/B/C")
-    constraints = load_reproducibility(pack)
-    source_set_hash = stable_json_hash(constraints.get("source_hashes", {}))
-    suite_hash = stable_json_hash(suite)
-    constraints.setdefault("evaluation_suite_hashes", {})[
-        suite.get("name", suite_path.stem)
-    ] = suite_hash
-    save_reproducibility(pack, constraints)
+    source_set_hash = current_source_set_hash(pack)
+    suite_hash = _assert_suite_frozen(pack, suite)
     runs: dict[str, dict[str, Any]] = {}
     for label, condition in mapping.items():
         answers = load_json(blind_directory / f"answers-{label}.json")
@@ -557,6 +691,11 @@ def import_blind_artifacts(
                     "source_set": source_set_hash,
                     "skill": skill_hash,
                     "answer": hashlib.sha256(answer_text.encode("utf-8")).hexdigest(),
+                    "judge": judge_artifact_hash(
+                        judgment["passed"],
+                        normalized_scores,
+                        str(judgment.get("reason") or ""),
+                    ),
                 },
                 latency_ms=0,
                 input_tokens=max(
@@ -593,7 +732,17 @@ def import_blind_artifacts(
             "summary": _summary_from_records(records),
             "generated_at": utc_now(),
             "artifact_source": "role-isolated runtime import",
+            "runtime": f"one-skills/{__version__}",
+            "parameters": {},
+            "input_snapshot_hash": stable_json_hash(
+                {
+                    "suite": suite_hash,
+                    "source_set": source_set_hash,
+                    "skill": skill_hash,
+                }
+            ),
         }
+        run["artifact_hash"] = stable_json_hash(run)
         directory = pack / "evaluations" / "runs"
         directory.mkdir(parents=True, exist_ok=True)
         require_schema(run, "evaluation-run.schema.json", condition)

@@ -20,10 +20,10 @@
   },
   "created_at": "2026-08-06T04:16:31+00:00",
   "semantic_contract": {
-    "overview_confirmation": "stale",
+    "overview_confirmation": "confirmed",
     "capability_confirmation": "stale"
   },
-  "object_overview_hash": null,
+  "object_overview_hash": "bb80923b2537d87f07a5f8c039caa57d6ceb84a55ea32c8f264534bee1f0bcc0",
   "capability_portfolio_hash": null,
   "capability_graph_hash": null,
   "recipe_lock": {
@@ -64,7 +64,9 @@
     ],
     "canonical_eval_hashes": {},
     "runtime_eval_hashes": {},
-    "source_quality_hash": "2afe8dad1ea5cc5e37d26a54e6697058e9c46d6c270d7171c68b0f4a7c2ce4c9"
+    "source_quality_hash": "2afe8dad1ea5cc5e37d26a54e6697058e9c46d6c270d7171c68b0f4a7c2ce4c9",
+    "source_set_hash": "5104237235335b042e9568b4158606471ae8ee4481453b2202f77fc0fa68b2aa",
+    "object_overview_hash": "bb80923b2537d87f07a5f8c039caa57d6ceb84a55ea32c8f264534bee1f0bcc0"
   },
   "lifecycle": {
     "schema_version": "1.0",
@@ -133,5 +135,5 @@
     }
   ],
   "migrated_at": "2026-08-11T03:14:55+00:00",
-  "revision": 1
+  "revision": 4
 }

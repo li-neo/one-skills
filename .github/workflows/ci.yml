@@ -10,10 +10,21 @@ permissions:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        include:
+          - os: ubuntu-latest
+            python-version: "3.10"
+          - os: ubuntu-latest
+            python-version: "3.11"
+          - os: ubuntu-latest
+            python-version: "3.12"
+          - os: macos-latest
+            python-version: "3.12"
+          - os: windows-latest
+            python-version: "3.12"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -26,6 +37,49 @@ jobs:
       - run: one --help
       - run: one validate .
       - run: one benchmark --suite benchmarks/profile-routing.json
+      - if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
+        run: python -m pip install coverage
+      - if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
+        run: >-
+          coverage run --source=src/one_skills
+          -m unittest discover -s tests
+      - if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
+        run: |
+          coverage json -o coverage.json
+          python scripts/check_coverage.py coverage.json
+
+  artifact:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip build twine
+      - run: python -m build
+      - run: python -m twine check dist/*
+      - run: python scripts/check_distribution.py dist
+      - run: |
+          python -m venv /tmp/one-skills-artifact
+          /tmp/one-skills-artifact/bin/python -m pip install dist/*.whl
+          cd /tmp
+          /tmp/one-skills-artifact/bin/one --version
+          /tmp/one-skills-artifact/bin/python - <<'PY'
+          from one_skills.resources import resource_file
+          from one_skills.schema_runtime import validate_schema
+
+          assert validate_schema(
+              {"schema_version": "1.0"},
+              "pack.schema.json",
+          )
+          with resource_file("migrations", "postgres", "001_initial.sql") as path:
+              assert "CREATE EXTENSION" in path.read_text(encoding="utf-8")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-dist
+          path: dist/*
+          if-no-files-found: error
 
   postgres:
     runs-on: ubuntu-latest
@@ -67,3 +121,26 @@ jobs:
       - run: one postgres health
       - run: one postgres load-test --query "瓶颈价值" --iterations 50
       - run: python scripts/postgres_smoke.py
+
+  release:
+    if: github.ref == 'refs/tags/v1.0.0'
+    needs: [test, artifact, postgres]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-dist
+          path: release-dist
+      - run: cd release-dist && sha256sum * > SHA256SUMS
+      - uses: softprops/action-gh-release@v2
+        with:
+          body_path: docs/RELEASE_1.0.md
+          files: |
+            release-dist/one_skills-1.0.0-py3-none-any.whl
+            release-dist/one_skills-1.0.0.tar.gz
+            release-dist/SHA256SUMS

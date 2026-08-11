@@ -15,6 +15,7 @@ from .batch import distill_batch, load_jobs
 from .benchmark import run_profile_benchmark
 from .comparison import (
     fetch_github_skill_context,
+    freeze_evaluation_suite,
     import_blind_artifacts,
     local_skill_context,
     run_blind_comparison,
@@ -87,6 +88,7 @@ from .portfolio import confirm_portfolio
 from .postgres import PostgresBackend
 from .provider import ProviderError
 from .recipes import Recipe, promote_recipe, promotion_decision
+from .resources import resource_file
 from .retrieval import HybridRetriever, local_embedding
 from .routing import route_intent
 from .skill_retrieval import search_skills
@@ -233,6 +235,10 @@ def cmd_evaluate(args: argparse.Namespace) -> int:
 
 
 def cmd_compare(args: argparse.Namespace) -> int:
+    if args.compare_command == "freeze":
+        suite = json.loads(_path(args.suite).read_text(encoding="utf-8"))
+        _print(freeze_evaluation_suite(_path(args.pack), suite))
+        return 0
     if args.compare_command == "report":
         _print(
             json.loads(
@@ -426,14 +432,23 @@ def cmd_acl(args: argparse.Namespace) -> int:
 def cmd_job(args: argparse.Namespace) -> int:
     workspace = workspace_for(_path(args.workspace))
     if args.job_command == "worker":
-        result = run_worker_once(workspace, args.owner)
+        result = run_worker_once(
+            workspace,
+            args.owner,
+            args.lease_seconds,
+        )
         _print(result or {"status": "idle"})
         return 0
     with KnowledgeDB(workspace / ".one" / "knowledge.db") as database:
         queue = JobQueue(database)
         if args.job_command == "submit":
             payload = json.loads(_path(args.payload).read_text(encoding="utf-8"))
-            job_id = queue.enqueue(args.type, payload, args.max_attempts)
+            job_id = queue.enqueue(
+                args.type,
+                payload,
+                args.max_attempts,
+                idempotency_key=args.idempotency_key,
+            )
             _print({"job_id": job_id, "status": "queued"})
         else:
             _print(queue.get(args.id))
@@ -689,7 +704,15 @@ def cmd_postgres(args: argparse.Namespace) -> int:
         raise ValueError("set ONE_SKILLS_POSTGRES_DSN")
     with PostgresBackend(dsn) as backend:
         if args.postgres_command == "init":
-            backend.initialize(_path(args.migration))
+            if args.migration:
+                backend.initialize(_path(args.migration))
+            else:
+                with resource_file(
+                    "migrations",
+                    "postgres",
+                    "001_initial.sql",
+                ) as migration:
+                    backend.initialize(migration)
             result = backend.health()
         elif args.postgres_command == "health":
             result = backend.health()
@@ -870,6 +893,10 @@ def build_parser() -> argparse.ArgumentParser:
         default="benchmarks/mao-methods/baselines.json",
     )
     compare_run.set_defaults(func=cmd_compare)
+    compare_freeze = compare_commands.add_parser("freeze")
+    compare_freeze.add_argument("pack")
+    compare_freeze.add_argument("--suite", required=True)
+    compare_freeze.set_defaults(func=cmd_compare)
     compare_import = compare_commands.add_parser("import")
     compare_import.add_argument("pack")
     compare_import.add_argument("--suite", required=True)
@@ -1090,6 +1117,7 @@ def build_parser() -> argparse.ArgumentParser:
     job_submit.add_argument("--type", choices=("distill", "update", "benchmark"), required=True)
     job_submit.add_argument("--payload", required=True, help="JSON payload file")
     job_submit.add_argument("--max-attempts", type=int, default=3)
+    job_submit.add_argument("--idempotency-key")
     job_submit.set_defaults(func=cmd_job)
     job_status = job_commands.add_parser("status")
     job_status.add_argument("--workspace", default=".")
@@ -1098,6 +1126,7 @@ def build_parser() -> argparse.ArgumentParser:
     job_worker = job_commands.add_parser("worker")
     job_worker.add_argument("--workspace", default=".")
     job_worker.add_argument("--owner", required=True)
+    job_worker.add_argument("--lease-seconds", type=int, default=300)
     job_worker.set_defaults(func=cmd_job)
 
     lineage_parser = commands.add_parser("lineage", help="list transitive descendants of an asset")
@@ -1310,7 +1339,7 @@ def build_parser() -> argparse.ArgumentParser:
     postgres_init = postgres_commands.add_parser("init")
     postgres_init.add_argument(
         "--migration",
-        default="migrations/postgres/001_initial.sql",
+        help="override the packaged PostgreSQL migration",
     )
     postgres_init.set_defaults(func=cmd_postgres)
     postgres_health = postgres_commands.add_parser("health")

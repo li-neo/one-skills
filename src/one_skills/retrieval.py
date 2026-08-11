@@ -140,17 +140,54 @@ class HybridRetriever:
             scored.append((score, item))
         return [item for _, item in sorted(scored, key=lambda pair: pair[0], reverse=True)[:limit]]
 
-    def graph_neighbors(self, chunk_ids: list[str], limit: int = 20) -> list[str]:
-        if not chunk_ids:
+    def graph_neighbors(
+        self,
+        chunk_ids: list[str],
+        allowed_access: set[str],
+        limit: int = 20,
+    ) -> list[str]:
+        if not chunk_ids or not allowed_access:
             return []
         placeholders = ", ".join("?" for _ in chunk_ids)
+        clause, access_values = self._allowed_clause(allowed_access)
         rows = self.database.rows(
-            "SELECT DISTINCT e2.to_id AS chunk_id "
-            "FROM lineage_edges e1 "
-            "JOIN lineage_edges e2 ON e1.to_type = e2.from_type AND e1.to_id = e2.from_id "
-            f"WHERE e1.from_type = 'chunk' AND e1.from_id IN ({placeholders}) "
-            "AND e2.to_type = 'chunk' LIMIT ?",
-            (*chunk_ids, limit),
+            "WITH seed_claims AS ("
+            "  SELECT DISTINCT claim_id FROM evidence_links "
+            f"  WHERE chunk_id IN ({placeholders})"
+            "), seed_capabilities AS ("
+            "  SELECT DISTINCT le.to_id AS capability_id "
+            "  FROM lineage_edges le JOIN seed_claims sc "
+            "    ON le.from_type = 'claim' AND le.from_id = sc.claim_id "
+            "  WHERE le.to_type = 'capability'"
+            "), related_capabilities AS ("
+            "  SELECT capability_id FROM seed_capabilities "
+            # Retrieval uses an undirected relevance neighborhood even when
+            # the capability edge has directed execution semantics.
+            "  UNION "
+            "  SELECT ge.to_id FROM graph_edges ge JOIN seed_capabilities sc "
+            "    ON ge.from_type = 'capability' AND ge.from_id = sc.capability_id "
+            "  WHERE ge.to_type = 'capability' "
+            "  UNION "
+            "  SELECT ge.from_id FROM graph_edges ge JOIN seed_capabilities sc "
+            "    ON ge.to_type = 'capability' AND ge.to_id = sc.capability_id "
+            "  WHERE ge.from_type = 'capability'"
+            "), related_claims AS ("
+            "  SELECT claim_id FROM seed_claims "
+            "  UNION "
+            "  SELECT le.from_id FROM lineage_edges le "
+            "  JOIN related_capabilities rc "
+            "    ON le.to_type = 'capability' AND le.to_id = rc.capability_id "
+            "  WHERE le.from_type = 'claim'"
+            ") "
+            "SELECT DISTINCT c.id AS chunk_id "
+            "FROM evidence_links el "
+            "JOIN related_claims rc ON rc.claim_id = el.claim_id "
+            "JOIN chunks c ON c.id = el.chunk_id "
+            "JOIN documents d ON d.id = c.document_id "
+            f"WHERE c.id NOT IN ({placeholders}) "
+            f"AND c.document_version = d.active_version AND {clause} "
+            "LIMIT ?",
+            (*chunk_ids, *chunk_ids, *access_values, limit),
         )
         return [row["chunk_id"] for row in rows]
 
@@ -164,7 +201,11 @@ class HybridRetriever:
         semantic = self.semantic_search(query, allowed_access, max(limit * 3, 20))
         keyword_ids = [item["id"] for item in keyword]
         semantic_ids = [item["id"] for item in semantic]
-        graph_ids = self.graph_neighbors((keyword_ids + semantic_ids)[:10], limit * 2)
+        graph_ids = self.graph_neighbors(
+            (keyword_ids + semantic_ids)[:10],
+            allowed_access,
+            limit * 2,
+        )
         fused = reciprocal_rank_fusion([keyword_ids, semantic_ids, graph_ids])
         items = {item["id"]: item for item in keyword + semantic}
         missing = [item_id for item_id in graph_ids if item_id not in items]
@@ -172,7 +213,10 @@ class HybridRetriever:
             placeholders = ", ".join("?" for _ in missing)
             clause, access_values = self._allowed_clause(allowed_access)
             for row in self.database.rows(
-                f"SELECT c.* FROM chunks c WHERE c.id IN ({placeholders}) AND {clause}",
+                "SELECT c.* FROM chunks c "
+                "JOIN documents d ON d.id = c.document_id "
+                f"WHERE c.id IN ({placeholders}) AND {clause} "
+                "AND c.document_version = d.active_version",
                 (*missing, *access_values),
             ):
                 items[row["id"]] = dict(row)

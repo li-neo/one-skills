@@ -22,7 +22,7 @@ from one_skills.lifecycle import load_state, save_state
 from one_skills.migrations import migrate_pack, rollback_pack_migration
 from one_skills.pipeline import create_pack, revoke_source
 from one_skills.schema_runtime import validate_schema
-from one_skills.utils import dump_json, load_json
+from one_skills.utils import dump_json, load_json, stable_json_hash
 from one_skills.validation import validate_pack
 
 
@@ -326,6 +326,73 @@ class CoreConsolidationTests(unittest.TestCase):
             self.assertEqual(rolled_back["schema_version"], "0.3")
             self.assertEqual(load_pack_metadata(pack)["schema_version"], "0.3")
             self.assertTrue((pack / "PIPELINE_STATE.json").exists())
+
+    def test_migration_rejects_tampered_evaluation_answer(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            pack = self._pack(Path(temporary))
+            constraints = load_reproducibility(pack)
+            legacy_source_hash = stable_json_hash(
+                constraints["source_hashes"]
+            )
+            run_path = pack / "evaluations" / "runs" / "one-skills.json"
+            dump_json(
+                run_path,
+                {
+                    "schema_version": "1.0",
+                    "run_id": "run-legacy",
+                    "condition": "one-skills",
+                    "suite_hash": "suite",
+                    "source_set_hash": legacy_source_hash,
+                    "skill_hash": "skill",
+                    "roles": {
+                        "answer": "answer-model",
+                        "judge": "judge-model",
+                    },
+                    "isolation_level": "model-separated",
+                    "records": [
+                        {
+                            "id": "record",
+                            "case_id": "case",
+                            "condition": "one-skills",
+                            "prompt": "prompt",
+                            "answer": "tampered answer",
+                            "passed": True,
+                            "scores": {"task_effect": 1.0},
+                            "judge_reason": "reason",
+                            "answer_model": "answer-model",
+                            "judge_model": "judge-model",
+                            "isolation_level": "model-separated",
+                            "hashes": {
+                                "suite": "suite",
+                                "source_set": legacy_source_hash,
+                                "skill": "skill",
+                                "answer": "0" * 64,
+                            },
+                        }
+                    ],
+                    "summary": {},
+                },
+            )
+            self._downgrade_pack(pack, "0.4")
+            with self.assertRaisesRegex(
+                ValueError,
+                "answer hash is invalid before migration",
+            ):
+                migrate_pack(pack)
+
+    def test_migration_resumes_missing_test_result_status(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            pack = self._pack(Path(temporary))
+            dump_json(
+                pack / "test-results.json",
+                {"errors": 0, "skills": []},
+            )
+            self.assertEqual(migrate_pack(pack)["status"], "migrated")
+            self.assertEqual(
+                load_json(pack / "test-results.json")["status"],
+                "valid",
+            )
+            self.assertEqual(migrate_pack(pack)["status"], "unchanged")
 
     def test_released_mao_pack_passes_core_quality_gates(self) -> None:
         root = Path(__file__).resolve().parents[1]

@@ -5,12 +5,17 @@
   "to": "1.0",
   "status": "completed",
   "original_files": [
+    "SOURCE_MANIFEST.json",
+    "evaluations/comparison-report.json",
+    "evaluations/runs/cangjie.json",
+    "evaluations/runs/no-skill.json",
+    "evaluations/runs/one-skills.json",
     "pack.json",
-    "SOURCE_MANIFEST.json"
+    "test-results.json"
   ],
   "removed_legacy_assets": [],
   "started_at": "2026-08-11T03:14:54+00:00",
-  "updated_at": "2026-08-11T03:14:54+00:00",
-  "completed_at": "2026-08-11T03:14:54+00:00",
-  "result_revision": 1
+  "updated_at": "2026-08-11T04:06:50+00:00",
+  "completed_at": "2026-08-11T04:06:50+00:00",
+  "result_revision": 4
 }

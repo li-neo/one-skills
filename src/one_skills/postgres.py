@@ -36,6 +36,73 @@ MIGRATION_TABLES = (
     "asset_acl",
 )
 
+TABLE_PRIMARY_KEYS = {
+    "tenants": ("id",),
+    "principals": ("tenant_id", "id"),
+    "sources": ("id",),
+    "source_assessments": ("source_id",),
+    "documents": ("id",),
+    "document_versions": ("document_id", "version"),
+    "chunks": ("id",),
+    "claims": ("id",),
+    "evidence_links": ("claim_id", "chunk_id", "relation"),
+    "capabilities": ("id",),
+    "lineage_edges": (
+        "from_type",
+        "from_id",
+        "relation",
+        "to_type",
+        "to_id",
+    ),
+    "graph_edges": (
+        "pack_id",
+        "from_type",
+        "from_id",
+        "relation",
+        "to_type",
+        "to_id",
+    ),
+    "skill_versions": ("skill_id", "version"),
+    "eval_runs": ("id",),
+    "person_subjects": ("id",),
+    "person_facts": ("id",),
+    "person_evidence_links": ("fact_id", "chunk_id", "relation"),
+    "runs": ("id",),
+    "jobs": ("id",),
+    "audit_events": ("id",),
+    "asset_acl": (
+        "tenant_id",
+        "principal_id",
+        "asset_type",
+        "asset_id",
+        "permission",
+    ),
+}
+
+MUTABLE_PRIMARY_KEYS = {
+    "source_assessments": ("source_id",),
+    "documents": ("id",),
+    "document_versions": ("document_id", "version"),
+    "chunks": ("id",),
+    "claims": ("id",),
+    "capabilities": ("id",),
+    "graph_edges": (
+        "pack_id",
+        "from_type",
+        "from_id",
+        "relation",
+        "to_type",
+        "to_id",
+    ),
+    "skill_versions": ("skill_id", "version"),
+    "eval_runs": ("id",),
+    "person_subjects": ("id",),
+    "person_facts": ("id",),
+    "runs": ("id",),
+    "jobs": ("id",),
+    "principals": ("tenant_id", "id"),
+}
+
 
 class PostgresBackend:
     def __init__(self, dsn: str):
@@ -89,6 +156,7 @@ class PostgresBackend:
         source = sqlite3.connect(sqlite_path)
         source.row_factory = sqlite3.Row
         counts: dict[str, int] = {}
+        snapshots: dict[str, tuple[list[str], list[sqlite3.Row]]] = {}
         try:
             for table in MIGRATION_TABLES:
                 exists = source.execute(
@@ -98,39 +166,133 @@ class PostgresBackend:
                 if not exists:
                     continue
                 rows = source.execute(f'SELECT * FROM "{table}"').fetchall()
-                if not rows:
-                    counts[table] = 0
-                    continue
-                columns = list(rows[0].keys())
-                statement = self.sql.SQL(
-                    "INSERT INTO {} ({}) VALUES ({}) ON CONFLICT DO NOTHING"
-                ).format(
-                    self.sql.Identifier(table),
-                    self.sql.SQL(", ").join(
-                        self.sql.Identifier(column) for column in columns
-                    ),
-                    self.sql.SQL(", ").join(
-                        self.sql.SQL("{}::vector").format(self.sql.Placeholder())
-                        if column == "embedding"
-                        and table in {"chunks", "person_facts"}
-                        else self.sql.Placeholder()
-                        for column in columns
-                    ),
-                )
-                inserted = 0
-                with self.connection.cursor() as cursor:
+                columns = [
+                    row["name"]
+                    for row in source.execute(f'PRAGMA table_info("{table}")')
+                ]
+                snapshots[table] = (columns, rows)
+
+            with self.connection.cursor() as cursor:
+                for table in reversed(MIGRATION_TABLES):
+                    if table not in snapshots:
+                        continue
+                    _, rows = snapshots[table]
+                    self._delete_stale_rows(cursor, table, rows)
+                for table in MIGRATION_TABLES:
+                    if table not in snapshots:
+                        continue
+                    columns, rows = snapshots[table]
+                    counts[table] = len(rows)
+                    if not rows:
+                        continue
+                    statement = self.sql.SQL(
+                        "INSERT INTO {} ({}) VALUES ({}) {}"
+                    ).format(
+                        self.sql.Identifier(table),
+                        self.sql.SQL(", ").join(
+                            self.sql.Identifier(column) for column in columns
+                        ),
+                        self.sql.SQL(", ").join(
+                            self.sql.SQL("{}::vector").format(
+                                self.sql.Placeholder()
+                            )
+                            if column == "embedding"
+                            and table in {"chunks", "person_facts"}
+                            else self.sql.Placeholder()
+                            for column in columns
+                        ),
+                        self._conflict_clause(table, columns),
+                    )
                     for offset in range(0, len(rows), batch_size):
                         batch = [
-                            tuple(self._convert_value(table, column, row[column]) for column in columns)
+                            tuple(
+                                self._convert_value(
+                                    table,
+                                    column,
+                                    row[column],
+                                )
+                                for column in columns
+                            )
                             for row in rows[offset : offset + batch_size]
                         ]
                         cursor.executemany(statement, batch)
-                        inserted += len(batch)
-                self.connection.commit()
-                counts[table] = inserted
+            self.connection.commit()
+        except Exception:
+            self.connection.rollback()
+            raise
         finally:
             source.close()
         return counts
+
+    def _delete_stale_rows(
+        self,
+        cursor,
+        table: str,
+        rows: list[sqlite3.Row],
+    ) -> None:
+        keys = TABLE_PRIMARY_KEYS[table]
+        temporary = self.sql.Identifier(f"_one_sync_{table}")
+        key_sql = self.sql.SQL(", ").join(
+            self.sql.Identifier(column) for column in keys
+        )
+        cursor.execute(
+            self.sql.SQL(
+                "CREATE TEMP TABLE {} AS SELECT {} FROM {} WITH NO DATA"
+            ).format(
+                temporary,
+                key_sql,
+                self.sql.Identifier(table),
+            )
+        )
+        if rows:
+            cursor.executemany(
+                self.sql.SQL("INSERT INTO {} ({}) VALUES ({})").format(
+                    temporary,
+                    key_sql,
+                    self.sql.SQL(", ").join(
+                        self.sql.Placeholder() for _ in keys
+                    ),
+                ),
+                [tuple(row[column] for column in keys) for row in rows],
+            )
+        predicate = self.sql.SQL(" AND ").join(
+            self.sql.SQL("target.{} IS NOT DISTINCT FROM source.{}").format(
+                self.sql.Identifier(column),
+                self.sql.Identifier(column),
+            )
+            for column in keys
+        )
+        cursor.execute(
+            self.sql.SQL(
+                "DELETE FROM {} AS target WHERE NOT EXISTS "
+                "(SELECT 1 FROM {} AS source WHERE {})"
+            ).format(
+                self.sql.Identifier(table),
+                temporary,
+                predicate,
+            )
+        )
+        cursor.execute(self.sql.SQL("DROP TABLE {}").format(temporary))
+
+    def _conflict_clause(self, table: str, columns: list[str]):
+        keys = MUTABLE_PRIMARY_KEYS.get(table)
+        if not keys:
+            return self.sql.SQL("ON CONFLICT DO NOTHING")
+        updates = [column for column in columns if column not in keys]
+        if not updates:
+            return self.sql.SQL("ON CONFLICT DO NOTHING")
+        return self.sql.SQL("ON CONFLICT ({}) DO UPDATE SET {}").format(
+            self.sql.SQL(", ").join(
+                self.sql.Identifier(column) for column in keys
+            ),
+            self.sql.SQL(", ").join(
+                self.sql.SQL("{} = EXCLUDED.{}").format(
+                    self.sql.Identifier(column),
+                    self.sql.Identifier(column),
+                )
+                for column in updates
+            ),
+        )
 
     def _convert_value(self, table: str, column: str, value: Any) -> Any:
         if value is None:
@@ -161,6 +323,7 @@ class PostgresBackend:
             "valid_from",
             "valid_to",
             "lease_until",
+            "heartbeat_at",
         } and isinstance(value, str):
             return datetime.fromisoformat(value)
         return value

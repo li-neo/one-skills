@@ -9,20 +9,32 @@ import shutil
 from datetime import datetime
 from pathlib import Path
 
-from .comparison import local_skill_context
+from .comparison import (
+    COMPARISON_WEIGHTS,
+    COMPARISON_WIN_RULE,
+    calculate_comparison,
+    holdout_leaked_to_builder,
+    judge_artifact_hash,
+    local_skill_context,
+)
+from .core_assets import load_reproducibility
 from .database import KnowledgeDB
 from .distillation_quality import assess_distillation_quality
 from .evaluation import paired_decision
 from .lifecycle import advance_phase, load_state, workspace_for
+from .provenance import current_source_set_hash
 from .reporting import write_evidence_graph
 from .runtime import export_runtime
-from .utils import atomic_write, dump_json, load_json, utc_now
+from .utils import atomic_write, dump_json, load_json, stable_json_hash, utc_now
 from .validation import validate_frozen_evals, validate_pack
 from .versions import uses_consolidated_assets, uses_semantic_contract
 
 
 class DeliveryError(RuntimeError):
     pass
+
+
+INDEPENDENT_ISOLATION_LEVELS = {"provider-separated", "model-separated"}
 
 
 def _assert_no_pending_revocations(pack: Path) -> None:
@@ -39,6 +51,71 @@ def _assert_no_pending_revocations(pack: Path) -> None:
             raise DeliveryError(
                 f"pending source revocation blocks delivery: {intent.get('id')}"
             )
+
+
+def _load_bound_evaluation_run(
+    pack: Path,
+    condition: str,
+    comparison: dict,
+    source_set_hash: str,
+    suite_hash: str,
+) -> dict:
+    run_path = pack / "evaluations" / "runs" / f"{condition}.json"
+    if not run_path.exists():
+        raise DeliveryError(f"{condition} evaluation run is missing")
+    run = load_json(run_path)
+    if run.get("run_id") != comparison.get("runs", {}).get(condition):
+        raise DeliveryError(f"{condition} evaluation run identity does not match report")
+    if run.get("artifact_hash") != comparison.get("run_hashes", {}).get(condition):
+        raise DeliveryError(f"{condition} evaluation run hash does not match report")
+    artifact = dict(run)
+    artifact_hash = artifact.pop("artifact_hash", None)
+    if artifact_hash != stable_json_hash(artifact):
+        raise DeliveryError(f"{condition} evaluation run artifact hash is invalid")
+    skill_hash = run.get("skill_hash")
+    if (
+        run.get("suite_hash") != suite_hash
+        or run.get("source_set_hash") != source_set_hash
+        or run.get("input_snapshot_hash")
+        != stable_json_hash(
+            {
+                "suite": suite_hash,
+                "source_set": source_set_hash,
+                "skill": skill_hash,
+            }
+        )
+    ):
+        raise DeliveryError(f"{condition} evaluation run hashes are stale")
+    roles = run.get("roles", {})
+    isolation = run.get("isolation_level")
+    for record in run.get("records", []):
+        hashes = record.get("hashes", {})
+        if (
+            hashes.get("suite") != suite_hash
+            or hashes.get("source_set") != source_set_hash
+            or hashes.get("skill") != skill_hash
+            or hashes.get("answer")
+            != hashlib.sha256(record.get("answer", "").encode("utf-8")).hexdigest()
+            or hashes.get("judge")
+            != judge_artifact_hash(
+                bool(record.get("passed")),
+                record.get("scores", {}),
+                str(record.get("judge_reason") or ""),
+            )
+        ):
+            raise DeliveryError(
+                f"evaluation record hash is invalid: {condition}/{record.get('case_id')}"
+            )
+        if (
+            record.get("answer_model") != roles.get("answer")
+            or record.get("judge_model") != roles.get("judge")
+            or record.get("isolation_level") != isolation
+        ):
+            raise DeliveryError(
+                f"evaluation record role identity is invalid: "
+                f"{condition}/{record.get('case_id')}"
+            )
+    return run
 
 
 def _assert_tested(pack: Path) -> None:
@@ -58,16 +135,94 @@ def _assert_tested(pack: Path) -> None:
         if not comparison_path.exists():
             raise DeliveryError("v0.3 release requires a blind comparison report")
         comparison = load_json(comparison_path)
+        if comparison.get("status") != "valid":
+            raise DeliveryError("blind comparison report is stale")
         if not comparison.get("passed"):
-            raise DeliveryError("v0.3 blind comparison or a non-compensating hard gate failed")
+            raise DeliveryError(
+                "blind comparison or a non-compensating hard gate failed"
+            )
+        constraints = load_reproducibility(pack)
+        source_set_hash = current_source_set_hash(pack)
+        if comparison.get("source_set_hash") != source_set_hash:
+            raise DeliveryError(
+                "blind comparison report does not match the current Source Set"
+            )
+        suite_hash = comparison.get("suite_hash")
+        if suite_hash not in set(
+            constraints.get("evaluation_suite_hashes", {}).values()
+        ):
+            raise DeliveryError(
+                "blind comparison suite is not frozen by Pack reproducibility"
+            )
         expected_skill_hash = comparison.get("skill_hashes", {}).get("one-skills")
         current_skill_hash = hashlib.sha256(
             local_skill_context(pack).encode("utf-8")
         ).hexdigest()
         if expected_skill_hash != current_skill_hash:
             raise DeliveryError(
-                "v0.3 blind comparison report does not match the current Skill context"
+                "blind comparison report does not match the current Skill context"
             )
+        runs = {
+            condition: _load_bound_evaluation_run(
+                pack,
+                condition,
+                comparison,
+                source_set_hash,
+                suite_hash,
+            )
+            for condition in ("no-skill", "cangjie", "one-skills")
+        }
+        suite_path = pack / "evaluations" / "suite.json"
+        if not suite_path.exists():
+            raise DeliveryError("frozen comparison suite snapshot is missing")
+        suite = load_json(suite_path)
+        if stable_json_hash(suite) != suite_hash:
+            raise DeliveryError("frozen comparison suite snapshot is stale")
+        decision = calculate_comparison(
+            pack,
+            runs["no-skill"],
+            runs["cangjie"],
+            runs["one-skills"],
+            holdout_leaked_to_builder(pack, suite),
+        )
+        if (
+            comparison.get("scores") != decision["scores"]
+            or comparison.get("weighted_lead")
+            != decision["weighted_lead"]
+            or comparison.get("hard_gates") != decision["hard_gates"]
+            or comparison.get("passed") != decision["passed"]
+            or comparison.get("weights") != COMPARISON_WEIGHTS
+            or comparison.get("win_rule") != COMPARISON_WIN_RULE
+        ):
+            raise DeliveryError(
+                "blind comparison conclusion does not match bound evaluation runs"
+            )
+        run = runs["one-skills"]
+        if run.get("artifact_hash") != comparison.get("candidate_run_hash"):
+            raise DeliveryError("candidate evaluation run hash does not match report")
+        if run.get("artifact_source"):
+            raise DeliveryError(
+                "stable release requires directly executed evaluation; "
+                "imported artifacts need a trusted runner signature"
+            )
+        isolation = run.get("isolation_level")
+        if isolation not in INDEPENDENT_ISOLATION_LEVELS:
+            raise DeliveryError(
+                "stable release requires provider-separated or model-separated evaluation"
+            )
+        roles = run.get("roles", {})
+        if (
+            isolation == "model-separated"
+            and roles.get("answer") == roles.get("judge")
+        ):
+            raise DeliveryError(
+                "model-separated evaluation requires different Answer and Judge models"
+            )
+        if (
+            run.get("skill_hash") != current_skill_hash
+            or comparison.get("isolation_level") != isolation
+        ):
+            raise DeliveryError("candidate evaluation run hashes are stale")
     if (
         uses_consolidated_assets(metadata.get("schema_version"))
         and (pack / "CAPABILITY_GRAPH.json").exists()
@@ -86,6 +241,8 @@ def _assert_tested(pack: Path) -> None:
     if not path.exists():
         raise DeliveryError("missing test-results.json")
     report = load_json(path)
+    if report.get("status") != "valid":
+        raise DeliveryError("independent test results are not valid")
     if report.get("errors") or not report.get("skills"):
         raise DeliveryError("test report is incomplete or contains structural errors")
     for skill in report["skills"]:

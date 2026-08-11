@@ -148,10 +148,15 @@ def create_api_server(
                     "job-request.schema.json",
                     "HTTP job request",
                 )
+                if "idempotency_key" not in body:
+                    raise ValueError(
+                        "HTTP job request requires idempotency_key"
+                    )
                 unknown = set(body) - {
                     "type",
                     "payload",
                     "max_attempts",
+                    "idempotency_key",
                 }
                 if unknown:
                     raise ValueError(
@@ -164,6 +169,7 @@ def create_api_server(
                         body["payload"],
                         body.get("max_attempts", 3),
                         actor_id="api",
+                        idempotency_key=body["idempotency_key"],
                     )
                 self._json(HTTPStatus.ACCEPTED, {"job_id": job_id, "status": "queued"})
             except (KeyError, OSError, RuntimeError, ValueError, json.JSONDecodeError) as exc:

@@ -22,6 +22,7 @@ from .core_assets import (
 )
 from .database import KnowledgeDB
 from .errors import PipelineError
+from .evaluation_state import mark_evaluations_stale
 from .ingest import expand_sources, structural_chunks
 from .learning import build_learning_path
 from .lifecycle import (
@@ -35,6 +36,7 @@ from .lifecycle import (
 from .locking import file_lock, pack_lock, workspace_pack_lock_path
 from .overview import build_object_overview
 from .profiles import PROFILES, detect_profile, load_profile_plugins
+from .provenance import source_set_fingerprint
 from .recipes import initialize_registry
 from .retrieval import local_embedding
 from .source_quality import (
@@ -522,6 +524,11 @@ def _ingest_documents(
         f"{item['source_id']}@{item['document_version']}": item["content_hash"]
         for item in manifest
     }
+    constraints["source_set_hash"] = source_set_fingerprint(
+        {
+            "sources": manifest,
+        }
+    )
     save_reproducibility(pack, constraints)
     advance_phase(pack, "ingest", "completed", f"indexed {len(documents)} sources")
     build_learning_path(pack)
@@ -632,6 +639,7 @@ def _update_pack_locked(pack: Path, sources: list[str]) -> dict[str, Any]:
         current["updated_at"] = utc_now()
 
     metadata = update_pack_metadata(pack, update_sources)
+    mark_evaluations_stale(pack, "source set changed")
     _reset_extraction_artifacts(pack)
     _ingest_documents(
         workspace,
@@ -740,6 +748,15 @@ def revoke_source(workspace: Path, source_id: str, reason: str) -> dict[str, Any
                     item["revocation_reason"] = reason.strip()
                     item["revocation_intent_id"] = intent["id"]
                 dump_json(manifest_path, manifest)
+                constraints = load_reproducibility(pack)
+                constraints["source_set_hash"] = source_set_fingerprint(
+                    manifest
+                )
+                save_reproducibility(pack, constraints)
+                mark_evaluations_stale(
+                    pack,
+                    f"source revoked: {source_id}",
+                )
                 _invalidate_revoked_evidence(pack, revoked_chunks, intent["id"])
                 state = load_state(pack)
                 for phase in PHASES[PHASE_INDEX["ingest"] :]:

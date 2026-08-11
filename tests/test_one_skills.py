@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import json
 import tempfile
+import time
 import unittest
 import zipfile
 from pathlib import Path
-from threading import Thread
+from threading import Event, Thread
+from unittest.mock import patch
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
@@ -71,7 +73,12 @@ from one_skills.pipeline import (
     update_pack,
     verify_and_compile_with_model,
 )
-from one_skills.postgres import MIGRATION_TABLES, PostgresBackend
+from one_skills.postgres import (
+    MIGRATION_TABLES,
+    MUTABLE_PRIMARY_KEYS,
+    TABLE_PRIMARY_KEYS,
+    PostgresBackend,
+)
 from one_skills.profiles import Profile, register_profile
 from one_skills.provider import ProviderError
 from one_skills.recipes import promotion_decision
@@ -430,6 +437,7 @@ class DatabaseAndRetrievalTests(unittest.TestCase):
                 payload = json.dumps(
                     {
                         "type": "benchmark",
+                        "idempotency_key": "api-benchmark-valid",
                         "payload": {
                             "suite": str(suite)
                         },
@@ -456,6 +464,7 @@ class DatabaseAndRetrievalTests(unittest.TestCase):
                     data=json.dumps(
                         {
                             "type": "benchmark",
+                            "idempotency_key": "api-benchmark-escaped",
                             "payload": {"suite": "/etc/hosts"},
                         }
                     ).encode(),
@@ -546,6 +555,13 @@ class DatabaseAndRetrievalTests(unittest.TestCase):
                     )
                 }
         self.assertTrue(tables.issubset(set(MIGRATION_TABLES)))
+        self.assertEqual(set(TABLE_PRIMARY_KEYS), set(MIGRATION_TABLES))
+        self.assertEqual(MUTABLE_PRIMARY_KEYS["documents"], ("id",))
+        self.assertEqual(
+            MUTABLE_PRIMARY_KEYS["document_versions"],
+            ("document_id", "version"),
+        )
+        self.assertEqual(MUTABLE_PRIMARY_KEYS["jobs"], ("id",))
         self.assertEqual(
             PostgresBackend._vector_literal([0.5, -0.25]),
             "[0.5,-0.25]",
@@ -591,15 +607,135 @@ class DatabaseAndRetrievalTests(unittest.TestCase):
                 audits = database.rows("SELECT * FROM audit_events")
                 self.assertGreaterEqual(len(audits), 6)
 
+    def test_job_idempotency_heartbeat_and_fencing(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            init_workspace(root)
+            payload = {"suite": str(root / "suite.json")}
+            with KnowledgeDB(root / ".one" / "knowledge.db") as database:
+                queue = JobQueue(database)
+                job_id = queue.enqueue(
+                    "benchmark",
+                    payload,
+                    idempotency_key="benchmark:stable-input",
+                )
+                replayed = queue.enqueue(
+                    "benchmark",
+                    payload,
+                    idempotency_key="benchmark:stable-input",
+                )
+                self.assertEqual(replayed, job_id)
+                with self.assertRaisesRegex(ValueError, "different job"):
+                    queue.enqueue(
+                        "benchmark",
+                        {"suite": str(root / "other.json")},
+                        idempotency_key="benchmark:stable-input",
+                    )
+                first = queue.claim("worker-1", lease_seconds=30)
+                self.assertEqual(first["lease_token"], 1)
+                extended = queue.heartbeat(
+                    job_id,
+                    "worker-1",
+                    first["lease_token"],
+                    lease_seconds=60,
+                )
+                self.assertGreater(extended, first["lease_until"])
+                database.connection.execute(
+                    "UPDATE jobs SET lease_until = ? WHERE id = ?",
+                    ("2000-01-01T00:00:00+00:00", job_id),
+                )
+                database.connection.commit()
+                with self.assertRaisesRegex(ValueError, "lease was lost"):
+                    queue.heartbeat(
+                        job_id,
+                        "worker-1",
+                        first["lease_token"],
+                    )
+                with self.assertRaisesRegex(ValueError, "lease owner or state"):
+                    queue.complete(
+                        job_id,
+                        "worker-1",
+                        first["lease_token"],
+                        {"expired": True},
+                    )
+                with self.assertRaisesRegex(ValueError, "lease owner mismatch"):
+                    queue.fail(
+                        job_id,
+                        "worker-1",
+                        first["lease_token"],
+                        "expired",
+                    )
+                second = queue.claim("worker-1", lease_seconds=30)
+                self.assertEqual(second["lease_token"], 2)
+                with self.assertRaisesRegex(ValueError, "lease owner or state"):
+                    queue.complete(
+                        job_id,
+                        "worker-1",
+                        first["lease_token"],
+                        {"stale": True},
+                    )
+                queue.complete(
+                    job_id,
+                    "worker-1",
+                    second["lease_token"],
+                    {"ok": True},
+                )
+                self.assertEqual(queue.get(job_id)["status"], "completed")
+
+    def test_worker_heartbeat_prevents_lease_reclaim(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            init_workspace(root)
+            with KnowledgeDB(root / ".one" / "knowledge.db") as database:
+                JobQueue(database).enqueue(
+                    "benchmark",
+                    {"suite": str(root / "suite.json")},
+                )
+            started = Event()
+
+            def slow_benchmark(
+                suite: Path,
+                output: Path | None = None,
+            ) -> dict:
+                del suite, output
+                started.set()
+                time.sleep(1.5)
+                return {"status": "passed"}
+
+            result: list[dict] = []
+            with patch(
+                "one_skills.jobs.run_profile_benchmark",
+                side_effect=slow_benchmark,
+            ):
+                worker = Thread(
+                    target=lambda: result.append(
+                        run_worker_once(root, "worker-1", lease_seconds=1)
+                    )
+                )
+                worker.start()
+                self.assertTrue(started.wait(timeout=2))
+                time.sleep(1.1)
+                with KnowledgeDB(root / ".one" / "knowledge.db") as database:
+                    self.assertIsNone(
+                        JobQueue(database).claim(
+                            "worker-2",
+                            lease_seconds=1,
+                        )
+                    )
+                worker.join(timeout=5)
+            self.assertFalse(worker.is_alive())
+            self.assertEqual(result[0]["status"], "completed")
+
     def test_worker_revalidates_persisted_job_paths(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             init_workspace(root)
             with KnowledgeDB(root / ".one" / "knowledge.db") as database:
                 database.connection.execute(
-                    "INSERT INTO jobs VALUES "
-                    "('job-tampered', 'benchmark', ?, 'queued', 0, 1, "
-                    "NULL, NULL, NULL, NULL, ?, ?)",
+                    "INSERT INTO jobs("
+                    "id, job_type, payload_json, status, attempts, max_attempts, "
+                    "created_at, updated_at"
+                    ") VALUES ('job-tampered', 'benchmark', ?, 'queued', 0, 1, ?, ?)",
                     (
                         json.dumps({"suite": "/etc/hosts"}),
                         "2026-01-01T00:00:00+00:00",
@@ -752,6 +888,126 @@ class DatabaseAndRetrievalTests(unittest.TestCase):
                 )
                 self.assertEqual(
                     retriever.search("uncommitted replacement", {"authorized"}),
+                    [],
+                )
+
+    def test_graph_neighbors_follow_capability_evidence_and_filter_active_acl(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            with KnowledgeDB(root / "knowledge.db") as database:
+                documents = [
+                    SourceDocument(
+                        source=str(root / f"source-{index}.md"),
+                        title=f"Source {index}",
+                        media_type="text/markdown",
+                        text=text,
+                        content_hash=str(index) * 64,
+                        byte_count=len(text),
+                        access_level="authorized",
+                    )
+                    for index, text in (
+                        (1, "# Input\n\nidentify the governing constraint"),
+                        (2, "# Related\n\nverify the rollback checkpoint"),
+                    )
+                ]
+                chunks: list[Chunk] = []
+                for document in documents:
+                    *_, stored = database.ingest_document(
+                        document,
+                        "methodology",
+                        lambda document_id, version, value=document: structural_chunks(
+                            value,
+                            document_id,
+                            version,
+                        ),
+                        lambda values: {
+                            item.id: local_embedding(item.text)
+                            for item in values
+                        },
+                    )
+                    chunks.extend(stored)
+                database.add_claim(
+                    "constraint claim",
+                    0.9,
+                    [chunks[0].id],
+                    claim_id="claim-input",
+                )
+                database.add_claim(
+                    "rollback claim",
+                    0.9,
+                    [chunks[1].id],
+                    claim_id="claim-related",
+                )
+                database.add_edge(
+                    "claim",
+                    "claim-input",
+                    "supports",
+                    "capability",
+                    "capability-shared",
+                )
+                database.add_edge(
+                    "claim",
+                    "claim-related",
+                    "supports",
+                    "capability",
+                    "capability-shared",
+                )
+                retriever = HybridRetriever(database)
+                self.assertEqual(
+                    retriever.graph_neighbors(
+                        [chunks[0].id],
+                        {"authorized"},
+                    ),
+                    [chunks[1].id],
+                )
+
+                database.connection.execute(
+                    "DELETE FROM asset_acl WHERE asset_type = 'chunk' "
+                    "AND asset_id = ?",
+                    (chunks[1].id,),
+                )
+                database.connection.commit()
+                self.assertEqual(
+                    retriever.graph_neighbors(
+                        [chunks[0].id],
+                        {"authorized"},
+                    ),
+                    [],
+                )
+                database.grant_acl(
+                    "local",
+                    "local-user",
+                    "chunk",
+                    chunks[1].id,
+                    "owner",
+                )
+                replacement = SourceDocument(
+                    source=documents[1].source,
+                    title="Source 2",
+                    media_type="text/markdown",
+                    text="# New\n\nreplacement active version",
+                    content_hash="3" * 64,
+                    byte_count=34,
+                    access_level="authorized",
+                )
+                database.ingest_document(
+                    replacement,
+                    "methodology",
+                    lambda document_id, version: structural_chunks(
+                        replacement,
+                        document_id,
+                        version,
+                    ),
+                    lambda values: {
+                        item.id: local_embedding(item.text)
+                        for item in values
+                    },
+                )
+                self.assertEqual(
+                    retriever.graph_neighbors(
+                        [chunks[0].id],
+                        {"authorized"},
+                    ),
                     [],
                 )
 

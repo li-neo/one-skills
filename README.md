@@ -22,7 +22,9 @@
 
 ## 项目状态
 
-当前版本 **0.4.0**，处于 **Alpha 工程验证阶段**。v0.4 不增加新领域概念，集中优化蒸馏可靠性、完整性和准确率：合并重复事实源、明确权威资产与可重建投影、拆分来源与生命周期编排，并把三项核心质量变成发布硬门。
+当前版本 **1.0.0**。Stable Core 已进入工程落地阶段：本地 CLI、Pack 1.0、SQLite 工作区、来源与证据、Overview/Portfolio/Compiler、评测门、迁移、安装和导出按 1.x 兼容策略维护。
+
+HTTP API、Worker、PostgreSQL、S3、插件信任、自动进化及七类 Profile 的通用效果声明仍为 **Experimental**。完整稳定边界与弃用策略见 [Stability and Compatibility](docs/STABILITY.md)。
 
 | 能力 | 状态 |
 |---|---|
@@ -33,15 +35,17 @@
 | Darwin 兼容层 | 已实现 `prepared` 交接与降级契约 |
 | 工程架构与知识库索引 | [已实现本地 MVP](docs/ARCHITECTURE.md) |
 | 根目录 `SKILL.md` | 已完成运行协议 |
-| CLI、脚本与 Schema | 已实现 Alpha 版本 |
-| 端到端工程链 | 已由集成测试覆盖 |
+| CLI、脚本与 Schema | Stable Core 1.0 |
+| 端到端工程链 | 原子提交、恢复、迁移和制品测试覆盖 |
 | 示例库 | 已实现单任务、批量并发与七类 Profile 基准 |
 | Guided 蒸馏 | 已实现可恢复会话、证据分级、Overview/Portfolio 两次语义确认与无损入 Pack |
 | 高质量来源 | 已实现 Local/GitHub/Hugging Face/Manifest 候选发现、Source Catalog、集合质量门、反证和 holdout |
 | Skill 召回 | 已实现字段感知 sparse/dense 召回、margin 与拒答 |
 | 学习模式 | 已实现先修路径、掌握证据和间隔复习状态 |
 | 经验进化 | 已实现 append-only 反馈、复现门、结构化 whole-folder patch、before/after 和 keep/revert |
-| 自动化测试 | 40 项，持续扩充 |
+| 自动化测试 | 61 项，持续扩充 |
+
+Mao 案例保留冻结的 60 题开发比较，但历史 Answer/Judge 为共享模型、会话隔离。Stable 发布门不会把它当作独立质量证明；必须以 Provider 隔离或不同模型重跑后，才能发布为 Stable Pack。
 
 当前可运行命令以 `python3 scripts/one.py --help` 或安装后的 `one --help` 为准。README 中尚未出现在 CLI 帮助里的命令仍属于规划接口。
 
@@ -937,7 +941,7 @@ packs/<object-slug>/
 
 ```json
 {
-  "schema_version": "0.4",
+  "schema_version": "1.0",
   "lifecycle": {
     "current_phase": "verify",
     "phases": {
@@ -1119,6 +1123,8 @@ one semantic confirm ./packs/example \
   --artifact portfolio --notes "能力组合和降级理由已核对"
 one compile ./packs/example
 
+one compare freeze ./packs/example \
+  --suite benchmarks/mao-methods/suite.json
 one compare run ./packs/example \
   --suite benchmarks/mao-methods/suite.json \
   --baseline benchmarks/mao-methods/baselines.json
@@ -1127,7 +1133,7 @@ one install ./packs/example --target ~/.codex/skills
 one export ./packs/example --runtime claude
 ```
 
-非公开 Pack 默认禁止发送到模型端点。只有在确认端点、数据协议和授权范围后，才能显式增加 `--allow-sensitive-data`。三角色未配置时可以从隔离 Runtime 导入完整 Answer/Judge artifacts，但报告必须保留实际隔离等级。
+非公开 Pack 默认禁止发送到模型端点。只有在确认端点、数据协议和授权范围后，才能显式增加 `--allow-sensitive-data`。比较 Suite 必须在运行前独立冻结。三角色未配置时可以从隔离 Runtime 导入完整 Answer/Judge artifacts，但未签名的导入结果只作为开发证据，不能通过 Stable 发布门。
 
 ### 检索与用户画像记忆
 
@@ -1407,6 +1413,15 @@ one-skills 不做以下事情：
 - [x] 来源工作流、生命周期和语义蒸馏编排分离
 - [x] 可靠性、完整性、准确率进入确定性质量硬门
 - [x] v0.3 Pack 可无损迁移到 v0.4，不改写 Skill 和评测内容
+
+### Milestone 6：Stable Core 1.0
+
+- [x] Pack 1.0 Schema 与 0.2/0.3/0.4 可恢复迁移
+- [x] Source/Document/Chunk/FTS/ACL 原子提交与 active-version 后切换
+- [x] Pack staging、跨进程锁、revision/CAS 和 intent-first 撤销
+- [x] Source/Suite/Skill/Answer/Judge/Artifact Hash 发布绑定
+- [x] Stable 发布要求 Provider 隔离或不同模型隔离
+- [x] MIT、Security、Changelog、wheel/sdist 和隔离安装验证
 
 ---
 

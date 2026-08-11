@@ -10,6 +10,7 @@ import shutil
 from pathlib import Path
 from typing import Any
 
+from .evaluation_state import mark_evaluations_stale
 from .experience import load_experiences
 from .schema_runtime import require_schema
 from .utils import dump_json, load_json, new_id, stable_json_hash, utc_now
@@ -225,6 +226,7 @@ def apply_patch_candidate(
     patch["status"] = "applied"
     patch["applied_at"] = utc_now()
     _save_patch(path, patch)
+    mark_evaluations_stale(pack, f"Skill changed by evolution patch {safe_patch_id}")
     return patch
 
 
@@ -269,6 +271,7 @@ def resolve_patch(
     patch["decision_reason"] = reason.strip()
     patch["resolved_at"] = utc_now()
     _save_patch(path, patch)
+    mark_evaluations_stale(pack, f"evolution patch resolved: {patch_id}")
     history = pack / "evolution" / "DECISIONS.jsonl"
     with history.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(patch, ensure_ascii=False) + "\n")

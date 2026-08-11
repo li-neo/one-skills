@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/li-neo/one-skills/schemas/comparison-report.schema.json",
+  "title": "One Skills Comparison Report",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "status",
+    "generated_at",
+    "runs",
+    "run_hashes",
+    "scores",
+    "weighted_lead",
+    "hard_gates",
+    "passed",
+    "win_rule",
+    "weights",
+    "suite_hash",
+    "source_set_hash",
+    "skill_hashes",
+    "isolation_level",
+    "candidate_run_hash"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "status": {"enum": ["valid", "stale"]},
+    "generated_at": {"type": "string"},
+    "runs": {
+      "type": "object",
+      "required": ["no-skill", "cangjie", "one-skills"],
+      "additionalProperties": {"type": "string"}
+    },
+    "run_hashes": {
+      "type": "object",
+      "required": ["no-skill", "cangjie", "one-skills"],
+      "additionalProperties": {"type": "string", "minLength": 1}
+    },
+    "scores": {"type": "object"},
+    "weighted_lead": {"type": "number"},
+    "hard_gates": {
+      "type": "object",
+      "additionalProperties": {"type": "boolean"}
+    },
+    "passed": {"type": "boolean"},
+    "win_rule": {"type": "object"},
+    "weights": {"type": "object"},
+    "suite_hash": {"type": "string", "minLength": 1},
+    "source_set_hash": {"type": "string", "minLength": 1},
+    "skill_hashes": {
+      "type": "object",
+      "required": ["no-skill", "cangjie", "one-skills"],
+      "additionalProperties": {"type": "string"}
+    },
+    "isolation_level": {
+      "enum": [
+        "provider-separated",
+        "model-separated",
+        "model-shared/session-separated"
+      ]
+    },
+    "candidate_run_hash": {"type": "string", "minLength": 1},
+    "stale_reason": {"type": "string"},
+    "stale_at": {"type": "string"}
+  },
+  "additionalProperties": false
+}

@@ -207,13 +207,20 @@ CREATE TABLE IF NOT EXISTS jobs (
   status TEXT NOT NULL,
   attempts INTEGER NOT NULL DEFAULT 0,
   max_attempts INTEGER NOT NULL DEFAULT 3,
+  idempotency_key TEXT,
+  lease_token INTEGER NOT NULL DEFAULT 0,
   lease_owner TEXT,
   lease_until TIMESTAMPTZ,
+  heartbeat_at TIMESTAMPTZ,
   result_json JSONB,
   error TEXT,
   created_at TIMESTAMPTZ NOT NULL,
   updated_at TIMESTAMPTZ NOT NULL
 );
+
+ALTER TABLE jobs ADD COLUMN IF NOT EXISTS idempotency_key TEXT;
+ALTER TABLE jobs ADD COLUMN IF NOT EXISTS lease_token INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE jobs ADD COLUMN IF NOT EXISTS heartbeat_at TIMESTAMPTZ;
 
 CREATE TABLE IF NOT EXISTS audit_events (
   id TEXT PRIMARY KEY,
@@ -234,4 +241,6 @@ CREATE INDEX IF NOT EXISTS idx_edges_to ON lineage_edges(to_type, to_id);
 CREATE INDEX IF NOT EXISTS idx_graph_edges_pack ON graph_edges(pack_id, from_type, from_id);
 CREATE INDEX IF NOT EXISTS idx_acl_asset ON asset_acl(tenant_id, asset_type, asset_id);
 CREATE INDEX IF NOT EXISTS idx_jobs_status ON jobs(status, created_at);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_jobs_idempotency
+  ON jobs(idempotency_key) WHERE idempotency_key IS NOT NULL;
 CREATE INDEX IF NOT EXISTS idx_audit_asset ON audit_events(asset_type, asset_id, created_at);

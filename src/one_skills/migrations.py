@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
+import hashlib
 import shutil
 from pathlib import Path
 from typing import Any
 
+from .comparison import judge_artifact_hash
 from .locking import pack_lock
-from .schema_runtime import require_schema
+from .provenance import source_set_fingerprint
+from .schema_runtime import require_schema, validate_schema
 from .utils import atomic_write, dump_json, load_json, stable_json_hash, utc_now
 from .versions import CURRENT_PACK_VERSION, READABLE_PACK_VERSIONS
 
@@ -86,6 +89,189 @@ def _remove_legacy_asset(path: Path) -> None:
     path.unlink()
 
 
+def _evaluation_contract_is_current(pack: Path) -> bool:
+    assets = [
+        *sorted((pack / "evaluations" / "runs").glob("*.json")),
+        pack / "evaluations" / "comparison-report.json",
+    ]
+    artifacts_current = all(
+        not path.exists()
+        or not validate_schema(
+            load_json(path),
+            (
+                "comparison-report.schema.json"
+                if path.name == "comparison-report.json"
+                else "evaluation-run.schema.json"
+            ),
+        )
+        for path in assets
+    )
+    results_path = pack / "test-results.json"
+    results_current = (
+        not results_path.exists()
+        or load_json(results_path).get("status") in {"valid", "stale"}
+    )
+    return artifacts_current and results_current
+
+
+def _backup_evaluation_assets(
+    pack: Path,
+    journal_path: Path,
+    backup_root: Path,
+    journal: dict[str, Any],
+) -> None:
+    assets = [
+        *sorted((pack / "evaluations" / "runs").glob("*.json")),
+        pack / "evaluations" / "comparison-report.json",
+        pack / "test-results.json",
+    ]
+    originals = set(journal.get("original_files", []))
+    for source in assets:
+        if not source.is_file():
+            continue
+        relative = source.relative_to(pack).as_posix()
+        if relative in originals:
+            continue
+        destination = backup_root / relative
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, destination)
+        originals.add(relative)
+    journal["original_files"] = sorted(originals)
+    dump_json(journal_path, journal)
+
+
+def _normalize_evaluation_contract(
+    pack: Path,
+    manifest: dict[str, Any],
+    reproducibility: dict[str, Any],
+) -> None:
+    run_paths = sorted((pack / "evaluations" / "runs").glob("*.json"))
+    report_path = pack / "evaluations" / "comparison-report.json"
+    if not run_paths:
+        if report_path.exists():
+            raise MigrationError(
+                "comparison report exists without evaluation run artifacts"
+            )
+        results_path = pack / "test-results.json"
+        if results_path.exists():
+            results = load_json(results_path)
+            results.setdefault("status", "valid")
+            dump_json(results_path, results)
+        return
+    current_source_hash = source_set_fingerprint(manifest)
+    legacy_source_hash = stable_json_hash(
+        reproducibility.get("source_hashes", {})
+    )
+    can_rebind_source_hash = all(
+        item.get("active", True) and not item.get("revoked_at")
+        for item in manifest.get("sources", [])
+    )
+    runs: dict[str, dict[str, Any]] = {}
+    for path in run_paths:
+        run = load_json(path)
+        existing_artifact_hash = run.get("artifact_hash")
+        if existing_artifact_hash is not None:
+            artifact = dict(run)
+            artifact.pop("artifact_hash", None)
+            if existing_artifact_hash != stable_json_hash(artifact):
+                raise MigrationError(
+                    f"evaluation artifact hash is invalid before migration: {path}"
+                )
+        old_source_hash = run.get("source_set_hash")
+        if old_source_hash not in {legacy_source_hash, current_source_hash}:
+            raise MigrationError(
+                f"evaluation source hash is unrelated to Pack provenance: {path}"
+            )
+        source_hash = (
+            current_source_hash if can_rebind_source_hash else old_source_hash
+        )
+        for record in run.get("records", []):
+            hashes = record.setdefault("hashes", {})
+            if hashes.get("source_set") not in {
+                legacy_source_hash,
+                current_source_hash,
+            }:
+                raise MigrationError(
+                    f"evaluation record source hash is invalid: {path}"
+                )
+            answer_hash = hashlib.sha256(
+                str(record.get("answer") or "").encode("utf-8")
+            ).hexdigest()
+            if (
+                hashes.get("answer") is not None
+                and hashes.get("answer") != answer_hash
+            ):
+                raise MigrationError(
+                    f"evaluation answer hash is invalid before migration: {path}"
+                )
+            judge_hash = judge_artifact_hash(
+                bool(record.get("passed")),
+                record.get("scores", {}),
+                str(record.get("judge_reason") or ""),
+            )
+            if (
+                hashes.get("judge") is not None
+                and hashes.get("judge") != judge_hash
+            ):
+                raise MigrationError(
+                    f"evaluation judge hash is invalid before migration: {path}"
+                )
+            hashes["source_set"] = source_hash
+            hashes["answer"] = answer_hash
+            hashes["judge"] = judge_hash
+        run["source_set_hash"] = source_hash
+        run.setdefault("runtime", "one-skills/migrated-pack-1.0")
+        run.setdefault("parameters", {"migration": MIGRATION_ID})
+        run["input_snapshot_hash"] = stable_json_hash(
+            {
+                "suite": run["suite_hash"],
+                "source_set": source_hash,
+                "skill": run["skill_hash"],
+            }
+        )
+        run.pop("artifact_hash", None)
+        run["artifact_hash"] = stable_json_hash(run)
+        require_schema(run, "evaluation-run.schema.json", str(path))
+        dump_json(path, run)
+        runs[run["condition"]] = run
+
+    if report_path.exists():
+        report = load_json(report_path)
+        candidate = runs.get("one-skills")
+        if candidate is None:
+            raise MigrationError("comparison report has no candidate run")
+        if can_rebind_source_hash:
+            report["source_set_hash"] = current_source_hash
+            report.setdefault("status", "valid")
+        else:
+            report["status"] = "stale"
+            report.setdefault(
+                "stale_reason",
+                "source state changed before evaluation contract migration",
+            )
+            report.setdefault("stale_at", utc_now())
+        report["isolation_level"] = candidate["isolation_level"]
+        report["candidate_run_hash"] = candidate["artifact_hash"]
+        report["run_hashes"] = {
+            condition: run["artifact_hash"]
+            for condition, run in sorted(runs.items())
+        }
+        require_schema(
+            report,
+            "comparison-report.schema.json",
+            str(report_path),
+        )
+        dump_json(report_path, report)
+    results_path = pack / "test-results.json"
+    if results_path.exists():
+        results = load_json(results_path)
+        results.setdefault(
+            "status",
+            "valid" if can_rebind_source_hash else "stale",
+        )
+        dump_json(results_path, results)
+
+
 def migrate_pack(pack: Path) -> dict[str, Any]:
     metadata_path = pack / "pack.json"
     if not metadata_path.exists():
@@ -96,8 +282,27 @@ def migrate_pack(pack: Path) -> dict[str, Any]:
         if version not in READABLE_PACK_VERSIONS:
             raise MigrationError(f"unsupported Pack schema: {version}")
         existing_journal, _ = _migration_paths(pack)
+        reproducibility = metadata.get("reproducibility")
+        has_source_set_hash = (
+            isinstance(reproducibility, dict)
+            and isinstance(reproducibility.get("source_set_hash"), str)
+        )
+        evaluation_contract_current = _evaluation_contract_is_current(pack)
+        if existing_journal.exists() and not evaluation_contract_current:
+            existing_state = load_json(existing_journal)
+            if (
+                existing_state.get("status") == "completed"
+                and metadata.get("revision")
+                != existing_state.get("result_revision")
+            ):
+                raise MigrationError(
+                    "Pack changed after migration; refusing to rewrite "
+                    "newer evaluation artifacts"
+                )
         if (
             version == CURRENT_PACK_VERSION
+            and has_source_set_hash
+            and evaluation_contract_current
             and not existing_journal.exists()
             and not any((pack / relative).exists() for relative in LEGACY_ASSETS)
         ):
@@ -108,6 +313,8 @@ def migrate_pack(pack: Path) -> dict[str, Any]:
             }
         if (
             version == CURRENT_PACK_VERSION
+            and has_source_set_hash
+            and evaluation_contract_current
             and existing_journal.exists()
             and load_json(existing_journal).get("status") == "completed"
             and not any((pack / relative).exists() for relative in LEGACY_ASSETS)
@@ -122,7 +329,10 @@ def migrate_pack(pack: Path) -> dict[str, Any]:
             if existing_journal.exists()
             else version
         )
-        journal_path, _, journal = _prepare_journal(pack, original_version)
+        journal_path, backup_root, journal = _prepare_journal(
+            pack,
+            original_version,
+        )
         try:
             if original_version == "0.2" and "semantic_contract" not in metadata:
                 _upgrade_semantic_metadata(pack, metadata)
@@ -171,6 +381,25 @@ def migrate_pack(pack: Path) -> dict[str, Any]:
             if "quality" not in manifest:
                 manifest["quality"] = (
                     load_json(quality_path) if quality_path.exists() else {}
+                )
+            reproducibility = metadata.get("reproducibility")
+            if not isinstance(reproducibility, dict):
+                raise MigrationError("Pack reproducibility contract is invalid")
+            reproducibility["source_set_hash"] = source_set_fingerprint(
+                manifest
+            )
+            metadata["reproducibility"] = reproducibility
+            if not evaluation_contract_current:
+                _backup_evaluation_assets(
+                    pack,
+                    journal_path,
+                    backup_root,
+                    journal,
+                )
+                _normalize_evaluation_contract(
+                    pack,
+                    manifest,
+                    reproducibility,
                 )
             require_schema(metadata, "pack.schema.json", str(metadata_path))
             require_schema(

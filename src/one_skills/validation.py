@@ -19,10 +19,12 @@ from .distillation_quality import assess_distillation_quality
 from .errors import PipelineError
 from .learning import validate_learning_path
 from .lifecycle import load_state
+from .provenance import source_set_fingerprint
 from .schema_runtime import validate_schema
 from .source_quality import source_quality_fingerprint
 from .utils import load_json, stable_json_hash
 from .versions import (
+    CURRENT_PACK_VERSION,
     READABLE_PACK_VERSIONS,
     uses_consolidated_assets,
     uses_semantic_contract,
@@ -576,6 +578,19 @@ def validate_reproducibility(pack: Path) -> list[Finding]:
                 str(paths["constraints"]),
             )
         )
+    if (
+        pack_version == CURRENT_PACK_VERSION
+        and constraints.get("source_set_hash")
+        != source_set_fingerprint(manifest)
+    ):
+        findings.append(
+            Finding(
+                "error",
+                "source.set_hash_drift",
+                "source_set_hash does not match active and revoked Manifest state",
+                str(paths["constraints"]),
+            )
+        )
     try:
         quality = load_source_quality(pack)
     except (OSError, json.JSONDecodeError) as exc:
@@ -797,6 +812,11 @@ def validate_pack(pack: Path) -> list[Finding]:
         ("VERIFIED_PORTFOLIO.json", "capability-portfolio.schema.json"),
         ("CAPABILITY_GRAPH.json", "capability-graph.schema.json"),
         ("ir/distillation.json", "distillation-ir.schema.json"),
+        (
+            "evaluations/comparison-report.json",
+            "comparison-report.schema.json",
+        ),
+        ("evaluations/suite.json", "comparison-suite.schema.json"),
     ]
     if uses_consolidated_assets(metadata.get("schema_version")):
         schema_assets.append(

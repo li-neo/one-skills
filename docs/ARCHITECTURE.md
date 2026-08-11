@@ -1513,11 +1513,12 @@ core_assets.py        authoritative asset compatibility boundary
 - 完整性：Overview、研究问题覆盖和可执行字段完整；
 - 准确率：Evidence ID 可解析、独立来源支持和 V1/V2/V3 结果。
 
-三类指标分别报告，硬门不可互相补偿。v0.4 双层网络发布时必须全部通过，不生成
+三类指标分别报告，硬门不可互相补偿。Pack 1.0 双层网络发布时必须全部通过，不生成
 新的质量状态文件。
 
 ### 22.4 兼容与迁移
 
-v0.2/v0.3 继续兼容读取。`one migrate <pack>` 将旧状态、Recipe、保护约束和
-Source Quality 合入 v0.4 权威资产，并删除六个重复文件。迁移不修改 `skills/`、
-评测答案或 Skill Hash。
+v0.2/v0.3/v0.4 继续兼容读取。`one migrate <pack>` 将旧状态、Recipe、保护约束和
+Source Quality 合入 Pack 1.0 权威资产，并清理六个重复文件。迁移使用 journal 和
+只读备份，可中断续跑；`one migrate --rollback <pack>` 仅在 Pack 未发生后续修改时
+恢复旧契约。迁移不修改 `skills/`、评测答案或 Skill Hash。
