@@ -194,8 +194,10 @@ def create_pack(
         documents = apply_catalog_metadata(documents, source_quality)
     if profile not in PROFILES:
         raise PipelineError(f"profile has no implementation: {profile}")
-    initialize_registry(root / ".one" / "recipes.json")
-    recipe = load_json(root / ".one" / "recipes.json")["active"].get(profile)
+    registry_path = root / ".one" / "recipes.json"
+    with file_lock(root / ".one" / "locks" / "recipes.lock"):
+        initialize_registry(registry_path)
+        recipe = load_json(registry_path)["active"].get(profile)
     if not recipe:
         raise PipelineError(f"profile has no active Recipe: {profile}")
     if profile == "person":
