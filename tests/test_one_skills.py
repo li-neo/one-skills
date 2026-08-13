@@ -86,10 +86,18 @@ from one_skills.retrieval import HybridRetriever, local_embedding
 from one_skills.routing import route_intent
 from one_skills.skill_retrieval import search_skills
 from one_skills.source_quality import audit_source_catalog
+from one_skills.storage import LocalBlobStore
 from one_skills.validation import validate_pack, validate_skill
 
 
 class IngestionTests(unittest.TestCase):
+    def test_local_blob_store_reads_platform_file_uri(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "source with space.md"
+            path.write_text("content", encoding="utf-8")
+            store = LocalBlobStore(Path(temporary) / "blobs")
+            self.assertTrue(store.exists(path.resolve().as_uri()))
+
     def test_line_locator_merges_existing_fragment(self) -> None:
         self.assertEqual(
             _line_locator("https://example.org/book#chapter", 42),

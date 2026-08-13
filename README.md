@@ -43,7 +43,7 @@ HTTP API、Worker、PostgreSQL、S3、插件信任、自动进化及七类 Profi
 | Skill 召回 | 已实现字段感知 sparse/dense 召回、margin 与拒答 |
 | 学习模式 | 已实现先修路径、掌握证据和间隔复习状态 |
 | 经验进化 | 已实现 append-only 反馈、复现门、结构化 whole-folder patch、before/after 和 keep/revert |
-| 自动化测试 | 61 项，持续扩充 |
+| 自动化测试 | 62 项，持续扩充 |
 
 Mao 案例保留冻结的 60 题开发比较，但历史 Answer/Judge 为共享模型、会话隔离。Stable 发布门不会把它当作独立质量证明；必须以 Provider 隔离或不同模型重跑后，才能发布为 Stable Pack。
 

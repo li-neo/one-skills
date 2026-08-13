@@ -20,7 +20,7 @@ platform.
 
 ## Engineering Evidence
 
-- 61 unit and integration tests;
+- 62 unit and integration tests;
 - 87.73% Stable Core aggregate line coverage (85% release gate);
 - Pack migration interruption, rollback, lock, revision, and revocation
   fault-injection coverage;

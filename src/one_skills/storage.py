@@ -5,7 +5,8 @@ from __future__ import annotations
 from pathlib import Path
 import shutil
 from typing import Protocol
-from urllib.parse import unquote, urlparse
+from urllib.parse import urlparse
+from urllib.request import url2pathname
 
 from .models import SourceDocument
 from .utils import atomic_write
@@ -44,7 +45,10 @@ class LocalBlobStore:
 
     def exists(self, uri: str) -> bool:
         parsed = urlparse(uri)
-        return parsed.scheme == "file" and Path(unquote(parsed.path)).is_file()
+        if parsed.scheme != "file":
+            return False
+        value = f"//{parsed.netloc}{parsed.path}" if parsed.netloc else parsed.path
+        return Path(url2pathname(value)).is_file()
 
 
 class S3BlobStore:
