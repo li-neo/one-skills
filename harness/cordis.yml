@@ -1,0 +1,12 @@
+# Web overlay template that inserts the one-skills Harness plugin into a `dsh web`
+# profile. Launch from the deepseek-harness checkout root:
+#
+#   pnpm dsh web --patch /absolute/path/to/one-skills/harness/cordis.yml
+#
+# The plugin path MUST be absolute (patches only contribute config; they do
+# not change the profile directory the loader resolves modules against).
+# Replace the `name:` value below with the absolute path to plugin.ts on
+# this machine before use.
+- insert:
+    - id: one-skills
+      name: '/absolute/path/to/one-skills/harness/plugin.ts'

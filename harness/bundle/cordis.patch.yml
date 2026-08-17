@@ -1,0 +1,9 @@
+# dsh-plugin-one-skills bundle patch.
+#
+# The plugin row references this package by NAME (not by an absolute source
+# path), so Node's module resolution finds the installed bundle code. This is
+# the layer applied whenever a profile lists `dsh-plugin-one-skills` in its
+# `dsh.profile.bundles`.
+- insert:
+    - id: one-skills
+      name: dsh-plugin-one-skills

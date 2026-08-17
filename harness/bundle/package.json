@@ -1,0 +1,24 @@
+{
+  "name": "dsh-plugin-one-skills",
+  "version": "1.0.0",
+  "description": "DeepSeek Harness bundle registering the one-skills distillation methodology (SKILL.md) as a runtime skill.",
+  "type": "module",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "cordis.patch.yml",
+    "SKILL.md"
+  ],
+  "keywords": [
+    "dsh-plugin",
+    "skill",
+    "distillation",
+    "agent"
+  ],
+  "license": "MIT",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}
