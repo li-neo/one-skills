@@ -1061,9 +1061,12 @@ one guide record ./guided/reviewer \
   --permission authorized \
   --locator "conversation:turn-1"
 one guide create-pack ./guided/reviewer --output .
+# 使用 create-pack 输出的 Pack 路径：
+PACK_PATH="<create-pack JSON 输出中的 pack 字段>"
+one next "$PACK_PATH"
 ```
 
-`self_report`、`scenario_response`、`observed_behavior`、`documented_result` 等等级会原样进入 Pack 的证据账本和知识库，不会在 Markdown 摄取后退化为普通引文。完整协议见 [Guided Distillation](docs/GUIDED_DISTILLATION.md)。
+`create-pack` 进入与 `distill` 相同的正式十阶段 Pipeline，其 JSON 输出会给出下一步命令。`self_report`、`scenario_response`、`observed_behavior`、`documented_result` 等等级会原样进入 Pack 的证据账本和知识库，不会在 Markdown 摄取后退化为普通引文。完整协议见 [Guided Distillation](docs/GUIDED_DISTILLATION.md)。
 
 ### 蒸馏一个人
 
@@ -1075,7 +1078,25 @@ one distill \
   --mode standard \
   --access authorized \
   --consent self
+
+# 先按输出确认 Object Overview；模型验证前检查实际端点和授权阻塞：
+one next ./packs/example-person
+one next ./packs/example-person --allow-sensitive-data
 ```
+
+`--consent self/consented/work-authorized` 只记录蒸馏授权，不自动代表允许向第三方模型发送材料。非公开 Pack 的 `one next` 会列出 Builder、Answer、Judge 的模型与 `base_url`；每次执行 `verify-model` 或 `compare run` 前，只有确认授权范围覆盖这些端点后，才使用 `--allow-sensitive-data` 返回并执行命令。
+
+本地 Ollama、vLLM 等服务可直接使用 OpenAI-compatible 端点：
+
+```bash
+export ONE_SKILLS_MODEL_BASE_URL="http://127.0.0.1:11434/v1"
+export ONE_SKILLS_MODEL_API_KEY="local"
+export ONE_SKILLS_MODEL="qwen3"
+one model status
+```
+
+回环地址只说明网络目的地在本机，仍需确认该服务不会把请求代理到外部。
+单模型 fallback 可用于验证和开发证据；Stable 发布评测仍要求 Answer 与 Judge 达到 Provider 隔离或模型隔离。
 
 ### 从文档创建 Skill
 
@@ -1116,6 +1137,7 @@ export ONE_SKILLS_BUILDER_MODEL="builder-model"
 # 只有一套模型时可回退到 ONE_SKILLS_MODEL_*。
 
 one model status
+one next ./packs/example
 one semantic confirm ./packs/example \
   --artifact overview --notes "对象骨架和来源已核对"
 one verify-model ./packs/example
@@ -1133,7 +1155,11 @@ one install ./packs/example --target ~/.codex/skills
 one export ./packs/example --runtime claude
 ```
 
-非公开 Pack 默认禁止发送到模型端点。只有在确认端点、数据协议和授权范围后，才能显式增加 `--allow-sensitive-data`。比较 Suite 必须在运行前独立冻结。三角色未配置时可以从隔离 Runtime 导入完整 Answer/Judge artifacts，但未签名的导入结果只作为开发证据，不能通过 Stable 发布门。
+`one next <pack>` 是只读操作：它综合 lifecycle、semantic contract、验证审计和评测产物返回 `action`、可执行 `command`、`blocked_by`、`warnings` 与模型 `endpoints`，不会推进状态或调用模型。缺少人工确认说明、Suite、baseline 或敏感数据授权时不会伪造命令，可分别通过 `--notes`、`--suite`、`--baseline`、`--allow-sensitive-data` 显式补齐。
+
+非公开 Pack 默认禁止发送到模型端点。只有在确认端点、数据协议和授权范围后，才能显式增加 `--allow-sensitive-data`。比较 Suite 必须在运行前独立冻结；`--baseline` 是必填的冻结对照 Skill 与评分契约清单，不是预跑结果。三角色未配置时可以从隔离 Runtime 导入完整 Answer/Judge artifacts，但未签名的导入结果只作为开发证据，不能通过 Stable 发布门。
+
+`one approve --candidate ...` 是旧版单候选编译旁路，不满足 Stable 1.0 的 Portfolio 确认流程。可发布 Pack 应使用 `verify-model → semantic confirm portfolio → compile`。
 
 ### 检索与用户画像记忆
 

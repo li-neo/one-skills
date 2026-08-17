@@ -258,6 +258,27 @@ class RoleSeparatedEvaluationTests(unittest.TestCase):
             with self.assertRaisesRegex(DeliveryError, "report is stale"):
                 _assert_tested(pack)
 
+    def test_non_public_skill_context_requires_explicit_authorization(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            pack = self._compiled_pack(Path(temporary))
+            metadata_path = pack / "pack.json"
+            metadata = load_json(metadata_path)
+            metadata["access_level"] = "authorized"
+            dump_json(metadata_path, metadata)
+
+            with self.assertRaisesRegex(
+                ComparisonError,
+                "--allow-sensitive-data",
+            ):
+                run_condition(
+                    pack,
+                    {},
+                    "one-skills",
+                    local_skill_context(pack),
+                    FakeRoles(),
+                    "A",
+                )
+
     def test_holdout_rubric_leakage_is_detected(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             pack = self._compiled_pack(Path(temporary))

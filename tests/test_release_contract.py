@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import argparse
 import unittest
+from contextlib import redirect_stderr
+from io import StringIO
 
 from one_skills import __version__
 from one_skills.cli import build_parser
@@ -24,6 +26,7 @@ class ReleaseContractTests(unittest.TestCase):
             "init",
             "distill",
             "inspect",
+            "next",
             "update",
             "source",
             "semantic",
@@ -37,6 +40,19 @@ class ReleaseContractTests(unittest.TestCase):
             "migrate",
         }
         self.assertTrue(stable <= set(subparsers.choices))
+
+    def test_compare_baseline_is_explicit(self) -> None:
+        parser = build_parser()
+        with redirect_stderr(StringIO()), self.assertRaises(SystemExit):
+            parser.parse_args(
+                [
+                    "compare",
+                    "run",
+                    "./packs/example",
+                    "--suite",
+                    "./suite.json",
+                ]
+            )
 
     def test_version_and_pack_compatibility_matrix(self) -> None:
         self.assertEqual(__version__, "1.0.0")

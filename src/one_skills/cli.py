@@ -60,6 +60,7 @@ from .guided import (
     update_session_profile,
     validate_guided_workspace,
 )
+from .guidance import recommend_next_action
 from .ingest import IngestionError
 from .jobs import JobQueue, run_worker_once
 from .learning import (
@@ -109,6 +110,52 @@ def _print(value: object) -> None:
     print(json.dumps(value, ensure_ascii=False, indent=2))
 
 
+def _with_next(
+    value: dict,
+    pack: Path,
+    *,
+    allow_sensitive_data: bool = False,
+    suite_path: Path | None = None,
+    baseline_path: Path | None = None,
+    confirmation_notes: str | None = None,
+) -> dict:
+    return {
+        **value,
+        "next": recommend_next_action(
+            pack,
+            allow_sensitive_data=allow_sensitive_data,
+            suite_path=suite_path,
+            baseline_path=baseline_path,
+            confirmation_notes=confirmation_notes,
+        ),
+    }
+
+
+def _require_next_action(
+    pack: Path,
+    expected: str,
+    *,
+    allow_sensitive_data: bool = False,
+) -> dict:
+    recommendation = recommend_next_action(
+        pack,
+        allow_sensitive_data=allow_sensitive_data,
+    )
+    if recommendation["action"] == expected:
+        return recommendation
+    detail = recommendation["command"] or "; ".join(recommendation["warnings"])
+    endpoints = ", ".join(
+        f"{item['role']}={item['base_url']}"
+        for item in recommendation["endpoints"]
+    )
+    if endpoints:
+        detail = f"{detail}; endpoints: {endpoints}" if detail else endpoints
+    suffix = f"; run: {detail}" if detail else ""
+    raise PipelineError(
+        f"required next action is {recommendation['action']}{suffix}"
+    )
+
+
 def cmd_init(args: argparse.Namespace) -> int:
     root = init_workspace(_path(args.path), args.mode)
     print(f"initialized one-skills workspace: {root}")
@@ -128,15 +175,14 @@ def cmd_distill(args: argparse.Namespace) -> int:
         args.alias,
     )
     state = load_state(pack)
+    recommendation = recommend_next_action(pack)
     _print(
         {
             "pack": str(pack),
             "phase": state["current_phase"],
             "status": state["phases"][state["current_phase"]]["status"],
-            "next": (
-                "review OBJECT_OVERVIEW.md, run `one semantic confirm --artifact overview`, "
-                "then run role-separated `one verify-model`"
-            ),
+            "artifact_maturity": recommendation["artifact_maturity"],
+            "next": recommendation,
         }
     )
     return 0
@@ -154,6 +200,24 @@ def cmd_inspect(args: argparse.Namespace) -> int:
             "skills": [path.parent.name for path in (pack / "skills").glob("*/SKILL.md")],
             "core_quality": assess_distillation_quality(pack),
             "asset_contract": artifact_contract(pack),
+            "next": recommend_next_action(pack),
+        }
+    )
+    return 0
+
+
+def cmd_next(args: argparse.Namespace) -> int:
+    pack = _path(args.pack)
+    _print(
+        {
+            "pack": str(pack),
+            "next": recommend_next_action(
+                pack,
+                allow_sensitive_data=args.allow_sensitive_data,
+                suite_path=_path(args.suite) if args.suite else None,
+                baseline_path=_path(args.baseline) if args.baseline else None,
+                confirmation_notes=args.notes,
+            ),
         }
     )
     return 0
@@ -171,24 +235,42 @@ def cmd_advance(args: argparse.Namespace) -> int:
 
 
 def cmd_approve(args: argparse.Namespace) -> int:
-    skill = approve_and_compile(_path(args.pack), args.candidate, args.reason)
-    print(f"compiled Skill: {skill}")
+    pack = _path(args.pack)
+    skill = approve_and_compile(pack, args.candidate, args.reason)
+    _print(
+        {
+            "skill": str(skill),
+            "workflow": "legacy-single-candidate",
+            "warning": (
+                "`approve` bypasses the Stable 1.0 portfolio workflow; use "
+                "`verify-model`, portfolio confirmation, and `compile` for a "
+                "releasable Pack."
+            ),
+            "next": recommend_next_action(pack),
+        }
+    )
     return 0
 
 
 def cmd_verify_model(args: argparse.Namespace) -> int:
+    pack = _path(args.pack)
+    _require_next_action(
+        pack,
+        "verify_with_model",
+        allow_sensitive_data=args.allow_sensitive_data,
+    )
     roles = load_model_roles()
     if roles is None:
         raise ProviderError(
             "configure all Builder/Answer/Judge role variables or the ONE_SKILLS_MODEL fallback"
         )
     report = verify_pack_with_roles(
-        _path(args.pack),
+        pack,
         roles,
         args.allow_sensitive_data,
         not args.skip_semantic_extract,
     )
-    _print(report)
+    _print(_with_next(report, pack))
     return 0 if report["accepted"] else 1
 
 
@@ -200,7 +282,9 @@ def cmd_model(args: argparse.Namespace) -> int:
 
 
 def cmd_compile(args: argparse.Namespace) -> int:
-    _print(compile_confirmed_portfolio(_path(args.pack)))
+    pack = _path(args.pack)
+    _require_next_action(pack, "compile_portfolio")
+    _print(_with_next(compile_confirmed_portfolio(pack), pack))
     return 0
 
 
@@ -229,27 +313,35 @@ def cmd_evaluate(args: argparse.Namespace) -> int:
             context,
             roles,
             "A",
+            args.allow_sensitive_data,
         )
     )
     return 0
 
 
 def cmd_compare(args: argparse.Namespace) -> int:
+    pack = _path(args.pack)
     if args.compare_command == "freeze":
         suite = json.loads(_path(args.suite).read_text(encoding="utf-8"))
-        _print(freeze_evaluation_suite(_path(args.pack), suite))
-        return 0
-    if args.compare_command == "report":
         _print(
-            json.loads(
-                (_path(args.pack) / "evaluations" / "comparison-report.json")
-                .read_text(encoding="utf-8")
+            _with_next(
+                freeze_evaluation_suite(pack, suite),
+                pack,
+                suite_path=_path(args.suite),
             )
         )
         return 0
+    if args.compare_command == "report":
+        report = json.loads(
+            (pack / "evaluations" / "comparison-report.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        _print(_with_next(report, pack))
+        return 0
     if args.compare_command == "import":
         report = import_blind_artifacts(
-            _path(args.pack),
+            pack,
             _path(args.suite),
             _path(args.baseline),
             _path(args.artifacts),
@@ -257,18 +349,34 @@ def cmd_compare(args: argparse.Namespace) -> int:
             judge_model=args.judge_model,
             isolation_level=args.isolation_level,
         )
-        _print(report)
+        _print(
+            _with_next(
+                report,
+                pack,
+                suite_path=_path(args.suite),
+                baseline_path=_path(args.baseline),
+            )
+        )
         return 0 if report["passed"] else 1
     roles = load_model_roles()
     if roles is None:
         raise ProviderError("model roles are not configured")
     report = run_blind_comparison(
-        _path(args.pack),
+        pack,
         _path(args.suite),
         _path(args.baseline),
         roles,
+        args.allow_sensitive_data,
     )
-    _print(report)
+    _print(
+        _with_next(
+            report,
+            pack,
+            allow_sensitive_data=args.allow_sensitive_data,
+            suite_path=_path(args.suite),
+            baseline_path=_path(args.baseline),
+        )
+    )
     return 0 if report["passed"] else 1
 
 
@@ -355,10 +463,10 @@ def cmd_migrate(args: argparse.Namespace) -> int:
 def cmd_semantic(args: argparse.Namespace) -> int:
     pack = _path(args.pack)
     if args.artifact == "overview":
-        _print(confirm_object_overview(pack, args.notes))
+        _print(_with_next(confirm_object_overview(pack, args.notes), pack))
         return 0
     if args.artifact == "portfolio":
-        _print(confirm_portfolio(pack, args.notes))
+        _print(_with_next(confirm_portfolio(pack, args.notes), pack))
         return 0
     raise ValueError(f"unsupported semantic artifact: {args.artifact}")
 
@@ -522,7 +630,8 @@ def cmd_install(args: argparse.Namespace) -> int:
 
 
 def cmd_release(args: argparse.Namespace) -> int:
-    _print(release_pack(_path(args.pack)))
+    pack = _path(args.pack)
+    _print(_with_next(release_pack(pack), pack))
     return 0
 
 
@@ -688,11 +797,14 @@ def cmd_guide(args: argparse.Namespace) -> int:
         pack, evidence_count = create_pack_from_session(
             workspace, _path(args.output), args.mode, args.source
         )
+        recommendation = recommend_next_action(pack)
         _print(
             {
                 "pack": str(pack),
                 "guided_evidence_materialized": evidence_count,
                 "current_phase": load_state(pack)["current_phase"],
+                "artifact_maturity": recommendation["artifact_maturity"],
+                "next": recommendation,
             }
         )
     return 0
@@ -805,6 +917,27 @@ def build_parser() -> argparse.ArgumentParser:
     inspect.add_argument("pack")
     inspect.set_defaults(func=cmd_inspect)
 
+    next_parser = commands.add_parser(
+        "next",
+        help="recommend the next executable Pack action without changing state",
+    )
+    next_parser.add_argument("pack")
+    next_parser.add_argument(
+        "--allow-sensitive-data",
+        action="store_true",
+        help=(
+            "confirm that consent covers the listed endpoints and reveal the "
+            "non-public verification command"
+        ),
+    )
+    next_parser.add_argument("--suite")
+    next_parser.add_argument("--baseline")
+    next_parser.add_argument(
+        "--notes",
+        help="human review notes used to build a semantic confirmation command",
+    )
+    next_parser.set_defaults(func=cmd_next)
+
     update = commands.add_parser("update", help="incrementally ingest changed sources")
     update.add_argument("pack")
     update.add_argument("--source", action="append", required=True)
@@ -817,7 +950,10 @@ def build_parser() -> argparse.ArgumentParser:
     advance.add_argument("--notes")
     advance.set_defaults(func=cmd_advance)
 
-    approve = commands.add_parser("approve", help="record independent V2 approval and compile a Skill")
+    approve = commands.add_parser(
+        "approve",
+        help="legacy: approve and compile one candidate outside the Stable portfolio flow",
+    )
     approve.add_argument("pack")
     approve.add_argument("--candidate", required=True)
     approve.add_argument("--reason", required=True)
@@ -850,7 +986,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     compile_parser = commands.add_parser(
         "compile",
-        help="compile a confirmed v0.3 Capability Portfolio",
+        help="compile a confirmed Capability Portfolio",
     )
     compile_parser.add_argument("pack")
     compile_parser.set_defaults(func=cmd_compile)
@@ -875,6 +1011,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--baseline",
         default="benchmarks/mao-methods/baselines.json",
     )
+    evaluate_run.add_argument(
+        "--allow-sensitive-data",
+        action="store_true",
+        help="authorize sending non-public Skill context to evaluation models",
+    )
     evaluate_run.set_defaults(func=cmd_evaluate)
 
     compare = commands.add_parser(
@@ -888,9 +1029,11 @@ def build_parser() -> argparse.ArgumentParser:
     compare_run = compare_commands.add_parser("run")
     compare_run.add_argument("pack")
     compare_run.add_argument("--suite", required=True)
+    compare_run.add_argument("--baseline", required=True)
     compare_run.add_argument(
-        "--baseline",
-        default="benchmarks/mao-methods/baselines.json",
+        "--allow-sensitive-data",
+        action="store_true",
+        help="authorize sending non-public Skill context to comparison models",
     )
     compare_run.set_defaults(func=cmd_compare)
     compare_freeze = compare_commands.add_parser("freeze")
@@ -900,10 +1043,7 @@ def build_parser() -> argparse.ArgumentParser:
     compare_import = compare_commands.add_parser("import")
     compare_import.add_argument("pack")
     compare_import.add_argument("--suite", required=True)
-    compare_import.add_argument(
-        "--baseline",
-        default="benchmarks/mao-methods/baselines.json",
-    )
+    compare_import.add_argument("--baseline", required=True)
     compare_import.add_argument("--artifacts", required=True)
     compare_import.add_argument("--answer-model", required=True)
     compare_import.add_argument("--judge-model", required=True)

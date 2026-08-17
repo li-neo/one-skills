@@ -190,6 +190,65 @@ one public SKILL.md
 
 不要把全部研究材料塞入 `SKILL.md`。
 
+### 产物分离：Pack 产物 ≠ 可发布 Skill
+
+蒸馏产物必须分成两层，**不要混在一个目录里**：
+
+```text
+packs/<name>/                       ← Pack 根 = 蒸馏溯源产物（开发/审计用，不上线）
+├── pack.json                       ← 元数据 + lifecycle 状态机
+├── DISTILLATION_CONTRACT.md        ← Phase 0 契约
+├── SOURCE_CATALOG.json             ← 来源账本
+├── OBJECT_OVERVIEW.md              ← 对象地图
+├── CANDIDATE_PORTFOLIO.json        ← 候选能力
+├── VERIFIED_PORTFOLIO.json         ← 验证结果
+├── EVIDENCE_LEDGER.jsonl           ← 证据账本
+├── LEARNING_PATH.json              ← 学习路径
+├── SOURCE_MANIFEST.json            ← 来源质量清单
+├── candidates/ verified/ rejected/ evaluations/ sources/ ir/   ← 各阶段开发产物
+└── skills/<name>/                  ← 可发布的 Skill（唯一要发布的东西）
+    ├── SKILL.md
+    ├── capability.json
+    ├── agents/
+    ├── capabilities/*.json
+    ├── references/modules/*.md
+    ├── evals/*.json
+    └── test-prompts.json
+```
+
+关键规则：
+
+1. **`skills/<name>/` 是唯一可发布单元**。`one install` / `one export` 只处理
+   `pack/skills/*/SKILL.md`，把它整个目录复制/打包到目标运行时；pack 根其余
+   溯源产物**不会**进入发布产物。
+2. **Skill 目录必须自包含**：`SKILL.md` 及各模块只能引用自身目录内的文件，
+   **禁止 `../` 跨目录引用 pack 根**（如 `../EVIDENCE_LEDGER.jsonl`）。如需在
+   Skill 内提供证据摘要，把精简版放进 `references/evidence.md`，完整账本留在
+   pack 根供溯源。
+3. **目录名 = SKILL.md 的 `name`**：`skills/<name>/` 的 `<name>` 必须与 frontmatter
+   `name` 一致，这样安装到目标时目录名才正确（默认 `~/.codex/skills/<name>/`）。
+4. **发布前确认 ship 完成**：`one install` / `one export` 要求 `pack.json.lifecycle`
+   的 `ship` 阶段为 `completed`，且已通过 `_assert_tested`。
+
+### 如何单独发布 Skill
+
+```bash
+# 安装到运行时（默认 ~/.codex/skills/，可用 CODEX_HOME 或 --target 改）
+one install ./packs/<name> --target ~/.dsh/skills        # DSH 运行时
+one install ./packs/<name> --target ~/.codex/skills       # Codex 运行时
+one install ./packs/<name>                                # 默认目标
+
+# 打包导出（zip，含 read-back 校验）
+one export ./packs/<name> --output ./dist --runtime generic
+
+# 预览将安装什么（dry-run，不改动目标）
+one install ./packs/<name> --target <dir> --dry-run
+```
+
+- 覆盖已存在的目标 Skill 必须先 `.backup-<timestamp>`（`--force` 触发）
+- 安装/导出后必须读回校验（目标存在 `SKILL.md` / zip 非空且含 `SKILL.md`）
+- 发布到多个运行时：先 `one install` 到各目标，或 `one export --runtime <runtime>` 分别导出
+
 ## Profile 专项要求
 
 ### person

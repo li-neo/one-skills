@@ -29,6 +29,20 @@ class ComparisonError(ValueError):
     pass
 
 
+def _assert_model_data_allowed(
+    pack: Path,
+    allow_sensitive_data: bool,
+    operation: str,
+) -> None:
+    metadata = load_json(pack / "pack.json")
+    if metadata.get("access_level") != "public" and not allow_sensitive_data:
+        raise ComparisonError(
+            f"non-public Pack data cannot be sent for {operation} without explicit "
+            "--allow-sensitive-data authorization; run `one next` to inspect "
+            "configured endpoints"
+        )
+
+
 COMPARISON_WEIGHTS = {
     "task_effect": 50,
     "routing": 15,
@@ -228,9 +242,16 @@ def run_condition(
     skill_context: str,
     roles: Any,
     blind_label: str,
+    allow_sensitive_data: bool = False,
 ) -> dict[str, Any]:
     if condition not in {"no-skill", "cangjie", "one-skills"}:
         raise ComparisonError(f"unsupported condition: {condition}")
+    if condition == "one-skills":
+        _assert_model_data_allowed(
+            pack,
+            allow_sensitive_data,
+            "one-skills evaluation",
+        )
     providers = roles.providers()
     records: list[dict[str, Any]] = []
     suite_hash = _assert_suite_frozen(pack, suite)
@@ -763,7 +784,13 @@ def run_blind_comparison(
     suite_path: Path,
     baseline_path: Path,
     roles: Any,
+    allow_sensitive_data: bool = False,
 ) -> dict[str, Any]:
+    _assert_model_data_allowed(
+        pack,
+        allow_sensitive_data,
+        "blind comparison",
+    )
     suite = load_json(suite_path)
     baseline_manifest = load_json(baseline_path)
     comparison = baseline_manifest["comparison"]
@@ -789,6 +816,7 @@ def run_blind_comparison(
             context,
             roles,
             labels[condition],
+            allow_sensitive_data,
         )
         for condition, context in contexts.items()
     }

@@ -112,6 +112,9 @@ one guide advance <workspace>
 one guide export <workspace>
 one guide create-pack <workspace> --output <one-workspace> [--source <path>]
 one validate <workspace>
+one next <pack-path-returned-by-create-pack>
 ```
 
 `create-pack` 至少要求 `scope` 与 `evidence_inventory` 已确认。创建后回答、纠正、假设、观察和结果事件会成为可检索 Claim，并保留原始事件 ID；材料清单和 evidence gap 只保留在会话审计中。
+
+创建出的 Pack 不走更短的旁路，而是进入与 `one distill` 相同的正式十阶段 Pipeline。`create-pack` 输出包含统一的 `next` 对象；也可以随时运行 `one next <pack>`，依次完成 Object Overview 确认、模型验证、Portfolio 确认、编译、冻结评测、比较和受控发布。对于非公开 Pack，先检查 `next.endpoints`，确认授权覆盖实际模型端点后，再使用 `one next <pack> --allow-sensitive-data` 获取验证命令。
