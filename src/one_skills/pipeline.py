@@ -8,7 +8,6 @@ from pathlib import Path
 from typing import Any
 
 from .compiler import capability_from_candidate, compile_skill
-from .database import KnowledgeDB
 from .errors import PipelineError
 from .evaluation_state import mark_evaluations_stale
 from .extraction import (
@@ -102,7 +101,7 @@ def extract_pack(pack: Path) -> tuple[list[Candidate], list[Evidence]]:
     verified = verify_candidates(
         candidates,
         deep=metadata["mode"] == "deep",
-        require_independent_sources=metadata["profile"] in {"person", "hybrid"},
+        require_independent_sources=metadata["profile"] == "hybrid",
     )
     dump_json(pack / "verified" / "decisions.json", [_candidate_dict(item) for item in verified])
     build_portfolio(pack, verified, kind="verified")
@@ -152,7 +151,7 @@ def reextract_with_model(
     verified = verify_candidates(
         candidates,
         deep=True,
-        require_independent_sources=metadata["profile"] in {"person", "hybrid"},
+        require_independent_sources=metadata["profile"] == "hybrid",
     )
     dump_json(pack / "verified" / "decisions.json", [_candidate_dict(item) for item in verified])
     build_portfolio(pack, verified, kind="verified")
@@ -178,33 +177,41 @@ def reextract_with_model(
     return verified, evidence
 
 
+def _active_chunks(pack: Path) -> list[dict[str, Any]]:
+    """Resolve the pack's active chunks from flat files (no database)."""
+    chunks = load_json(pack / "sources" / "chunks.json")
+    manifest = load_json(pack / "SOURCE_MANIFEST.json")
+    active_versions = {
+        item["document_id"]: item["document_version"]
+        for item in manifest.get("sources", [])
+        if item.get("active")
+    }
+    return [
+        chunk
+        for chunk in chunks
+        if active_versions.get(chunk.get("document_id")) == chunk.get("document_version")
+    ]
+
+
 def _index_evidence(pack: Path, evidence: list[Evidence]) -> None:
-    workspace = workspace_for(pack)
-    with KnowledgeDB(workspace / ".one" / "knowledge.db") as database:
-        for item in evidence:
-            if item.chunk_id:
-                chunk_rows = database.rows(
-                    "SELECT id FROM chunks WHERE id = ? AND document_id = ? "
-                    "AND document_version = ?",
-                    (item.chunk_id, item.source, item.document_version),
-                )
-            else:
-                chunk_rows = database.rows(
-                    "SELECT c.id FROM chunks c "
-                    "JOIN documents d ON d.id = c.document_id "
-                    "WHERE c.document_id = ? AND c.source_locator = ? "
-                    "AND c.document_version = d.active_version",
-                    (item.source, item.locator),
-                )
-            if not chunk_rows:
-                raise PipelineError(
-                    f"evidence {item.id} does not resolve to an active source chunk"
-                )
-            database.add_claim(
-                item.claim,
-                item.confidence,
-                [row["id"] for row in chunk_rows],
-                claim_id=item.id,
+    chunks = _active_chunks(pack)
+    by_id = {chunk["id"]: chunk for chunk in chunks}
+    for item in evidence:
+        if item.chunk_id:
+            chunk = by_id.get(item.chunk_id)
+        else:
+            chunk = next(
+                (
+                    candidate
+                    for candidate in chunks
+                    if candidate.get("document_id") == item.source
+                    and candidate.get("source_locator") == item.locator
+                ),
+                None,
+            )
+        if chunk is None:
+            raise PipelineError(
+                f"evidence {item.id} does not resolve to an active source chunk"
             )
 
 
@@ -216,7 +223,7 @@ def approve_and_compile(pack: Path, candidate_id: str, reason: str) -> Path:
     if not target:
         raise PipelineError(f"candidate not found: {candidate_id}")
     profile = load_json(pack / "pack.json")["profile"]
-    source_gate = target.source_independent or profile not in {"person", "hybrid"}
+    source_gate = target.source_independent or profile != "hybrid"
     if target.status == "rejected" and not (
         target.cross_domain
         and source_gate
@@ -235,12 +242,6 @@ def approve_and_compile(pack: Path, candidate_id: str, reason: str) -> Path:
     capability = capability_from_candidate(target, profile)
     skill_dir = compile_skill(pack, capability, linked, profile=profile)
     mark_evaluations_stale(pack, f"Skill compiled: {skill_dir.name}")
-    workspace = workspace_for(pack)
-    with KnowledgeDB(workspace / ".one" / "knowledge.db") as database:
-        database.add_capability(capability.id, capability.name, profile, capability.to_dict())
-        for evidence_id in capability.evidence_ids:
-            database.add_edge("claim", evidence_id, "supports", "capability", capability.id)
-        database.add_edge("capability", capability.id, "produces", "skill", skill_dir.name)
     state = load_state(pack)
     state["phases"]["verify"] = {
         "status": "completed",
@@ -323,7 +324,7 @@ def verify_pack_with_roles(
         candidate.actionable = verification["actionable"]
         source_gate = (
             candidate.source_independent
-            or metadata["profile"] not in {"person", "hybrid"}
+            or metadata["profile"] != "hybrid"
         )
         if verification["accepted"] and candidate.cross_domain and source_gate:
             generated = model_capability(
@@ -462,55 +463,44 @@ def verify_and_compile_with_model(
     contract = profile_prompt(metadata["profile"])
     audit: list[dict[str, Any]] = []
     compiled: list[Path] = []
-    workspace = workspace_for(pack)
-    with KnowledgeDB(workspace / ".one" / "knowledge.db") as database:
-        for candidate in candidates:
-            related = [item for item in evidence if item.get("id") in candidate.evidence_ids]
-            # The independent verifier also sees nearby evidence so it can test recurrence.
-            verification = verify_candidate(provider, asdict(candidate), evidence[:50], contract)
-            audit.append({"candidate_id": candidate.id, **verification})
-            candidate.cross_domain = (
-                verification["cross_domain"]
-                and len(set(candidate.source_contexts)) >= 2
+    for candidate in candidates:
+        related = [item for item in evidence if item.get("id") in candidate.evidence_ids]
+        # The independent verifier also sees nearby evidence so it can test recurrence.
+        verification = verify_candidate(provider, asdict(candidate), evidence[:50], contract)
+        audit.append({"candidate_id": candidate.id, **verification})
+        candidate.cross_domain = (
+            verification["cross_domain"]
+            and len(set(candidate.source_contexts)) >= 2
+        )
+        candidate.source_independent = len(
+            set(candidate.independence_groups)
+        ) >= 2
+        candidate.predictive = verification["predictive"]
+        candidate.distinctive = verification["distinctive"]
+        candidate.actionable = verification["actionable"]
+        source_gate = (
+            candidate.source_independent
+            or metadata["profile"] != "hybrid"
+        )
+        if not verification["accepted"] or not candidate.cross_domain or not source_gate:
+            candidate.status = "rejected"
+            candidate.rejection_reason = (
+                verification["reason"]
+                if source_gate
+                else "hybrid Profile requires two independent provenance groups"
             )
-            candidate.source_independent = len(
-                set(candidate.independence_groups)
-            ) >= 2
-            candidate.predictive = verification["predictive"]
-            candidate.distinctive = verification["distinctive"]
-            candidate.actionable = verification["actionable"]
-            source_gate = (
-                candidate.source_independent
-                or metadata["profile"] not in {"person", "hybrid"}
-            )
-            if not verification["accepted"] or not candidate.cross_domain or not source_gate:
-                candidate.status = "rejected"
-                candidate.rejection_reason = (
-                    verification["reason"]
-                    if source_gate
-                    else "person and hybrid Profiles require two independent provenance groups"
-                )
-                dump_json(pack / "rejected" / f"{candidate.id}.json", _candidate_dict(candidate))
-                continue
-            candidate.status = "accepted"
-            candidate.rejection_reason = ""
-            generated = model_capability(provider, asdict(candidate), related, contract)
-            capability = Capability(
-                **generated,
-                evidence_ids=list(candidate.evidence_ids),
-                confidence=0.85,
-            )
-            skill_dir = compile_skill(pack, capability, related, profile=metadata["profile"])
-            compiled.append(skill_dir)
-            database.add_capability(
-                capability.id,
-                capability.name,
-                metadata["profile"],
-                capability.to_dict(),
-            )
-            for evidence_id in capability.evidence_ids:
-                database.add_edge("claim", evidence_id, "supports", "capability", capability.id)
-            database.add_edge("capability", capability.id, "produces", "skill", skill_dir.name)
+            dump_json(pack / "rejected" / f"{candidate.id}.json", _candidate_dict(candidate))
+            continue
+        candidate.status = "accepted"
+        candidate.rejection_reason = ""
+        generated = model_capability(provider, asdict(candidate), related, contract)
+        capability = Capability(
+            **generated,
+            evidence_ids=list(candidate.evidence_ids),
+            confidence=0.85,
+        )
+        skill_dir = compile_skill(pack, capability, related, profile=metadata["profile"])
+        compiled.append(skill_dir)
     dump_json(decisions_path, [_candidate_dict(item) for item in candidates])
     dump_json(pack / "audit" / "model-verification.json", audit)
     build_portfolio(pack, candidates, kind="verified")
@@ -581,11 +571,6 @@ def _write_distillation_ir(pack: Path, skills: list[Path]) -> None:
             for item in evidence
         ],
         "capabilities": capabilities,
-        "style": {
-            "enabled": metadata["profile"] == "person",
-            "mode": "advisor",
-            "forbidden_patterns": ["identity impersonation", "unsupported sensitive inference"],
-        },
         "evals": evals,
         "learning_path": load_json(pack / "LEARNING_PATH.json"),
         "object_overview": (

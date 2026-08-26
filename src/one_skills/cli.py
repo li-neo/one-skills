@@ -10,9 +10,6 @@ from pathlib import Path
 from typing import Sequence
 
 from . import __version__
-from .api import create_api_server
-from .batch import distill_batch, load_jobs
-from .benchmark import run_profile_benchmark
 from .comparison import (
     fetch_github_skill_context,
     freeze_evaluation_suite,
@@ -20,11 +17,12 @@ from .comparison import (
     local_skill_context,
     run_blind_comparison,
     run_condition,
+    write_baseline_manifest,
 )
 from .compiler import export_profile_templates
-from .constants import CONSENT_LEVELS, MODES, PERMISSIONS, PHASES
+from .constants import CONSENT_LEVELS, MODES, OBJECT_TO_PROFILE, PERMISSIONS, PHASES
+from .control import build_control_status
 from .core_assets import artifact_contract
-from .database import KnowledgeDB
 from .delivery import (
     DeliveryError,
     export_pack,
@@ -42,6 +40,7 @@ from .experience import (
     mine_experience_candidates,
     record_experience,
 )
+from .guidance import recommend_next_action
 from .guided import (
     CHECKPOINT_STATUSES,
     CHECKPOINTS,
@@ -60,9 +59,7 @@ from .guided import (
     update_session_profile,
     validate_guided_workspace,
 )
-from .guidance import recommend_next_action
 from .ingest import IngestionError
-from .jobs import JobQueue, run_worker_once
 from .learning import (
     LearningError,
     build_learning_path,
@@ -86,11 +83,10 @@ from .pipeline import (
     verify_pack_with_roles,
 )
 from .portfolio import confirm_portfolio
-from .postgres import PostgresBackend
 from .provider import ProviderError
 from .recipes import Recipe, promote_recipe, promotion_decision
 from .resources import resource_file
-from .retrieval import HybridRetriever, local_embedding
+from .retrieval import HybridRetriever
 from .routing import route_intent
 from .skill_retrieval import search_skills
 from .source_discovery import discover_sources, shortlist_sources
@@ -143,16 +139,26 @@ def _require_next_action(
     )
     if recommendation["action"] == expected:
         return recommendation
-    detail = recommendation["command"] or "; ".join(recommendation["warnings"])
+    action = recommendation["action"]
+    detail_parts: list[str] = []
+    command = recommendation["command"]
+    if command:
+        detail_parts.append(f"run: {command}")
+    else:
+        detail_parts.append(
+            f"run `one next {pack}` and follow the flags it requests "
+            "(e.g. `--notes`, `--suite`, `--baseline`, `--allow-sensitive-data`)"
+        )
+    detail_parts.extend(recommendation["warnings"])
     endpoints = ", ".join(
-        f"{item['role']}={item['base_url']}"
+        f"{item['role']}={item['base_url']} ({item['network_scope']})"
         for item in recommendation["endpoints"]
     )
     if endpoints:
-        detail = f"{detail}; endpoints: {endpoints}" if detail else endpoints
-    suffix = f"; run: {detail}" if detail else ""
+        detail_parts.append(f"endpoints: {endpoints}")
     raise PipelineError(
-        f"required next action is {recommendation['action']}{suffix}"
+        f"Pack is not at the '{expected}' step; required next action is "
+        f"'{action}'. {'; '.join(detail_parts)}"
     )
 
 
@@ -163,10 +169,15 @@ def cmd_init(args: argparse.Namespace) -> int:
 
 
 def cmd_distill(args: argparse.Namespace) -> int:
+    profile = (
+        "auto"
+        if args.type == "auto"
+        else OBJECT_TO_PROFILE.get(args.type, args.type)
+    )
     pack = create_pack(
         _path(args.workspace),
         args.source or [],
-        args.type,
+        profile,
         args.mode,
         args.name,
         args.access,
@@ -221,6 +232,19 @@ def cmd_next(args: argparse.Namespace) -> int:
         }
     )
     return 0
+
+
+def cmd_status(args: argparse.Namespace) -> int:
+    """Unified control plane: one status <pack|guided-workspace|workspace> --json."""
+    status = build_control_status(
+        _path(args.path),
+        allow_sensitive_data=args.allow_sensitive_data,
+        suite_path=_path(args.suite) if args.suite else None,
+        baseline_path=_path(args.baseline) if args.baseline else None,
+        confirmation_notes=args.notes,
+    )
+    _print(status)
+    return 0 if status.get("blocker_code") is None or status.get("ready_to_advance") else 1
 
 
 def cmd_update(args: argparse.Namespace) -> int:
@@ -321,6 +345,15 @@ def cmd_evaluate(args: argparse.Namespace) -> int:
 
 def cmd_compare(args: argparse.Namespace) -> int:
     pack = _path(args.pack)
+    if args.compare_command == "baseline":
+        output = (
+            _path(args.output)
+            if args.output
+            else pack / "evaluations" / "baseline.json"
+        )
+        path = write_baseline_manifest(output, args.repository, args.commit)
+        _print(_with_next({"baseline": str(path)}, pack, baseline_path=path))
+        return 0
     if args.compare_command == "freeze":
         suite = json.loads(_path(args.suite).read_text(encoding="utf-8"))
         _print(
@@ -382,15 +415,15 @@ def cmd_compare(args: argparse.Namespace) -> int:
 
 def cmd_search(args: argparse.Namespace) -> int:
     workspace = workspace_for(_path(args.workspace))
-    with KnowledgeDB(workspace / ".one" / "knowledge.db") as database:
-        results = HybridRetriever(database, args.tenant, args.principal).search(
-            args.query, set(args.access), args.limit
-        )
+    results = HybridRetriever(workspace).search(
+        args.query, set(args.access), args.limit
+    )
     _print(
         [
             {
                 "id": item["id"],
                 "score": item["score"],
+                "pack": item.get("pack"),
                 "section": item["section_path"],
                 "locator": item["source_locator"],
                 "text": item["text"][:500],
@@ -518,51 +551,6 @@ def cmd_experience(args: argparse.Namespace) -> int:
     return 0
 
 
-def cmd_acl(args: argparse.Namespace) -> int:
-    workspace = workspace_for(_path(args.workspace))
-    with KnowledgeDB(workspace / ".one" / "knowledge.db") as database:
-        if args.acl_command == "tenant":
-            database.create_tenant(args.tenant, args.name)
-        elif args.acl_command == "principal":
-            database.create_principal(args.tenant, args.principal, args.name)
-        else:
-            database.grant_acl(
-                args.tenant,
-                args.principal,
-                args.asset_type,
-                args.asset_id,
-                args.permission,
-            )
-    _print({"status": "ok", "operation": args.acl_command})
-    return 0
-
-
-def cmd_job(args: argparse.Namespace) -> int:
-    workspace = workspace_for(_path(args.workspace))
-    if args.job_command == "worker":
-        result = run_worker_once(
-            workspace,
-            args.owner,
-            args.lease_seconds,
-        )
-        _print(result or {"status": "idle"})
-        return 0
-    with KnowledgeDB(workspace / ".one" / "knowledge.db") as database:
-        queue = JobQueue(database)
-        if args.job_command == "submit":
-            payload = json.loads(_path(args.payload).read_text(encoding="utf-8"))
-            job_id = queue.enqueue(
-                args.type,
-                payload,
-                args.max_attempts,
-                idempotency_key=args.idempotency_key,
-            )
-            _print({"job_id": job_id, "status": "queued"})
-        else:
-            _print(queue.get(args.id))
-    return 0
-
-
 def cmd_lineage(args: argparse.Namespace) -> int:
     _print(lineage(_path(args.workspace), args.type, args.id))
     return 0
@@ -575,27 +563,6 @@ def cmd_revoke_source(args: argparse.Namespace) -> int:
 
 def cmd_regression_plan(args: argparse.Namespace) -> int:
     _print(select_regression_tests(_path(args.pack), args.skill))
-    return 0
-
-
-def cmd_memory(args: argparse.Namespace) -> int:
-    workspace = workspace_for(_path(args.workspace))
-    with KnowledgeDB(workspace / ".one" / "knowledge.db") as database:
-        if args.memory_command == "subject":
-            subject_id = database.add_person_subject(args.name, args.relation, args.access)
-            _print({"subject_id": subject_id})
-        else:
-            fact_id = database.mutate_person_fact(
-                args.action,
-                args.subject,
-                args.dimension,
-                args.statement,
-                args.confidence,
-                args.access,
-                args.supersedes,
-                local_embedding(args.statement),
-            )
-            _print({"fact_id": fact_id, "action": args.action})
     return 0
 
 
@@ -631,7 +598,7 @@ def cmd_install(args: argparse.Namespace) -> int:
 
 def cmd_release(args: argparse.Namespace) -> int:
     pack = _path(args.pack)
-    _print(_with_next(release_pack(pack), pack))
+    _print(_with_next(release_pack(pack, draft=args.draft), pack))
     return 0
 
 
@@ -680,19 +647,6 @@ def cmd_evolution(args: argparse.Namespace) -> int:
         ] if directory.exists() else []
         _print({"count": len(values), "proposals": values})
     return 0
-
-
-def cmd_benchmark(args: argparse.Namespace) -> int:
-    suite = _path(args.suite)
-    report = run_profile_benchmark(suite, _path(args.output) if args.output else None)
-    _print(report)
-    return 0 if report["rate"] == 1.0 else 1
-
-
-def cmd_batch(args: argparse.Namespace) -> int:
-    report = distill_batch(_path(args.workspace), load_jobs(_path(args.manifest)), args.workers)
-    _print(report)
-    return 1 if report["failed"] else 0
 
 
 def cmd_profiles(args: argparse.Namespace) -> int:
@@ -810,34 +764,6 @@ def cmd_guide(args: argparse.Namespace) -> int:
     return 0
 
 
-def cmd_postgres(args: argparse.Namespace) -> int:
-    dsn = os.getenv("ONE_SKILLS_POSTGRES_DSN")
-    if not dsn:
-        raise ValueError("set ONE_SKILLS_POSTGRES_DSN")
-    with PostgresBackend(dsn) as backend:
-        if args.postgres_command == "init":
-            if args.migration:
-                backend.initialize(_path(args.migration))
-            else:
-                with resource_file(
-                    "migrations",
-                    "postgres",
-                    "001_initial.sql",
-                ) as migration:
-                    backend.initialize(migration)
-            result = backend.health()
-        elif args.postgres_command == "health":
-            result = backend.health()
-        elif args.postgres_command == "migrate":
-            result = {
-                "migrated": backend.migrate_from_sqlite(_path(args.sqlite), args.batch_size)
-            }
-        else:
-            result = backend.load_test(args.query, args.iterations, args.tenant, args.principal)
-    _print(result)
-    return 0
-
-
 def cmd_recipe(args: argparse.Namespace) -> int:
     workspace = workspace_for(_path(args.workspace))
     registry_path = workspace / ".one" / "recipes.json"
@@ -862,33 +788,12 @@ def cmd_recipe(args: argparse.Namespace) -> int:
     return 0
 
 
-def cmd_serve(args: argparse.Namespace) -> int:
-    workspace = workspace_for(_path(args.workspace))
-    server = create_api_server(
-        workspace,
-        args.host,
-        args.port,
-        os.getenv("ONE_SKILLS_API_TOKEN"),
-        args.tenant,
-        args.principal,
-        args.access or ("public",),
-    )
-    print(f"one-skills API listening on http://{args.host}:{server.server_port}")
-    try:
-        server.serve_forever()
-    except KeyboardInterrupt:
-        pass
-    finally:
-        server.server_close()
-    return 0
-
-
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="one", description="Evidence-first Skill distillation and knowledge system")
     parser.add_argument("--version", action="version", version=f"one-skills {__version__}")
     commands = parser.add_subparsers(dest="command", required=True)
 
-    init = commands.add_parser("init", help="initialize a workspace and SQLite knowledge base")
+    init = commands.add_parser("init", help="initialize a flat-file workspace")
     init.add_argument("path", nargs="?", default=".")
     init.add_argument("--mode", choices=MODES, default="standard")
     init.set_defaults(func=cmd_init)
@@ -900,7 +805,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="quality-gated source catalog whose selected ingest paths are added",
     )
     distill.add_argument("--workspace", default=".")
-    distill.add_argument("--type", default="auto", help="built-in or entry-point Profile name")
+    distill.add_argument("--type", default="auto", help="built-in Profile name")
     distill.add_argument("--mode", choices=MODES, default="standard")
     distill.add_argument("--name")
     distill.add_argument("--access", choices=("public", "authorized", "private-local"), default="private-local")
@@ -937,6 +842,21 @@ def build_parser() -> argparse.ArgumentParser:
         help="human review notes used to build a semantic confirmation command",
     )
     next_parser.set_defaults(func=cmd_next)
+
+    status_parser = commands.add_parser(
+        "status",
+        help=(
+            "unified control plane for a Pack, guided session, or workspace; "
+            "returns one stable machine contract (gate, allowed_actions, "
+            "ready_to_advance, recommended_action)"
+        ),
+    )
+    status_parser.add_argument("path")
+    status_parser.add_argument("--allow-sensitive-data", action="store_true")
+    status_parser.add_argument("--suite")
+    status_parser.add_argument("--baseline")
+    status_parser.add_argument("--notes")
+    status_parser.set_defaults(func=cmd_status)
 
     update = commands.add_parser("update", help="incrementally ingest changed sources")
     update.add_argument("pack")
@@ -1036,6 +956,22 @@ def build_parser() -> argparse.ArgumentParser:
         help="authorize sending non-public Skill context to comparison models",
     )
     compare_run.set_defaults(func=cmd_compare)
+    compare_baseline = compare_commands.add_parser(
+        "baseline",
+        help="write a Stable Core 1.0 baseline manifest for the frozen cangjie reference",
+    )
+    compare_baseline.add_argument("pack")
+    compare_baseline.add_argument(
+        "--repository",
+        required=True,
+        help="owner/repository holding the frozen cangjie reference",
+    )
+    compare_baseline.add_argument("--commit", required=True)
+    compare_baseline.add_argument(
+        "--output",
+        help="output path (default: <pack>/evaluations/baseline.json)",
+    )
+    compare_baseline.set_defaults(func=cmd_compare)
     compare_freeze = compare_commands.add_parser("freeze")
     compare_freeze.add_argument("pack")
     compare_freeze.add_argument("--suite", required=True)
@@ -1061,12 +997,10 @@ def build_parser() -> argparse.ArgumentParser:
     compare_report.add_argument("pack")
     compare_report.set_defaults(func=cmd_compare)
 
-    search = commands.add_parser("search", help="ACL-aware keyword, semantic, and graph retrieval")
+    search = commands.add_parser("search", help="keyword, semantic, and graph retrieval over Pack chunks")
     search.add_argument("query")
     search.add_argument("--workspace", default=".")
     search.add_argument("--access", action="append", default=["public"])
-    search.add_argument("--tenant", default="local")
-    search.add_argument("--principal", default="local-user")
     search.add_argument("--limit", type=int, default=10)
     search.set_defaults(func=cmd_search)
 
@@ -1228,47 +1162,6 @@ def build_parser() -> argparse.ArgumentParser:
     experience_status.add_argument("pack")
     experience_status.set_defaults(func=cmd_experience)
 
-    acl = commands.add_parser("acl", help="manage tenant, principal, and asset grants")
-    acl_commands = acl.add_subparsers(dest="acl_command", required=True)
-    acl_tenant = acl_commands.add_parser("tenant")
-    acl_tenant.add_argument("--workspace", default=".")
-    acl_tenant.add_argument("--tenant", required=True)
-    acl_tenant.add_argument("--name", required=True)
-    acl_tenant.set_defaults(func=cmd_acl)
-    acl_principal = acl_commands.add_parser("principal")
-    acl_principal.add_argument("--workspace", default=".")
-    acl_principal.add_argument("--tenant", required=True)
-    acl_principal.add_argument("--principal", required=True)
-    acl_principal.add_argument("--name", required=True)
-    acl_principal.set_defaults(func=cmd_acl)
-    acl_grant = acl_commands.add_parser("grant")
-    acl_grant.add_argument("--workspace", default=".")
-    acl_grant.add_argument("--tenant", required=True)
-    acl_grant.add_argument("--principal", required=True)
-    acl_grant.add_argument("--asset-type", required=True)
-    acl_grant.add_argument("--asset-id", required=True)
-    acl_grant.add_argument("--permission", choices=("read", "write", "owner"), required=True)
-    acl_grant.set_defaults(func=cmd_acl)
-
-    job = commands.add_parser("job", help="submit, inspect, or execute persistent jobs")
-    job_commands = job.add_subparsers(dest="job_command", required=True)
-    job_submit = job_commands.add_parser("submit")
-    job_submit.add_argument("--workspace", default=".")
-    job_submit.add_argument("--type", choices=("distill", "update", "benchmark"), required=True)
-    job_submit.add_argument("--payload", required=True, help="JSON payload file")
-    job_submit.add_argument("--max-attempts", type=int, default=3)
-    job_submit.add_argument("--idempotency-key")
-    job_submit.set_defaults(func=cmd_job)
-    job_status = job_commands.add_parser("status")
-    job_status.add_argument("--workspace", default=".")
-    job_status.add_argument("--id", required=True)
-    job_status.set_defaults(func=cmd_job)
-    job_worker = job_commands.add_parser("worker")
-    job_worker.add_argument("--workspace", default=".")
-    job_worker.add_argument("--owner", required=True)
-    job_worker.add_argument("--lease-seconds", type=int, default=300)
-    job_worker.set_defaults(func=cmd_job)
-
     lineage_parser = commands.add_parser("lineage", help="list transitive descendants of an asset")
     lineage_parser.add_argument("--workspace", default=".")
     lineage_parser.add_argument("--type", required=True)
@@ -1285,25 +1178,6 @@ def build_parser() -> argparse.ArgumentParser:
     regression.add_argument("pack")
     regression.add_argument("--skill", action="append", required=True)
     regression.set_defaults(func=cmd_regression_plan)
-
-    memory = commands.add_parser("memory", help="manage temporal Person Profile memory")
-    memory_commands = memory.add_subparsers(dest="memory_command", required=True)
-    subject = memory_commands.add_parser("subject")
-    subject.add_argument("--workspace", default=".")
-    subject.add_argument("--name", required=True)
-    subject.add_argument("--relation", required=True)
-    subject.add_argument("--access", default="private-local")
-    subject.set_defaults(func=cmd_memory)
-    fact = memory_commands.add_parser("fact")
-    fact.add_argument("--workspace", default=".")
-    fact.add_argument("--action", choices=("ADD", "UPDATE", "REVOKE"), required=True)
-    fact.add_argument("--subject", required=True)
-    fact.add_argument("--dimension", required=True)
-    fact.add_argument("--statement", required=True)
-    fact.add_argument("--confidence", type=float, required=True)
-    fact.add_argument("--access", default="private-local")
-    fact.add_argument("--supersedes")
-    fact.set_defaults(func=cmd_memory)
 
     validate = commands.add_parser("validate", help="validate a Pack or Skill")
     validate.add_argument("target")
@@ -1323,6 +1197,11 @@ def build_parser() -> argparse.ArgumentParser:
 
     release = commands.add_parser("release", help="apply hard gates and complete test/ship phases")
     release.add_argument("pack")
+    release.add_argument(
+        "--draft",
+        action="store_true",
+        help="quick/continuous-only draft release: skip the stable blind comparison",
+    )
     release.set_defaults(func=cmd_release)
 
     export = commands.add_parser("export", help="export a tested Pack")
@@ -1376,20 +1255,6 @@ def build_parser() -> argparse.ArgumentParser:
     evolution_status = evolution_commands.add_parser("status")
     evolution_status.add_argument("pack")
     evolution_status.set_defaults(func=cmd_evolution)
-
-    benchmark = commands.add_parser("benchmark", help="run a frozen Profile benchmark suite")
-    benchmark.add_argument(
-        "--suite",
-        required=True,
-    )
-    benchmark.add_argument("--output")
-    benchmark.set_defaults(func=cmd_benchmark)
-
-    batch = commands.add_parser("batch", help="distill independent Packs concurrently")
-    batch.add_argument("--manifest", required=True)
-    batch.add_argument("--workspace", default=".")
-    batch.add_argument("--workers", type=int, default=4)
-    batch.set_defaults(func=cmd_batch)
 
     profiles = commands.add_parser("profiles", help="export built-in Profile templates")
     profiles.add_argument("--output", required=True)
@@ -1474,27 +1339,6 @@ def build_parser() -> argparse.ArgumentParser:
     guide_pack.add_argument("--output", required=True)
     guide_pack.set_defaults(func=cmd_guide)
 
-    postgres = commands.add_parser("postgres", help="initialize, migrate, and verify PostgreSQL")
-    postgres_commands = postgres.add_subparsers(dest="postgres_command", required=True)
-    postgres_init = postgres_commands.add_parser("init")
-    postgres_init.add_argument(
-        "--migration",
-        help="override the packaged PostgreSQL migration",
-    )
-    postgres_init.set_defaults(func=cmd_postgres)
-    postgres_health = postgres_commands.add_parser("health")
-    postgres_health.set_defaults(func=cmd_postgres)
-    postgres_migrate = postgres_commands.add_parser("migrate")
-    postgres_migrate.add_argument("--sqlite", required=True)
-    postgres_migrate.add_argument("--batch-size", type=int, default=500)
-    postgres_migrate.set_defaults(func=cmd_postgres)
-    postgres_load = postgres_commands.add_parser("load-test")
-    postgres_load.add_argument("--query", required=True)
-    postgres_load.add_argument("--iterations", type=int, default=100)
-    postgres_load.add_argument("--tenant", default="local")
-    postgres_load.add_argument("--principal", default="local-user")
-    postgres_load.set_defaults(func=cmd_postgres)
-
     recipe = commands.add_parser("recipe", help="evaluate and promote versioned Recipes")
     recipe_commands = recipe.add_subparsers(dest="recipe_command", required=True)
     recipe_list = recipe_commands.add_parser("list")
@@ -1513,14 +1357,6 @@ def build_parser() -> argparse.ArgumentParser:
     recipe_promote.add_argument("--decision", required=True)
     recipe_promote.set_defaults(func=cmd_recipe)
 
-    serve = commands.add_parser("serve", help="run authenticated HTTP API")
-    serve.add_argument("--workspace", default=".")
-    serve.add_argument("--host", default="127.0.0.1")
-    serve.add_argument("--port", type=int, default=8765)
-    serve.add_argument("--tenant", default="local")
-    serve.add_argument("--principal", default="local-user")
-    serve.add_argument("--access", action="append", choices=PERMISSIONS)
-    serve.set_defaults(func=cmd_serve)
     return parser
 
 

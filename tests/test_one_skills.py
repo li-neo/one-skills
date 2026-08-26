@@ -2,17 +2,10 @@ from __future__ import annotations
 
 import json
 import tempfile
-import time
 import unittest
 import zipfile
 from pathlib import Path
-from threading import Event, Thread
-from unittest.mock import patch
-from urllib.error import HTTPError
-from urllib.request import Request, urlopen
 
-from one_skills.api import create_api_server
-from one_skills.batch import distill_batch
 from one_skills.compiler import (
     capability_from_candidate,
     compile_skill,
@@ -25,7 +18,6 @@ from one_skills.core_assets import (
     save_pack_metadata,
     save_reproducibility,
 )
-from one_skills.database import KnowledgeDB
 from one_skills.delivery import (
     DeliveryError,
     export_pack,
@@ -59,9 +51,8 @@ from one_skills.ingest import (
     ingest_file,
     structural_chunks,
 )
-from one_skills.jobs import JobQueue, run_worker_once
 from one_skills.learning import init_learner, next_learning_node, record_attempt
-from one_skills.models import Candidate, Chunk, SourceDocument
+from one_skills.models import Candidate, Chunk
 from one_skills.pipeline import (
     PipelineError,
     advance_phase,
@@ -73,16 +64,9 @@ from one_skills.pipeline import (
     update_pack,
     verify_and_compile_with_model,
 )
-from one_skills.postgres import (
-    MIGRATION_TABLES,
-    MUTABLE_PRIMARY_KEYS,
-    TABLE_PRIMARY_KEYS,
-    PostgresBackend,
-)
-from one_skills.profiles import Profile, register_profile
 from one_skills.provider import ProviderError
 from one_skills.recipes import promotion_decision
-from one_skills.retrieval import HybridRetriever, local_embedding
+from one_skills.retrieval import HybridRetriever
 from one_skills.routing import route_intent
 from one_skills.skill_retrieval import search_skills
 from one_skills.source_quality import audit_source_catalog
@@ -205,17 +189,17 @@ class IngestionTests(unittest.TestCase):
                 json.dumps(catalog, ensure_ascii=False),
                 encoding="utf-8",
             )
-            report = audit_source_catalog(catalog_path, "person", "deep")
+            report = audit_source_catalog(catalog_path, "content", "deep")
             self.assertEqual(report["status"], "passed")
             self.assertEqual(report["metrics"]["selected_count"], 3)
             pack = create_pack(
                 root / "workspace",
                 [],
-                "person",
+                "content",
                 "deep",
                 "historical-method",
                 "public",
-                "public-only",
+                None,
                 catalog_path,
             )
             manifest = json.loads(
@@ -230,13 +214,12 @@ class IngestionTests(unittest.TestCase):
                 [item for item in validate_pack(pack) if item.severity == "error"],
                 [],
             )
-            with KnowledgeDB(root / "workspace" / ".one" / "knowledge.db") as database:
-                self.assertEqual(
-                    len(database.rows("SELECT * FROM source_assessments")),
-                    3,
-                )
+            self.assertEqual(
+                len([item for item in manifest["sources"] if item["active"]]),
+                3,
+            )
 
-    def test_person_candidate_requires_independent_provenance_groups(self) -> None:
+    def test_hybrid_candidate_requires_independent_provenance_groups(self) -> None:
         candidate = Candidate(
             title="recurring-method",
             candidate_type="framework",
@@ -420,604 +403,115 @@ class DatabaseAndRetrievalTests(unittest.TestCase):
             self.assertEqual(selected["status"], "selected")
             self.assertTrue(selected["results"][0]["activation_eligible"])
 
-    def test_authenticated_http_api_queues_jobs(self) -> None:
+    def test_flat_file_hybrid_search_filters_access(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             init_workspace(root)
-            suite = root / "profile-routing.json"
-            suite.write_bytes(
-                (
-                    Path(__file__).resolve().parents[1]
-                    / "benchmarks"
-                    / "profile-routing.json"
-                ).read_bytes()
-            )
-            server = create_api_server(root, "127.0.0.1", 0, "secret-token")
-            thread = Thread(target=server.serve_forever, daemon=True)
-            thread.start()
-            base = f"http://127.0.0.1:{server.server_port}"
-            try:
-                health = json.loads(urlopen(f"{base}/health").read().decode())
-                self.assertEqual(health["status"], "ok")
-                with self.assertRaises(HTTPError) as unauthorized:
-                    urlopen(f"{base}/v1/jobs/missing")
-                self.assertEqual(unauthorized.exception.code, 401)
-                payload = json.dumps(
-                    {
-                        "type": "benchmark",
-                        "idempotency_key": "api-benchmark-valid",
-                        "payload": {
-                            "suite": str(suite)
-                        },
-                    }
-                ).encode()
-                request = Request(
-                    f"{base}/v1/jobs",
-                    data=payload,
-                    method="POST",
-                    headers={
-                        "Authorization": "Bearer secret-token",
-                        "Content-Type": "application/json",
-                    },
-                )
-                accepted = json.loads(urlopen(request).read().decode())
-                status_request = Request(
-                    f"{base}/v1/jobs/{accepted['job_id']}",
-                    headers={"Authorization": "Bearer secret-token"},
-                )
-                status = json.loads(urlopen(status_request).read().decode())
-                self.assertEqual(status["status"], "queued")
-                escaped = Request(
-                    f"{base}/v1/jobs",
-                    data=json.dumps(
-                        {
-                            "type": "benchmark",
-                            "idempotency_key": "api-benchmark-escaped",
-                            "payload": {"suite": "/etc/hosts"},
-                        }
-                    ).encode(),
-                    method="POST",
-                    headers={
-                        "Authorization": "Bearer secret-token",
-                        "Content-Type": "application/json",
-                    },
-                )
-                with self.assertRaises(HTTPError) as rejected:
-                    urlopen(escaped)
-                self.assertEqual(rejected.exception.code, 400)
-            finally:
-                server.shutdown()
-                thread.join(timeout=5)
-                server.server_close()
-
-    def test_http_api_ignores_request_identity_overrides(self) -> None:
-        with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary)
-            init_workspace(root)
-            document = SourceDocument(
-                source="private.md",
-                title="Private",
-                media_type="text/markdown",
-                text="restricted-secret",
-                content_hash="a" * 64,
-                byte_count=17,
-                access_level="private-local",
-            )
-            with KnowledgeDB(root / ".one" / "knowledge.db") as database:
-                _, document_id, version, _ = database.add_document(
-                    document,
-                    "content",
-                )
-                chunks = structural_chunks(document, document_id, version)
-                database.add_chunks(
-                    chunks,
-                    {chunk.id: local_embedding(chunk.text) for chunk in chunks},
-                )
-                database.create_tenant("team-b", "Team B")
-                database.create_principal("team-b", "bob", "Bob")
-                database.grant_acl(
-                    "team-b",
-                    "bob",
-                    "chunk",
-                    chunks[0].id,
-                    "read",
-                )
-                database.connection.execute(
-                    "DELETE FROM asset_acl WHERE tenant_id = 'local' "
-                    "AND asset_type = 'chunk' AND asset_id = ?",
-                    (chunks[0].id,),
-                )
-                database.connection.commit()
-            server = create_api_server(root, "127.0.0.1", 0, "secret-token")
-            thread = Thread(target=server.serve_forever, daemon=True)
-            thread.start()
-            try:
-                request = Request(
-                    f"http://127.0.0.1:{server.server_port}/v1/search"
-                    "?q=restricted-secret&tenant=team-b&principal=bob"
-                    "&access=private-local",
-                    headers={"Authorization": "Bearer secret-token"},
-                )
-                result = json.loads(urlopen(request).read().decode())
-                self.assertEqual(result["results"], [])
-            finally:
-                server.shutdown()
-                thread.join(timeout=5)
-                server.server_close()
-
-    def test_postgres_schema_and_migration_mapping_cover_sqlite_assets(self) -> None:
-        root = Path(__file__).resolve().parents[1]
-        migration = (root / "migrations" / "postgres" / "001_initial.sql").read_text(
-            encoding="utf-8"
-        )
-        self.assertIn("CREATE EXTENSION IF NOT EXISTS vector", migration)
-        self.assertIn("USING hnsw", migration)
-        self.assertIn("search_vector tsvector", migration)
-        with tempfile.TemporaryDirectory() as temporary:
-            with KnowledgeDB(Path(temporary) / "knowledge.db") as database:
-                tables = {
-                    row["name"]
-                    for row in database.rows(
-                        "SELECT name FROM sqlite_master WHERE type = 'table' "
-                        "AND name NOT LIKE 'chunks_fts%'"
-                    )
-                }
-        self.assertTrue(tables.issubset(set(MIGRATION_TABLES)))
-        self.assertEqual(set(TABLE_PRIMARY_KEYS), set(MIGRATION_TABLES))
-        self.assertEqual(MUTABLE_PRIMARY_KEYS["documents"], ("id",))
-        self.assertEqual(
-            MUTABLE_PRIMARY_KEYS["document_versions"],
-            ("document_id", "version"),
-        )
-        self.assertEqual(MUTABLE_PRIMARY_KEYS["jobs"], ("id",))
-        self.assertEqual(
-            PostgresBackend._vector_literal([0.5, -0.25]),
-            "[0.5,-0.25]",
-        )
-
-    def test_persistent_job_worker_retries_and_audits(self) -> None:
-        with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary)
-            init_workspace(root)
-            (root / "profile-routing.json").write_bytes(
-                (
-                    Path(__file__).resolve().parents[1]
-                    / "benchmarks"
-                    / "profile-routing.json"
-                ).read_bytes()
-            )
-            with KnowledgeDB(root / ".one" / "knowledge.db") as database:
-                queue = JobQueue(database)
-                good_id = queue.enqueue(
-                    "benchmark",
-                    {
-                        "suite": str(
-                            root / "profile-routing.json"
-                        )
-                    },
-                )
-            result = run_worker_once(root, "worker-1")
-            self.assertEqual(result["status"], "completed")
-            with KnowledgeDB(root / ".one" / "knowledge.db") as database:
-                queue = JobQueue(database)
-                self.assertEqual(queue.get(good_id)["status"], "completed")
-                bad_id = queue.enqueue(
-                    "update",
-                    {"pack": str(root / "missing"), "sources": []},
-                    max_attempts=2,
-                )
-            self.assertEqual(run_worker_once(root, "worker-1")["status"], "failed")
-            with KnowledgeDB(root / ".one" / "knowledge.db") as database:
-                self.assertEqual(JobQueue(database).get(bad_id)["status"], "queued")
-            self.assertEqual(run_worker_once(root, "worker-1")["status"], "failed")
-            with KnowledgeDB(root / ".one" / "knowledge.db") as database:
-                self.assertEqual(JobQueue(database).get(bad_id)["status"], "failed")
-                audits = database.rows("SELECT * FROM audit_events")
-                self.assertGreaterEqual(len(audits), 6)
-
-    def test_job_idempotency_heartbeat_and_fencing(self) -> None:
-        with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary)
-            init_workspace(root)
-            payload = {"suite": str(root / "suite.json")}
-            with KnowledgeDB(root / ".one" / "knowledge.db") as database:
-                queue = JobQueue(database)
-                job_id = queue.enqueue(
-                    "benchmark",
-                    payload,
-                    idempotency_key="benchmark:stable-input",
-                )
-                replayed = queue.enqueue(
-                    "benchmark",
-                    payload,
-                    idempotency_key="benchmark:stable-input",
-                )
-                self.assertEqual(replayed, job_id)
-                with self.assertRaisesRegex(ValueError, "different job"):
-                    queue.enqueue(
-                        "benchmark",
-                        {"suite": str(root / "other.json")},
-                        idempotency_key="benchmark:stable-input",
-                    )
-                first = queue.claim("worker-1", lease_seconds=30)
-                self.assertEqual(first["lease_token"], 1)
-                extended = queue.heartbeat(
-                    job_id,
-                    "worker-1",
-                    first["lease_token"],
-                    lease_seconds=60,
-                )
-                self.assertGreater(extended, first["lease_until"])
-                database.connection.execute(
-                    "UPDATE jobs SET lease_until = ? WHERE id = ?",
-                    ("2000-01-01T00:00:00+00:00", job_id),
-                )
-                database.connection.commit()
-                with self.assertRaisesRegex(ValueError, "lease was lost"):
-                    queue.heartbeat(
-                        job_id,
-                        "worker-1",
-                        first["lease_token"],
-                    )
-                with self.assertRaisesRegex(ValueError, "lease owner or state"):
-                    queue.complete(
-                        job_id,
-                        "worker-1",
-                        first["lease_token"],
-                        {"expired": True},
-                    )
-                with self.assertRaisesRegex(ValueError, "lease owner mismatch"):
-                    queue.fail(
-                        job_id,
-                        "worker-1",
-                        first["lease_token"],
-                        "expired",
-                    )
-                second = queue.claim("worker-1", lease_seconds=30)
-                self.assertEqual(second["lease_token"], 2)
-                with self.assertRaisesRegex(ValueError, "lease owner or state"):
-                    queue.complete(
-                        job_id,
-                        "worker-1",
-                        first["lease_token"],
-                        {"stale": True},
-                    )
-                queue.complete(
-                    job_id,
-                    "worker-1",
-                    second["lease_token"],
-                    {"ok": True},
-                )
-                self.assertEqual(queue.get(job_id)["status"], "completed")
-
-    def test_worker_heartbeat_prevents_lease_reclaim(self) -> None:
-        with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary)
-            init_workspace(root)
-            with KnowledgeDB(root / ".one" / "knowledge.db") as database:
-                JobQueue(database).enqueue(
-                    "benchmark",
-                    {"suite": str(root / "suite.json")},
-                )
-            started = Event()
-
-            def slow_benchmark(
-                suite: Path,
-                output: Path | None = None,
-            ) -> dict:
-                del suite, output
-                started.set()
-                time.sleep(1.5)
-                return {"status": "passed"}
-
-            result: list[dict] = []
-            with patch(
-                "one_skills.jobs.run_profile_benchmark",
-                side_effect=slow_benchmark,
-            ):
-                worker = Thread(
-                    target=lambda: result.append(
-                        run_worker_once(root, "worker-1", lease_seconds=1)
-                    )
-                )
-                worker.start()
-                self.assertTrue(started.wait(timeout=2))
-                time.sleep(1.1)
-                with KnowledgeDB(root / ".one" / "knowledge.db") as database:
-                    self.assertIsNone(
-                        JobQueue(database).claim(
-                            "worker-2",
-                            lease_seconds=1,
-                        )
-                    )
-                worker.join(timeout=5)
-            self.assertFalse(worker.is_alive())
-            self.assertEqual(result[0]["status"], "completed")
-
-    def test_worker_revalidates_persisted_job_paths(self) -> None:
-        with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary)
-            init_workspace(root)
-            with KnowledgeDB(root / ".one" / "knowledge.db") as database:
-                database.connection.execute(
-                    "INSERT INTO jobs("
-                    "id, job_type, payload_json, status, attempts, max_attempts, "
-                    "created_at, updated_at"
-                    ") VALUES ('job-tampered', 'benchmark', ?, 'queued', 0, 1, ?, ?)",
-                    (
-                        json.dumps({"suite": "/etc/hosts"}),
-                        "2026-01-01T00:00:00+00:00",
-                        "2026-01-01T00:00:00+00:00",
-                    ),
-                )
-                database.connection.commit()
-
-            result = run_worker_once(root, "worker-1")
-            self.assertEqual(result["status"], "failed")
-            with KnowledgeDB(root / ".one" / "knowledge.db") as database:
-                job = JobQueue(database).get("job-tampered")
-            self.assertEqual(job["status"], "failed")
-            self.assertIn("must stay inside the workspace", job["error"])
-
-    def test_acl_hybrid_search_and_person_fact_history(self) -> None:
-        with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary)
             source = root / "source.md"
-            source.write_text("# Decisions\n\n先确认瓶颈，再比较每单位瓶颈的价值。", encoding="utf-8")
-            document = ingest_file(source, "authorized")
-            with KnowledgeDB(root / "knowledge.db") as database:
-                _, document_id, version, _ = database.add_document(document, "methodology")
-                chunks = structural_chunks(document, document_id, version)
-                database.add_chunks(chunks, {item.id: local_embedding(item.text) for item in chunks})
-                retriever = HybridRetriever(database)
-                self.assertEqual(retriever.search("瓶颈价值", {"public"}), [])
-                results = retriever.search("瓶颈价值", {"authorized"})
-                self.assertTrue(results)
-                database.create_tenant("team-a", "Team A")
-                database.create_principal("team-a", "alice", "Alice")
-                team_retriever = HybridRetriever(database, "team-a", "alice")
-                self.assertEqual(team_retriever.search("瓶颈价值", {"authorized"}), [])
-                database.grant_acl("team-a", "alice", "chunk", chunks[0].id, "read")
-                self.assertTrue(team_retriever.search("瓶颈价值", {"authorized"}))
-                source.write_text("# Decisions\n\n新版本要求先验证约束，再分配资源。", encoding="utf-8")
-                updated = ingest_file(source, "authorized")
-                _, same_document_id, second_version, created = database.add_document(
-                    updated, "methodology"
-                )
-                self.assertTrue(created)
-                self.assertEqual(same_document_id, document_id)
-                self.assertEqual(second_version, 2)
-                updated_chunks = structural_chunks(updated, document_id, second_version)
-                database.add_chunks(
-                    updated_chunks,
-                    {item.id: local_embedding(item.text) for item in updated_chunks},
-                )
-                self.assertEqual(retriever.search("单位瓶颈价值", {"authorized"}), [])
-                self.assertTrue(retriever.search("验证约束", {"authorized"}))
+            source.write_text(
+                "# Decisions\n\n先确认瓶颈，再比较每单位瓶颈的价值。",
+                encoding="utf-8",
+            )
+            create_pack(
+                root,
+                [str(source)],
+                "methodology",
+                "quick",
+                "bottleneck",
+                "authorized",
+            )
+            retriever = HybridRetriever(root)
+            self.assertEqual(retriever.search("瓶颈价值", {"public"}), [])
+            results = retriever.search("瓶颈价值", {"authorized"})
+            self.assertTrue(results)
+            self.assertEqual(results[0]["pack"], "bottleneck")
 
-                subject = database.add_person_subject("Example", "self")
-                first = database.mutate_person_fact(
-                    "ADD", subject, "preference", "偏好简洁输出", 0.9, "private-local"
-                )
-                second = database.mutate_person_fact(
-                    "UPDATE",
-                    subject,
-                    "preference",
-                    "偏好简洁且包含证据的输出",
-                    0.95,
-                    "private-local",
-                    supersedes=first,
-                )
-                database.mutate_person_fact(
-                    "REVOKE",
-                    subject,
-                    "preference",
-                    "",
-                    1.0,
-                    "private-local",
-                    supersedes=second,
-                )
-                statuses = {
-                    row["id"]: row["status"]
-                    for row in database.rows("SELECT id, status FROM person_facts")
-                }
-                self.assertEqual(statuses[first], "superseded")
-                self.assertEqual(statuses[second], "revoked")
-
-    def test_document_ingest_failure_keeps_previous_version_active(self) -> None:
+    def test_graph_neighbors_follow_capability_evidence(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
-            with KnowledgeDB(root / "knowledge.db") as database:
-                first = SourceDocument(
-                    source=str(root / "source.md"),
-                    title="Source",
-                    media_type="text/markdown",
-                    text="# First\n\nstable searchable evidence",
-                    content_hash="1" * 64,
-                    byte_count=34,
-                    access_level="authorized",
-                )
-                _, document_id, version, _, _ = database.ingest_document(
-                    first,
-                    "methodology",
-                    lambda current_id, current_version: structural_chunks(
-                        first,
-                        current_id,
-                        current_version,
-                    ),
-                    lambda chunks: {
-                        chunk.id: local_embedding(chunk.text) for chunk in chunks
+            init_workspace(root)
+            source_a = root / "source-a.md"
+            source_a.write_text(
+                "# Input\n\nidentify the governing constraint",
+                encoding="utf-8",
+            )
+            source_b = root / "source-b.md"
+            source_b.write_text(
+                "# Related\n\nverify the rollback checkpoint",
+                encoding="utf-8",
+            )
+            pack = create_pack(
+                root,
+                [str(source_a), str(source_b)],
+                "methodology",
+                "quick",
+                "shared",
+                "authorized",
+            )
+            chunks = json.loads(
+                (pack / "sources" / "chunks.json").read_text(encoding="utf-8")
+            )
+            chunk_a = next(
+                chunk for chunk in chunks if "governing constraint" in chunk["text"]
+            )
+            chunk_b = next(
+                chunk for chunk in chunks if "rollback checkpoint" in chunk["text"]
+            )
+            with (pack / "EVIDENCE_LEDGER.jsonl").open(
+                "a", encoding="utf-8"
+            ) as handle:
+                for chunk, claim in (
+                    (chunk_a, "claim-input"),
+                    (chunk_b, "claim-related"),
+                ):
+                    handle.write(
+                        json.dumps(
+                            {
+                                "id": claim,
+                                "claim": "claim",
+                                "evidence_type": "quote",
+                                "source": chunk["document_id"],
+                                "locator": chunk["source_locator"],
+                                "confidence": 0.9,
+                                "inference_level": "none",
+                                "permission": "authorized",
+                                "chunk_id": chunk["id"],
+                                "document_version": chunk["document_version"],
+                            },
+                            ensure_ascii=False,
+                        )
+                        + "\n"
+                    )
+            skill_dir = pack / "skills" / "shared-skill"
+            skill_dir.mkdir(parents=True, exist_ok=True)
+            (skill_dir / "capability.json").write_text(
+                json.dumps(
+                    {
+                        "id": "capability-shared",
+                        "name": "shared",
+                        "problem": "p",
+                        "trigger": "t",
+                        "inputs": [],
+                        "procedure": ["step"],
+                        "output": "o",
+                        "done": "d",
+                        "boundaries": [],
+                        "failures": [],
+                        "fallback": "f",
+                        "evidence_ids": ["claim-input", "claim-related"],
+                        "confidence": 0.9,
+                        "relations": [],
+                        "module_type": "entry",
+                        "status": "verified",
                     },
+                    ensure_ascii=False,
                 )
-                self.assertEqual(version, 1)
-                second = SourceDocument(
-                    source=first.source,
-                    title="Source",
-                    media_type="text/markdown",
-                    text="# Second\n\nuncommitted replacement",
-                    content_hash="2" * 64,
-                    byte_count=33,
-                    access_level="authorized",
-                )
-
-                def fail_embeddings(chunks: list[Chunk]) -> dict[str, list[float]]:
-                    del chunks
-                    raise OSError("injected embedding failure")
-
-                with self.assertRaises(OSError):
-                    database.ingest_document(
-                        second,
-                        "methodology",
-                        lambda current_id, current_version: structural_chunks(
-                            second,
-                            current_id,
-                            current_version,
-                        ),
-                        fail_embeddings,
-                    )
-
-                active = database.connection.execute(
-                    "SELECT active_version FROM documents WHERE id = ?",
-                    (document_id,),
-                ).fetchone()
-                versions = database.rows(
-                    "SELECT version, status FROM document_versions "
-                    "WHERE document_id = ? ORDER BY version",
-                    (document_id,),
-                )
-                retriever = HybridRetriever(database)
-                self.assertEqual(active["active_version"], 1)
-                self.assertEqual(
-                    [(row["version"], row["status"]) for row in versions],
-                    [(1, "active")],
-                )
-                self.assertTrue(
-                    retriever.search("stable searchable", {"authorized"})
-                )
-                self.assertEqual(
-                    retriever.search("uncommitted replacement", {"authorized"}),
-                    [],
-                )
-
-    def test_graph_neighbors_follow_capability_evidence_and_filter_active_acl(self) -> None:
-        with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary)
-            with KnowledgeDB(root / "knowledge.db") as database:
-                documents = [
-                    SourceDocument(
-                        source=str(root / f"source-{index}.md"),
-                        title=f"Source {index}",
-                        media_type="text/markdown",
-                        text=text,
-                        content_hash=str(index) * 64,
-                        byte_count=len(text),
-                        access_level="authorized",
-                    )
-                    for index, text in (
-                        (1, "# Input\n\nidentify the governing constraint"),
-                        (2, "# Related\n\nverify the rollback checkpoint"),
-                    )
-                ]
-                chunks: list[Chunk] = []
-                for document in documents:
-                    *_, stored = database.ingest_document(
-                        document,
-                        "methodology",
-                        lambda document_id, version, value=document: structural_chunks(
-                            value,
-                            document_id,
-                            version,
-                        ),
-                        lambda values: {
-                            item.id: local_embedding(item.text)
-                            for item in values
-                        },
-                    )
-                    chunks.extend(stored)
-                database.add_claim(
-                    "constraint claim",
-                    0.9,
-                    [chunks[0].id],
-                    claim_id="claim-input",
-                )
-                database.add_claim(
-                    "rollback claim",
-                    0.9,
-                    [chunks[1].id],
-                    claim_id="claim-related",
-                )
-                database.add_edge(
-                    "claim",
-                    "claim-input",
-                    "supports",
-                    "capability",
-                    "capability-shared",
-                )
-                database.add_edge(
-                    "claim",
-                    "claim-related",
-                    "supports",
-                    "capability",
-                    "capability-shared",
-                )
-                retriever = HybridRetriever(database)
-                self.assertEqual(
-                    retriever.graph_neighbors(
-                        [chunks[0].id],
-                        {"authorized"},
-                    ),
-                    [chunks[1].id],
-                )
-
-                database.connection.execute(
-                    "DELETE FROM asset_acl WHERE asset_type = 'chunk' "
-                    "AND asset_id = ?",
-                    (chunks[1].id,),
-                )
-                database.connection.commit()
-                self.assertEqual(
-                    retriever.graph_neighbors(
-                        [chunks[0].id],
-                        {"authorized"},
-                    ),
-                    [],
-                )
-                database.grant_acl(
-                    "local",
-                    "local-user",
-                    "chunk",
-                    chunks[1].id,
-                    "owner",
-                )
-                replacement = SourceDocument(
-                    source=documents[1].source,
-                    title="Source 2",
-                    media_type="text/markdown",
-                    text="# New\n\nreplacement active version",
-                    content_hash="3" * 64,
-                    byte_count=34,
-                    access_level="authorized",
-                )
-                database.ingest_document(
-                    replacement,
-                    "methodology",
-                    lambda document_id, version: structural_chunks(
-                        replacement,
-                        document_id,
-                        version,
-                    ),
-                    lambda values: {
-                        item.id: local_embedding(item.text)
-                        for item in values
-                    },
-                )
-                self.assertEqual(
-                    retriever.graph_neighbors(
-                        [chunks[0].id],
-                        {"authorized"},
-                    ),
-                    [],
-                )
+            )
+            retriever = HybridRetriever(root)
+            self.assertEqual(
+                retriever.graph_neighbors([chunk_a["id"]], {"authorized"}),
+                [chunk_b["id"]],
+            )
 
 
 class PipelineTests(unittest.TestCase):
@@ -1090,9 +584,9 @@ class PipelineTests(unittest.TestCase):
     def test_router_abstains_on_ambiguous_intent(self) -> None:
         routed = route_intent("帮我整理一下这个东西")
         self.assertTrue(routed["needs_confirmation"])
-        clear = route_intent("把毛泽东的思维方法蒸馏成人物 skill")
-        self.assertFalse(clear["needs_confirmation"])
-        self.assertEqual(clear["selected_object_type"], "person")
+        # "人物" no longer has a dedicated person Profile; the intent abstains.
+        unclear = route_intent("把毛泽东的思维方法蒸馏成人物 skill")
+        self.assertTrue(unclear["needs_confirmation"])
 
     def test_guided_session_preserves_evidence_class_in_pack(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -1162,34 +656,25 @@ class PipelineTests(unittest.TestCase):
                 [item for item in validate_pack(pack) if item.severity == "error"],
                 [],
             )
-            with KnowledgeDB(root / "workspace" / ".one" / "knowledge.db") as database:
-                claim = database.rows(
-                    "SELECT * FROM claims WHERE id = ?", (event["id"],)
-                )[0]
-                links = database.rows(
-                    "SELECT * FROM evidence_links WHERE claim_id = ?", (event["id"],)
-                )
-            self.assertEqual(claim["status"], "active")
-            self.assertEqual(len(links), 1)
 
     def test_guided_session_enforces_consent_and_evidence_grade(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             with self.assertRaises(GuidedSessionError):
-                init_session(root / "missing-consent", "Private Person", "person")
+                init_session(root / "unsupported-object", "Private Person", "person")
             with self.assertRaises(GuidedSessionError):
                 init_session(
                     root / "bad-public-only",
-                    "Public Person",
-                    "person",
+                    "Public Method",
+                    "methodology",
                     consent="public-only",
                     access_level="private-local",
                 )
-            guided = root / "person"
+            guided = root / "method"
             init_session(
                 guided,
-                "Self",
-                "person",
+                "Method",
+                "methodology",
                 target_capability="review",
                 consent="self",
             )
@@ -1219,51 +704,22 @@ class PipelineTests(unittest.TestCase):
             with self.assertRaises(GuidedSessionError):
                 confirm_checkpoint(guided, "ship", "confirmed")
 
-    def test_custom_profile_registration_is_usable_by_pipeline(self) -> None:
-        register_profile(
-            Profile(
-                name="compliance",
-                map_dimensions=("controls", "evidence"),
-                candidate_kinds=("rule", "exception"),
-                required_boundaries=("jurisdiction",),
-                compiler="control-pack",
-            )
-        )
+    def test_unregistered_profile_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             source = root / "controls.md"
-            source.write_text("必须记录控制证据，并在例外发生时停止发布。" * 8, encoding="utf-8")
-            pack = create_pack(root, [str(source)], "compliance", "quick", "control-pack")
-            metadata = json.loads((pack / "pack.json").read_text(encoding="utf-8"))
-            self.assertEqual(metadata["profile"], "compliance")
-            registry = json.loads((root / ".one" / "recipes.json").read_text(encoding="utf-8"))
-            self.assertIn("compliance", registry["active"])
-
-    def test_batch_distillation_runs_independent_jobs_concurrently(self) -> None:
-        with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary)
-            sources = []
-            for index in range(3):
-                source = root / f"source-{index}.md"
-                source.write_text(
-                    f"# Method {index}\n\n必须先确认约束 {index}，然后执行步骤并验证结果。" * 5,
-                    encoding="utf-8",
+            source.write_text(
+                "必须记录控制证据，并在例外发生时停止发布。" * 8,
+                encoding="utf-8",
+            )
+            with self.assertRaises(PipelineError):
+                create_pack(
+                    root,
+                    [str(source)],
+                    "compliance",
+                    "quick",
+                    "control-pack",
                 )
-                sources.append(source)
-            jobs = [
-                {
-                    "name": f"batch-{index}",
-                    "sources": [str(source)],
-                    "type": "methodology",
-                    "mode": "quick",
-                    "access": "public",
-                }
-                for index, source in enumerate(sources)
-            ]
-            report = distill_batch(root / "workspace", jobs, workers=3)
-            self.assertEqual(report["created"], 3)
-            self.assertEqual(report["failed"], 0)
-            self.assertEqual(report["workers"], 3)
 
     def test_pipeline_blocks_at_independent_verification_and_cannot_skip(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -1376,11 +832,6 @@ class PipelineTests(unittest.TestCase):
             }
             self.assertFalse(old_quote_ids & new_quote_ids)
             self.assertTrue(any((pack / "audit" / "history").glob("source-update-*")))
-            with KnowledgeDB(root / ".one" / "knowledge.db") as database:
-                superseded = database.rows(
-                    "SELECT id FROM claims WHERE status = 'superseded'"
-                )
-            self.assertTrue(superseded)
             self.assertEqual(
                 [item for item in validate_pack(pack) if item.severity == "error"],
                 [],
@@ -1510,13 +961,13 @@ class PipelineTests(unittest.TestCase):
             source = root / "private.md"
             source.write_text("必须保留这条私人方法和证据，不能外发。" * 10, encoding="utf-8")
             with self.assertRaises(PipelineError):
-                create_pack(root, [str(source)], "person", "quick", "missing-consent")
+                create_pack(root, [str(source)], "compliance", "quick", "missing-profile")
             pack = create_pack(
                 root,
                 [str(source)],
-                "person",
+                "methodology",
                 "quick",
-                "private-person",
+                "private-method",
                 "private-local",
                 "self",
             )
@@ -1531,7 +982,7 @@ class CompilerEvaluationTests(unittest.TestCase):
             templates = json.loads(path.read_text(encoding="utf-8"))
             self.assertEqual(
                 set(templates["profiles"]),
-                {"person", "content", "methodology", "sop", "tool", "skill", "hybrid"},
+                {"content", "methodology", "sop", "tool", "skill", "hybrid"},
             )
 
     def test_recipe_promotion_uses_non_compensating_gates(self) -> None:
@@ -1566,10 +1017,10 @@ class CompilerEvaluationTests(unittest.TestCase):
             status="accepted",
         )
         outputs = {}
-        for profile in ("person", "content", "methodology", "sop", "tool", "skill", "hybrid"):
+        for profile in ("content", "methodology", "sop", "tool", "skill", "hybrid"):
             capability = capability_from_candidate(candidate, profile)
             outputs[profile] = (tuple(capability.procedure), tuple(capability.boundaries))
-        self.assertEqual(len(set(outputs.values())), 7)
+        self.assertEqual(len(set(outputs.values())), 6)
 
     def _skill(self, root: Path) -> tuple[Path, list[dict[str, object]]]:
         candidate = Candidate(

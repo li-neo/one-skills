@@ -17,8 +17,7 @@ from .comparison import (
     judge_artifact_hash,
     local_skill_context,
 )
-from .core_assets import load_reproducibility
-from .database import KnowledgeDB
+from .core_assets import load_reproducibility, update_pack_metadata
 from .distillation_quality import assess_distillation_quality
 from .evaluation import paired_decision
 from .lifecycle import advance_phase, load_state, workspace_for
@@ -258,8 +257,85 @@ def _assert_tested(pack: Path) -> None:
                 raise DeliveryError(f"{skill['name']} did not fully pass hard gate {hard_gate}")
 
 
-def release_pack(pack: Path) -> dict:
-    """Close test and ship phases only after all non-negotiable gates pass."""
+def _release_tier(pack: Path) -> str:
+    metadata = load_json(pack / "pack.json") if (pack / "pack.json").exists() else {}
+    return str(metadata.get("release_tier") or "stable")
+
+
+def _assert_draft_tested(pack: Path) -> None:
+    drift = [
+        finding
+        for finding in validate_frozen_evals(pack)
+        if finding.severity == "error"
+    ]
+    if drift:
+        raise DeliveryError(f"evaluation freeze check failed: {drift[0].code}")
+
+
+def _assert_installable(pack: Path) -> None:
+    if _release_tier(pack) == "draft":
+        _assert_draft_tested(pack)
+        return
+    _assert_tested(pack)
+
+
+def _release_draft(pack: Path) -> dict:
+    metadata = load_json(pack / "pack.json")
+    if metadata.get("mode") not in {"quick", "continuous"}:
+        raise DeliveryError(
+            "draft release is only valid for quick or continuous mode"
+        )
+    _assert_no_pending_revocations(pack)
+    if any(finding.severity == "error" for finding in validate_pack(pack)):
+        raise DeliveryError("pack validation failed")
+    _assert_draft_tested(pack)
+    state = load_state(pack)
+    if state["current_phase"] != "test":
+        raise DeliveryError(
+            f"release requires current phase test, got {state['current_phase']}"
+        )
+    skills = sorted(path.parent for path in (pack / "skills").glob("*/SKILL.md"))
+    if not skills:
+        raise DeliveryError("draft release requires at least one compiled Skill")
+    advance_phase(pack, "test", "completed", "draft release: blind comparison skipped")
+    atomic_write(
+        pack / "MODEL_CARD.md",
+        f"# Model Card\n\n- Status: `draft`\n- Profile: `{metadata['profile']}`\n"
+        "- Release tier: `draft` (no stable blind comparison)\n"
+        "- Known limitation: not verified against no-skill / frozen baseline.\n",
+    )
+    if not (pack / "DIGEST.md").exists():
+        atomic_write(
+            pack / "DIGEST.md",
+            "# Digest\n\n"
+            + "\n".join(
+                f"- [{skill.name}](skills/{skill.name}/SKILL.md)"
+                for skill in skills
+            )
+            + "\n",
+        )
+    update_pack_metadata(
+        pack,
+        lambda current: current.__setitem__("release_tier", "draft"),
+    )
+    advance_phase(pack, "ship", "completed", "draft release complete")
+    return {
+        "status": "draft_released",
+        "release_tier": "draft",
+        "skills": len(skills),
+        "current_phase": load_state(pack)["current_phase"],
+        "warning": (
+            "draft release skipped the stable no-skill/frozen-baseline comparison; "
+            "not valid as stable-release evidence"
+        ),
+    }
+
+
+def release_pack(pack: Path, draft: bool = False) -> dict:
+    """Close test and ship phases. Stable release runs all non-negotiable gates;
+    ``draft=True`` is a quick/continuous-only tier that skips the blind comparison."""
+    if draft:
+        return _release_draft(pack)
     _assert_no_pending_revocations(pack)
     findings = validate_pack(pack)
     errors = [finding for finding in findings if finding.severity == "error"]
@@ -330,9 +406,7 @@ def release_pack(pack: Path) -> dict:
             )
             + "\n",
         )
-    workspace = workspace_for(pack)
-    with KnowledgeDB(workspace / ".one" / "knowledge.db") as database:
-        graph_path = write_evidence_graph(pack, database)
+    graph_path = write_evidence_graph(pack)
     advance_phase(pack, "ship", "completed", "reports generated and release gate passed")
     return {
         "status": "released",
@@ -362,7 +436,7 @@ def install_pack(
     if not dry_run and state["phases"]["ship"]["status"] != "completed":
         raise DeliveryError("ship phase is not completed")
     if not dry_run:
-        _assert_tested(pack)
+        _assert_installable(pack)
     destination_root = (target or default_target()).expanduser().resolve()
     actions: list[dict[str, str]] = []
     for source in sorted(path.parent for path in (pack / "skills").glob("*/SKILL.md")):
@@ -391,7 +465,7 @@ def export_pack(pack: Path, output: Path, runtime: str = "generic") -> Path:
         raise DeliveryError("pack validation failed")
     if load_state(pack)["phases"]["ship"]["status"] != "completed":
         raise DeliveryError("ship phase is not completed")
-    _assert_tested(pack)
+    _assert_installable(pack)
     try:
         return export_runtime(pack, output, runtime)
     except ValueError as exc:

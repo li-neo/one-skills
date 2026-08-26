@@ -58,6 +58,30 @@ COMPARISON_WIN_RULE = {
 }
 
 
+def write_baseline_manifest(
+    output: Path,
+    repository: str,
+    commit: str,
+) -> Path:
+    """Write a Stable Core 1.0 baseline manifest for the frozen cangjie reference.
+
+    The manifest pins the cangjie baseline source (``repository@commit``) and
+    records the comparison contract (``score_weights`` and ``win_rule``) so that
+    ``compare run`` validates against Stable Core 1.0 without the user having to
+    reproduce the constants by hand.
+    """
+    manifest: dict[str, Any] = {
+        "schema_version": "1.0",
+        "comparison": {"repository": repository, "commit": commit},
+        "score_weights": COMPARISON_WEIGHTS,
+        "win_rule": COMPARISON_WIN_RULE,
+    }
+    output = output.expanduser().resolve()
+    output.parent.mkdir(parents=True, exist_ok=True)
+    dump_json(output, manifest)
+    return output
+
+
 def freeze_evaluation_suite(
     pack: Path,
     suite: dict[str, Any],

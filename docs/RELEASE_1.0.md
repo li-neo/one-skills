@@ -6,22 +6,19 @@ platform.
 ## Stable
 
 - local CLI and Pack 1.0 protocol;
-- SQLite workspace, source/version/evidence lifecycle;
+- pure flat-file (zero-database) workspace, source/version/evidence lifecycle;
 - Overview, Portfolio, Compiler, validation, evaluation gates;
 - Pack 0.2/0.3/0.4 migration;
 - install and runtime export.
 
-## Experimental
-
-- HTTP API and remote Worker deployment;
-- PostgreSQL, S3, and plugin trust;
-- automatic evolution;
-- generalized effectiveness claims for all seven Profiles.
+The PostgreSQL / S3 / multi-tenant ACL / Worker queue / HTTP API / plugin
+subsystems previously listed as Experimental were removed in the v1.0
+consolidation.
 
 ## Engineering Evidence
 
-- 62 unit and integration tests;
-- 87.73% Stable Core aggregate line coverage (85% release gate);
+- 80+ unit and integration tests;
+- Stable Core aggregate line coverage above the 85% release gate;
 - Pack migration interruption, rollback, lock, revision, and revocation
   fault-injection coverage;
 - Python 3.10/3.11/3.12 plus macOS and Windows CI;

@@ -2,7 +2,6 @@
 
 OBJECT_TYPES = (
     "auto",
-    "person",
     "content",
     "methodology",
     "sop",
@@ -10,6 +9,25 @@ OBJECT_TYPES = (
     "skill",
     "hybrid",
 )
+
+# Object type -> base distillation Profile. Routing aliases (book/document and
+# the generalized customer/proposal/thought-system intents) are included so a
+# single canonical map serves the router, guided sessions, and
+# `one distill --type`. `auto` is resolved by Profile detection, not mapped.
+OBJECT_TO_PROFILE = {
+    "customer": "hybrid",
+    "proposal": "content",
+    "content": "content",
+    "book": "content",
+    "document": "content",
+    "methodology": "methodology",
+    "thought-system": "hybrid",
+    "sop": "sop",
+    "tool": "tool",
+    "skill": "skill",
+    "hybrid": "hybrid",
+}
+
 MODES = ("quick", "standard", "deep", "continuous")
 PHASES = (
     "contract",

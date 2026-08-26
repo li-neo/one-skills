@@ -1,4 +1,4 @@
-"""Content-addressed local and optional S3 object stores."""
+"""Content-addressed local object store."""
 
 from __future__ import annotations
 
@@ -49,43 +49,3 @@ class LocalBlobStore:
             return False
         value = f"//{parsed.netloc}{parsed.path}" if parsed.netloc else parsed.path
         return Path(url2pathname(value)).is_file()
-
-
-class S3BlobStore:
-    """Optional adapter; boto3 is imported only when this backend is selected."""
-
-    def __init__(self, bucket: str, prefix: str = "one-skills", client=None):
-        if client is None:
-            try:
-                import boto3
-            except ImportError as exc:
-                raise RuntimeError("S3BlobStore requires `pip install one-skills[production]`") from exc
-            client = boto3.client("s3")
-        self.client = client
-        self.bucket = bucket
-        self.prefix = prefix.strip("/")
-
-    def put_source(self, source: SourceDocument) -> str:
-        key = f"{self.prefix}/{source.content_hash[:2]}/{source.content_hash}/captured.txt"
-        self.client.put_object(
-            Bucket=self.bucket,
-            Key=key,
-            Body=source.text.encode("utf-8"),
-            ContentType="text/plain; charset=utf-8",
-            Metadata={"sha256": source.content_hash},
-        )
-        uri = f"s3://{self.bucket}/{key}"
-        if not self.exists(uri):
-            raise OSError(f"S3 blob read-back verification failed: {uri}")
-        return uri
-
-    def exists(self, uri: str) -> bool:
-        prefix = f"s3://{self.bucket}/"
-        if not uri.startswith(prefix):
-            return False
-        key = uri[len(prefix) :]
-        try:
-            self.client.head_object(Bucket=self.bucket, Key=key)
-            return True
-        except self.client.exceptions.ClientError:
-            return False

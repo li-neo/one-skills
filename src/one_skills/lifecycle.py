@@ -10,7 +10,6 @@ from .core_assets import (
     load_pack_metadata,
     update_pack_metadata,
 )
-from .database import KnowledgeDB
 from .errors import PipelineError
 from .recipes import initialize_registry
 from .utils import dump_json, load_json, utc_now
@@ -35,13 +34,13 @@ def init_workspace(path: Path, mode: str = "standard") -> Path:
         {
             "schema_version": "0.1",
             "default_mode": mode,
-            "database": ".one/knowledge.db",
             "packs_dir": "packs",
             "dist_dir": "dist",
         },
     )
-    with KnowledgeDB(root / ".one" / "knowledge.db"):
-        pass
+    stale_database = root / ".one" / "knowledge.db"
+    if stale_database.exists():
+        stale_database.unlink()
     initialize_registry(root / ".one" / "recipes.json")
     return root
 

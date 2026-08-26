@@ -38,6 +38,7 @@ class GuidanceTests(unittest.TestCase):
         *,
         access: str = "public",
         consent: str | None = None,
+        mode: str = "standard",
     ) -> Path:
         source = root / "method.md"
         source.write_text(
@@ -48,12 +49,35 @@ class GuidanceTests(unittest.TestCase):
         return create_pack(
             root / "workspace",
             [str(source)],
-            "person" if consent else "methodology",
-            "quick",
+            "methodology",
+            mode,
             "guided-method",
             access,
             consent,
         )
+
+    def _advance_to_compiled(
+        self,
+        pack: Path,
+        *,
+        shipped: bool = False,
+    ) -> None:
+        metadata_path = pack / "pack.json"
+        metadata = load_json(metadata_path)
+        metadata["semantic_contract"]["overview_confirmation"] = "confirmed"
+        metadata["semantic_contract"]["capability_confirmation"] = "confirmed"
+        metadata["lifecycle"]["phases"]["verify"]["status"] = "completed"
+        metadata["lifecycle"]["phases"]["compile"]["status"] = "completed"
+        metadata["lifecycle"]["phases"]["link"]["status"] = "completed"
+        metadata["lifecycle"]["phases"]["test"]["status"] = "in_progress"
+        if shipped:
+            metadata["lifecycle"]["phases"]["test"]["status"] = "completed"
+            metadata["lifecycle"]["phases"]["ship"]["status"] = "completed"
+        metadata["lifecycle"]["current_phase"] = "evolve" if shipped else "test"
+        dump_json(metadata_path, metadata)
+        skill = pack / "skills" / "guided-method"
+        skill.mkdir(parents=True)
+        (skill / "SKILL.md").write_text("# Skill\n", encoding="utf-8")
 
     def test_initial_recommendation_is_executable_and_read_only(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -252,6 +276,97 @@ class GuidanceTests(unittest.TestCase):
             self.assertTrue(
                 any("stale" in warning for warning in result["warnings"])
             )
+
+
+    def test_quick_mode_delivers_draft_after_compile(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            pack = self._pack(Path(temporary), mode="quick")
+            self._advance_to_compiled(pack)
+
+            result = recommend_next_action(pack)
+
+            self.assertEqual(result["action"], "deliver_draft")
+            self.assertIsNone(result["command"])
+            self.assertEqual(result["blocked_by"], ["stable_release_gate"])
+            self.assertEqual(result["artifact_maturity"], "compiled_untested")
+            self.assertTrue(
+                any("quick 模式" in warning for warning in result["warnings"])
+            )
+            self.assertTrue(
+                any(str(pack / "skills") in warning for warning in result["warnings"])
+            )
+
+    def test_continuous_mode_records_experience_after_compile(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            pack = self._pack(Path(temporary), mode="continuous")
+            self._advance_to_compiled(pack)
+
+            result = recommend_next_action(pack)
+
+            self.assertEqual(result["action"], "record_experience_or_evolve")
+            self.assertIn("one experience mine", result["command"])
+            self.assertTrue(
+                any("continuous 模式" in warning for warning in result["warnings"])
+            )
+
+    def test_shipped_pack_offers_evolve_alternative(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            pack = self._pack(Path(temporary))
+            self._advance_to_compiled(pack, shipped=True)
+
+            result = recommend_next_action(pack)
+
+            self.assertEqual(result["action"], "install_or_export")
+            self.assertEqual(result["artifact_maturity"], "released")
+            alternatives = result.get("alternatives", [])
+            self.assertTrue(alternatives)
+            self.assertEqual(
+                alternatives[0]["action"],
+                "record_experience_or_evolve",
+            )
+            self.assertIn("one experience mine", alternatives[0]["command"])
+
+    def test_comparison_missing_baseline_suggests_generator(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            pack = self._pack(Path(temporary))
+            self._advance_to_compiled(pack)
+            evaluations = pack / "evaluations"
+            evaluations.mkdir()
+            (evaluations / "suite.json").write_text("{}\n", encoding="utf-8")
+
+            with patch.dict(os.environ, ISOLATED_MODEL_ENV, clear=True):
+                result = recommend_next_action(pack)
+
+            self.assertEqual(result["action"], "run_comparison")
+            self.assertEqual(result["blocked_by"], ["baseline_manifest_path"])
+            self.assertTrue(
+                any(
+                    "one compare baseline" in warning for warning in result["warnings"]
+                )
+            )
+
+    def test_write_baseline_manifest_matches_contract(self) -> None:
+        from one_skills.comparison import (
+            COMPARISON_WEIGHTS,
+            COMPARISON_WIN_RULE,
+            write_baseline_manifest,
+        )
+
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary) / "baseline.json"
+            path = write_baseline_manifest(
+                output,
+                "owner/repo",
+                "abc123",
+            )
+            manifest = load_json(path)
+            self.assertEqual(manifest["comparison"], {
+                "repository": "owner/repo",
+                "commit": "abc123",
+            })
+            self.assertEqual(manifest["score_weights"], COMPARISON_WEIGHTS)
+            self.assertEqual(manifest["win_rule"], COMPARISON_WIN_RULE)
+            self.assertEqual(manifest["schema_version"], "1.0")
 
 
 if __name__ == "__main__":

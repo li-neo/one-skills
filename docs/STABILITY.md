@@ -8,7 +8,7 @@ The following contracts follow Semantic Versioning throughout 1.x:
   `evaluate`, `compare`, `validate`, `release`, `install`, `export`, and
   `migrate`;
 - Pack Schema 1.0 and authoritative Pack assets;
-- SQLite workspace and local retrieval;
+- pure flat-file (zero-database) workspace and local retrieval;
 - source, evidence, Overview, Portfolio, Compiler, evaluation, install, and
   export behavior;
 - migration from Pack 0.2, 0.3, and 0.4.
@@ -17,24 +17,14 @@ Stable fields and commands are not removed in 1.x. A deprecation remains
 available for at least one minor release before removal in a future major
 version.
 
-## Experimental
-
-The following modules ship for engineering evaluation but are not covered by
-the 1.x compatibility promise:
-
-- HTTP API and remote Worker deployment;
-- PostgreSQL and S3 adapters;
-- plugin trust and third-party Profile loading;
-- automatic evolution;
-- generalized quality claims across all seven Profiles.
-
-Experimental does not mean exempt from security checks. It means the contract,
-operational recovery evidence, and compatibility surface may still change.
+The PostgreSQL / S3 / multi-tenant ACL / Worker queue / HTTP API / plugin
+subsystems previously listed here were removed in the v1.0 consolidation and
+are no longer part of the package.
 
 ## Quality Claim
 
 Version 1.0 claims engineering stability for Stable Core. It does not claim
-that all seven distillation Profiles have proven stable task effectiveness.
+that all distillation Profiles have proven stable task effectiveness.
 
 The Mao case retains a frozen 60-case development comparison. Its historical
 Answer and Judge used shared-model, session-separated execution, so Stable

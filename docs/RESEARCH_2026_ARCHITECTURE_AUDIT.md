@@ -3,6 +3,11 @@
 审计日期：2026-08-06
 目标：判断 one-skills 是否需要继续补强，并把有证据的改进落实到代码、Schema、测试和真实案例。
 
+> **状态说明**：本审计撰写于 v1.0 收敛之前。其中"one-skills 已有
+> SQLite/PostgreSQL、ACL、API、Worker，不能倒退"等论断在 v1.0 收敛后不再
+> 成立——这些企业级外壳已整体移除，回归纯文件蒸馏核心。当前架构见
+> [ARCHITECTURE.md](ARCHITECTURE.md)。
+
 ## 1. 结论
 
 需要完善，但不需要推翻现有架构。

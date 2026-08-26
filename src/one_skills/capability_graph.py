@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import Any
 
 from .core_assets import load_reproducibility, update_pack_metadata
-from .database import KnowledgeDB
 from .models import Candidate, Capability, GraphEdge
 from .utils import dump_json, load_json, stable_json_hash
 
@@ -180,22 +179,5 @@ def build_capability_graph(
         current["capability_graph_hash"] = graph_hash
         current["reproducibility"] = constraints
 
-    metadata = update_pack_metadata(pack, update_metadata)
-    from .lifecycle import workspace_for
-
-    workspace = workspace_for(pack)
-    with KnowledgeDB(workspace / ".one" / "knowledge.db") as database:
-        database.clear_pack_graph(metadata["id"])
-        for edge in edges:
-            database.add_graph_edge(
-                metadata["id"],
-                edge.from_type,
-                edge.from_id,
-                edge.relation,
-                edge.to_type,
-                edge.to_id,
-                list(edge.evidence_ids),
-                edge.confidence,
-                edge.status,
-            )
+    update_pack_metadata(pack, update_metadata)
     return value

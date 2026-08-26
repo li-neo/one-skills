@@ -6,24 +6,9 @@ import re
 from pathlib import Path
 from typing import Any
 
-OBJECT_TO_PROFILE = {
-    "person": "person",
-    "customer": "hybrid",
-    "proposal": "hybrid",
-    "skill": "skill",
-    "methodology": "methodology",
-    "thought-system": "hybrid",
-    "book": "content",
-    "document": "content",
-    "sop": "sop",
-    "tool": "tool",
-}
+from .constants import OBJECT_TO_PROFILE
 
 SIGNALS = {
-    "person": (
-        (r"人物|名人|伟人|老板|同事|家人|自己|思维方式|视角|毛泽东|鲁迅|芒格", 4),
-        (r"person|biography|perspective|how .+ thinks", 4),
-    ),
     "customer": ((r"客户|用户画像|customer", 4),),
     "proposal": ((r"方案|提案|proposal|pitch", 4),),
     "skill": (
@@ -77,7 +62,7 @@ def route_intent(intent: str, sources: list[str] | None = None) -> dict[str, Any
     margin = top_score - second_score
     needs_confirmation = top_score < 3 or margin < 2
     selected = None if needs_confirmation else top_type
-    if selected in {"person", "customer", "proposal", "thought-system"}:
+    if selected in {"customer", "proposal", "thought-system"}:
         recommended_path = "guided"
     elif selected:
         recommended_path = "direct_pack" if sources else "guided"

@@ -36,32 +36,6 @@ COMMON_RELATIONS = (
 
 
 PROFILE_SPECS = {
-    "person": ProfileSpec(
-        name="person",
-        overview_sections=(
-            "thesis",
-            "domains",
-            "timeline",
-            "key_terms",
-            "decision_patterns",
-            "tensions",
-            "limitations",
-            "research_gaps",
-        ),
-        extractor_views=(
-            "writings",
-            "conversations",
-            "decisions",
-            "timeline",
-            "external_views",
-            "expression",
-        ),
-        compiler="person-perspective-router",
-        relation_types=COMMON_RELATIONS,
-        learning_policy="mental-model-prerequisite",
-        evaluation_types=COMMON_EVALUATIONS + ("fidelity", "out_of_scope_honesty"),
-        module_strategy="router-with-mental-models",
-    ),
     "content": ProfileSpec(
         name="content",
         overview_sections=(

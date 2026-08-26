@@ -1,4 +1,4 @@
-"""Local semantic vectors and ACL-aware hybrid retrieval."""
+"""Local semantic vectors and flat-file hybrid retrieval over Pack chunks."""
 
 from __future__ import annotations
 
@@ -7,9 +7,8 @@ from hashlib import blake2b
 import json
 import math
 import re
+from pathlib import Path
 from typing import Any
-
-from .database import KnowledgeDB
 
 
 VECTOR_DIMENSIONS = 128
@@ -54,28 +53,43 @@ def reciprocal_rank_fusion(rankings: list[list[str]], k: int = 60) -> dict[str, 
 
 
 class HybridRetriever:
-    def __init__(
-        self,
-        database: KnowledgeDB,
-        tenant_id: str = "local",
-        principal_id: str = "local-user",
-    ):
-        self.database = database
-        self.tenant_id = tenant_id
-        self.principal_id = principal_id
+    """Flat-file hybrid retrieval over a workspace's Pack chunks (no database).
 
-    def _allowed_clause(self, allowed_access: set[str]) -> tuple[str, tuple[str, ...]]:
-        if not allowed_access:
-            return "0", ()
-        placeholders = ", ".join("?" for _ in allowed_access)
-        clause = (
-            f"c.access_level IN ({placeholders}) AND EXISTS ("
-            "SELECT 1 FROM asset_acl acl "
-            "WHERE acl.asset_type = 'chunk' AND acl.asset_id = c.id "
-            "AND acl.tenant_id = ? AND acl.principal_id IN (?, '*') "
-            "AND acl.permission IN ('read', 'owner'))"
-        )
-        return clause, (*tuple(sorted(allowed_access)), self.tenant_id, self.principal_id)
+    Scans ``workspace/packs/*/sources/chunks.json`` at construction and runs
+    keyword, semantic, and evidence-graph neighborhood search over the in-memory
+    rows. Access filtering is a plain ``access_level`` membership check.
+    """
+
+    def __init__(self, workspace: Path):
+        self.workspace = workspace.expanduser().resolve()
+        self._rows = self._load_chunks()
+
+    def _load_chunks(self) -> list[dict[str, Any]]:
+        rows: list[dict[str, Any]] = []
+        packs_dir = self.workspace / "packs"
+        if not packs_dir.is_dir():
+            return rows
+        for chunks_path in sorted(packs_dir.glob("*/sources/chunks.json")):
+            try:
+                chunks = json.loads(chunks_path.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                continue
+            if not isinstance(chunks, list):
+                continue
+            pack = chunks_path.parents[1].name
+            for chunk in chunks:
+                if isinstance(chunk, dict):
+                    rows.append({**chunk, "pack": pack})
+        return rows
+
+    def _visible(
+        self,
+        rows: list[dict[str, Any]],
+        allowed_access: set[str],
+    ) -> list[dict[str, Any]]:
+        return [
+            row for row in rows if row.get("access_level") in allowed_access
+        ]
 
     def keyword_search(
         self,
@@ -83,33 +97,20 @@ class HybridRetriever:
         allowed_access: set[str],
         limit: int = 20,
     ) -> list[dict[str, Any]]:
-        clause, access_values = self._allowed_clause(allowed_access)
-        if self.database.fts_enabled:
-            terms = [term.replace('"', "") for term in tokenize(query)[:12]]
-            expression = " OR ".join(f'"{term}"' for term in terms)
-            if expression:
-                rows = self.database.rows(
-                    "SELECT c.*, bm25(chunks_fts) AS keyword_score "
-                    "FROM chunks_fts JOIN chunks c ON c.id = chunks_fts.chunk_id "
-                    "JOIN documents d ON d.id = c.document_id "
-                    f"WHERE chunks_fts MATCH ? AND {clause} "
-                    "AND c.document_version = d.active_version "
-                    "ORDER BY keyword_score LIMIT ?",
-                    (expression, *access_values, limit),
-                )
-                return [dict(row) for row in rows]
-        patterns = [f"%{term}%" for term in tokenize(query)[:5]]
-        if not patterns:
+        terms = tokenize(query)[:5]
+        if not terms:
             return []
-        conditions = " OR ".join("c.text LIKE ?" for _ in patterns)
-        rows = self.database.rows(
-            f"SELECT c.*, 0.0 AS keyword_score FROM chunks c "
-            "JOIN documents d ON d.id = c.document_id "
-            f"WHERE ({conditions}) AND {clause} "
-            "AND c.document_version = d.active_version LIMIT ?",
-            (*patterns, *access_values, limit),
-        )
-        return [dict(row) for row in rows]
+        scored: list[tuple[float, dict[str, Any]]] = []
+        for row in self._visible(self._rows, allowed_access):
+            text = row.get("text") or ""
+            hits = sum(text.count(term) for term in terms)
+            if not hits:
+                continue
+            item = dict(row)
+            item["keyword_score"] = float(hits)
+            scored.append((float(hits), item))
+        scored.sort(key=lambda pair: pair[0], reverse=True)
+        return [item for _, item in scored[:limit]]
 
     def semantic_search(
         self,
@@ -117,28 +118,19 @@ class HybridRetriever:
         allowed_access: set[str],
         limit: int = 20,
     ) -> list[dict[str, Any]]:
-        clause, access_values = self._allowed_clause(allowed_access)
-        rows = self.database.rows(
-            "SELECT c.* FROM chunks c JOIN documents d ON d.id = c.document_id "
-            f"WHERE {clause} AND c.document_version = d.active_version",
-            access_values,
-        )
         query_vector = local_embedding(query)
         scored: list[tuple[float, dict[str, Any]]] = []
-        for row in rows:
-            item = dict(row)
-            try:
-                vector = json.loads(item.get("embedding") or "[]")
-            except json.JSONDecodeError:
-                vector = []
-            score = cosine_similarity(query_vector, vector)
+        for row in self._visible(self._rows, allowed_access):
+            score = cosine_similarity(query_vector, local_embedding(row.get("text") or ""))
             # Feature hashing is a dependency-free fallback; a floor avoids
             # returning collisions as semantic matches.
             if score < 0.20:
                 continue
+            item = dict(row)
             item["semantic_score"] = score
             scored.append((score, item))
-        return [item for _, item in sorted(scored, key=lambda pair: pair[0], reverse=True)[:limit]]
+        scored.sort(key=lambda pair: pair[0], reverse=True)
+        return [item for _, item in scored[:limit]]
 
     def graph_neighbors(
         self,
@@ -146,50 +138,58 @@ class HybridRetriever:
         allowed_access: set[str],
         limit: int = 20,
     ) -> list[str]:
+        """Undirected relevance neighborhood: chunks sharing capabilities with the seeds."""
         if not chunk_ids or not allowed_access:
             return []
-        placeholders = ", ".join("?" for _ in chunk_ids)
-        clause, access_values = self._allowed_clause(allowed_access)
-        rows = self.database.rows(
-            "WITH seed_claims AS ("
-            "  SELECT DISTINCT claim_id FROM evidence_links "
-            f"  WHERE chunk_id IN ({placeholders})"
-            "), seed_capabilities AS ("
-            "  SELECT DISTINCT le.to_id AS capability_id "
-            "  FROM lineage_edges le JOIN seed_claims sc "
-            "    ON le.from_type = 'claim' AND le.from_id = sc.claim_id "
-            "  WHERE le.to_type = 'capability'"
-            "), related_capabilities AS ("
-            "  SELECT capability_id FROM seed_capabilities "
-            # Retrieval uses an undirected relevance neighborhood even when
-            # the capability edge has directed execution semantics.
-            "  UNION "
-            "  SELECT ge.to_id FROM graph_edges ge JOIN seed_capabilities sc "
-            "    ON ge.from_type = 'capability' AND ge.from_id = sc.capability_id "
-            "  WHERE ge.to_type = 'capability' "
-            "  UNION "
-            "  SELECT ge.from_id FROM graph_edges ge JOIN seed_capabilities sc "
-            "    ON ge.to_type = 'capability' AND ge.to_id = sc.capability_id "
-            "  WHERE ge.from_type = 'capability'"
-            "), related_claims AS ("
-            "  SELECT claim_id FROM seed_claims "
-            "  UNION "
-            "  SELECT le.from_id FROM lineage_edges le "
-            "  JOIN related_capabilities rc "
-            "    ON le.to_type = 'capability' AND le.to_id = rc.capability_id "
-            "  WHERE le.from_type = 'claim'"
-            ") "
-            "SELECT DISTINCT c.id AS chunk_id "
-            "FROM evidence_links el "
-            "JOIN related_claims rc ON rc.claim_id = el.claim_id "
-            "JOIN chunks c ON c.id = el.chunk_id "
-            "JOIN documents d ON d.id = c.document_id "
-            f"WHERE c.id NOT IN ({placeholders}) "
-            f"AND c.document_version = d.active_version AND {clause} "
-            "LIMIT ?",
-            (*chunk_ids, *chunk_ids, *access_values, limit),
-        )
-        return [row["chunk_id"] for row in rows]
+        seed = set(chunk_ids)
+        visible = {row["id"] for row in self._visible(self._rows, allowed_access)}
+        claim_by_chunk: defaultdict[str, set[str]] = defaultdict(set)
+        capability_by_claim: defaultdict[str, set[str]] = defaultdict(set)
+        claim_by_capability: defaultdict[str, set[str]] = defaultdict(set)
+        for pack_dir in (self.workspace / "packs").glob("*"):
+            ledger = pack_dir / "EVIDENCE_LEDGER.jsonl"
+            if ledger.exists():
+                try:
+                    lines = ledger.read_text(encoding="utf-8").splitlines()
+                except OSError:
+                    lines = []
+                for line in lines:
+                    if not line.strip():
+                        continue
+                    try:
+                        item = json.loads(line)
+                    except json.JSONDecodeError:
+                        continue
+                    if item.get("chunk_id") and item.get("id"):
+                        claim_by_chunk[item["chunk_id"]].add(item["id"])
+            for capability_path in (pack_dir / "skills").glob("*/capability.json"):
+                try:
+                    capability = json.loads(
+                        capability_path.read_text(encoding="utf-8")
+                    )
+                except (OSError, json.JSONDecodeError):
+                    continue
+                capability_id = capability.get("id")
+                if not capability_id:
+                    continue
+                for evidence_id in capability.get("evidence_ids", []):
+                    capability_by_claim[evidence_id].add(capability_id)
+                    claim_by_capability[capability_id].add(evidence_id)
+        related_capabilities: set[str] = set()
+        for chunk_id in seed:
+            for claim_id in claim_by_chunk.get(chunk_id, ()):
+                related_capabilities.update(capability_by_claim.get(claim_id, ()))
+        related_claims: set[str] = set()
+        for capability_id in related_capabilities:
+            related_claims.update(claim_by_capability.get(capability_id, ()))
+        neighbors = {
+            chunk_id
+            for chunk_id, claims in claim_by_chunk.items()
+            if chunk_id not in seed
+            and chunk_id in visible
+            and bool(claims & related_claims)
+        }
+        return sorted(neighbors)[:limit]
 
     def search(
         self,
@@ -208,25 +208,11 @@ class HybridRetriever:
         )
         fused = reciprocal_rank_fusion([keyword_ids, semantic_ids, graph_ids])
         items = {item["id"]: item for item in keyword + semantic}
-        missing = [item_id for item_id in graph_ids if item_id not in items]
-        if missing:
-            placeholders = ", ".join("?" for _ in missing)
-            clause, access_values = self._allowed_clause(allowed_access)
-            for row in self.database.rows(
-                "SELECT c.* FROM chunks c "
-                "JOIN documents d ON d.id = c.document_id "
-                f"WHERE c.id IN ({placeholders}) AND {clause} "
-                "AND c.document_version = d.active_version",
-                (*missing, *access_values),
-            ):
-                items[row["id"]] = dict(row)
         results: list[dict[str, Any]] = []
         for item_id, score in sorted(fused.items(), key=lambda pair: pair[1], reverse=True):
             if item_id not in items:
                 continue
             item = items[item_id]
-            if item["access_level"] not in allowed_access:
-                continue
             item["score"] = score
             results.append(item)
             if len(results) == limit:

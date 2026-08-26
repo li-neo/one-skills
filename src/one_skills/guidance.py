@@ -160,8 +160,11 @@ def _comparison_action(
             blocked_by=["baseline_manifest_path"],
             warnings=(warnings or [])
             + [
-                "Rerun `one next` with `--baseline <baseline.json>` to receive an "
-                "executable comparison command."
+                "Baseline manifest is missing; generate one with "
+                "`one compare baseline <pack> --repository <owner/repo> "
+                "--commit <sha>`, then rerun `one next` with "
+                "`--baseline <baseline.json>` to receive an executable "
+                "comparison command."
             ],
             endpoints=endpoints,
         )
@@ -361,8 +364,40 @@ def recommend_next_action(
             command=_command("one", "compile", pack),
         )
 
-    if state["phases"]["ship"]["status"] == "completed":
+    mode = str(metadata.get("mode") or "standard")
+    if (
+        mode in {"quick", "continuous"}
+        and state["phases"]["ship"]["status"] != "completed"
+    ):
+        if mode == "continuous":
+            return _result(
+                state,
+                maturity,
+                "record_experience_or_evolve",
+                command=_command("one", "experience", "mine", pack),
+                warnings=[
+                    "continuous 模式进入经验与进化循环：先记录部署反馈，再生成进化候选。",
+                    "`one evolve <pack> --skill <name>` 生成 Darwin 候选；无 Darwin 时只写 "
+                    "DARWIN_REQUEST.md 并保持 status: prepared。",
+                    "正式发布仍需走 standard/deep 的角色隔离比较门：`one next <pack>`。",
+                ],
+            )
         return _result(
+            state,
+            maturity,
+            "deliver_draft",
+            command=None,
+            blocked_by=["stable_release_gate"],
+            warnings=[
+                "quick 模式以草稿交付，不做稳定发布比较。",
+                f"编译产物位于 {pack / 'skills'}/；可直接交付该目录到目标运行时。",
+                "`one install` / `one release` 仍要求 ship 阶段完成（稳定发布门）；"
+                "如需正式发布，请按 standard/deep 走 `one next <pack>` 的完整验证与比较。",
+            ],
+        )
+
+    if state["phases"]["ship"]["status"] == "completed":
+        result = _result(
             state,
             maturity,
             "install_or_export",
@@ -372,6 +407,15 @@ def recommend_next_action(
                 "`one export` for a runtime archive."
             ],
         )
+        result["alternatives"] = [
+            {
+                "action": "record_experience_or_evolve",
+                "command": _command("one", "experience", "mine", pack),
+                "hint": "持续进化：`one experience mine <pack>` 挖掘部署反馈；"
+                "`one evolve <pack> --skill <name>` 生成 Darwin 候选。",
+            }
+        ]
+        return result
 
     frozen_suite = pack / "evaluations" / "suite.json"
     comparison_report = pack / "evaluations" / "comparison-report.json"

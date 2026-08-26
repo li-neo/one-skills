@@ -1,11 +1,14 @@
 ---
-name: "one-skills"
-description: "Distills people, content, methodologies, SOPs, or existing skills into traceable, testable Agent Skills. Invoke when users ask to distill, create, repair, validate, or evolve a skill."
+name: one-skills
+description: Distill people, content, methodologies, SOPs, or existing skills into traceable, testable Agent Skills. Invoke when users ask to distill, create, repair, validate, or evolve a skill.
 ---
 
 # one-skills
 
 将人、内容、方法、流程或既有 Skill 转换为可运行、可验证、可追溯的 Agent Skills。
+
+本文件是**路由索引**：先定位对象与阶段，再按需读取 `references/` 下的完整协议。
+完整执行前置见 [运行前置与降级](references/runtime.md)。
 
 ## 核心规则
 
@@ -25,13 +28,16 @@ description: "Distills people, content, methodologies, SOPs, or existing skills 
 
 ## 入口路由
 
-先根据用户目标选择 Profile：
+先根据用户目标选择对象类型：
 
-| 用户目标 | Profile |
+| 用户目标 | 对象类型 |
 |---|---|
 | 蒸馏自己、家人、同事、老板、名人或历史人物 | `person` |
+| 蒸馏客户、客户群或关键账户 | `customer` |
+| 蒸馏产品/技术/商业/项目方案 | `proposal` |
 | 蒸馏书籍、课程、播客、访谈、长文或字幕 | `content` |
 | 蒸馏理论、框架、原则或完整方法论 | `methodology` |
+| 蒸馏思想、理论或价值体系 | `thought-system` |
 | 整理操作手册、录屏、工单或隐性流程 | `sop` |
 | 从需求文档创建 Skill，或修复现有 Skill | `skill` |
 | 人物、资料、案例、工具和流程混合 | `hybrid` |
@@ -39,297 +45,63 @@ description: "Distills people, content, methodologies, SOPs, or existing skills 
 
 无法唯一判断时，先运行 `one route --intent <minimal-intent>`。返回
 `needs_confirmation=true` 时，只展示最多三个候选和最多两个确认问题，不创建
-Workspace。
+Workspace。各对象类型的专项要求见 [Profile 专项要求](references/profiles.md)。
 
-## Phase 0：建立蒸馏契约
+## 工作流
 
-确认或合理默认以下字段：
+十阶段 `contract→ingest→map→extract→verify→compile→link→test→ship→evolve` 由
+`pack.json.lifecycle` 持久化，不能跳阶。
 
-- 蒸馏对象
-- 目标用途
-- 受众
-- 聚焦范围
-- 可用材料
-- 是否允许联网补充
-- 授权和隐私范围
-- 交付形式
-- 成功标准
-- 快速、标准或深度档位
+| 阶段 | 最小产物 | 门 |
+|---|---|---|
+| contract | `DISTILLATION_CONTRACT.md` | 无占位符 |
+| ingest | `SOURCE_CATALOG.json` / `SOURCE_MANIFEST.json` | 来源存在且角色/独立组确认 |
+| map | `OBJECT_OVERVIEW.json/md` | Overview 已显式确认 |
+| extract | `CANDIDATE_PORTFOLIO.json` / `EVIDENCE_LEDGER.jsonl` | 至少一条 Claim |
+| verify | `VERIFIED_PORTFOLIO.json` | 至少一个 accepted 候选 |
+| compile | `skills/<name>/SKILL.md` | 结构校验无错误 |
+| link | `LEARNING_PATH.json` | 无环 |
+| test | `evaluations/comparison-report.json` | 三条件盲测 valid+passed（standard/deep） |
+| ship | `MODEL_CARD.md` + `DIGEST.md` | 测试门仍通过 |
+| evolve | `evolution/DARWIN_REQUEST.md` | 已生成交接请求 |
 
-以下情况必须暂停并询问：
-
-- 用户未提供材料，且要求蒸馏非公开对象
-- 涉及未授权私聊、秘密录音或敏感个人信息
-- 无法判断用户要摘要、方法论还是可运行 Skill
-- 成功标准会显著改变产物结构
-
-如果目标明确但材料不足，不要一次抛出长表单。使用 `one guide init` 启动可恢复会话，每轮最多询问三个问题；将自述、情景回答、观察行为、文档结果和模型推断分级记录。至少确认 `scope` 与 `evidence_inventory` 后，才使用 `one guide create-pack` 进入正式十阶段 Pipeline。完整协议见 [Guided Distillation](docs/GUIDED_DISTILLATION.md)。
-
-输出 `DISTILLATION_CONTRACT.md`。如果当前任务只要求设计方案，不创建虚假的输入和测试结果。
-
-## Phase 1：建立来源账本
-
-标准/深度任务先按 [来源质量协议](docs/SOURCE_QUALITY.md) 建立
-`SOURCE_CATALOG.json`，再运行 `one source audit`。对每个来源记录：
-
-- 来源 ID
-- 文件、URL 或内容定位
-- 作者和时间
-- `authority` 与 `directness`
-- 独立来源组，不按 URL 个数计数
-- evidence、context、counterevidence、verification anchor 或 evaluation only 角色
-- 对研究问题的覆盖
-- 许可证和发布范围
-- 隐私等级
-- 哈希或版本
-
-重要结论必须能回指来源位置。`evaluation_only` 不进入构建语料。高质量人工捕获
-可以用 `Claim-Key` 显式声明跨来源同一主张；系统必须验证声明一致和独立来源组，
-不得靠降低语义阈值强行合并。
-
-本地、GitHub、Hugging Face 或外部搜索结果先通过 `one source discover` 进入
-`SOURCE_CANDIDATES.json`。发现结果不能自动摄取，必须 shortlist 后再进入 Catalog。
-
-## Phase 2：建立对象地图
-
-先整体理解，再提取局部能力。
-
-| Profile | 对象地图 |
-|---|---|
-| `person` | 时间线、领域、关键决策、观点演化、表达场景、矛盾 |
-| `content` | 主旨、结构、概念、论证、案例、反例 |
-| `methodology` | 目标、假设、机制、步骤、边界 |
-| `sop` | 角色、前置条件、系统、状态、异常、交接 |
-| `skill` | 承诺能力、触发、工作流、资源、测试、问题 |
-
-输出 `OBJECT_OVERVIEW.json/md`，包含对象主旨、骨架、术语、
-机制链、张力、局限、来源覆盖和研究缺口。确认 Overview Hash 后再进入语义验证。
-
-## Phase 3：提取候选能力
-
-从材料中提取：
-
-- 能力与问题解决模式
-- 框架、模型和原则
-- 操作步骤和决策分支
-- 触发与反触发条件
-- 案例、反例和失败模式
-- 边界、风险和降级路径
-- 术语和概念关系
-- 可定位证据
-
-按 ProfileSpec 的互不重叠视角并行提取；不支持并行时串行执行，并保持相同产物结构。
-长语料按自然章节 map，每块都携带 Object Overview，再层级 reduce。输出
-`CANDIDATE_PORTFOLIO.json/md`，同义候选合并，冲突候选并列，案例/反例/术语降级为支持节点。
-
-## Phase 4：验证候选
-
-每个候选依次检查 V1/V2/V3：
-
-1. **证据**：有可定位来源吗？
-2. **语境复现**：是否跨场景或时间重复出现？
-3. **来源独立**：人物或混合对象是否有两个独立 provenance group？
-4. **生成力**：能处理材料未直接回答的新问题吗？
-5. **独特性**：是否超越通用常识？
-6. **可执行性**：能转成 Agent 步骤吗？
-7. **边界**：知道何时失效吗？
-
-结果只能是：
-
-- `accepted`
-- `downgraded`
-- `rejected`
-- `needs_evidence`
-
-保留淘汰原因，不静默删除。
-
-Builder、Answer Agent、Judge 使用隔离角色。只有一个模型时也必须分开会话和上下文，
-并标记 `model-shared/session-separated`。验证结果写入
-`VERIFIED_PORTFOLIO.json/md`；确认 Portfolio Hash 后才能编译。
-
-## Phase 5：构建能力单元
-
-每个接受的能力必须包含：
-
-```text
-Problem → Trigger → Input → Procedure → Output → Done
-                       ↓
-               Boundary / Failure / Fallback
-                       ↓
-                  Evidence / Confidence
-```
-
-能力之间标记：
-
-- `depends_on`
-- `contrasts_with`
-- `composes_with`
-- `conflicts_with`
-- `routes_to`
-
-## Phase 6：生成 Skill Pack
-
-按 ProfileSpec 编译。内容和方法论默认生成双层网络：
-
-```text
-one public SKILL.md
-  -> capabilities/*.json
-  -> references/modules/*.md
-  -> evals/modules/*.json
-```
-
-只有总入口参与全局 Skill Retrieval；内部模块在 Skill 已加载后进行二阶段路由。
-
-文件分工：
-
-- `SKILL.md`：高频执行规则、触发、步骤、边界
-- `references/`：证据、背景、详细方法
-- `scripts/`：可重复工具
-- `evals/`：测试集
-- `manifest.yaml`：来源、版本、授权和兼容信息
-
-不要把全部研究材料塞入 `SKILL.md`。
-
-### 产物分离：Pack 产物 ≠ 可发布 Skill
-
-蒸馏产物必须分成两层，**不要混在一个目录里**：
-
-```text
-packs/<name>/                       ← Pack 根 = 蒸馏溯源产物（开发/审计用，不上线）
-├── pack.json                       ← 元数据 + lifecycle 状态机
-├── DISTILLATION_CONTRACT.md        ← Phase 0 契约
-├── SOURCE_CATALOG.json             ← 来源账本
-├── OBJECT_OVERVIEW.md              ← 对象地图
-├── CANDIDATE_PORTFOLIO.json        ← 候选能力
-├── VERIFIED_PORTFOLIO.json         ← 验证结果
-├── EVIDENCE_LEDGER.jsonl           ← 证据账本
-├── LEARNING_PATH.json              ← 学习路径
-├── SOURCE_MANIFEST.json            ← 来源质量清单
-├── candidates/ verified/ rejected/ evaluations/ sources/ ir/   ← 各阶段开发产物
-└── skills/<name>/                  ← 可发布的 Skill（唯一要发布的东西）
-    ├── SKILL.md
-    ├── capability.json
-    ├── agents/
-    ├── capabilities/*.json
-    ├── references/modules/*.md
-    ├── evals/*.json
-    └── test-prompts.json
-```
-
-关键规则：
-
-1. **`skills/<name>/` 是唯一可发布单元**。`one install` / `one export` 只处理
-   `pack/skills/*/SKILL.md`，把它整个目录复制/打包到目标运行时；pack 根其余
-   溯源产物**不会**进入发布产物。
-2. **Skill 目录必须自包含**：`SKILL.md` 及各模块只能引用自身目录内的文件，
-   **禁止 `../` 跨目录引用 pack 根**（如 `../EVIDENCE_LEDGER.jsonl`）。如需在
-   Skill 内提供证据摘要，把精简版放进 `references/evidence.md`，完整账本留在
-   pack 根供溯源。
-3. **目录名 = SKILL.md 的 `name`**：`skills/<name>/` 的 `<name>` 必须与 frontmatter
-   `name` 一致，这样安装到目标时目录名才正确（默认 `~/.codex/skills/<name>/`）。
-4. **发布前确认 ship 完成**：`one install` / `one export` 要求 `pack.json.lifecycle`
-   的 `ship` 阶段为 `completed`，且已通过 `_assert_tested`。
-
-### 如何单独发布 Skill
+每个阶段的完整步骤、命令与验证细节见 [十阶段 Pipeline 详解](references/pipeline.md)。
+阶段门与统一推进见 [统一控制面与 Pack 阶段门](references/control-plane.md)。
 
 ```bash
-# 安装到运行时（默认 ~/.codex/skills/，可用 CODEX_HOME 或 --target 改）
-one install ./packs/<name> --target ~/.dsh/skills        # DSH 运行时
-one install ./packs/<name> --target ~/.codex/skills       # Codex 运行时
-one install ./packs/<name>                                # 默认目标
-
-# 打包导出（zip，含 read-back 校验）
-one export ./packs/<name> --output ./dist --runtime generic
-
-# 预览将安装什么（dry-run，不改动目标）
-one install ./packs/<name> --target <dir> --dry-run
+one distill --source <dir> --type auto --mode standard --workspace .
+one status <pack> --json       # 统一控制面：gate / allowed_actions / recommended_action
 ```
 
-- 覆盖已存在的目标 Skill 必须先 `.backup-<timestamp>`（`--force` 触发）
-- 安装/导出后必须读回校验（目标存在 `SKILL.md` / zip 非空且含 `SKILL.md`）
-- 发布到多个运行时：先 `one install` 到各目标，或 `one export --runtime <runtime>` 分别导出
+## 产物分离
 
-## Profile 专项要求
+Pack 根（溯源产物）与 `skills/<name>/`（唯一可发布单元）必须分层；Skill 目录必须
+自包含，禁止 `../` 跨目录引用。完整规则、安装/导出命令与对比门分层见
+[产物分离与交付](references/artifacts.md)。
 
-### person
+## 进度与恢复
 
-提取心智模型、决策启发式、表达 DNA、价值观、反模式、内在张力和诚实边界。
+每完成一个 Phase 更新 `pack.json.lifecycle`，记录当前阶段、已完成产物、待处理问题、
+被阻塞项与下一步。恢复时先 `one status <path> --json` 读取统一契约（
+`recommended_action` / `gate` / `allowed_actions`），只执行白名单内动作；遇到
+`blocked` 阶段按 `recommended_action.command` 或 `instruction` 继续，不重复已完成工作。
 
-默认输出 `advisor` 模式。只有用户明确需要且授权允许时，才启用 `voice` 模式。
+## 停止条件
 
-对自己、家人、同事或老板：
+以下任一情况必须暂停并向用户说明：
 
-- 优先蒸馏工作能力和决策方法
-- 不推断敏感人格、健康或私人关系
-- 不允许 Skill 冒充本人授权或承诺
-- 标记 `self`、`consented`、`work-authorized`、`public-only` 或 `prohibited`
+- 私人材料没有合理授权；
+- 关键来源不可读或证据不足以支持所声称能力；
+- 蒸馏目标将用于未经人工复核的高影响决定；
+- 测试执行者与唯一评审者无法隔离；
+- 发布会违反来源许可、版权或删除请求；
+- 安装、外部写入或破坏性操作超出用户授权。
 
-### content
+## 完成定义
 
-摘要只是副产物。核心产物是原子方法论 Skills、术语表、关系图、测试和
-`LEARNING_PATH.json`。原课程或原书有明确递进时，先保留源顺序；Skill 编译后再
-用 `depends_on` 补先修关系。
-
-### methodology
-
-必须明确目标问题、成立假设、诊断、执行、分支、完成标准、失效条件和误用案例。
-
-### sop
-
-每一步必须有执行主体、输入、输出和完成标准。删除、迁移、发布等跨系统动作必须形成完整闭环。
-
-### skill
-
-支持 `create`、`extract`、`repair`、`refactor` 和 `evaluate`。重构时不得静默改变核心用途。
-
-## Phase 7：验证
-
-至少执行：
-
-1. Frontmatter 和文件结构检查
-2. `should_trigger`
-3. `should_not_trigger`
-4. `edge_case`
-5. `sibling_conflict`
-6. 核心任务行为测试
-7. 失败恢复测试
-8. 安全、隐私和来源检查
-
-安全、授权、反触发和相邻 Skill 冲突默认要求 100% 通过。
-
-优先使用独立答题 Agent 和独立评分 Agent。至少同题比较 `no-skill / frozen baseline /
-candidate`，保存完整回答、Judge 理由、模型角色、Suite/Source/Skill/Answer Hash、
-token 和延迟。独立 Provider 不可用时允许同模型隔离会话，但必须降低验证等级。
-
-## Phase 8：交付
-
-交付前确认：
-
-- Skill 已通过门禁
-- 来源和截止时间清晰
-- 已知限制已记录
-- 测试可以复跑
-- 目标 Runtime 能发现并触发 Skill
-- 未把内部或敏感来源发布到公开产物
-
-## Phase 9：进化
-
-如果用户要求优化或持续进化：
-
-1. 保留 one-skills 的规范化测试集。
-2. 生成当前 Darwin 版本兼容的 `test-prompts.json`。
-3. 将授权、安全、来源和反触发条件设为受保护约束。
-4. 直接调用 Darwin 执行基线、实验、paired 评审和 keep/revert。
-5. 重复失败才生成 `CREATE/UPDATE/MERGE/PRUNE/NOOP` whole-folder patch。
-6. 每个 patch 必须绑定训练轨迹、before/after Hash、protected gates、快照和用户 keep/revert。
-5. Darwin 完成后重新运行 one-skills 回归门禁。
-
-不得为了通过测试而降低测试难度或删除失败案例。
-
-运行反馈先用 `one experience record` 写入 append-only 账本。单次失败不能改
-Skill；至少两次独立 evidence locator 复现后，才用 `one experience mine`
-形成候选。`evaluation` 事件不参与候选挖掘。完整协议见
-[学习路径与经验进化](docs/LEARNING_AND_EXPERIENCE.md)。
+只有当 Pack 通过契约、对象地图、模型验证、编译、触发、任务效果、安全/运行时和进化
+棘轮相应质量门，且具备来源、边界、测试、版本和回滚点时，才报告"蒸馏完成"。否则准确
+报告为草稿、候选、待验证或被阻塞。
 
 ## 失败与降级
 
@@ -355,25 +127,13 @@ Skill；至少两次独立 evidence locator 复现后，才用 `one experience m
 - 把规划接口写成已实现能力
 - 为了通用性制造巨型 Skill
 
-## 进度与恢复
-
-长任务每完成一个 Phase，更新 `pack.json.lifecycle`：
-
-- 当前 Phase
-- 已完成产物
-- 待处理问题
-- 被阻塞项
-- 下一步
-- 最后更新时间
-
-恢复时先读取状态和已有产物，不重复已完成工作。
-
 ## 最小执行契约
 
-以下硬约束吸收自姊妹项目与 2026 年检索、来源和学习研究，任何 Skill 交付都必须满足。完整规范见 `docs/ARCHITECTURE.md` 第 19、20 章。
+以下硬约束吸收自姊妹项目与 2026 年检索、来源和学习研究，任何 Skill 交付都必须满足。
+完整规范见 `docs/ARCHITECTURE.md` 第 19、20 章。
 
 1. **Frontmatter**：必需 `name` 与 `description`；允许官方规范的 `license / compatibility / metadata / allowed-tools`；name 与父目录一致。
-2. **Pipeline 状态机**：十阶段 `contract→ingest→map→extract→verify→compile→link→test→ship→evolve` 由 `pack.json.lifecycle` 持久化，不能跳阶。
+2. **Pipeline 状态机**：十阶段由 `pack.json.lifecycle` 持久化，不能跳阶。
 3. **证据 Schema**：`EVIDENCE_LEDGER.jsonl` 每条必须含 `id / claim / evidence_type / source / locator / confidence[0,1] / inference_level / permission`；`evidence_type` 使用 `schemas/evidence.schema.json` 的封闭枚举，自述和情景回答不得冒充观察行为或已记录结果。
 4. **测试覆盖**：`test-prompts.json` 必须至少含 `should_trigger / should_not_trigger / edge_case`；静态检查永远不填 `actual_effect` 分，只有独立 Agent 结果才折算。
 5. **交付读回**：安装、导出、切换 `active_version` 后必须读回校验；覆盖已存在目标须先 `.backup-<timestamp>`。

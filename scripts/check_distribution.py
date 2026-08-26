@@ -11,14 +11,11 @@ from pathlib import Path
 VERSION = "1.0.0"
 WHEEL_REQUIRED = {
     "one_skills/schemas/pack.schema.json",
-    "one_skills/schemas/job-request.schema.json",
-    "one_skills/migrations/postgres/001_initial.sql",
     "one_skills/SKILL.md",
     f"one_skills-{VERSION}.dist-info/licenses/LICENSE",
 }
 SDIST_REQUIRED = {
     f"one_skills-{VERSION}/schemas/pack.schema.json",
-    f"one_skills-{VERSION}/migrations/postgres/001_initial.sql",
     f"one_skills-{VERSION}/SKILL.md",
     f"one_skills-{VERSION}/LICENSE",
     f"one_skills-{VERSION}/SECURITY.md",

@@ -65,15 +65,6 @@ class ReleaseContractTests(unittest.TestCase):
     def test_protocol_resources_are_available(self) -> None:
         with resource_file("schemas", "pack.schema.json") as schema:
             self.assertIn('"1.0"', schema.read_text(encoding="utf-8"))
-        with resource_file(
-            "migrations",
-            "postgres",
-            "001_initial.sql",
-        ) as migration:
-            self.assertIn(
-                "CREATE EXTENSION IF NOT EXISTS vector",
-                migration.read_text(encoding="utf-8"),
-            )
         with resource_file("SKILL.md") as skill:
             self.assertGreater(skill.stat().st_size, 100)
 

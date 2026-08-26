@@ -22,9 +22,9 @@
 
 ## 项目状态
 
-当前版本 **1.0.0**。Stable Core 已进入工程落地阶段：本地 CLI、Pack 1.0、SQLite 工作区、来源与证据、Overview/Portfolio/Compiler、评测门、迁移、安装和导出按 1.x 兼容策略维护。
+当前版本 **1.0.0**。Stable Core 已进入工程落地阶段：本地 CLI、Pack 1.0、纯文件工作区（零数据库）、来源与证据、Overview/Portfolio/Compiler、评测门、迁移、安装和导出按 1.x 兼容策略维护。
 
-HTTP API、Worker、PostgreSQL、S3、插件信任、自动进化及七类 Profile 的通用效果声明仍为 **Experimental**。完整稳定边界与弃用策略见 [Stability and Compatibility](docs/STABILITY.md)。
+完整稳定边界与弃用策略见 [Stability and Compatibility](docs/STABILITY.md)。
 
 | 能力 | 状态 |
 |---|---|
@@ -238,7 +238,6 @@ Skill 是否有价值，首先取决于：
 
 | Profile | 输入示例 | 核心产物 | 主要验收标准 |
 |---|---|---|---|
-| `person` | 自己、家人、同事、老板、名人、历史人物 | 思维与决策 Skill | 保真度、诚实度、来源透明度 |
 | `content` | 书、课程、播客、访谈、长文、视频字幕 | 方法论 Skill Pack | 生成力、独特性、可调用性 |
 | `methodology` | 理论、框架、原则、模型 | 执行型 Skill | 场景迁移、步骤完整、边界明确 |
 | `sop` | 操作手册、录屏、聊天记录、工单、流程文档 | SOP Skill | 可复现、异常恢复、完成标准 |
@@ -288,7 +287,7 @@ one-skills 并不假设所有对象都能被完整复制。
                            │                   │
               ┌────────────▼──────────┐  ┌────▼─────────────────┐
               │ Profile Components   │  │ Universal IR         │
-              │ person/content/sop…  │  │ 证据、能力、触发、边界   │
+              │ content/methodology… │  │ 证据、能力、触发、边界   │
               └────────────┬──────────┘  └────┬─────────────────┘
                            │                   │
                     ┌──────▼───────────────────▼──────┐
@@ -344,8 +343,8 @@ one-skills 的关键不是统一最终模板，而是统一中间表示。
 
 ```yaml
 object:
-  id: karpathy
-  type: person
+  id: methodology-sample
+  type: methodology
   goal: "用于 AI 工程决策与教学表达"
   scope: "公开资料，截至 2026-07"
   consent: public
@@ -876,10 +875,10 @@ one-skills/
 ├── README.md
 ├── SKILL.md
 ├── profiles/
-│   ├── person/
 │   ├── content/
 │   ├── methodology/
 │   ├── sop/
+│   ├── tool/
 │   ├── skill/
 │   └── hybrid/
 ├── core/
@@ -1068,20 +1067,19 @@ one next "$PACK_PATH"
 
 `create-pack` 进入与 `distill` 相同的正式十阶段 Pipeline，其 JSON 输出会给出下一步命令。`self_report`、`scenario_response`、`observed_behavior`、`documented_result` 等等级会原样进入 Pack 的证据账本和知识库，不会在 Markdown 摄取后退化为普通引文。完整协议见 [Guided Distillation](docs/GUIDED_DISTILLATION.md)。
 
-### 蒸馏一个人
+### 蒸馏方法论
 
 ```bash
 one distill \
-  --source ./materials/person \
-  --type person \
-  --name "Example Person" \
+  --source ./materials/method \
+  --type methodology \
+  --name "Constraint Method" \
   --mode standard \
-  --access authorized \
-  --consent self
+  --access authorized
 
 # 先按输出确认 Object Overview；模型验证前检查实际端点和授权阻塞：
-one next ./packs/example-person
-one next ./packs/example-person --allow-sensitive-data
+one next ./packs/constraint-method
+one next ./packs/constraint-method --allow-sensitive-data
 ```
 
 `--consent self/consented/work-authorized` 只记录蒸馏授权，不自动代表允许向第三方模型发送材料。非公开 Pack 的 `one next` 会列出 Builder、Answer、Judge 的模型与 `base_url`；每次执行 `verify-model` 或 `compare run` 前，只有确认授权范围覆盖这些端点后，才使用 `--allow-sensitive-data` 返回并执行命令。
@@ -1097,6 +1095,26 @@ one model status
 
 回环地址只说明网络目的地在本机，仍需确认该服务不会把请求代理到外部。
 单模型 fallback 可用于验证和开发证据；Stable 发布评测仍要求 Answer 与 Judge 达到 Provider 隔离或模型隔离。
+
+**让非公开对象（如私人人物）不外发数据即可达到 Stable 发布级隔离的配方**：同一个本地端点配置三个角色、
+三个不同模型名即可判定为 `model-separated`（base_url 可相同，模型名集合为 3 即满足）：
+
+```bash
+# 同一本地端点，三个不同本地模型
+export ONE_SKILLS_BUILDER_BASE_URL="http://127.0.0.1:11434/v1"
+export ONE_SKILLS_BUILDER_API_KEY="local"
+export ONE_SKILLS_BUILDER_MODEL="qwen3:32b"
+export ONE_SKILLS_ANSWER_BASE_URL="http://127.0.0.1:11434/v1"
+export ONE_SKILLS_ANSWER_API_KEY="local"
+export ONE_SKILLS_ANSWER_MODEL="qwen3:14b"
+export ONE_SKILLS_JUDGE_BASE_URL="http://127.0.0.1:11434/v1"
+export ONE_SKILLS_JUDGE_API_KEY="local"
+export ONE_SKILLS_JUDGE_MODEL="qwen3:8b"
+one model status   # isolation_level 应为 model-separated
+```
+
+`one next <pack>` 会显示各角色的 `base_url` 与 `network_scope`（local/remote）；每次 `verify-model` /
+`compare run` 前，确认授权范围覆盖这些端点后，再用 `--allow-sensitive-data` 放行非公开 Pack。
 
 ### 从文档创建 Skill
 
@@ -1161,30 +1179,15 @@ one export ./packs/example --runtime claude
 
 `one approve --candidate ...` 是旧版单候选编译旁路，不满足 Stable 1.0 的 Portfolio 确认流程。可发布 Pack 应使用 `verify-model → semantic confirm portfolio → compile`。
 
-### 检索与用户画像记忆
+### 检索与血缘
 
 ```bash
 one search "如何验证删除动作已经闭环" --access authorized
-one memory subject --name "Example Person" --relation self
-one memory fact --action ADD --subject <subject-id> \
-  --dimension preference --statement "偏好结论附带证据" \
-  --confidence 0.9
+one skill-search "触发条件" --root ~/skills
 
 one lineage --type source --id <source-id>
 one source-revoke --id <source-id> --reason "来源方撤回授权"
-
-one batch --manifest examples/batch-manifest.json --workers 8
-
-one acl tenant --tenant team-a --name "Team A"
-one acl principal --tenant team-a --principal alice --name "Alice"
-one acl grant --tenant team-a --principal alice \
-  --asset-type chunk --asset-id <chunk-id> --permission read
-
-one job submit --type distill --payload ./job-payload.json
-one job worker --owner worker-01
-
-export ONE_SKILLS_API_TOKEN="replace-with-secret"
-one serve --host 127.0.0.1 --port 8765
+one regression-plan <pack> --skill <skill-name>
 ```
 
 ---
@@ -1194,7 +1197,7 @@ one serve --host 127.0.0.1 --port 8765
 ```yaml
 project:
   name: example-distillation
-  profile: person
+  profile: methodology
   depth: standard
 
 goal:
@@ -1392,44 +1395,38 @@ one-skills 不做以下事情：
 
 ### Milestone 1：最小闭环
 
-- [x] 建立本地 Source Store、不可变文档版本和 SQLite 元数据
-- [x] 实现结构化 Chunk、SQLite FTS5 与本地语义索引
+- [x] 建立本地 Source Store、不可变文档版本和纯文件元数据
+- [x] 实现结构化 Chunk 与本地语义索引（零数据库）
 - [x] 实现 `content` Profile
 - [x] 实现 `skill` Profile
 - [x] 建立 canonical eval schema 与 Darwin Adapter
 - [x] 输出可运行、可安装、可导出的 Skill
 - [x] 完成 Trigger、行为、边界、安全与相邻冲突测试框架
 
-### Milestone 2：人物与 SOP
+### Milestone 2：SOP 与混合对象
 
-- [x] 实现 `person` Profile 与时序记忆
-- [x] 实现授权等级、模型外发隐私门和撤销数据模型
 - [x] 实现 `sop` Profile 与破坏性操作闭环约束
-- [x] 建立七类 Profile 专项测试
+- [x] 实现 `hybrid` / `tool` Profile 与授权等级、模型外发隐私门和撤销数据模型
+- [x] 建立各 Profile 专项测试
 
 ### Milestone 3：Darwin 与增量更新
 
 - [x] 建立 Recipe Registry 与非补偿式晋升门
-- [x] 建立七类 Profile 固定 Benchmark 语料与基准运行器
 - [x] 实现 Darwin Adapter
 - [x] 接入 paired 评审决策；Git 提交与回滚由 Darwin 执行
 - [x] 支持来源增量更新与 active version 原子切换
 - [x] 支持来源撤销、影响报告与下游阶段失效
 - [x] 支持按血缘自动选择局部回归测试
 
-### Milestone 4：生态化
+### Milestone 4：收敛为纯文件核心
 
-- [x] 建立本地内容寻址对象存储与可选 S3 Adapter
-- [x] 建立多租户召回前 ACL、持久 Worker lease 和 append-only 审计事件
-- [x] 完成 PostgreSQL + pgvector 初始化、迁移、ACL 混合检索与负载测试工具
-- [x] 在 CI PostgreSQL 16 + pgvector 环境完成迁移、并发写入、重连和容量验证
-- [x] Profile entry-point 插件协议
+- [x] 建立本地内容寻址对象存储
 - [x] Generic、Codex、Claude Code、Cursor Runtime Adapters
 - [x] 建立可复现端到端示例
-- [x] 建立七类 Profile 专项模板导出与示例库
-- [x] 批量蒸馏、错误隔离和有界并发执行
+- [x] 建立各 Profile 专项模板导出与示例库
 - [x] 生成证据索引、质量报告与 Provenance 报告
 - [x] 发布时生成 Mermaid 可视化证据图
+- [x] 移除 PostgreSQL / S3 / 多租户 ACL / Worker 队列 / HTTP API / 插件等企业级外壳，回归简单易用的蒸馏架构
 
 ### Milestone 5：v0.4 核心收敛
 

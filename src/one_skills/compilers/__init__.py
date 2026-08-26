@@ -15,7 +15,6 @@ from ..core_assets import (
     load_source_quality,
     save_reproducibility,
 )
-from ..database import KnowledgeDB
 from ..models import Candidate, Capability, TestCase
 from ..utils import (
     atomic_write,
@@ -394,9 +393,6 @@ def compile_profile_network(
     source_notes_dir = skill_dir / "references" / "source-notes"
     capabilities_dir = skill_dir / "capabilities"
     module_evals_dir = skill_dir / "evals" / "modules"
-    from ..pipeline import workspace_for
-
-    workspace = workspace_for(pack)
     evidence_records = list(iter_jsonl(pack / "EVIDENCE_LEDGER.jsonl"))
     evidence_by_id = {
         item["id"]: item
@@ -546,42 +542,6 @@ def compile_profile_network(
     )
     save_reproducibility(pack, constraints)
 
-    with KnowledgeDB(workspace / ".one" / "knowledge.db") as database:
-        database.add_capability(
-            entry_capability.id,
-            entry_capability.name,
-            metadata["profile"],
-            entry_capability.to_dict(),
-        )
-        for capability in capabilities:
-            database.add_capability(
-                capability.id,
-                capability.name,
-                metadata["profile"],
-                capability.to_dict(),
-            )
-            for evidence_id in capability.evidence_ids:
-                database.add_edge(
-                    "claim",
-                    evidence_id,
-                    "supports",
-                    "capability",
-                    capability.id,
-                )
-            database.add_edge(
-                "capability",
-                entry_capability.id,
-                "routes_to",
-                "capability",
-                capability.id,
-            )
-        database.add_edge(
-            "capability",
-            entry_capability.id,
-            "produces",
-            "skill",
-            slug,
-        )
     graph = build_capability_graph(pack, capabilities, candidates)
     write_semantic_artifacts(pack, graph, capabilities, candidates)
     return skill_dir, capabilities

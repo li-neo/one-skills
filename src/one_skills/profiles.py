@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from importlib.metadata import entry_points
 from pathlib import Path
 
 from .models import SourceDocument
@@ -22,14 +21,6 @@ class Profile:
 
 
 PROFILES = {
-    "person": Profile(
-        "person",
-        ("timeline", "domains", "decisions", "view_changes", "expression", "tensions"),
-        ("mental_model", "heuristic", "value", "anti_pattern", "expression_pattern"),
-        ("consent", "sensitive_inference", "identity_impersonation"),
-        "perspective-router",
-        PROFILE_SPECS["person"],
-    ),
     "content": Profile(
         "content",
         ("thesis", "structure", "concepts", "arguments", "cases", "counterexamples"),
@@ -79,37 +70,6 @@ PROFILES = {
         PROFILE_SPECS["hybrid"],
     ),
 }
-_LOADED_PLUGIN_ENTRIES: set[str] = set()
-
-
-def register_profile(profile: Profile, replace: bool = False) -> None:
-    if profile.name in PROFILES and not replace:
-        raise ValueError(f"profile already registered: {profile.name}")
-    if not re.fullmatch(r"[a-z][a-z0-9-]{1,63}", profile.name):
-        raise ValueError("profile name must be hyphen-case")
-    PROFILES[profile.name] = profile
-
-
-def load_profile_plugins() -> list[str]:
-    loaded: list[str] = []
-    discovered = entry_points()
-    selected = (
-        discovered.select(group="one_skills.profiles")
-        if hasattr(discovered, "select")
-        else discovered.get("one_skills.profiles", [])
-    )
-    for entry_point in selected:
-        identity = f"{entry_point.name}:{entry_point.value}"
-        if identity in _LOADED_PLUGIN_ENTRIES:
-            continue
-        value = entry_point.load()
-        profile = value() if callable(value) else value
-        if not isinstance(profile, Profile):
-            raise TypeError(f"profile plugin {entry_point.name} did not return Profile")
-        register_profile(profile)
-        _LOADED_PLUGIN_ENTRIES.add(identity)
-        loaded.append(profile.name)
-    return loaded
 
 
 def detect_profile(documents: list[SourceDocument], source_values: list[str]) -> str:
@@ -124,7 +84,6 @@ def detect_profile(documents: list[SourceDocument], source_values: list[str]) ->
     names = " ".join(document.title.lower() for document in documents)
     scores = {name: 0 for name in PROFILES}
     signals = {
-        "person": ("访谈", "我认为", "他说", "她说", "biography", "interview", "career"),
         "content": ("目录", "前言", "chapter", "序言", "作者", "课程", "podcast"),
         "methodology": ("框架", "方法论", "原则", "模型", "framework", "methodology"),
         "sop": ("标准作业", "操作步骤", "审批", "交接", "升级路径", "runbook", "procedure"),
@@ -185,10 +144,6 @@ def signal_patterns(profile_name: str) -> dict[str, re.Pattern[str]]:
     if profile_name == "sop":
         common["framework"] = re.compile(
             r"(步骤|执行|输入|输出|完成标准|审批|回滚|step|run|verify)", re.I
-        )
-    elif profile_name == "person":
-        common["framework"] = re.compile(
-            r"(我会|我通常|判断|决定|看重|反对|习惯|I believe|I decide)", re.I
         )
     elif profile_name == "tool":
         common["framework"] = re.compile(

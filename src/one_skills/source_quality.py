@@ -169,7 +169,7 @@ def _default_requirements(profile: str, mode: str) -> dict[str, Any]:
         }
     if mode == "deep":
         roles = ["evidence", "verification_anchor"]
-        if profile in {"person", "hybrid"}:
+        if profile == "hybrid":
             roles.append("counterevidence")
         return {
             "minimum_independent_groups": 3,

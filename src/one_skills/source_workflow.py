@@ -7,10 +7,9 @@ import os
 import shutil
 from dataclasses import asdict
 from pathlib import Path
-from threading import Lock
 from typing import Any
 
-from .constants import CONSENT_LEVELS, MODES, PHASE_INDEX, PHASES
+from .constants import MODES, PHASE_INDEX, PHASES
 from .core_assets import (
     CONSOLIDATED_PACK_VERSION,
     load_reproducibility,
@@ -20,7 +19,6 @@ from .core_assets import (
     save_source_manifest,
     update_pack_metadata,
 )
-from .database import KnowledgeDB
 from .errors import PipelineError
 from .evaluation_state import mark_evaluations_stale
 from .ingest import expand_sources, structural_chunks
@@ -35,10 +33,9 @@ from .lifecycle import (
 )
 from .locking import file_lock, pack_lock, workspace_pack_lock_path
 from .overview import build_object_overview
-from .profiles import PROFILES, detect_profile, load_profile_plugins
+from .profiles import PROFILES, detect_profile
 from .provenance import source_set_fingerprint
 from .recipes import initialize_registry
-from .retrieval import local_embedding
 from .source_quality import (
     apply_catalog_metadata,
     audit_source_catalog,
@@ -55,8 +52,6 @@ from .utils import (
     slugify,
     utc_now,
 )
-
-_DB_WRITE_LOCK = Lock()
 
 
 def _contract(
@@ -151,7 +146,6 @@ def create_pack(
     source_catalog: Path | None = None,
     activation_aliases: list[str] | None = None,
 ) -> Path:
-    load_profile_plugins()
     if requested_profile != "auto" and requested_profile not in PROFILES:
         raise PipelineError(f"unsupported profile: {requested_profile}")
     if mode not in MODES:
@@ -200,18 +194,6 @@ def create_pack(
         recipe = load_json(registry_path)["active"].get(profile)
     if not recipe:
         raise PipelineError(f"profile has no active Recipe: {profile}")
-    if profile == "person":
-        if consent not in CONSENT_LEVELS:
-            raise PipelineError(
-                "person Profile requires --consent self, consented, "
-                "work-authorized, or public-only"
-            )
-        if consent == "prohibited":
-            raise PipelineError(
-                "person distillation is prohibited by the consent contract"
-            )
-        if consent == "public-only" and access_level != "public":
-            raise PipelineError("public-only consent requires --access public")
     resolved_name = name or documents[0].title
     stored_sources = (
         [
@@ -423,7 +405,6 @@ def _ingest_documents(
     append: bool = False,
     quality: dict[str, Any] | None = None,
 ) -> None:
-    database_path = workspace / ".one" / "knowledge.db"
     source_bundle = load_source_manifest(pack) if append else {}
     existing_manifest = source_bundle.get("sources", [])
     existing_chunks = (
@@ -437,83 +418,80 @@ def _ingest_documents(
     manifest: list[dict[str, Any]] = list(existing_manifest)
     all_chunks: list[dict[str, Any]] = list(existing_chunks)
     blob_store = LocalBlobStore(workspace / "knowledge" / "sources")
-    with _DB_WRITE_LOCK, KnowledgeDB(database_path) as database:
-        for document in documents:
-            raw_uri = blob_store.put_source(document)
-
-            def normalized_uri(
-                document_id: str,
-                version: int,
-                source_document=document,
-            ) -> str:
-                normalized_path = (
-                    workspace
-                    / "knowledge"
-                    / "normalized"
-                    / document_id
-                    / f"{version}.md"
-                )
-                atomic_write(normalized_path, source_document.text + "\n")
-                return _portable_workspace_path(
+    for document in documents:
+        raw_uri = blob_store.put_source(document)
+        # Content-hash dedup against this Pack's manifest (flat-file scope).
+        previous = next(
+            (
+                item
+                for item in manifest
+                if item.get("content_hash") == document.content_hash
+            ),
+            None,
+        )
+        if previous is not None:
+            source_id = previous["source_id"]
+            document_id = previous["document_id"]
+            version = previous["document_version"]
+            created = False
+            chunks = structural_chunks(document, document_id, version)
+        else:
+            # URI-based versioning within this Pack.
+            prior = next(
+                (
+                    item
+                    for item in manifest
+                    if item.get("source") == document.source
+                ),
+                None,
+            )
+            source_id = new_id("source")
+            document_id = prior["document_id"] if prior else new_id("document")
+            version = int(prior["document_version"]) + 1 if prior else 1
+            created = True
+            chunks = structural_chunks(document, document_id, version)
+            if not chunks:
+                raise ValueError("document produced no searchable chunks")
+        if not created and any(
+            item.get("source_id") == source_id
+            and item.get("document_version") == version
+            for item in manifest
+        ):
+            continue
+        if version > 1:
+            for item in manifest:
+                if item.get("document_id") == document_id:
+                    item["active"] = False
+            all_chunks = [
+                item
+                for item in all_chunks
+                if item.get("document_id") != document_id
+            ]
+        normalized_path = (
+            workspace / "knowledge" / "normalized" / document_id / f"{version}.md"
+        )
+        if not normalized_path.exists():
+            atomic_write(normalized_path, document.text + "\n")
+        document_metadata = document.metadata()
+        if document.source_uri:
+            document_metadata["source"] = document.source_uri
+        manifest.append(
+            {
+                **document_metadata,
+                "source_id": source_id,
+                "document_id": document_id,
+                "document_version": version,
+                "created": created,
+                "active": True,
+                "normalized_uri": _portable_workspace_path(
                     str(normalized_path),
                     workspace,
-                )
-
-            source_id, document_id, version, created, chunks = (
-                database.ingest_document(
-                    document,
-                    profile,
-                    lambda current_id, current_version, source_document=document: structural_chunks(
-                        source_document,
-                        current_id,
-                        current_version,
-                    ),
-                    lambda values: {
-                        chunk.id: local_embedding(chunk.text)
-                        for chunk in values
-                    },
-                    normalized_uri,
-                )
-            )
-            if not created and any(
-                item.get("source_id") == source_id
-                and item.get("document_version") == version
-                for item in manifest
-            ):
-                continue
-            if version > 1:
-                for item in manifest:
-                    if item.get("document_id") == document_id:
-                        item["active"] = False
-                all_chunks = [
-                    item
-                    for item in all_chunks
-                    if item.get("document_id") != document_id
-                ]
-            normalized_path = (
-                workspace / "knowledge" / "normalized" / document_id / f"{version}.md"
-            )
-            document_metadata = document.metadata()
-            if document.source_uri:
-                document_metadata["source"] = document.source_uri
-            manifest.append(
-                {
-                    **document_metadata,
-                    "source_id": source_id,
-                    "document_id": document_id,
-                    "document_version": version,
-                    "created": created,
-                    "active": True,
-                    "normalized_uri": _portable_workspace_path(
-                        str(normalized_path),
-                        workspace,
-                    ),
-                    "raw_uri": _portable_workspace_path(raw_uri, workspace),
-                    "chunk_ids": [chunk.id for chunk in chunks],
-                }
-            )
-            all_chunks.extend(asdict(chunk) for chunk in chunks)
-        database.invalidate_claims_from_inactive_versions()
+                ),
+                "raw_uri": _portable_workspace_path(raw_uri, workspace),
+                "chunk_ids": [chunk.id for chunk in chunks],
+            }
+        )
+        all_chunks.extend(asdict(chunk) for chunk in chunks)
     save_source_manifest(
         pack,
         profile=profile,
@@ -672,10 +650,161 @@ def _update_pack_locked(pack: Path, sources: list[str]) -> dict[str, Any]:
     }
 
 
+def build_pack_edges(pack: Path) -> list[dict[str, str]]:
+    """Reconstruct lineage edges from a Pack's flat-file artifacts.
+
+    Mirrors the edge writes the old knowledge database received: sources
+    produce documents, documents produce chunks, chunks/documents support
+    claims, claims support capabilities, and capabilities produce skills.
+    """
+    edges: list[dict[str, str]] = []
+    manifest = load_json(pack / "SOURCE_MANIFEST.json")
+    for item in manifest.get("sources", []):
+        source_id = item.get("source_id")
+        document_id = item.get("document_id")
+        if not source_id or not document_id:
+            continue
+        edges.append(
+            {
+                "from_type": "source",
+                "from_id": source_id,
+                "relation": "produces",
+                "to_type": "document",
+                "to_id": document_id,
+            }
+        )
+        for chunk_id in item.get("chunk_ids", []):
+            edges.append(
+                {
+                    "from_type": "document",
+                    "from_id": document_id,
+                    "relation": "produces",
+                    "to_type": "chunk",
+                    "to_id": chunk_id,
+                }
+            )
+    ledger_path = pack / "EVIDENCE_LEDGER.jsonl"
+    if ledger_path.exists():
+        for line in ledger_path.read_text(encoding="utf-8").splitlines():
+            if not line.strip():
+                continue
+            item = json.loads(line)
+            claim_id = item.get("id")
+            if not claim_id:
+                continue
+            chunk_id = item.get("chunk_id")
+            from_type = "chunk" if chunk_id else "document"
+            from_id = chunk_id if chunk_id else item.get("source")
+            if not from_id:
+                continue
+            edges.append(
+                {
+                    "from_type": from_type,
+                    "from_id": from_id,
+                    "relation": "supports",
+                    "to_type": "claim",
+                    "to_id": claim_id,
+                }
+            )
+    for capability_path in (pack / "skills").glob("*/capability.json"):
+        skill_name = capability_path.parent.name
+        capability = load_json(capability_path)
+        capability_id = capability.get("id")
+        if not capability_id:
+            continue
+        for evidence_id in capability.get("evidence_ids", []):
+            edges.append(
+                {
+                    "from_type": "claim",
+                    "from_id": evidence_id,
+                    "relation": "supports",
+                    "to_type": "capability",
+                    "to_id": capability_id,
+                }
+            )
+        edges.append(
+            {
+                "from_type": "capability",
+                "from_id": capability_id,
+                "relation": "produces",
+                "to_type": "skill",
+                "to_id": skill_name,
+            }
+        )
+    return edges
+
+
+def _workspace_edges(root: Path) -> list[dict[str, str]]:
+    edges: list[dict[str, str]] = []
+    for pack in (root / "packs").glob("*"):
+        if (pack / "SOURCE_MANIFEST.json").exists():
+            edges.extend(build_pack_edges(pack))
+    return edges
+
+
 def lineage(workspace: Path, node_type: str, node_id: str) -> list[dict[str, str]]:
     root = workspace_for(workspace)
-    with KnowledgeDB(root / ".one" / "knowledge.db") as database:
-        return database.descendants(node_type, node_id)
+    edges = _workspace_edges(root)
+    queue: list[tuple[str, str]] = [(node_type, node_id)]
+    seen = set(queue)
+    result: list[dict[str, str]] = []
+    while queue:
+        current_type, current_id = queue.pop(0)
+        for edge in edges:
+            if edge["from_type"] != current_type or edge["from_id"] != current_id:
+                continue
+            target = (edge["to_type"], edge["to_id"])
+            if target in seen:
+                continue
+            seen.add(target)
+            queue.append(target)
+            result.append(edge)
+    return result
+
+
+def _affected_skills_for_source(
+    manifests: list[tuple[Path, list[dict[str, Any]]]],
+) -> set[str]:
+    """Skill names whose capability evidence traces to a revoked source.
+
+    Flat-file equivalent of the old database's source->document->chunk->claim
+    lineage: revoked chunks/documents mark ledger claims, then any capability
+    whose evidence_ids intersect those claims is affected.
+    """
+    affected: set[str] = set()
+    for manifest_path, matches in manifests:
+        pack = manifest_path.parent
+        revoked_chunks = {
+            chunk_id
+            for item in matches
+            for chunk_id in item.get("chunk_ids", [])
+        }
+        revoked_documents = {
+            item.get("document_id") for item in matches
+        }
+        revoked_claims: set[str] = set()
+        ledger_path = pack / "EVIDENCE_LEDGER.jsonl"
+        if ledger_path.exists():
+            for line in ledger_path.read_text(encoding="utf-8").splitlines():
+                if not line.strip():
+                    continue
+                item = json.loads(line)
+                chunk_revoked = item.get("chunk_id") in revoked_chunks
+                document_revoked = (
+                    not item.get("chunk_id")
+                    and item.get("source") in revoked_documents
+                )
+                if chunk_revoked or document_revoked:
+                    claim_id = item.get("id")
+                    if claim_id:
+                        revoked_claims.add(claim_id)
+        for capability_path in (pack / "skills").glob("*/capability.json"):
+            capability = load_json(capability_path)
+            if set(capability.get("evidence_ids", [])).intersection(
+                revoked_claims
+            ):
+                affected.add(capability_path.parent.name)
+    return affected
 
 
 def revoke_source(workspace: Path, source_id: str, reason: str) -> dict[str, Any]:
@@ -721,15 +850,9 @@ def revoke_source(workspace: Path, source_id: str, reason: str) -> dict[str, Any
     intent["last_attempt_at"] = utc_now()
     dump_json(intent_path, intent)
     try:
-        with KnowledgeDB(root / ".one" / "knowledge.db") as database:
-            result = database.revoke_source(source_id)
-        affected_skills = sorted(
-            {
-                edge["to_id"]
-                for edge in result["affected"]
-                if edge["to_type"] == "skill"
-            }
-        )
+        if not manifests:
+            raise ValueError(f"source does not exist: {source_id}")
+        affected_skills = sorted(_affected_skills_for_source(manifests))
         for manifest_path, _ in manifests:
             pack = manifest_path.parent
             with pack_lock(pack):

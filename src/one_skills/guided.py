@@ -6,12 +6,11 @@ import json
 from pathlib import Path
 from typing import Any
 
-from .constants import CONSENT_LEVELS, PERMISSIONS
+from .constants import CONSENT_LEVELS, OBJECT_TO_PROFILE, PERMISSIONS
 from .models import Evidence
 from .utils import append_jsonl, atomic_write, dump_json, iter_jsonl, new_id, utc_now
 
 GUIDE_OBJECTS = (
-    "person",
     "customer",
     "proposal",
     "skill",
@@ -61,18 +60,7 @@ SESSION_EVIDENCE_CLASSES = (
     "model_inference",
     "unknown",
 )
-PROFILE_BY_GUIDE_OBJECT = {
-    "person": "person",
-    "customer": "hybrid",
-    "proposal": "content",
-    "skill": "skill",
-    "methodology": "methodology",
-    "thought-system": "hybrid",
-    "book": "content",
-    "document": "content",
-    "sop": "sop",
-    "tool": "tool",
-}
+PROFILE_BY_GUIDE_OBJECT = OBJECT_TO_PROFILE
 _STAGE_BY_CHECKPOINT = {
     "scope": "scope",
     "evidence_inventory": "evidence_inventory",
@@ -101,7 +89,6 @@ class GuidedSessionError(RuntimeError):
 
 def _object_question(object_type: str) -> str:
     return {
-        "person": "最近一次别人采用、拒绝或纠正你的建议是什么？你先注意到了什么？",
         "customer": "最近一次客户表达需求或异议时，哪些是原话，哪些只是团队推测？",
         "proposal": "最近一份被修改或否决的方案，真正阻断点和最终结果是什么？",
         "skill": "最近一次这个 Skill 成功、误触发或需要返工的真实任务是什么？",
@@ -249,14 +236,6 @@ def validate_session_state(state: dict[str, Any]) -> list[str]:
         errors.append("invalid access_level")
     if state.get("consent") not in (*CONSENT_LEVELS, "not-applicable"):
         errors.append("invalid consent")
-    if object_type == "person":
-        if state.get("consent") in {"not-applicable", "prohibited"}:
-            errors.append("person sessions require usable consent")
-        if (
-            state.get("consent") == "public-only"
-            and state.get("access_level") != "public"
-        ):
-            errors.append("public-only consent requires public access")
     if state.get("current_stage") not in SESSION_STAGES:
         errors.append("invalid current_stage")
     if set(state.get("stages", {})) != set(SESSION_STAGES):
@@ -318,13 +297,9 @@ def init_session(
         raise GuidedSessionError(f"unsupported interaction mode: {interaction_mode}")
     if access_level not in {"public", "authorized", "private-local"}:
         raise GuidedSessionError(f"unsupported access level: {access_level}")
-    resolved_consent = consent or ("not-applicable" if object_type != "person" else "")
-    if object_type == "person" and resolved_consent not in CONSENT_LEVELS:
-        raise GuidedSessionError("person sessions require an explicit consent level")
+    resolved_consent = consent or "not-applicable"
     if resolved_consent == "prohibited":
-        raise GuidedSessionError(
-            "person distillation is prohibited by the consent contract"
-        )
+        raise GuidedSessionError("distillation is prohibited by the consent contract")
     if resolved_consent == "public-only" and access_level != "public":
         raise GuidedSessionError("public-only consent requires public access")
     if not subject.strip():
@@ -559,8 +534,6 @@ def export_session_source(workspace: Path, output: Path | None = None) -> Path:
 
 
 def _materialize_session_evidence(pack: Path, events: list[dict[str, Any]]) -> int:
-    from .database import KnowledgeDB
-    from .lifecycle import workspace_for
     from .utils import append_jsonl, load_json
 
     manifest = load_json(pack / "SOURCE_MANIFEST.json")
@@ -568,47 +541,36 @@ def _materialize_session_evidence(pack: Path, events: list[dict[str, Any]]) -> i
     document_id = guided_source["document_id"]
     source_path = guided_source["source"]
     materialized = 0
-    root = workspace_for(pack)
-    with KnowledgeDB(root / ".one" / "knowledge.db") as database:
-        chunks = {
-            row["section_path"]: row
-            for row in database.rows(
-                "SELECT id, section_path, source_locator FROM chunks "
-                "WHERE document_id = ? AND document_version = ?",
-                (document_id, guided_source["document_version"]),
-            )
-        }
-        for event in events:
-            if event["kind"] not in _CLAIM_EVENT_KINDS:
-                continue
-            chunk = chunks.get(event["id"])
-            confidence, inference_level = _EVIDENCE_QUALITY[event["evidence_class"]]
-            locator = (
-                chunk["source_locator"]
-                if chunk
-                else event.get("locator") or f"{source_path}#{event['id']}"
-            )
-            evidence = Evidence(
-                id=event["id"],
-                claim=event["content"],
-                evidence_type=event["evidence_class"],
-                source=document_id,
-                locator=locator,
-                confidence=confidence,
-                inference_level=inference_level,
-                permission=event["permission"],
-                notes=f"guided session {event['stage']} / {event['kind']}",
-                recorded_at=event["recorded_at"],
-            )
-            append_jsonl(pack / "EVIDENCE_LEDGER.jsonl", evidence.to_dict())
-            database.add_claim(
-                evidence.claim,
-                evidence.confidence,
-                [chunk["id"]] if chunk else [],
-                status="needs_evidence" if inference_level == "high" else "active",
-                claim_id=evidence.id,
-            )
-            materialized += 1
+    chunks = {
+        chunk["section_path"]: chunk
+        for chunk in load_json(pack / "sources" / "chunks.json")
+        if chunk.get("document_id") == document_id
+        and chunk.get("document_version") == guided_source["document_version"]
+    }
+    for event in events:
+        if event["kind"] not in _CLAIM_EVENT_KINDS:
+            continue
+        chunk = chunks.get(event["id"])
+        confidence, inference_level = _EVIDENCE_QUALITY[event["evidence_class"]]
+        locator = (
+            chunk["source_locator"]
+            if chunk
+            else event.get("locator") or f"{source_path}#{event['id']}"
+        )
+        evidence = Evidence(
+            id=event["id"],
+            claim=event["content"],
+            evidence_type=event["evidence_class"],
+            source=document_id,
+            locator=locator,
+            confidence=confidence,
+            inference_level=inference_level,
+            permission=event["permission"],
+            notes=f"guided session {event['stage']} / {event['kind']}",
+            recorded_at=event["recorded_at"],
+        )
+        append_jsonl(pack / "EVIDENCE_LEDGER.jsonl", evidence.to_dict())
+        materialized += 1
     return materialized
 
 
@@ -636,7 +598,7 @@ def create_pack_from_session(
         mode,
         state["target_capability"],
         state["access_level"],
-        state["consent"] if state["object_type"] == "person" else None,
+        state["consent"],
     )
     count = _materialize_session_evidence(pack, load_events(workspace))
     state = load_session(workspace)

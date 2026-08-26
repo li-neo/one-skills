@@ -18,11 +18,6 @@ class build_py(_build_py):
             package / "schemas",
             dirs_exist_ok=True,
         )
-        shutil.copytree(
-            ROOT / "migrations",
-            package / "migrations",
-            dirs_exist_ok=True,
-        )
         shutil.copy2(ROOT / "SKILL.md", package / "SKILL.md")
 
 

@@ -6,7 +6,7 @@ from hashlib import sha256
 from pathlib import Path
 import re
 
-from .database import KnowledgeDB
+from .source_workflow import build_pack_edges
 from .utils import atomic_write, load_json
 
 
@@ -19,7 +19,7 @@ def _label(node_type: str, value: str) -> str:
     return f"{node_type}: {cleaned[:48]}"
 
 
-def write_evidence_graph(pack: Path, database: KnowledgeDB) -> Path:
+def write_evidence_graph(pack: Path) -> Path:
     manifest = load_json(pack / "SOURCE_MANIFEST.json")
     capabilities = [
         load_json(path)
@@ -35,14 +35,12 @@ def write_evidence_graph(pack: Path, database: KnowledgeDB) -> Path:
         known.update(("claim", evidence_id) for evidence_id in capability["evidence_ids"])
     known.update(("skill", path.parent.name) for path in (pack / "skills").glob("*/SKILL.md"))
 
-    edges = []
-    for row in database.rows(
-        "SELECT from_type, from_id, relation, to_type, to_id FROM lineage_edges"
-    ):
-        source = (row["from_type"], row["from_id"])
-        target = (row["to_type"], row["to_id"])
-        if source in known and target in known:
-            edges.append(dict(row))
+    edges = [
+        edge
+        for edge in build_pack_edges(pack)
+        if (edge["from_type"], edge["from_id"]) in known
+        and (edge["to_type"], edge["to_id"]) in known
+    ]
 
     lines = [
         "# Evidence Graph",

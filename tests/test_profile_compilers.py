@@ -13,7 +13,6 @@ from one_skills.portfolio import build_portfolio, confirm_portfolio
 from one_skills.validation import validate_skill
 
 EXPECTED_TITLES = {
-    "person": "证据化人物视角顾问",
     "content": "内容能力网络",
     "methodology": "证据化方法工具",
     "sop": "可恢复 SOP 工作流",
@@ -74,7 +73,6 @@ class ProfileCompilerTests(unittest.TestCase):
                     "quick",
                     f"{profile}-pack",
                     "public",
-                    "public-only" if profile == "person" else None,
                 )
                 confirm_object_overview(pack, "对象骨架已核对")
                 build_portfolio(pack, [self._candidate(profile)], kind="verified")

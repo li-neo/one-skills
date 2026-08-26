@@ -1,9 +1,8 @@
-"""Runtime-neutral export adapters with plugin registration."""
+"""Runtime-neutral export adapters."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
-from importlib.metadata import entry_points
 from pathlib import Path, PurePosixPath
 import zipfile
 
@@ -23,39 +22,9 @@ RUNTIME_ADAPTERS = {
     "claude": RuntimeAdapter("claude", PurePosixPath(".claude/skills")),
     "cursor": RuntimeAdapter("cursor", PurePosixPath(".cursor/skills")),
 }
-_LOADED_RUNTIME_ENTRIES: set[str] = set()
-
-
-def register_runtime(adapter: RuntimeAdapter, replace: bool = False) -> None:
-    if adapter.name in RUNTIME_ADAPTERS and not replace:
-        raise ValueError(f"runtime already registered: {adapter.name}")
-    RUNTIME_ADAPTERS[adapter.name] = adapter
-
-
-def load_runtime_plugins() -> list[str]:
-    loaded: list[str] = []
-    discovered = entry_points()
-    selected = (
-        discovered.select(group="one_skills.runtimes")
-        if hasattr(discovered, "select")
-        else discovered.get("one_skills.runtimes", [])
-    )
-    for entry_point in selected:
-        identity = f"{entry_point.name}:{entry_point.value}"
-        if identity in _LOADED_RUNTIME_ENTRIES:
-            continue
-        value = entry_point.load()
-        adapter = value() if callable(value) else value
-        if not isinstance(adapter, RuntimeAdapter):
-            raise TypeError(f"runtime plugin {entry_point.name} did not return RuntimeAdapter")
-        register_runtime(adapter)
-        _LOADED_RUNTIME_ENTRIES.add(identity)
-        loaded.append(adapter.name)
-    return loaded
 
 
 def export_runtime(pack: Path, output: Path, runtime: str) -> Path:
-    load_runtime_plugins()
     adapter = RUNTIME_ADAPTERS.get(runtime)
     if adapter is None:
         raise ValueError(f"unknown runtime adapter: {runtime}")

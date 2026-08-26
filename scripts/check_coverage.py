@@ -13,7 +13,6 @@ STABLE_CORE = {
     "src/one_skills/compiler.py",
     "src/one_skills/compilers/__init__.py",
     "src/one_skills/core_assets.py",
-    "src/one_skills/database.py",
     "src/one_skills/delivery.py",
     "src/one_skills/distillation_quality.py",
     "src/one_skills/evaluation.py",

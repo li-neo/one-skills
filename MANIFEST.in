@@ -3,5 +3,4 @@ include SECURITY.md
 include CHANGELOG.md
 include SKILL.md
 recursive-include schemas *.json
-recursive-include migrations *.sql
 recursive-include docs *.md
